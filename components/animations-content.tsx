@@ -264,27 +264,7 @@ export function AnimationsContent() {
         </div>
       </section>
 
-      {/* How it works — horizontal on desktop */}
-      <section className="bg-white border-t border-neutral-100">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <h2 className="font-display text-xl font-bold text-neutral-900 text-center mb-10">How it works</h2>
-          <div className="grid sm:grid-cols-3 gap-8 sm:gap-12">
-            {[
-              { n: "1", title: "Choose", desc: "Pick a pre-made animation or let AI generate a custom one." },
-              { n: "2", title: "Pay once", desc: "$4.99. No subscription. The animation is permanently yours." },
-              { n: "3", title: "Done", desc: "Visitors see your intro animation when they open your profile." },
-            ].map(step => (
-              <div key={step.n} className="text-center sm:text-left">
-                <div className="w-8 h-8 bg-neutral-900 text-white rounded-lg flex items-center justify-center font-display font-bold text-sm mx-auto sm:mx-0 mb-3">
-                  {step.n}
-                </div>
-                <h3 className="font-display font-bold text-neutral-900 mb-1">{step.title}</h3>
-                <p className="text-sm text-neutral-500">{step.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+
     </div>
   );
 }
