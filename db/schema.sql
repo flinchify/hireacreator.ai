@@ -13,7 +13,7 @@ CREATE TABLE users (
     bio TEXT,
     headline VARCHAR(255),
     location VARCHAR(255),
-    role VARCHAR(20) NOT NULL DEFAULT 'creator' CHECK (role IN ('creator', 'brand', 'admin')),
+    role VARCHAR(20) NOT NULL DEFAULT 'creator' CHECK (role IN ('creator', 'brand', 'agent', 'admin')),
     hourly_rate INTEGER,
     currency VARCHAR(3) DEFAULT 'USD',
     stripe_account_id VARCHAR(255),
@@ -139,3 +139,67 @@ CREATE TABLE auth_codes (
 );
 
 CREATE INDEX idx_auth_codes_email ON auth_codes(email);
+
+-- API keys for agent accounts
+CREATE TABLE api_keys (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    name VARCHAR(100) NOT NULL DEFAULT 'Default',
+    key_prefix VARCHAR(12) NOT NULL,           -- "hca_" + first 8 chars (for display)
+    key_hash VARCHAR(128) NOT NULL,            -- SHA-256 hash of the full key
+    tier VARCHAR(20) NOT NULL DEFAULT 'free' CHECK (tier IN ('free', 'pro', 'enterprise')),
+    scopes TEXT[] NOT NULL DEFAULT '{"read"}', -- read, write, book
+    is_active BOOLEAN DEFAULT TRUE,
+    last_used_at TIMESTAMP WITH TIME ZONE,
+    expires_at TIMESTAMP WITH TIME ZONE,       -- NULL = never expires
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX idx_api_keys_user ON api_keys(user_id);
+CREATE INDEX idx_api_keys_hash ON api_keys(key_hash);
+CREATE INDEX idx_api_keys_prefix ON api_keys(key_prefix);
+
+-- Rate limit tracking (sliding window per key)
+CREATE TABLE rate_limit_log (
+    id BIGSERIAL PRIMARY KEY,
+    api_key_id UUID NOT NULL REFERENCES api_keys(id) ON DELETE CASCADE,
+    endpoint VARCHAR(100) NOT NULL,
+    ip_address INET,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX idx_rate_limit_key_time ON rate_limit_log(api_key_id, created_at);
+-- Auto-purge entries older than 1 hour (run via cron or pg_cron)
+-- DELETE FROM rate_limit_log WHERE created_at < NOW() - INTERVAL '1 hour';
+
+-- Rate limit tiers
+CREATE TABLE rate_limit_tiers (
+    tier VARCHAR(20) PRIMARY KEY,
+    read_per_minute INTEGER NOT NULL DEFAULT 60,
+    write_per_minute INTEGER NOT NULL DEFAULT 10,
+    book_per_hour INTEGER NOT NULL DEFAULT 5,
+    daily_cap INTEGER NOT NULL DEFAULT 100
+);
+
+INSERT INTO rate_limit_tiers (tier, read_per_minute, write_per_minute, book_per_hour, daily_cap) VALUES
+  ('free',       60,   10,   5,    100),
+  ('pro',        1000, 100,  50,   10000),
+  ('enterprise', 5000, 500,  500,  100000);
+
+-- Ownership verification for agent accounts
+CREATE TABLE agent_verifications (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    method VARCHAR(20) NOT NULL CHECK (method IN ('dns', 'meta_tag', 'email')),
+    domain VARCHAR(255) NOT NULL,
+    verification_token VARCHAR(128) NOT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'verified', 'failed', 'expired')),
+    attempts INTEGER DEFAULT 0,
+    max_attempts INTEGER DEFAULT 5,
+    verified_at TIMESTAMP WITH TIME ZONE,
+    expires_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (NOW() + INTERVAL '72 hours'),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX idx_agent_verif_user ON agent_verifications(user_id);
+CREATE INDEX idx_agent_verif_domain ON agent_verifications(domain);

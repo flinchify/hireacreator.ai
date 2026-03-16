@@ -356,10 +356,41 @@ export function AuthModal() {
                       <Input label="Company name" placeholder="Acme Inc." />
                     )}
                     {role === "agent" && (
-                      <Input label="Company or project name" placeholder="My AI App" />
+                      <>
+                        <Input label="Company or project name" placeholder="My AI App" />
+                        <Input label="Website / domain" placeholder="myapp.com" />
+                        <div className="space-y-1.5">
+                          <label className="block text-sm font-medium text-neutral-700">Primary use case</label>
+                          <select className="w-full px-3.5 py-2.5 rounded-lg border border-neutral-300 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent">
+                            <option value="">Select use case</option>
+                            <option>AI Agent / Autonomous booking</option>
+                            <option>Marketing automation</option>
+                            <option>Agency management tool</option>
+                            <option>Creator analytics</option>
+                            <option>Other / Custom integration</option>
+                          </select>
+                        </div>
+                        <div className="bg-neutral-50 rounded-xl border border-neutral-200 p-4">
+                          <div className="text-xs font-medium text-neutral-500 uppercase tracking-wider mb-2">What happens next</div>
+                          <ul className="space-y-1.5 text-xs text-neutral-500">
+                            <li className="flex items-start gap-2">
+                              <span className="text-neutral-900 font-bold mt-px">1.</span>
+                              Your API key will be generated instantly (read-only)
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="text-neutral-900 font-bold mt-px">2.</span>
+                              Verify domain ownership to unlock write + booking access
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="text-neutral-900 font-bold mt-px">3.</span>
+                              Rate limits apply per tier (free: 100 req/day)
+                            </li>
+                          </ul>
+                        </div>
+                      </>
                     )}
                     <Button type="button" className="w-full rounded-full" size="lg">
-                      Complete Setup
+                      {role === "agent" ? "Create Account & Generate Key" : "Complete Setup"}
                     </Button>
                   </form>
                 </>
