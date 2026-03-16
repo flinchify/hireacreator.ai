@@ -50,9 +50,14 @@ export function CreatorCard({ creator }: { creator: Creator }) {
                   {creator.name}
                 </h3>
                 {creator.isVerified && (
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="text-brand-600 shrink-0">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="text-blue-500 shrink-0">
                     <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
+                )}
+                {creator.isPro && (
+                  <span className="inline-flex items-center px-1.5 py-0.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[9px] font-bold uppercase tracking-wider rounded-full">
+                    PRO
+                  </span>
                 )}
               </div>
               {creator.headline && (
@@ -74,6 +79,15 @@ export function CreatorCard({ creator }: { creator: Creator }) {
             {creator.category && <Badge>{creator.category}</Badge>}
             {creator.location && (
               <span className="text-xs text-neutral-400">{creator.location}</span>
+            )}
+            {creator.isOnline && (
+              <span className="inline-flex items-center gap-1 text-[10px] text-emerald-600">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
+                </span>
+                Online
+              </span>
             )}
           </div>
 

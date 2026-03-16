@@ -30,7 +30,13 @@ function assembleCreator(
     totalProjects: (user.total_projects as number) || 0,
     isVerified: (user.is_verified as boolean) || false,
     isFeatured: (user.is_featured as boolean) || false,
+    isOnline: (user.is_online as boolean) || false,
+    isPro: ((user.subscription_tier as string) || "free") !== "free",
+    subscriptionTier: (user.subscription_tier as string) || "free",
     visibleInMarketplace: user.visible_in_marketplace !== false,
+    websiteUrl: (user.website_url as string) || null,
+    businessName: (user.business_name as string) || null,
+    businessUrl: (user.business_url as string) || null,
     socials: socials.map((s) => ({
       platform: s.platform as string,
       handle: s.handle as string,
@@ -48,7 +54,9 @@ function assembleCreator(
       id: p.id as string,
       title: p.title as string,
       image: (p.image_url as string) || "",
+      video: (p.video_url as string) || undefined,
       category: (p.category as string) || "",
+      mediaType: ((p.media_type as string) || "image") as "image" | "video",
     })),
     reviews: reviews.map((r) => ({
       id: r.id as string,

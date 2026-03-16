@@ -2,8 +2,15 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { exchangeCodeForTokens, getGoogleUser } from "@/lib/google-auth";
 import { getDb } from "@/lib/db";
+import { checkLoginRateLimit, checkIpRateLimit } from "@/lib/login-rate-limit";
 
 export async function GET(request: Request) {
+  // Rate limit by IP
+  const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "0.0.0.0";
+  if (!checkIpRateLimit(ip)) {
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    return NextResponse.redirect(`${appUrl}?auth_error=rate_limited`);
+  }
   const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
   const state = searchParams.get("state");

@@ -9,6 +9,11 @@ export const CATEGORIES = [
   "Motion Designer",
   "Podcast Producer",
   "Influencer",
+  "Automotive",
+  "Education / Tech",
+  "Consultant",
+  "Music Producer",
+  "Developer",
 ] as const;
 
 export type Social = {
@@ -24,13 +29,16 @@ export type Service = {
   description: string;
   price: number;
   deliveryDays: number;
+  category?: string;
 };
 
 export type PortfolioItem = {
   id: string;
   title: string;
   image: string;
+  video?: string;
   category: string;
+  mediaType: "image" | "video";
 };
 
 export type Review = {
@@ -58,7 +66,13 @@ export type Creator = {
   totalProjects: number;
   isVerified: boolean;
   isFeatured: boolean;
+  isOnline: boolean;
+  isPro: boolean;
+  subscriptionTier: string;
   visibleInMarketplace: boolean;
+  websiteUrl: string | null;
+  businessName: string | null;
+  businessUrl: string | null;
   socials: Social[];
   services: Service[];
   portfolio: PortfolioItem[];
