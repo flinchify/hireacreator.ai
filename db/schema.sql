@@ -18,6 +18,7 @@ CREATE TABLE users (
     currency VARCHAR(3) DEFAULT 'USD',
     stripe_account_id VARCHAR(255),
     stripe_customer_id VARCHAR(255),
+    category VARCHAR(100),
     is_verified BOOLEAN DEFAULT FALSE,
     is_featured BOOLEAN DEFAULT FALSE,
     total_earnings INTEGER DEFAULT 0,

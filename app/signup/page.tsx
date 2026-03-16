@@ -222,25 +222,18 @@ export default function SignupPage() {
 
       {/* Right - Visual */}
       <div className="hidden lg:flex flex-1 bg-neutral-950 items-center justify-center p-16">
-        <div className="max-w-md">
-          <blockquote className="text-xl text-white font-display leading-relaxed">
-            &ldquo;HireACreator helped me go from freelancing on the side to
-            running a full-time creative business. I booked $12K in my first
-            month on the platform.&rdquo;
-          </blockquote>
-          <div className="mt-6 flex items-center gap-3">
-            <img
-              src="https://randomuser.me/api/portraits/women/44.jpg"
-              alt="Sophia Chen"
-              className="w-10 h-10 rounded-full object-cover"
-            />
-            <div>
-              <div className="text-white font-medium text-sm">Sophia Chen</div>
-              <div className="text-neutral-400 text-sm">
-                UGC Creator, Los Angeles
-              </div>
-            </div>
+        <div className="max-w-md text-center">
+          <div className="w-16 h-16 bg-neutral-900 rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <span className="text-white font-bold text-2xl">H</span>
           </div>
+          <h2 className="text-2xl text-white font-display font-bold mb-3">
+            {role === "creator" ? "Showcase your talent" : "Find top creators"}
+          </h2>
+          <p className="text-neutral-400 leading-relaxed">
+            {role === "creator"
+              ? "Get a beautiful profile page, list your services, and let brands and AI agents book you directly."
+              : "Browse verified creators, check real portfolios and reviews, and book the talent you need."}
+          </p>
         </div>
       </div>
     </div>
