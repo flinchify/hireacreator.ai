@@ -4,6 +4,7 @@ import { getCreators } from "@/lib/queries";
 import { CATEGORIES } from "@/lib/types";
 import type { Creator } from "@/lib/types";
 import { BrowseContent } from "@/components/browse-content";
+import { BrowseEmptyState } from "@/components/browse-empty-state";
 
 export default async function BrowsePage() {
   let creators: Creator[] = [];
@@ -31,29 +32,7 @@ export default async function BrowsePage() {
         {creators.length > 0 ? (
           <BrowseContent creators={creators} categories={[...CATEGORIES]} />
         ) : (
-          <div className="text-center py-20">
-            <div className="w-16 h-16 rounded-full bg-neutral-100 flex items-center justify-center mx-auto mb-4">
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                className="text-neutral-400"
-              >
-                <path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4-4v2" strokeLinecap="round" strokeLinejoin="round" />
-                <circle cx="9" cy="7" r="4" />
-                <path d="M22 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </div>
-            <h3 className="font-semibold text-neutral-900 mb-1">
-              No creators yet
-            </h3>
-            <p className="text-sm text-neutral-500 mb-6">
-              Be the first to join and get featured to every brand on the platform.
-            </p>
-          </div>
+          <BrowseEmptyState />
         )}
       </div>
       <Footer />

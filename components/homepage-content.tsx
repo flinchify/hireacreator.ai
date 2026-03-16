@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useState } from "react";
 import { useAuth } from "@/components/auth-context";
 import { CreatorCard } from "@/components/creator-card";
 import { AnimateOnScroll, StaggerChildren } from "@/components/animate-on-scroll";
@@ -11,7 +12,6 @@ import {
   YouTubeIcon,
   TwitterIcon,
   LinkedInIcon,
-  DribbbleIcon,
 } from "@/components/icons/platforms";
 import { PlatformTicker } from "@/components/platform-ticker";
 import type { Creator } from "@/lib/types";
@@ -29,6 +29,80 @@ function CheckIcon() {
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="text-neutral-900 shrink-0">
       <path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
+  );
+}
+
+function WaitlistForm() {
+  const { openSignup } = useAuth();
+  const [email, setEmail] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+  const [position, setPosition] = useState(0);
+  const [loading, setLoading] = useState(false);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!email) return;
+    setLoading(true);
+    const res = await fetch("/api/waitlist", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, role: "creator" }),
+    });
+    const data = await res.json();
+    if (data.success) {
+      setSubmitted(true);
+      setPosition(data.position);
+    }
+    setLoading(false);
+  }
+
+  if (submitted) {
+    return (
+      <div className="mt-8 max-w-md mx-auto">
+        <div className="bg-neutral-950 text-white rounded-2xl px-6 py-5 text-center">
+          <div className="text-lg font-display font-bold mb-1">You're in.</div>
+          <p className="text-sm text-neutral-400">
+            #{position} on the waitlist. We'll email you when it's your turn.
+          </p>
+        </div>
+        <button
+          onClick={() => openSignup("creator")}
+          className="mt-4 text-sm text-neutral-500 hover:text-neutral-900 transition-colors underline underline-offset-4"
+        >
+          Or create your profile now (early access)
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-8 max-w-md mx-auto">
+      <form onSubmit={handleSubmit} className="flex gap-2">
+        <input
+          type="email"
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+          placeholder="you@email.com"
+          className="flex-1 px-5 py-3.5 rounded-full border border-neutral-300 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent text-neutral-900 placeholder:text-neutral-400"
+          required
+        />
+        <button
+          type="submit"
+          disabled={loading}
+          className="px-6 sm:px-8 py-3.5 text-sm font-medium text-white bg-neutral-900 rounded-full hover:bg-neutral-800 transition-colors shadow-lg shadow-neutral-900/20 whitespace-nowrap disabled:opacity-50"
+        >
+          {loading ? "..." : "Join Waitlist"}
+        </button>
+      </form>
+      <div className="mt-3 flex items-center justify-center gap-4">
+        <button
+          onClick={() => openSignup("creator")}
+          className="text-sm text-neutral-500 hover:text-neutral-900 transition-colors"
+        >
+          Or create your profile now
+        </button>
+      </div>
+    </div>
   );
 }
 
@@ -61,22 +135,10 @@ export function HomepageContent({
             <PlatformTicker />
           </div>
 
-          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button
-              onClick={() => openSignup("creator")}
-              className="px-8 py-3.5 text-base font-medium text-white bg-neutral-900 rounded-full hover:bg-neutral-800 transition-colors shadow-lg shadow-neutral-900/20 w-full sm:w-auto"
-            >
-              Claim Your Profile
-            </button>
-            <Link href="/browse">
-              <button className="px-8 py-3.5 text-base font-medium text-neutral-700 bg-transparent rounded-full border border-neutral-300 hover:border-neutral-400 hover:bg-neutral-50 transition-all w-full sm:w-auto">
-                Browse Creators
-              </button>
-            </Link>
-          </div>
+          <WaitlistForm />
 
           <p className="mt-6 text-sm text-neutral-400">
-            Free for creators. Zero fees. Always.
+            0% commission on bookings. Creators keep 100% of earnings. Optional paid tools for power users.
           </p>
         </div>
       </section>
@@ -100,8 +162,8 @@ export function HomepageContent({
               Brands find you
             </h3>
             <p className="text-neutral-400 text-sm leading-relaxed">
-              Stop pitching. Brands and agencies browse verified creators,
-              filter by niche, check your work, and book directly. You set the rates.
+              Stop pitching. Brands browse creators by niche, platform, and budget —
+              then book directly. You set your own rates. Early creators get featured placement.
             </p>
           </div>
           <div className="aos-stagger-item bg-neutral-950 text-white rounded-3xl p-8 md:p-10">
@@ -110,8 +172,8 @@ export function HomepageContent({
               Get paid instantly
             </h3>
             <p className="text-neutral-400 text-sm leading-relaxed">
-              Zero platform fees. You keep 100% of what you charge.
-              Stripe-powered escrow on every deal. No chasing invoices. Money moves when work ships.
+              0% commission — you keep 100% of what you charge.
+              Payments held in Stripe escrow until work is approved. No chasing invoices. Brands pay a small service fee, not you.
             </p>
           </div>
         </StaggerChildren>
@@ -269,8 +331,8 @@ export function HomepageContent({
             </h2>
             <p className="text-neutral-400 text-lg leading-relaxed">
               Search by niche, audience size, engagement rate, and budget.
-              Every creator is verified with real work and real reviews.
-              Book in minutes, not weeks.
+              Book in minutes, not weeks. Payments are held in Stripe escrow
+              and released when you approve the deliverables.
             </p>
           </div>
 
@@ -412,7 +474,7 @@ export function HomepageContent({
                   { feature: "Portfolio + services page", us: true, linktree: false, fiverr: true },
                   { feature: "Direct booking & payments", us: true, linktree: false, fiverr: true },
                   { feature: "Link-in-bio friendly", us: true, linktree: true, fiverr: false },
-                  { feature: "0% platform fees", us: true, linktree: false, fiverr: false },
+                  { feature: "0% creator commission", us: true, linktree: false, fiverr: false },
                   { feature: "Verified creator profiles", us: true, linktree: false, fiverr: false },
                   { feature: "Brand marketplace discovery", us: true, linktree: false, fiverr: true },
                   { feature: "AI agent API (MCP + REST)", us: true, linktree: false, fiverr: false },
@@ -468,21 +530,9 @@ export function HomepageContent({
           <p className="text-neutral-500 text-lg mb-10 max-w-xl mx-auto">
             {creatorCount > 0
               ? "Create your profile, list your services, and start getting booked by brands and AI agents."
-              : "Early creators get featured to every brand that joins. Claim your profile before your niche fills up."}
+              : "Early creators get featured placement to every brand that joins. First 500 get priority access."}
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button
-              onClick={() => openSignup("creator")}
-              className="px-8 py-3.5 text-base font-medium text-white bg-neutral-900 rounded-full hover:bg-neutral-800 transition-colors shadow-lg shadow-neutral-900/20 w-full sm:w-auto"
-            >
-              Claim Your Profile
-            </button>
-            <Link href="/browse">
-              <button className="px-8 py-3.5 text-base font-medium text-neutral-700 bg-transparent rounded-full border border-neutral-300 hover:border-neutral-400 hover:bg-white transition-all w-full sm:w-auto">
-                Browse Creators
-              </button>
-            </Link>
-          </div>
+          <WaitlistForm />
         </div>
       </AnimateOnScroll>
     </>
