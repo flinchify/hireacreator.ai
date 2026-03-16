@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useAuth } from "./auth-context";
 
 export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { openLogin, openSignup } = useAuth();
 
   return (
     <header className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-4xl">
@@ -17,13 +19,13 @@ export function Header() {
             Creators
           </Link>
           <Link
-            href="/#for-brands"
+            href="/brands"
             className="px-4 py-2 text-sm font-medium text-neutral-700 hover:text-neutral-900 rounded-full border border-transparent hover:border-neutral-200 hover:bg-white/60 transition-all"
           >
             For Brands
           </Link>
           <Link
-            href="/#for-agents"
+            href="/api"
             className="px-4 py-2 text-sm font-medium text-neutral-700 hover:text-neutral-900 rounded-full border border-transparent hover:border-neutral-200 hover:bg-white/60 transition-all"
           >
             API
@@ -35,18 +37,18 @@ export function Header() {
         </Link>
 
         <div className="hidden md:flex items-center gap-2">
-          <Link
-            href="/login"
+          <button
+            onClick={openLogin}
             className="px-4 py-2 text-sm font-medium text-neutral-700 hover:text-neutral-900 rounded-full border border-transparent hover:border-neutral-200 hover:bg-white/60 transition-all"
           >
             Log in
-          </Link>
-          <Link
-            href="/signup"
+          </button>
+          <button
+            onClick={() => openSignup()}
             className="px-5 py-2 text-sm font-medium text-white bg-neutral-900 rounded-full hover:bg-neutral-800 transition-colors"
           >
             Get Started
-          </Link>
+          </button>
         </div>
 
         {/* Mobile toggle */}
@@ -72,19 +74,25 @@ export function Header() {
             <Link href="/browse" className="px-4 py-2.5 text-sm font-medium text-neutral-700 hover:bg-neutral-100 rounded-xl" onClick={() => setMobileOpen(false)}>
               Creators
             </Link>
-            <Link href="/#for-brands" className="px-4 py-2.5 text-sm font-medium text-neutral-700 hover:bg-neutral-100 rounded-xl" onClick={() => setMobileOpen(false)}>
+            <Link href="/brands" className="px-4 py-2.5 text-sm font-medium text-neutral-700 hover:bg-neutral-100 rounded-xl" onClick={() => setMobileOpen(false)}>
               For Brands
             </Link>
-            <Link href="/#for-agents" className="px-4 py-2.5 text-sm font-medium text-neutral-700 hover:bg-neutral-100 rounded-xl" onClick={() => setMobileOpen(false)}>
+            <Link href="/api" className="px-4 py-2.5 text-sm font-medium text-neutral-700 hover:bg-neutral-100 rounded-xl" onClick={() => setMobileOpen(false)}>
               API
             </Link>
             <div className="border-t border-neutral-200 my-2" />
-            <Link href="/login" className="px-4 py-2.5 text-sm font-medium text-neutral-700 hover:bg-neutral-100 rounded-xl" onClick={() => setMobileOpen(false)}>
+            <button
+              onClick={() => { setMobileOpen(false); openLogin(); }}
+              className="px-4 py-2.5 text-sm font-medium text-neutral-700 hover:bg-neutral-100 rounded-xl text-left"
+            >
               Log in
-            </Link>
-            <Link href="/signup" className="px-4 py-2.5 text-sm font-medium text-center text-white bg-neutral-900 rounded-xl hover:bg-neutral-800" onClick={() => setMobileOpen(false)}>
+            </button>
+            <button
+              onClick={() => { setMobileOpen(false); openSignup(); }}
+              className="px-4 py-2.5 text-sm font-medium text-center text-white bg-neutral-900 rounded-xl hover:bg-neutral-800"
+            >
               Get Started
-            </Link>
+            </button>
           </div>
         </div>
       )}

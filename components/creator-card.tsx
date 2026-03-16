@@ -63,6 +63,13 @@ export function CreatorCard({ creator }: { creator: Creator }) {
             </div>
           </div>
 
+          {/* Profile link */}
+          <div className="mt-2">
+            <span className="text-xs text-neutral-400 font-mono">
+              hireacreator.ai/{creator.slug}
+            </span>
+          </div>
+
           <div className="flex items-center gap-3 mt-3">
             {creator.category && <Badge>{creator.category}</Badge>}
             {creator.location && (

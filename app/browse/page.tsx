@@ -16,7 +16,7 @@ export default async function BrowsePage() {
   return (
     <div className="min-h-screen bg-white">
       <Header />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-10">
         <div className="mb-8">
           <h1 className="font-display text-3xl font-bold text-neutral-900">
             Browse Creators
@@ -53,12 +53,6 @@ export default async function BrowsePage() {
             <p className="text-sm text-neutral-500 mb-6">
               Be the first to join and get featured to every brand on the platform.
             </p>
-            <a
-              href="/signup"
-              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-neutral-900 rounded-lg hover:bg-neutral-800 transition-colors"
-            >
-              Join as a Creator
-            </a>
           </div>
         )}
       </div>

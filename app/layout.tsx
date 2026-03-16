@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { ClientLayout } from "@/components/client-layout";
 
 export const metadata: Metadata = {
   title: "HireACreator.ai - The Premium Creator Marketplace",
@@ -14,7 +15,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="min-h-screen">{children}</body>
+      <body className="min-h-screen">
+        <ClientLayout>{children}</ClientLayout>
+      </body>
     </html>
   );
 }

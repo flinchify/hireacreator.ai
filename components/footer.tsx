@@ -3,16 +3,15 @@ import Link from "next/link";
 const footerLinks = {
   Platform: [
     { label: "Browse Creators", href: "/browse" },
-    { label: "For Brands", href: "/#for-brands" },
+    { label: "For Brands", href: "/brands" },
     { label: "For Creators", href: "/#for-creators" },
-    { label: "For AI Agents", href: "/#for-agents" },
-    { label: "Pricing", href: "/pricing" },
+    { label: "API", href: "/api" },
   ],
   Resources: [
     { label: "Help Center", href: "/help" },
     { label: "Blog", href: "/blog" },
     { label: "Creator Guides", href: "/guides" },
-    { label: "API Docs", href: "/docs" },
+    { label: "API Docs", href: "/api#docs" },
   ],
   Company: [
     { label: "About", href: "/about" },
@@ -53,7 +52,7 @@ export function Footer() {
               </h3>
               <ul className="space-y-2.5">
                 {links.map((link) => (
-                  <li key={link.href}>
+                  <li key={link.href + link.label}>
                     <Link
                       href={link.href}
                       className="text-sm hover:text-white transition-colors"
