@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 const footerLinks = {
   Platform: [
@@ -33,9 +34,13 @@ export function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-                <span className="text-neutral-900 font-bold text-sm">H</span>
-              </div>
+              <Image
+                src="/logo-512.png"
+                alt="H"
+                width={32}
+                height={32}
+                className="w-8 h-8 invert"
+              />
               <span className="font-display font-bold text-lg text-white">
                 HireACreator
               </span>

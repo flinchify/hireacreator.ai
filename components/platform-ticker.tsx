@@ -15,6 +15,7 @@ import {
   DribbbleIcon,
   BehanceIcon,
   GitHubIcon,
+  KickIcon,
 } from "@/components/icons/platforms";
 
 const row1 = [
@@ -25,6 +26,7 @@ const row1 = [
   LinkedInIcon,
   TwitchIcon,
   SpotifyIcon,
+  KickIcon,
   PinterestIcon,
   FacebookIcon,
   SnapchatIcon,
@@ -42,6 +44,7 @@ const row2 = [
   SnapchatIcon,
   FacebookIcon,
   PinterestIcon,
+  KickIcon,
   SpotifyIcon,
   TwitchIcon,
   LinkedInIcon,

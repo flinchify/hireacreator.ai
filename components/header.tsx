@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import { useAuth } from "./auth-context";
 
@@ -62,7 +63,15 @@ export function Header({ theme = "light" }: { theme?: HeaderTheme }) {
           </Link>
         </div>
 
-        <Link href="/" className={`md:absolute md:left-1/2 md:-translate-x-1/2 font-display font-bold text-lg ${t.logo}`}>
+        <Link href="/" className={`md:absolute md:left-1/2 md:-translate-x-1/2 flex items-center gap-2 font-display font-bold text-lg ${t.logo}`}>
+          <Image
+            src="/logo-512.png"
+            alt="H"
+            width={28}
+            height={28}
+            className="w-7 h-7"
+            priority
+          />
           HireACreator
         </Link>
 
