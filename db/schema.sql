@@ -21,6 +21,7 @@ CREATE TABLE users (
     category VARCHAR(100),
     is_verified BOOLEAN DEFAULT FALSE,
     is_featured BOOLEAN DEFAULT FALSE,
+    visible_in_marketplace BOOLEAN DEFAULT TRUE,
     total_earnings INTEGER DEFAULT 0,
     total_projects INTEGER DEFAULT 0,
     rating NUMERIC(3,2) DEFAULT 0,

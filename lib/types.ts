@@ -58,6 +58,7 @@ export type Creator = {
   totalProjects: number;
   isVerified: boolean;
   isFeatured: boolean;
+  visibleInMarketplace: boolean;
   socials: Social[];
   services: Service[];
   portfolio: PortfolioItem[];

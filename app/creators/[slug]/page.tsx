@@ -92,6 +92,19 @@ export default async function CreatorProfilePage({
                   <span className="text-sm text-neutral-500">{creator.location}</span>
                 )}
               </div>
+              <div className="flex items-center gap-1.5 mt-2">
+                {creator.visibleInMarketplace ? (
+                  <>
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                    <span className="text-xs text-neutral-500">Listed on marketplace</span>
+                  </>
+                ) : (
+                  <>
+                    <span className="w-1.5 h-1.5 rounded-full bg-neutral-300" />
+                    <span className="text-xs text-neutral-500">Private profile</span>
+                  </>
+                )}
+              </div>
             </div>
             <div className="mt-4 sm:mt-0 sm:pb-2 flex gap-3">
               <Button size="lg">Book Now</Button>

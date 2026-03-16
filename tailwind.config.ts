@@ -30,6 +30,20 @@ const config: Config = {
       maxWidth: {
         "8xl": "88rem",
       },
+      animation: {
+        "ticker-left": "ticker-left 40s linear infinite",
+        "ticker-right": "ticker-right 40s linear infinite",
+      },
+      keyframes: {
+        "ticker-left": {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
+        "ticker-right": {
+          "0%": { transform: "translateX(-50%)" },
+          "100%": { transform: "translateX(0)" },
+        },
+      },
     },
   },
   plugins: [],

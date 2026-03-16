@@ -11,6 +11,7 @@ import {
   LinkedInIcon,
   DribbbleIcon,
 } from "@/components/icons/platforms";
+import { PlatformTicker } from "@/components/platform-ticker";
 import type { Creator } from "@/lib/types";
 
 function ArrowRightIcon() {
@@ -58,7 +59,11 @@ export function HomepageContent({
             and brands that come to you.
           </p>
 
-          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="mt-10 mb-2">
+            <PlatformTicker />
+          </div>
+
+          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
             <button
               onClick={() => openSignup("creator")}
               className="px-8 py-3.5 text-base font-medium text-white bg-neutral-900 rounded-full hover:bg-neutral-800 transition-colors shadow-lg shadow-neutral-900/20 w-full sm:w-auto"

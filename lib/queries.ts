@@ -30,6 +30,7 @@ function assembleCreator(
     totalProjects: (user.total_projects as number) || 0,
     isVerified: (user.is_verified as boolean) || false,
     isFeatured: (user.is_featured as boolean) || false,
+    visibleInMarketplace: user.visible_in_marketplace !== false,
     socials: socials.map((s) => ({
       platform: s.platform as string,
       handle: s.handle as string,
@@ -66,7 +67,7 @@ export async function getCreators(): Promise<Creator[]> {
   const sql = getDb();
   const users = await sql`
     SELECT * FROM users
-    WHERE role = 'creator'
+    WHERE role = 'creator' AND visible_in_marketplace = TRUE
     ORDER BY is_featured DESC, rating DESC
   `;
 
@@ -89,7 +90,7 @@ export async function getFeaturedCreators(): Promise<Creator[]> {
   const sql = getDb();
   const users = await sql`
     SELECT * FROM users
-    WHERE role = 'creator' AND is_featured = TRUE
+    WHERE role = 'creator' AND is_featured = TRUE AND visible_in_marketplace = TRUE
     ORDER BY rating DESC
     LIMIT 4
   `;
@@ -148,7 +149,7 @@ export async function searchCreators(filters?: {
   if (query && category) {
     users = await sql`
       SELECT * FROM users
-      WHERE role = 'creator'
+      WHERE role = 'creator' AND visible_in_marketplace = TRUE
         AND category = ${category}
         AND (
           LOWER(full_name) LIKE ${"%" + query + "%"}
@@ -160,7 +161,7 @@ export async function searchCreators(filters?: {
   } else if (query) {
     users = await sql`
       SELECT * FROM users
-      WHERE role = 'creator'
+      WHERE role = 'creator' AND visible_in_marketplace = TRUE
         AND (
           LOWER(full_name) LIKE ${"%" + query + "%"}
           OR LOWER(headline) LIKE ${"%" + query + "%"}
@@ -171,13 +172,13 @@ export async function searchCreators(filters?: {
   } else if (category) {
     users = await sql`
       SELECT * FROM users
-      WHERE role = 'creator' AND category = ${category}
+      WHERE role = 'creator' AND visible_in_marketplace = TRUE AND category = ${category}
       ORDER BY is_featured DESC, rating DESC
     `;
   } else {
     users = await sql`
       SELECT * FROM users
-      WHERE role = 'creator'
+      WHERE role = 'creator' AND visible_in_marketplace = TRUE
       ORDER BY is_featured DESC, rating DESC
     `;
   }
