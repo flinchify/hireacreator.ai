@@ -324,6 +324,35 @@ function ServicesSheet({ user, open, onClose }: { user: User; open: boolean; onC
   );
 }
 
+/* ───── Image Upload Button ───── */
+function ImageUploadButton({ type, onUploaded }: { type: "avatar" | "cover"; onUploaded: () => void }) {
+  const [uploading, setUploading] = useState(false);
+
+  async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    const fd = new FormData();
+    fd.append("file", file);
+    fd.append("type", type);
+    const res = await fetch("/api/upload", { method: "POST", body: fd });
+    if (res.ok) onUploaded();
+    setUploading(false);
+  }
+
+  return (
+    <label className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-neutral-600 bg-white/80 backdrop-blur-sm border border-neutral-200 rounded-full hover:bg-neutral-100 hover:border-neutral-300 transition-all shadow-sm cursor-pointer active:scale-95">
+      <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" className="hidden" onChange={handleFile} />
+      {uploading ? (
+        <div className="w-3.5 h-3.5 border-2 border-neutral-300 border-t-neutral-600 rounded-full animate-spin" />
+      ) : (
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" /><circle cx="12" cy="13" r="4" /></svg>
+      )}
+      {uploading ? "Uploading..." : type === "cover" ? "Upload Banner" : "Upload Photo"}
+    </label>
+  );
+}
+
 /* ───── Edit Button ───── */
 function EditButton({ onClick, label }: { onClick: () => void; label?: string }) {
   return (
@@ -339,7 +368,7 @@ function EditButton({ onClick, label }: { onClick: () => void; label?: string })
 
 /* ───── Main Dashboard ───── */
 export function DashboardContent() {
-  const { user, loading } = useAuth();
+  const { user, loading, refreshUser } = useAuth();
   const [editProfile, setEditProfile] = useState(false);
   const [editSocials, setEditSocials] = useState(false);
   const [editServices, setEditServices] = useState(false);
@@ -387,7 +416,7 @@ export function DashboardContent() {
 
   return (
     <div className="min-h-screen bg-neutral-50">
-      {/* Cover */}
+      {/* Cover with upload */}
       <div className="relative h-40 sm:h-64">
         {user.cover ? (
           <img src={user.cover} alt="" className="w-full h-full object-cover" />
@@ -395,9 +424,8 @@ export function DashboardContent() {
           <div className="w-full h-full bg-gradient-to-br from-neutral-200 via-neutral-100 to-neutral-300" />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-        {/* Edit cover button */}
         <div className="absolute top-20 sm:top-24 right-4">
-          <EditButton onClick={() => setEditProfile(true)} label="Edit Cover" />
+          <ImageUploadButton type="cover" onUploaded={() => refreshUser()} />
         </div>
       </div>
 
@@ -412,6 +440,19 @@ export function DashboardContent() {
                 <span className="text-2xl sm:text-3xl font-bold text-neutral-400">{user.name?.charAt(0) || "?"}</span>
               </div>
             )}
+            {/* Avatar upload overlay */}
+            <label className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/40 rounded-2xl cursor-pointer transition-all opacity-0 group-hover:opacity-100">
+              <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                const fd = new FormData();
+                fd.append("file", file);
+                fd.append("type", "avatar");
+                await fetch("/api/upload", { method: "POST", body: fd });
+                refreshUser();
+              }} />
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" /><circle cx="12" cy="13" r="4" /></svg>
+            </label>
             {user.isOnline && (
               <span className="absolute -bottom-1 -right-1 flex h-4 w-4 sm:h-5 sm:w-5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
