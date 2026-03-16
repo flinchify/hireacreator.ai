@@ -76,7 +76,10 @@ export async function getCreators(): Promise<Creator[]> {
   const sql = getDb();
   const users = await sql`
     SELECT * FROM users
-    WHERE role = 'creator' AND visible_in_marketplace = TRUE
+    WHERE role IN ('creator', 'admin')
+      AND visible_in_marketplace = TRUE
+      AND (is_banned IS NULL OR is_banned = FALSE)
+      AND created_at <= NOW() - INTERVAL '31 days'
     ORDER BY is_featured DESC, rating DESC
   `;
 
@@ -99,7 +102,9 @@ export async function getFeaturedCreators(): Promise<Creator[]> {
   const sql = getDb();
   const users = await sql`
     SELECT * FROM users
-    WHERE role = 'creator' AND is_featured = TRUE AND visible_in_marketplace = TRUE
+    WHERE role IN ('creator', 'admin') AND is_featured = TRUE AND visible_in_marketplace = TRUE
+      AND (is_banned IS NULL OR is_banned = FALSE)
+      AND created_at <= NOW() - INTERVAL '31 days'
     ORDER BY rating DESC
     LIMIT 4
   `;

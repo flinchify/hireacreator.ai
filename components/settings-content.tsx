@@ -7,7 +7,7 @@ import { Card } from "./ui/card";
 import { Input } from "./ui/input";
 import Link from "next/link";
 
-type Tab = "account" | "security" | "privacy" | "plan";
+type Tab = "account" | "security" | "privacy" | "plan" | "admin";
 
 interface Settings {
   email: string;
@@ -555,6 +555,263 @@ function PlanTab({ settings }: { settings: Settings }) {
   );
 }
 
+/* ───── Admin Tab ───── */
+function AdminTab() {
+  const [users, setUsers] = useState<any[]>([]);
+  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(1);
+  const [pages, setPages] = useState(1);
+  const [search, setSearch] = useState("");
+  const [searchInput, setSearchInput] = useState("");
+  const [loadingUsers, setLoadingUsers] = useState(true);
+  const [selected, setSelected] = useState<any | null>(null);
+  const [actionLoading, setActionLoading] = useState("");
+
+  function loadUsers(p: number = page, q: string = search) {
+    setLoadingUsers(true);
+    fetch(`/api/admin/users?page=${p}&search=${encodeURIComponent(q)}`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.users) {
+          setUsers(data.users);
+          setTotal(data.total);
+          setPages(data.pages);
+        }
+        setLoadingUsers(false);
+      })
+      .catch(() => setLoadingUsers(false));
+  }
+
+  useEffect(() => { loadUsers(1, ""); }, []);
+
+  function handleSearch(e: React.FormEvent) {
+    e.preventDefault();
+    setSearch(searchInput);
+    setPage(1);
+    loadUsers(1, searchInput);
+  }
+
+  async function doAction(userId: string, action: string, reason?: string) {
+    setActionLoading(action);
+    await fetch("/api/admin/users", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId, action, reason }),
+    });
+    setActionLoading("");
+    loadUsers(page, search);
+    if (selected?.id === userId) {
+      // Refresh selected user
+      const updated = users.find(u => u.id === userId);
+      if (updated) setSelected({ ...updated, is_banned: action === "ban" ? true : action === "unban" ? false : updated.is_banned });
+    }
+  }
+
+  function exportCSV() {
+    window.open("/api/admin/users?format=csv", "_blank");
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Stats */}
+      <Card className="p-4 sm:p-6">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div className="text-center">
+            <div className="font-display text-2xl font-bold text-neutral-900">{total}</div>
+            <div className="text-xs text-neutral-500">Total Users</div>
+          </div>
+          <div className="text-center">
+            <div className="font-display text-2xl font-bold text-neutral-900">{users.filter(u => u.role === "creator").length}</div>
+            <div className="text-xs text-neutral-500">Creators</div>
+          </div>
+          <div className="text-center">
+            <div className="font-display text-2xl font-bold text-neutral-900">{users.filter(u => u.role === "brand").length}</div>
+            <div className="text-xs text-neutral-500">Brands</div>
+          </div>
+          <div className="text-center">
+            <div className="font-display text-2xl font-bold text-neutral-900">{users.filter(u => u.is_banned).length}</div>
+            <div className="text-xs text-neutral-500">Banned</div>
+          </div>
+        </div>
+      </Card>
+
+      {/* Search + Export */}
+      <div className="flex gap-2">
+        <form onSubmit={handleSearch} className="flex-1 flex gap-2">
+          <input
+            value={searchInput}
+            onChange={e => setSearchInput(e.target.value)}
+            placeholder="Search by name, email, or slug..."
+            className="flex-1 px-3.5 py-2.5 rounded-lg border border-neutral-300 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900 text-neutral-900"
+          />
+          <Button type="submit" size="sm">Search</Button>
+        </form>
+        <Button onClick={exportCSV} variant="outline" size="sm">Export CSV</Button>
+      </div>
+
+      {/* User list */}
+      <Card className="overflow-hidden">
+        {loadingUsers ? (
+          <div className="p-8 text-center">
+            <div className="w-5 h-5 border-2 border-neutral-300 border-t-neutral-900 rounded-full animate-spin mx-auto" />
+          </div>
+        ) : (
+          <div className="divide-y divide-neutral-100">
+            {users.map(u => (
+              <button
+                key={u.id}
+                onClick={() => setSelected(selected?.id === u.id ? null : u)}
+                className={`w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-neutral-50 transition-colors ${
+                  selected?.id === u.id ? "bg-neutral-50" : ""
+                }`}
+              >
+                {u.avatar_url ? (
+                  <img src={u.avatar_url} alt="" className="w-8 h-8 rounded-full object-cover shrink-0" />
+                ) : (
+                  <div className="w-8 h-8 rounded-full bg-neutral-200 flex items-center justify-center shrink-0">
+                    <span className="text-xs font-medium text-neutral-500">{(u.full_name || "?").charAt(0)}</span>
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium text-neutral-900 truncate">{u.full_name || "No name"}</span>
+                    {u.is_banned && <span className="px-1.5 py-0.5 bg-red-100 text-red-700 text-[9px] font-bold rounded-full uppercase">Banned</span>}
+                    {u.role === "admin" && <span className="px-1.5 py-0.5 bg-purple-100 text-purple-700 text-[9px] font-bold rounded-full uppercase">Admin</span>}
+                    {u.subscription_tier && u.subscription_tier !== "free" && (
+                      <span className="px-1.5 py-0.5 bg-amber-100 text-amber-700 text-[9px] font-bold rounded-full uppercase">{u.subscription_tier}</span>
+                    )}
+                  </div>
+                  <div className="text-xs text-neutral-400 truncate">{u.email}</div>
+                </div>
+                <div className="text-[10px] text-neutral-400 shrink-0">
+                  {u.created_at ? new Date(u.created_at).toLocaleDateString() : ""}
+                </div>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={`text-neutral-300 shrink-0 transition-transform ${selected?.id === u.id ? "rotate-90" : ""}`}>
+                  <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Pagination */}
+        {pages > 1 && (
+          <div className="flex items-center justify-between px-4 py-3 border-t border-neutral-100">
+            <Button
+              onClick={() => { setPage(Math.max(1, page - 1)); loadUsers(Math.max(1, page - 1), search); }}
+              disabled={page <= 1}
+              variant="outline"
+              size="sm"
+            >
+              Previous
+            </Button>
+            <span className="text-xs text-neutral-500">Page {page} of {pages}</span>
+            <Button
+              onClick={() => { setPage(Math.min(pages, page + 1)); loadUsers(Math.min(pages, page + 1), search); }}
+              disabled={page >= pages}
+              variant="outline"
+              size="sm"
+            >
+              Next
+            </Button>
+          </div>
+        )}
+      </Card>
+
+      {/* Selected user detail panel */}
+      {selected && (
+        <Card className="p-4 sm:p-6">
+          <div className="flex items-start gap-4 mb-5">
+            {selected.avatar_url ? (
+              <img src={selected.avatar_url} alt="" className="w-14 h-14 rounded-xl object-cover" />
+            ) : (
+              <div className="w-14 h-14 rounded-xl bg-neutral-200 flex items-center justify-center">
+                <span className="text-lg font-bold text-neutral-400">{(selected.full_name || "?").charAt(0)}</span>
+              </div>
+            )}
+            <div className="flex-1 min-w-0">
+              <h3 className="font-display font-bold text-neutral-900">{selected.full_name || "No name"}</h3>
+              <p className="text-sm text-neutral-500">{selected.email}</p>
+              <div className="flex items-center gap-2 mt-1 flex-wrap">
+                <span className="text-[10px] px-2 py-0.5 bg-neutral-100 rounded-full capitalize">{selected.role}</span>
+                <span className="text-[10px] px-2 py-0.5 bg-neutral-100 rounded-full">{selected.subscription_tier || "free"}</span>
+                {selected.slug && <span className="text-[10px] text-neutral-400">@{selected.slug}</span>}
+              </div>
+              <div className="text-[10px] text-neutral-400 mt-1">
+                Joined: {selected.created_at ? new Date(selected.created_at).toLocaleString() : "—"}
+              </div>
+            </div>
+          </div>
+
+          {selected.is_banned && selected.ban_reason && (
+            <div className="mb-4 px-3 py-2 bg-red-50 border border-red-200 rounded-lg">
+              <span className="text-xs text-red-700 font-medium">Ban reason: </span>
+              <span className="text-xs text-red-600">{selected.ban_reason}</span>
+            </div>
+          )}
+
+          <div className="flex flex-wrap gap-2">
+            {selected.is_banned ? (
+              <Button onClick={() => doAction(selected.id, "unban")} size="sm" variant="outline" disabled={actionLoading === "unban"}>
+                {actionLoading === "unban" ? "..." : "Unban"}
+              </Button>
+            ) : (
+              <Button
+                onClick={() => {
+                  const reason = prompt("Ban reason:");
+                  if (reason !== null) doAction(selected.id, "ban", reason || "Banned by admin");
+                }}
+                size="sm"
+                variant="outline"
+                className="text-red-600 border-red-200 hover:bg-red-50"
+                disabled={actionLoading === "ban"}
+              >
+                {actionLoading === "ban" ? "..." : "Ban User"}
+              </Button>
+            )}
+
+            {selected.is_verified ? (
+              <Button onClick={() => doAction(selected.id, "unverify")} size="sm" variant="outline" disabled={actionLoading === "unverify"}>
+                Remove Verified
+              </Button>
+            ) : (
+              <Button onClick={() => doAction(selected.id, "verify")} size="sm" variant="outline" disabled={actionLoading === "verify"}>
+                Verify
+              </Button>
+            )}
+
+            {selected.role !== "admin" ? (
+              <Button onClick={() => doAction(selected.id, "make_admin")} size="sm" variant="outline" disabled={actionLoading === "make_admin"}>
+                Make Admin
+              </Button>
+            ) : (
+              <Button onClick={() => doAction(selected.id, "remove_admin")} size="sm" variant="outline" disabled={actionLoading === "remove_admin"}>
+                Remove Admin
+              </Button>
+            )}
+
+            {(selected.subscription_tier || "free") === "free" ? (
+              <Button onClick={() => doAction(selected.id, "set_pro")} size="sm" variant="outline" disabled={actionLoading === "set_pro"}>
+                Grant Pro
+              </Button>
+            ) : (
+              <Button onClick={() => doAction(selected.id, "remove_pro")} size="sm" variant="outline" disabled={actionLoading === "remove_pro"}>
+                Remove Pro
+              </Button>
+            )}
+
+            {selected.slug && (
+              <a href={`/creators/${selected.slug}`} target="_blank" rel="noopener noreferrer">
+                <Button size="sm" variant="outline">View Profile</Button>
+              </a>
+            )}
+          </div>
+        </Card>
+      )}
+    </div>
+  );
+}
+
 /* ───── Main Settings ───── */
 export function SettingsContent() {
   const { user, loading } = useAuth();
@@ -616,6 +873,11 @@ export function SettingsContent() {
       label: "Plan",
       icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>,
     },
+    ...(settings.role === "admin" ? [{
+      key: "admin" as Tab,
+      label: "Admin",
+      icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" strokeLinecap="round" strokeLinejoin="round" /></svg>,
+    }] : []),
   ];
 
   return (
@@ -655,6 +917,7 @@ export function SettingsContent() {
         {tab === "security" && <SecurityTab settings={settings} refresh={loadSettings} />}
         {tab === "privacy" && <PrivacyTab settings={settings} refresh={loadSettings} />}
         {tab === "plan" && <PlanTab settings={settings} />}
+        {tab === "admin" && settings.role === "admin" && <AdminTab />}
       </div>
     </div>
   );
