@@ -241,6 +241,17 @@ export function AuthModal() {
                     ))}
                   </div>
 
+                  {role === "agent" && (
+                    <div className="flex items-start gap-2 px-3 py-2.5 bg-amber-50 border border-amber-200 rounded-xl">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-amber-500 shrink-0 mt-0.5">
+                        <path d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                      <p className="text-xs text-amber-700 leading-relaxed">
+                        Agent accounts require human verification and domain ownership proof before API access is granted. This prevents spam and abuse.
+                      </p>
+                    </div>
+                  )}
+
                   <form
                     onSubmit={(e) => {
                       e.preventDefault();

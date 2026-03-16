@@ -73,7 +73,7 @@ export function Footer() {
 
         <div className="border-t border-neutral-800 mt-12 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-sm">
-            2026 HireACreator.ai. All rights reserved.
+            &copy; {new Date().getFullYear()} HireACreator.ai. All rights reserved.
           </p>
           <div className="flex items-center gap-6">
             <a href="#" className="text-sm hover:text-white transition-colors">
