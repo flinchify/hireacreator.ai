@@ -4,8 +4,8 @@ import Image from "next/image";
 const footerLinks = {
   Platform: [
     { label: "Browse Creators", href: "/browse" },
-    { label: "For Brands", href: "/brands" },
-    { label: "For Creators", href: "/#for-creators" },
+    { label: "For Brands", href: "/for-brands" },
+    { label: "For Creators", href: "/for-creators" },
     { label: "API", href: "/api" },
   ],
   Resources: [

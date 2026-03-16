@@ -124,46 +124,65 @@ export function HomepageContent({
             {/* Mockup */}
             <div className="order-2 lg:order-1">
               <div className="bg-white rounded-3xl p-6 sm:p-8 border border-neutral-200 shadow-xl shadow-neutral-200/50 max-w-sm mx-auto">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-neutral-200 to-neutral-300" />
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-rose-400 to-orange-300 flex items-center justify-center text-white font-bold text-lg">
+                    SR
+                  </div>
                   <div>
-                    <div className="font-display font-bold text-neutral-900">Your Name</div>
-                    <div className="text-sm text-neutral-400">hireacreator.ai/you</div>
+                    <div className="font-display font-bold text-neutral-900">Sarah Rivera</div>
+                    <div className="text-sm text-neutral-400">hireacreator.ai/sarahrivera</div>
                   </div>
                 </div>
-                <div className="flex gap-3 mb-6">
-                  <InstagramIcon size={16} className="text-neutral-300" />
-                  <TikTokIcon size={16} className="text-neutral-300" />
-                  <YouTubeIcon size={16} className="text-neutral-300" />
-                  <TwitterIcon size={16} className="text-neutral-300" />
-                  <LinkedInIcon size={16} className="text-neutral-300" />
-                  <DribbbleIcon size={16} className="text-neutral-300" />
+                <div className="flex items-center gap-2 mb-4">
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 text-emerald-700 text-xs font-medium rounded-full">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                    Verified
+                  </span>
+                  <span className="text-xs text-neutral-400">UGC Creator</span>
+                  <span className="text-xs text-neutral-400">Melbourne, AU</span>
                 </div>
-                <div className="space-y-2 mb-6">
-                  <div className="h-2.5 bg-neutral-100 rounded-full w-full" />
-                  <div className="h-2.5 bg-neutral-100 rounded-full w-3/4" />
+                <p className="text-sm text-neutral-500 mb-4 leading-relaxed">
+                  UGC specialist for beauty, skincare &amp; wellness brands. 150+ videos delivered. Fast turnaround.
+                </p>
+                <div className="flex gap-3 mb-5">
+                  <InstagramIcon size={16} className="text-neutral-400" />
+                  <TikTokIcon size={16} className="text-neutral-400" />
+                  <YouTubeIcon size={16} className="text-neutral-400" />
+                  <TwitterIcon size={16} className="text-neutral-400" />
                 </div>
                 <div className="text-xs font-medium text-neutral-400 uppercase tracking-wider mb-3">Services</div>
-                <div className="space-y-2 mb-6">
+                <div className="space-y-2 mb-5">
                   <div className="flex items-center justify-between bg-neutral-50 rounded-xl px-4 py-3 border border-neutral-100">
-                    <span className="text-sm text-neutral-600">UGC Video Package</span>
+                    <div>
+                      <div className="text-sm font-medium text-neutral-900">UGC Video Package</div>
+                      <div className="text-xs text-neutral-400">3 videos, 7-day delivery</div>
+                    </div>
                     <span className="text-sm font-bold text-neutral-900">$1,200</span>
                   </div>
                   <div className="flex items-center justify-between bg-neutral-50 rounded-xl px-4 py-3 border border-neutral-100">
-                    <span className="text-sm text-neutral-600">Product Photography</span>
+                    <div>
+                      <div className="text-sm font-medium text-neutral-900">Product Photography</div>
+                      <div className="text-xs text-neutral-400">10 edited shots, 5-day delivery</div>
+                    </div>
                     <span className="text-sm font-bold text-neutral-900">$800</span>
                   </div>
                   <div className="flex items-center justify-between bg-neutral-50 rounded-xl px-4 py-3 border border-neutral-100">
-                    <span className="text-sm text-neutral-600">Monthly Retainer</span>
+                    <div>
+                      <div className="text-sm font-medium text-neutral-900">Monthly Retainer</div>
+                      <div className="text-xs text-neutral-400">8 videos + 15 photos/mo</div>
+                    </div>
                     <span className="text-sm font-bold text-neutral-900">$3,500</span>
                   </div>
                 </div>
                 <div className="text-xs font-medium text-neutral-400 uppercase tracking-wider mb-3">Portfolio</div>
                 <div className="grid grid-cols-3 gap-2">
-                  <div className="aspect-square rounded-xl bg-neutral-100" />
-                  <div className="aspect-square rounded-xl bg-neutral-100" />
-                  <div className="aspect-square rounded-xl bg-neutral-100" />
+                  <div className="aspect-square rounded-xl bg-gradient-to-br from-rose-100 to-rose-200" />
+                  <div className="aspect-square rounded-xl bg-gradient-to-br from-amber-100 to-amber-200" />
+                  <div className="aspect-square rounded-xl bg-gradient-to-br from-violet-100 to-violet-200" />
                 </div>
+                <button className="w-full mt-5 py-2.5 text-sm font-medium text-white bg-neutral-900 rounded-full hover:bg-neutral-800 transition-colors">
+                  Book Now
+                </button>
               </div>
             </div>
 
@@ -360,8 +379,86 @@ export function HomepageContent({
         </div>
       </AnimateOnScroll>
 
+      {/* Comparison */}
+      <AnimateOnScroll as="section" className="bg-neutral-50 border-y border-neutral-100">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
+          <div className="text-center mb-14">
+            <h2 className="font-display text-3xl sm:text-4xl font-bold text-neutral-900 mb-4">
+              Why not just use Linktree or Fiverr?
+            </h2>
+            <p className="text-neutral-500 text-lg max-w-2xl mx-auto">
+              Because they weren&apos;t built for what you actually need.
+            </p>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead>
+                <tr className="border-b border-neutral-200">
+                  <th className="pb-4 pr-4 text-sm font-medium text-neutral-400 w-1/4" />
+                  <th className="pb-4 px-4 text-center">
+                    <div className="font-display font-bold text-neutral-900">HireACreator</div>
+                  </th>
+                  <th className="pb-4 px-4 text-center">
+                    <div className="font-display font-bold text-neutral-400">Linktree</div>
+                  </th>
+                  <th className="pb-4 px-4 text-center">
+                    <div className="font-display font-bold text-neutral-400">Fiverr</div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="text-sm">
+                {[
+                  { feature: "Portfolio + services page", us: true, linktree: false, fiverr: true },
+                  { feature: "Direct booking & payments", us: true, linktree: false, fiverr: true },
+                  { feature: "Link-in-bio friendly", us: true, linktree: true, fiverr: false },
+                  { feature: "0% platform fees", us: true, linktree: false, fiverr: false },
+                  { feature: "Verified creator profiles", us: true, linktree: false, fiverr: false },
+                  { feature: "Brand marketplace discovery", us: true, linktree: false, fiverr: true },
+                  { feature: "AI agent API (MCP + REST)", us: true, linktree: false, fiverr: false },
+                  { feature: "Calendar & availability", us: true, linktree: false, fiverr: false },
+                  { feature: "Custom domain", us: true, linktree: true, fiverr: false },
+                  { feature: "You set your own rates", us: true, linktree: false, fiverr: false },
+                ].map((row, i) => (
+                  <tr key={i} className="border-b border-neutral-100">
+                    <td className="py-3.5 pr-4 text-neutral-700 font-medium">{row.feature}</td>
+                    <td className="py-3.5 px-4 text-center">
+                      {row.us ? (
+                        <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-neutral-900 text-white">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                        </span>
+                      ) : (
+                        <span className="inline-block w-6 h-0.5 bg-neutral-200 rounded" />
+                      )}
+                    </td>
+                    <td className="py-3.5 px-4 text-center">
+                      {row.linktree ? (
+                        <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-neutral-200 text-neutral-500">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                        </span>
+                      ) : (
+                        <span className="inline-block w-6 h-0.5 bg-neutral-200 rounded" />
+                      )}
+                    </td>
+                    <td className="py-3.5 px-4 text-center">
+                      {row.fiverr ? (
+                        <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-neutral-200 text-neutral-500">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                        </span>
+                      ) : (
+                        <span className="inline-block w-6 h-0.5 bg-neutral-200 rounded" />
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </AnimateOnScroll>
+
       {/* Final CTA */}
-      <AnimateOnScroll as="section" className="bg-neutral-50 border-t border-neutral-100">
+      <AnimateOnScroll as="section" className="bg-white border-t border-neutral-100">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center">
           <h2 className="font-display text-3xl sm:text-4xl font-bold text-neutral-900 mb-4">
             {creatorCount > 0
