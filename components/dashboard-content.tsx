@@ -61,10 +61,13 @@ function OnlineIndicator() {
 function Sheet({ open, onClose, title, children }: { open: boolean; onClose: () => void; title: string; children: React.ReactNode }) {
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-50">
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
-      <div className="absolute inset-x-0 bottom-0 max-h-[90vh] bg-white rounded-t-2xl shadow-2xl overflow-y-auto animate-slideUp sm:inset-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:max-w-lg sm:w-full sm:rounded-2xl sm:max-h-[85vh]">
-        <div className="sticky top-0 bg-white border-b border-neutral-100 px-5 py-4 flex items-center justify-between z-10">
+    <div className="fixed inset-0 z-50" style={{ animation: "sheetFadeIn 0.15s ease-out" }}>
+      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
+      <div
+        className="absolute inset-x-0 bottom-0 max-h-[90vh] bg-white rounded-t-2xl shadow-2xl overflow-y-auto sm:inset-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:max-w-lg sm:w-full sm:rounded-2xl sm:max-h-[85vh]"
+        style={{ animation: "sheetSlideUp 0.2s cubic-bezier(0.16, 1, 0.3, 1)" }}
+      >
+        <div className="sticky top-0 bg-white border-b border-neutral-100 px-5 py-4 flex items-center justify-between z-10 rounded-t-2xl">
           <h3 className="font-display font-bold text-neutral-900">{title}</h3>
           <button onClick={onClose} className="p-1 rounded-lg hover:bg-neutral-100 text-neutral-400">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" /></svg>
@@ -708,11 +711,20 @@ export function DashboardContent() {
       <ServicesSheet user={user} open={editServices} onClose={() => setEditServices(false)} />
 
       <style>{`
-        @keyframes slideUp {
-          from { opacity: 0; transform: translateY(20px); }
+        @keyframes sheetFadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes sheetSlideUp {
+          from { opacity: 0; transform: translateY(100%); }
           to { opacity: 1; transform: translateY(0); }
         }
-        .animate-slideUp { animation: slideUp 0.3s ease-out; }
+        @media (min-width: 640px) {
+          @keyframes sheetSlideUp {
+            from { opacity: 0; transform: translate(-50%, -48%) scale(0.97); }
+            to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+          }
+        }
       `}</style>
     </div>
   );
