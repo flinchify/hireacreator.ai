@@ -129,7 +129,15 @@ export function Header({ theme = "light" }: { theme?: HeaderTheme }) {
           {loading ? (
             <div className="w-20 h-8" />
           ) : user ? (
-            <UserMenu />
+            <>
+              <Link href={user.slug ? `/u/${user.slug}` : "/dashboard"} className={`px-4 py-2 text-sm font-medium rounded-full border border-transparent transition-all ${t.link}`}>
+                Link in Bio
+              </Link>
+              <Link href="/dashboard" className={`px-4 py-2 text-sm font-medium rounded-full border border-transparent transition-all ${t.link}`}>
+                Dashboard
+              </Link>
+              <UserMenu />
+            </>
           ) : (
             <>
               <button onClick={openLogin} className={`px-4 py-2 text-sm font-medium rounded-full border border-transparent transition-all ${t.loginBtn}`}>
