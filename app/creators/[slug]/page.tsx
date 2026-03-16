@@ -9,7 +9,7 @@ import { PlatformIcon } from "@/components/icons/platforms";
 import { getCreatorBySlug } from "@/lib/queries";
 import { AnimateOnScroll, StaggerChildren } from "@/components/animate-on-scroll";
 import { CountUp } from "@/components/count-up";
-import { CreatorProfileClient } from "@/components/creator-profile-client";
+import { CreatorHeroActions, ServiceAction, ContactCreatorButton } from "@/components/creator-profile-client";
 
 function StarIcon({ filled = true }: { filled?: boolean }) {
   return (
@@ -178,14 +178,11 @@ export default async function CreatorProfilePage({
                 </div>
               )}
             </div>
-            <div className="mt-4 sm:mt-0 sm:pb-2 flex gap-3">
-              <Button size="lg" className="shadow-lg shadow-neutral-900/20 hover:scale-105 transition-transform">
-                Book Now
-              </Button>
-              <Button variant="outline" size="lg" className="hover:scale-105 transition-transform">
-                Message
-              </Button>
-            </div>
+            <CreatorHeroActions
+              hasServices={creator.services.length > 0}
+              allowMessages={creator.allowMessages}
+              creatorName={creator.name}
+            />
           </div>
         </div>
       </div>
@@ -383,7 +380,7 @@ export default async function CreatorProfilePage({
             {/* Services */}
             {creator.services.length > 0 && (
               <AnimateOnScroll>
-                <h2 className="font-display text-lg font-semibold text-neutral-900 mb-4">
+                <h2 id="services-section" className="font-display text-lg font-semibold text-neutral-900 mb-4 scroll-mt-24">
                   Services
                 </h2>
                 <div className="space-y-4">
@@ -416,7 +413,7 @@ export default async function CreatorProfilePage({
                           {service.deliveryDays} day delivery
                         </span>
                       </div>
-                      <CreatorProfileClient serviceId={service.id} price={service.price} />
+                      <ServiceAction serviceId={service.id} price={service.price} />
                     </Card>
                   ))}
                 </div>
@@ -426,9 +423,10 @@ export default async function CreatorProfilePage({
             {/* No services state */}
             {creator.services.length === 0 && (
               <Card className="p-5 text-center">
-                <p className="text-sm text-neutral-500">
+                <p className="text-sm text-neutral-500 mb-3">
                   This creator hasn&apos;t listed any services yet.
                 </p>
+                <ContactCreatorButton creatorName={creator.name} allowMessages={creator.allowMessages} />
               </Card>
             )}
 

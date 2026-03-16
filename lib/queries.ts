@@ -37,6 +37,7 @@ function assembleCreator(
     websiteUrl: (user.website_url as string) || null,
     businessName: (user.business_name as string) || null,
     businessUrl: (user.business_url as string) || null,
+    allowMessages: user.privacy_allow_messages !== false,
     socials: socials.map((s) => ({
       platform: s.platform as string,
       handle: s.handle as string,

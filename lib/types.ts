@@ -73,6 +73,7 @@ export type Creator = {
   websiteUrl: string | null;
   businessName: string | null;
   businessUrl: string | null;
+  allowMessages: boolean;
   socials: Social[];
   services: Service[];
   portfolio: PortfolioItem[];
