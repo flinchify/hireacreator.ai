@@ -6,7 +6,9 @@ import { AuthModal } from "./auth-modal";
 export function ClientLayout({ children }: { children: React.ReactNode }) {
   return (
     <AuthProvider>
-      {children}
+      <main className="page-fade-in">
+        {children}
+      </main>
       <AuthModal />
     </AuthProvider>
   );

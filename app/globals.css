@@ -24,3 +24,65 @@
     text-wrap: balance;
   }
 }
+
+/* Animate on scroll */
+.aos-hidden {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.aos-visible {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 600ms ease-out, transform 600ms ease-out;
+}
+
+.aos-stagger-item {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.aos-stagger-item.aos-visible {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 600ms ease-out, transform 600ms ease-out;
+}
+
+/* Page fade-in */
+.page-fade-in {
+  animation: pageFadeIn 300ms ease-out;
+}
+
+@keyframes pageFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Browse card stagger entrance */
+.animate-card-in {
+  animation: cardIn 500ms ease-out both;
+}
+
+@keyframes cardIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .aos-hidden,
+  .aos-stagger-item {
+    opacity: 1;
+    transform: none;
+  }
+  .page-fade-in,
+  .animate-card-in {
+    animation: none;
+  }
+}

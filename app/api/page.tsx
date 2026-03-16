@@ -3,6 +3,7 @@
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { useAuth } from "@/components/auth-context";
+import { AnimateOnScroll, StaggerChildren } from "@/components/animate-on-scroll";
 
 function CheckIcon({ className = "text-emerald-400" }: { className?: string }) {
   return (
@@ -67,7 +68,7 @@ export default function ApiPage() {
       </section>
 
       {/* MCP Section */}
-      <section className="border-t border-neutral-900">
+      <AnimateOnScroll as="section" className="border-t border-neutral-900">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-start">
             <div>
@@ -110,13 +111,13 @@ export default function ApiPage() {
             </div>
           </div>
         </div>
-      </section>
+      </AnimateOnScroll>
 
       {/* MCP Tools */}
       <section className="border-t border-neutral-900">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
           <h2 className="font-display text-2xl font-bold mb-10">Available MCP Tools</h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <StaggerChildren className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4" staggerMs={100}>
             {[
               { name: "search_creators", desc: "Search and filter creators by niche, rate, location, platform, and engagement." },
               { name: "get_creator", desc: "Get full profile details including portfolio, services, reviews, and availability." },
@@ -124,17 +125,17 @@ export default function ApiPage() {
               { name: "check_booking", desc: "Check the status of an existing booking. Track deliverables and milestones." },
               { name: "list_bookings", desc: "List all bookings for your account with filtering by status and date." },
             ].map((tool) => (
-              <div key={tool.name} className="bg-neutral-900 rounded-2xl p-6 border border-neutral-800">
+              <div key={tool.name} className="aos-stagger-item bg-neutral-900 rounded-2xl p-6 border border-neutral-800">
                 <code className="text-sm font-mono text-emerald-400">{tool.name}</code>
                 <p className="text-sm text-neutral-400 mt-2 leading-relaxed">{tool.desc}</p>
               </div>
             ))}
-          </div>
+          </StaggerChildren>
         </div>
       </section>
 
       {/* REST API Section */}
-      <section id="docs" className="border-t border-neutral-900">
+      <AnimateOnScroll as="section" id="docs" className="border-t border-neutral-900">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-start">
             <div>
@@ -208,10 +209,10 @@ export default function ApiPage() {
             </div>
           </div>
         </div>
-      </section>
+      </AnimateOnScroll>
 
       {/* Authentication */}
-      <section className="border-t border-neutral-900">
+      <AnimateOnScroll as="section" className="border-t border-neutral-900">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-start">
             <div>
@@ -247,29 +248,29 @@ export default function ApiPage() {
             </CodeBlock>
           </div>
         </div>
-      </section>
+      </AnimateOnScroll>
 
       {/* Rate Limits */}
       <section className="border-t border-neutral-900">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
           <h2 className="font-display text-2xl font-bold mb-10">Rate Limits</h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div className="bg-neutral-900 rounded-2xl p-6 border border-neutral-800">
+          <StaggerChildren className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4" staggerMs={100}>
+            <div className="aos-stagger-item bg-neutral-900 rounded-2xl p-6 border border-neutral-800">
               <div className="text-sm text-neutral-500 mb-2">Read endpoints</div>
               <div className="font-display text-2xl font-bold">1,000</div>
               <div className="text-sm text-neutral-500">requests / minute</div>
             </div>
-            <div className="bg-neutral-900 rounded-2xl p-6 border border-neutral-800">
+            <div className="aos-stagger-item bg-neutral-900 rounded-2xl p-6 border border-neutral-800">
               <div className="text-sm text-neutral-500 mb-2">Write endpoints</div>
               <div className="font-display text-2xl font-bold">100</div>
               <div className="text-sm text-neutral-500">requests / minute</div>
             </div>
-            <div className="bg-neutral-900 rounded-2xl p-6 border border-neutral-800">
+            <div className="aos-stagger-item bg-neutral-900 rounded-2xl p-6 border border-neutral-800">
               <div className="text-sm text-neutral-500 mb-2">MCP tools</div>
               <div className="font-display text-2xl font-bold">500</div>
               <div className="text-sm text-neutral-500">calls / minute</div>
             </div>
-          </div>
+          </StaggerChildren>
         </div>
       </section>
 
@@ -280,8 +281,8 @@ export default function ApiPage() {
           <p className="text-neutral-400 text-center mb-14 max-w-xl mx-auto">
             Start free, scale when you need to.
           </p>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-4xl mx-auto">
-            <div className="bg-neutral-900 rounded-2xl p-8 border border-neutral-800">
+          <StaggerChildren className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-4xl mx-auto" staggerMs={150}>
+            <div className="aos-stagger-item bg-neutral-900 rounded-2xl p-8 border border-neutral-800">
               <div className="text-sm font-medium text-neutral-500 uppercase tracking-wider mb-2">Free</div>
               <div className="font-display text-3xl font-bold mb-1">$0</div>
               <div className="text-sm text-neutral-500 mb-6">per month</div>
@@ -294,7 +295,7 @@ export default function ApiPage() {
                 ))}
               </ul>
             </div>
-            <div className="bg-neutral-900 rounded-2xl p-8 border border-neutral-700 ring-1 ring-neutral-700">
+            <div className="aos-stagger-item bg-neutral-900 rounded-2xl p-8 border border-neutral-700 ring-1 ring-neutral-700">
               <div className="text-sm font-medium text-emerald-400 uppercase tracking-wider mb-2">Pro</div>
               <div className="font-display text-3xl font-bold mb-1">$49</div>
               <div className="text-sm text-neutral-500 mb-6">per month</div>
@@ -307,7 +308,7 @@ export default function ApiPage() {
                 ))}
               </ul>
             </div>
-            <div className="bg-neutral-900 rounded-2xl p-8 border border-neutral-800">
+            <div className="aos-stagger-item bg-neutral-900 rounded-2xl p-8 border border-neutral-800">
               <div className="text-sm font-medium text-neutral-500 uppercase tracking-wider mb-2">Enterprise</div>
               <div className="font-display text-3xl font-bold mb-1">Custom</div>
               <div className="text-sm text-neutral-500 mb-6">contact us</div>
@@ -320,12 +321,12 @@ export default function ApiPage() {
                 ))}
               </ul>
             </div>
-          </div>
+          </StaggerChildren>
         </div>
       </section>
 
       {/* Final CTA */}
-      <section className="border-t border-neutral-900">
+      <AnimateOnScroll as="section" className="border-t border-neutral-900">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center">
           <h2 className="font-display text-3xl sm:text-4xl font-bold mb-4">
             Start building today
@@ -341,7 +342,7 @@ export default function ApiPage() {
             Get API Access
           </button>
         </div>
-      </section>
+      </AnimateOnScroll>
 
       <Footer />
     </div>

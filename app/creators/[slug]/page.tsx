@@ -7,6 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { PlatformIcon } from "@/components/icons/platforms";
 import { getCreatorBySlug } from "@/lib/queries";
+import { AnimateOnScroll, StaggerChildren } from "@/components/animate-on-scroll";
+import { CountUp } from "@/components/count-up";
 
 function StarIcon({ filled = true }: { filled?: boolean }) {
   return (
@@ -125,7 +127,7 @@ export default async function CreatorProfilePage({
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
                 <div className="text-center">
                   <div className="font-display text-2xl font-bold text-neutral-900">
-                    {creator.totalProjects}
+                    <CountUp end={creator.totalProjects} />
                   </div>
                   <div className="text-sm text-neutral-500 mt-0.5">Projects</div>
                 </div>
@@ -133,20 +135,24 @@ export default async function CreatorProfilePage({
                   <div className="flex items-center justify-center gap-1">
                     <StarIcon />
                     <span className="font-display text-2xl font-bold text-neutral-900">
-                      {creator.rating}
+                      <CountUp end={creator.rating} decimals={1} />
                     </span>
                   </div>
                   <div className="text-sm text-neutral-500 mt-0.5">Rating</div>
                 </div>
                 <div className="text-center">
                   <div className="font-display text-2xl font-bold text-neutral-900">
-                    {creator.reviewCount}
+                    <CountUp end={creator.reviewCount} />
                   </div>
                   <div className="text-sm text-neutral-500 mt-0.5">Reviews</div>
                 </div>
                 <div className="text-center">
                   <div className="font-display text-2xl font-bold text-neutral-900">
-                    {creator.hourlyRate ? `$${creator.hourlyRate}` : "—"}
+                    {creator.hourlyRate ? (
+                      <CountUp end={creator.hourlyRate} prefix="$" />
+                    ) : (
+                      "—"
+                    )}
                   </div>
                   <div className="text-sm text-neutral-500 mt-0.5">Per hour</div>
                 </div>
@@ -193,11 +199,11 @@ export default async function CreatorProfilePage({
                 <h2 className="font-display text-lg font-semibold text-neutral-900 mb-4">
                   Portfolio
                 </h2>
-                <div className="grid grid-cols-2 gap-4">
+                <StaggerChildren className="grid grid-cols-2 gap-4" staggerMs={100}>
                   {creator.portfolio.map((item) => (
                     <div
                       key={item.id}
-                      className="group relative aspect-square rounded-xl overflow-hidden bg-neutral-100"
+                      className="aos-stagger-item group relative aspect-square rounded-xl overflow-hidden bg-neutral-100"
                     >
                       {item.image ? (
                         <img
@@ -224,7 +230,7 @@ export default async function CreatorProfilePage({
                       </div>
                     </div>
                   ))}
-                </div>
+                </StaggerChildren>
               </div>
             )}
 

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { useAuth } from "@/components/auth-context";
+import { AnimateOnScroll, StaggerChildren } from "@/components/animate-on-scroll";
 
 function CheckIcon() {
   return (
@@ -68,8 +69,8 @@ export default function BrandsPage() {
             Three steps to great content
           </h2>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div className="bg-neutral-900 rounded-2xl p-8 border border-neutral-800">
+          <StaggerChildren className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4" staggerMs={200}>
+            <div className="aos-stagger-item bg-neutral-900 rounded-2xl p-8 border border-neutral-800">
               <div className="text-sm font-medium text-neutral-500 uppercase tracking-wider mb-4">01</div>
               <div className="text-2xl font-display font-bold text-white mb-3">Search</div>
               <p className="text-neutral-400 leading-relaxed">
@@ -77,7 +78,7 @@ export default function BrandsPage() {
                 Find exactly the creator you need in seconds, not days.
               </p>
             </div>
-            <div className="bg-neutral-900 rounded-2xl p-8 border border-neutral-800">
+            <div className="aos-stagger-item bg-neutral-900 rounded-2xl p-8 border border-neutral-800">
               <div className="text-sm font-medium text-neutral-500 uppercase tracking-wider mb-4">02</div>
               <div className="text-2xl font-display font-bold text-white mb-3">Book</div>
               <p className="text-neutral-400 leading-relaxed">
@@ -85,7 +86,7 @@ export default function BrandsPage() {
                 Funds are held in escrow until you approve the deliverables.
               </p>
             </div>
-            <div className="bg-neutral-900 rounded-2xl p-8 border border-neutral-800">
+            <div className="aos-stagger-item bg-neutral-900 rounded-2xl p-8 border border-neutral-800">
               <div className="text-sm font-medium text-neutral-500 uppercase tracking-wider mb-4">03</div>
               <div className="text-2xl font-display font-bold text-white mb-3">Ship</div>
               <p className="text-neutral-400 leading-relaxed">
@@ -93,7 +94,7 @@ export default function BrandsPage() {
                 Leave a review, rebook your favorites, build a roster.
               </p>
             </div>
-          </div>
+          </StaggerChildren>
         </div>
       </section>
 
@@ -107,7 +108,7 @@ export default function BrandsPage() {
             No more spreadsheets, no more DM negotiations, no more ghosting. One platform for the entire workflow.
           </p>
 
-          <div className="grid sm:grid-cols-2 gap-8">
+          <StaggerChildren className="grid sm:grid-cols-2 gap-8" staggerMs={100}>
             {[
               {
                 title: "Verified creators only",
@@ -134,7 +135,7 @@ export default function BrandsPage() {
                 desc: "Every review is tied to a verified booking. No fake testimonials, no paid reviews.",
               },
             ].map((feature) => (
-              <div key={feature.title} className="flex items-start gap-4">
+              <div key={feature.title} className="aos-stagger-item flex items-start gap-4">
                 <div className="mt-1"><CheckIcon /></div>
                 <div>
                   <h3 className="font-semibold text-neutral-900 mb-1">{feature.title}</h3>
@@ -142,12 +143,12 @@ export default function BrandsPage() {
                 </div>
               </div>
             ))}
-          </div>
+          </StaggerChildren>
         </div>
       </section>
 
       {/* Trust & Verification */}
-      <section className="bg-neutral-50 border-y border-neutral-100">
+      <AnimateOnScroll as="section" className="bg-neutral-50 border-y border-neutral-100">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             <div>
@@ -225,10 +226,10 @@ export default function BrandsPage() {
             </div>
           </div>
         </div>
-      </section>
+      </AnimateOnScroll>
 
       {/* Pricing */}
-      <section className="bg-white">
+      <AnimateOnScroll as="section" className="bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28 text-center">
           <h2 className="font-display text-3xl sm:text-4xl font-bold text-neutral-900 mb-4">
             Transparent pricing
@@ -263,10 +264,10 @@ export default function BrandsPage() {
             </button>
           </div>
         </div>
-      </section>
+      </AnimateOnScroll>
 
       {/* Final CTA */}
-      <section className="bg-neutral-950 text-white">
+      <AnimateOnScroll as="section" className="bg-neutral-950 text-white">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center">
           <h2 className="font-display text-3xl sm:text-4xl font-bold mb-4">
             Ready to find your next creator?
@@ -288,7 +289,7 @@ export default function BrandsPage() {
             </button>
           </div>
         </div>
-      </section>
+      </AnimateOnScroll>
 
       <Footer />
     </div>

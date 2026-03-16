@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { CreatorCard } from "@/components/creator-card";
 import { Button } from "@/components/ui/button";
 import type { Creator } from "@/lib/types";
@@ -282,11 +282,15 @@ export function BrowseContent({
       </div>
 
       {/* Mobile filter panel */}
-      {filtersOpen && (
-        <div className="lg:hidden mb-6 p-5 rounded-2xl border border-neutral-200 bg-white">
+      <div
+        className={`lg:hidden overflow-hidden transition-all duration-300 ease-out ${
+          filtersOpen ? "max-h-[800px] opacity-100 mb-6" : "max-h-0 opacity-0"
+        }`}
+      >
+        <div className="p-5 rounded-2xl border border-neutral-200 bg-white">
           {filterPanel}
         </div>
-      )}
+      </div>
 
       {/* Results count */}
       <div className="mb-6 text-sm text-neutral-500">
@@ -316,8 +320,14 @@ export function BrowseContent({
         <div className="flex-1 min-w-0">
           {filtered.length > 0 ? (
             <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6">
-              {filtered.map((creator) => (
-                <CreatorCard key={creator.id} creator={creator} />
+              {filtered.map((creator, i) => (
+                <div
+                  key={creator.id}
+                  className="animate-card-in"
+                  style={{ animationDelay: `${Math.min(i * 50, 400)}ms` }}
+                >
+                  <CreatorCard creator={creator} />
+                </div>
               ))}
             </div>
           ) : (

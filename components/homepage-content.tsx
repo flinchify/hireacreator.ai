@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useAuth } from "@/components/auth-context";
 import { CreatorCard } from "@/components/creator-card";
+import { AnimateOnScroll, StaggerChildren } from "@/components/animate-on-scroll";
 import {
   InstagramIcon,
   TikTokIcon,
@@ -85,8 +86,8 @@ export function HomepageContent({
 
       {/* What you get — visual cards */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-        <div className="grid md:grid-cols-3 gap-4">
-          <div className="bg-neutral-950 text-white rounded-3xl p-8 md:p-10">
+        <StaggerChildren className="grid md:grid-cols-3 gap-4" staggerMs={150}>
+          <div className="aos-stagger-item bg-neutral-950 text-white rounded-3xl p-8 md:p-10">
             <div className="text-sm font-medium text-neutral-400 uppercase tracking-wider mb-4">01</div>
             <h3 className="font-display text-xl font-bold mb-3">
               A profile that converts
@@ -96,7 +97,7 @@ export function HomepageContent({
               and instant booking. Put it in your bio and watch it work.
             </p>
           </div>
-          <div className="bg-neutral-950 text-white rounded-3xl p-8 md:p-10">
+          <div className="aos-stagger-item bg-neutral-950 text-white rounded-3xl p-8 md:p-10">
             <div className="text-sm font-medium text-neutral-400 uppercase tracking-wider mb-4">02</div>
             <h3 className="font-display text-xl font-bold mb-3">
               Brands find you
@@ -106,7 +107,7 @@ export function HomepageContent({
               filter by niche, check your work, and book directly. You set the rates.
             </p>
           </div>
-          <div className="bg-neutral-950 text-white rounded-3xl p-8 md:p-10">
+          <div className="aos-stagger-item bg-neutral-950 text-white rounded-3xl p-8 md:p-10">
             <div className="text-sm font-medium text-neutral-400 uppercase tracking-wider mb-4">03</div>
             <h3 className="font-display text-xl font-bold mb-3">
               Get paid instantly
@@ -116,11 +117,11 @@ export function HomepageContent({
               Stripe-powered escrow on every deal. No chasing invoices. Money moves when work ships.
             </p>
           </div>
-        </div>
+        </StaggerChildren>
       </section>
 
       {/* Platform preview / link-in-bio mockup */}
-      <section id="for-creators" className="bg-neutral-50 border-y border-neutral-100">
+      <AnimateOnScroll as="section" id="for-creators" className="bg-neutral-50 border-y border-neutral-100">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             {/* Mockup */}
@@ -207,11 +208,11 @@ export function HomepageContent({
             </div>
           </div>
         </div>
-      </section>
+      </AnimateOnScroll>
 
       {/* Featured Creators */}
       {featured.length > 0 && (
-        <section className="bg-white">
+        <AnimateOnScroll as="section" className="bg-white">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
             <div className="flex items-end justify-between mb-10">
               <div>
@@ -229,17 +230,19 @@ export function HomepageContent({
                 View all <ArrowRightIcon />
               </Link>
             </div>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <StaggerChildren className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5" staggerMs={100}>
               {featured.map((creator) => (
-                <CreatorCard key={creator.id} creator={creator} />
+                <div key={creator.id} className="aos-stagger-item">
+                  <CreatorCard creator={creator} />
+                </div>
               ))}
-            </div>
+            </StaggerChildren>
           </div>
-        </section>
+        </AnimateOnScroll>
       )}
 
       {/* For Brands */}
-      <section id="for-brands" className="bg-neutral-950 text-white">
+      <AnimateOnScroll as="section" id="for-brands" className="bg-neutral-950 text-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
           <div className="max-w-2xl mb-14">
             <div className="text-sm font-medium text-neutral-500 uppercase tracking-wider mb-4">
@@ -287,10 +290,10 @@ export function HomepageContent({
             </Link>
           </div>
         </div>
-      </section>
+      </AnimateOnScroll>
 
       {/* For AI Agents */}
-      <section id="for-agents" className="bg-white">
+      <AnimateOnScroll as="section" id="for-agents" className="bg-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-start">
             <div>
@@ -358,10 +361,10 @@ export function HomepageContent({
             </div>
           </div>
         </div>
-      </section>
+      </AnimateOnScroll>
 
       {/* Final CTA */}
-      <section className="bg-neutral-50 border-t border-neutral-100">
+      <AnimateOnScroll as="section" className="bg-neutral-50 border-t border-neutral-100">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center">
           <h2 className="font-display text-3xl sm:text-4xl font-bold text-neutral-900 mb-4">
             {creatorCount > 0
@@ -387,7 +390,7 @@ export function HomepageContent({
             </Link>
           </div>
         </div>
-      </section>
+      </AnimateOnScroll>
     </>
   );
 }
