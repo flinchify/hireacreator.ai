@@ -1,4 +1,5 @@
 import { Header } from "@/components/header";
+import { Footer } from "@/components/footer";
 import { DashboardContent } from "@/components/dashboard-content";
 
 export const metadata = {
@@ -7,9 +8,10 @@ export const metadata = {
 
 export default function DashboardPage() {
   return (
-    <div className="min-h-screen bg-neutral-50">
+    <>
       <Header />
       <DashboardContent />
-    </div>
+      <Footer />
+    </>
   );
 }
