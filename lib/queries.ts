@@ -129,7 +129,7 @@ export async function getCreatorBySlug(
 ): Promise<Creator | null> {
   const sql = getDb();
   const users = await sql`
-    SELECT * FROM users WHERE slug = ${slug} AND role = 'creator' LIMIT 1
+    SELECT * FROM users WHERE slug = ${slug} AND role IN ('creator', 'admin') LIMIT 1
   `;
 
   if (users.length === 0) return null;
