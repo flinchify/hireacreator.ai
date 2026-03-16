@@ -5,7 +5,7 @@ const footerLinks = {
     { label: "Browse Creators", href: "/browse" },
     { label: "For Brands", href: "/#for-brands" },
     { label: "For Creators", href: "/#for-creators" },
-    { label: "For Agents", href: "/#for-agents" },
+    { label: "For AI Agents", href: "/#for-agents" },
     { label: "Pricing", href: "/pricing" },
   ],
   Resources: [
@@ -69,7 +69,7 @@ export function Footer() {
 
         <div className="border-t border-neutral-800 mt-12 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-sm">
-            2024 HireACreator.ai. All rights reserved.
+            2025 HireACreator.ai. All rights reserved.
           </p>
           <div className="flex items-center gap-6">
             <a href="#" className="text-sm hover:text-white transition-colors">

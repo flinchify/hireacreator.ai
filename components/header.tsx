@@ -28,16 +28,16 @@ export function Header() {
               Browse Creators
             </Link>
             <Link
-              href="/#how-it-works"
-              className="text-sm text-neutral-600 hover:text-neutral-900 transition-colors"
-            >
-              How It Works
-            </Link>
-            <Link
               href="/#for-creators"
               className="text-sm text-neutral-600 hover:text-neutral-900 transition-colors"
             >
               For Creators
+            </Link>
+            <Link
+              href="/#for-agents"
+              className="text-sm text-neutral-600 hover:text-neutral-900 transition-colors"
+            >
+              For AI Agents
             </Link>
           </nav>
 
@@ -85,18 +85,18 @@ export function Header() {
                 Browse Creators
               </Link>
               <Link
-                href="/#how-it-works"
-                className="text-sm text-neutral-600 hover:text-neutral-900 py-1"
-                onClick={() => setMobileOpen(false)}
-              >
-                How It Works
-              </Link>
-              <Link
                 href="/#for-creators"
                 className="text-sm text-neutral-600 hover:text-neutral-900 py-1"
                 onClick={() => setMobileOpen(false)}
               >
                 For Creators
+              </Link>
+              <Link
+                href="/#for-agents"
+                className="text-sm text-neutral-600 hover:text-neutral-900 py-1"
+                onClick={() => setMobileOpen(false)}
+              >
+                For AI Agents
               </Link>
               <div className="flex gap-2 pt-2">
                 <Link href="/login" className="flex-1">

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Badge } from "./ui/badge";
-import type { Creator } from "@/lib/data";
+import { PlatformIcon } from "./icons/platforms";
+import type { Creator } from "@/lib/types";
 
 function StarIcon() {
   return (
@@ -15,17 +16,29 @@ export function CreatorCard({ creator }: { creator: Creator }) {
     <Link href={`/creators/${creator.slug}`} className="group block">
       <div className="bg-white rounded-xl border border-neutral-200 overflow-hidden hover:border-neutral-300 hover:shadow-lg transition-all duration-200">
         <div className="relative h-32 bg-neutral-100">
-          <img
-            src={creator.cover}
-            alt=""
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute -bottom-6 left-4">
+          {creator.cover ? (
             <img
-              src={creator.avatar}
-              alt={creator.name}
-              className="w-14 h-14 rounded-full border-2 border-white object-cover"
+              src={creator.cover}
+              alt=""
+              className="w-full h-full object-cover"
             />
+          ) : (
+            <div className="w-full h-full bg-gradient-to-br from-neutral-100 to-neutral-200" />
+          )}
+          <div className="absolute -bottom-6 left-4">
+            {creator.avatar ? (
+              <img
+                src={creator.avatar}
+                alt={creator.name}
+                className="w-14 h-14 rounded-full border-2 border-white object-cover"
+              />
+            ) : (
+              <div className="w-14 h-14 rounded-full border-2 border-white bg-neutral-200 flex items-center justify-center">
+                <span className="text-lg font-semibold text-neutral-500">
+                  {creator.name.charAt(0)}
+                </span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -42,16 +55,37 @@ export function CreatorCard({ creator }: { creator: Creator }) {
                   </svg>
                 )}
               </div>
-              <p className="text-sm text-neutral-500 truncate mt-0.5">
-                {creator.headline}
-              </p>
+              {creator.headline && (
+                <p className="text-sm text-neutral-500 truncate mt-0.5">
+                  {creator.headline}
+                </p>
+              )}
             </div>
           </div>
 
           <div className="flex items-center gap-3 mt-3">
-            <Badge>{creator.category}</Badge>
-            <span className="text-xs text-neutral-400">{creator.location}</span>
+            {creator.category && <Badge>{creator.category}</Badge>}
+            {creator.location && (
+              <span className="text-xs text-neutral-400">{creator.location}</span>
+            )}
           </div>
+
+          {/* Platform icons */}
+          {creator.socials.length > 0 && (
+            <div className="flex items-center gap-2 mt-3">
+              {creator.socials.slice(0, 5).map((s) => (
+                <PlatformIcon
+                  key={s.platform}
+                  platform={s.platform}
+                  size={16}
+                  className="text-neutral-300 group-hover:text-neutral-500 transition-colors"
+                />
+              ))}
+              {creator.socials.length > 5 && (
+                <span className="text-xs text-neutral-400">+{creator.socials.length - 5}</span>
+              )}
+            </div>
+          )}
 
           <div className="flex items-center justify-between mt-4 pt-3 border-t border-neutral-100">
             <div className="flex items-center gap-1">
@@ -63,9 +97,11 @@ export function CreatorCard({ creator }: { creator: Creator }) {
                 ({creator.reviewCount})
               </span>
             </div>
-            <span className="text-sm font-semibold text-neutral-900">
-              ${creator.hourlyRate}/hr
-            </span>
+            {creator.hourlyRate && (
+              <span className="text-sm font-semibold text-neutral-900">
+                ${creator.hourlyRate}/hr
+              </span>
+            )}
           </div>
         </div>
       </div>
