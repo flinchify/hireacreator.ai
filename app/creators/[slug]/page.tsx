@@ -10,6 +10,7 @@ import { getCreatorBySlug } from "@/lib/queries";
 import { AnimateOnScroll, StaggerChildren } from "@/components/animate-on-scroll";
 import { CountUp } from "@/components/count-up";
 import { CreatorHeroActions, ServiceAction, ContactCreatorButton } from "@/components/creator-profile-client";
+import { ReviewSection } from "@/components/review-form";
 
 function StarIcon({ filled = true }: { filled?: boolean }) {
   return (
@@ -373,6 +374,9 @@ export default async function CreatorProfilePage({
                 </div>
               </AnimateOnScroll>
             )}
+
+            {/* Review form — only shows if user has completed bookings with this creator */}
+            <ReviewSection creatorId={creator.id} creatorName={creator.name} />
           </div>
 
           {/* Sidebar */}
