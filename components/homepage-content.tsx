@@ -47,15 +47,6 @@ export function HomepageContent({
       <section className="relative pt-32 sm:pt-40 pb-20 sm:pb-28 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-neutral-50 to-white" />
         <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <Image
-            src="/logo-512.png"
-            alt="HireACreator"
-            width={56}
-            height={56}
-            className="w-14 h-14 mx-auto mb-8"
-            priority
-          />
-
           <h1 className="font-display text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight text-neutral-900 leading-[1.1]">
             Your talent deserves<br className="hidden sm:block" /> more than a link in bio
           </h1>
