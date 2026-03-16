@@ -1,11 +1,40 @@
 "use client";
 
-import { createContext, useContext, useState, useCallback } from "react";
+import { createContext, useContext, useState, useCallback, useEffect } from "react";
 
 type AuthTab = "login" | "signup";
 type AuthRole = "creator" | "brand" | "agent";
 
+export interface User {
+  id: string;
+  email: string;
+  name: string;
+  slug: string | null;
+  avatar: string | null;
+  cover: string | null;
+  headline: string | null;
+  bio: string | null;
+  location: string | null;
+  role: string;
+  category: string | null;
+  hourlyRate: number | null;
+  currency: string;
+  isVerified: boolean;
+  isOnline: boolean;
+  isPro: boolean;
+  subscriptionTier: string;
+  websiteUrl: string | null;
+  businessName: string | null;
+  businessUrl: string | null;
+  rating: number;
+  reviewCount: number;
+  totalProjects: number;
+  totalEarnings: number;
+}
+
 interface AuthContextType {
+  user: User | null;
+  loading: boolean;
   isOpen: boolean;
   tab: AuthTab;
   defaultRole: AuthRole;
@@ -14,14 +43,34 @@ interface AuthContextType {
   close: () => void;
   setTab: (tab: AuthTab) => void;
   setDefaultRole: (role: AuthRole) => void;
+  logout: () => Promise<void>;
+  refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
   const [tab, setTab] = useState<AuthTab>("login");
   const [defaultRole, setDefaultRole] = useState<AuthRole>("creator");
+
+  const refreshUser = useCallback(async () => {
+    try {
+      const res = await fetch("/api/auth/me");
+      const data = await res.json();
+      setUser(data.user || null);
+    } catch {
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    refreshUser();
+  }, [refreshUser]);
 
   const openLogin = useCallback(() => {
     setTab("login");
@@ -38,9 +87,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsOpen(false);
   }, []);
 
+  const logout = useCallback(async () => {
+    await fetch("/api/auth/logout", { method: "POST" });
+    setUser(null);
+  }, []);
+
   return (
     <AuthContext.Provider
-      value={{ isOpen, tab, defaultRole, openLogin, openSignup, close, setTab, setDefaultRole }}
+      value={{
+        user,
+        loading,
+        isOpen,
+        tab,
+        defaultRole,
+        openLogin,
+        openSignup,
+        close,
+        setTab,
+        setDefaultRole,
+        logout,
+        refreshUser,
+      }}
     >
       {children}
     </AuthContext.Provider>

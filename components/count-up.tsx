@@ -1,67 +1,50 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-
-interface CountUpProps {
-  end: number;
-  prefix?: string;
-  suffix?: string;
-  duration?: number;
-  decimals?: number;
-}
+import { useState, useEffect, useRef } from "react";
 
 export function CountUp({
   end,
-  prefix = "",
-  suffix = "",
-  duration = 800,
   decimals = 0,
-}: CountUpProps) {
+  prefix = "",
+  duration = 1500,
+}: {
+  end: number;
+  decimals?: number;
+  prefix?: string;
+  duration?: number;
+}) {
   const [value, setValue] = useState(0);
   const ref = useRef<HTMLSpanElement>(null);
-  const hasAnimated = useRef(false);
+  const started = useRef(false);
 
   useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-
-    const prefersReduced = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
-
-    if (prefersReduced) {
-      setValue(end);
-      return;
-    }
+    if (started.current) return;
 
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !hasAnimated.current) {
-          hasAnimated.current = true;
-          const start = performance.now();
-          const animate = (now: number) => {
-            const elapsed = now - start;
+      (entries) => {
+        if (entries[0].isIntersecting && !started.current) {
+          started.current = true;
+          const startTime = Date.now();
+          const animate = () => {
+            const elapsed = Date.now() - startTime;
             const progress = Math.min(elapsed / duration, 1);
-            const eased = 1 - Math.pow(1 - progress, 3);
+            const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
             setValue(eased * end);
             if (progress < 1) requestAnimationFrame(animate);
           };
           requestAnimationFrame(animate);
-          observer.unobserve(el);
         }
       },
-      { threshold: 0.5 }
+      { threshold: 0.1 }
     );
 
-    observer.observe(el);
+    if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
   }, [end, duration]);
 
-  const display = decimals > 0 ? value.toFixed(decimals) : Math.round(value);
-
   return (
     <span ref={ref}>
-      {prefix}{display}{suffix}
+      {prefix}{decimals > 0 ? value.toFixed(decimals) : Math.round(value)}
     </span>
   );
 }
