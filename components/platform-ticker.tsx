@@ -12,10 +12,8 @@ import {
   FacebookIcon,
   SnapchatIcon,
   DiscordIcon,
-  DribbbleIcon,
-  BehanceIcon,
   GitHubIcon,
-  KickIcon,
+  RedditIcon,
 } from "@/components/icons/platforms";
 
 const row1 = [
@@ -26,25 +24,21 @@ const row1 = [
   LinkedInIcon,
   TwitchIcon,
   SpotifyIcon,
-  KickIcon,
+  RedditIcon,
   PinterestIcon,
   FacebookIcon,
   SnapchatIcon,
   DiscordIcon,
-  DribbbleIcon,
-  BehanceIcon,
   GitHubIcon,
 ];
 
 const row2 = [
   GitHubIcon,
-  BehanceIcon,
-  DribbbleIcon,
   DiscordIcon,
   SnapchatIcon,
   FacebookIcon,
   PinterestIcon,
-  KickIcon,
+  RedditIcon,
   SpotifyIcon,
   TwitchIcon,
   LinkedInIcon,
