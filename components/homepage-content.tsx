@@ -73,7 +73,7 @@ export function HomepageContent({
           </div>
 
           <p className="mt-6 text-sm text-neutral-400">
-            Free to join. Only pay 5% when you earn.
+            Free for creators. Zero fees. Always.
           </p>
         </div>
       </section>
@@ -107,8 +107,8 @@ export function HomepageContent({
               Get paid instantly
             </h3>
             <p className="text-neutral-400 text-sm leading-relaxed">
-              Stripe-powered payments. Escrow protection on every deal.
-              No chasing invoices, no &quot;we&apos;ll pay net-60.&quot; Money moves when work ships.
+              Zero platform fees. You keep 100% of what you charge.
+              Stripe-powered escrow on every deal. No chasing invoices. Money moves when work ships.
             </p>
           </div>
         </div>
@@ -182,7 +182,7 @@ export function HomepageContent({
                 {[
                   "Portfolio, pricing, and booking in one page",
                   "Connect Instagram, TikTok, YouTube, and more",
-                  "Accept payments directly via Stripe",
+                  "Accept payments directly via Stripe — 0% platform fee",
                   "Verified badge builds instant trust with brands",
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-3">

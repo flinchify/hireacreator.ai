@@ -234,20 +234,20 @@ export default function BrandsPage() {
             Transparent pricing
           </h2>
           <p className="text-neutral-500 text-lg mb-14 max-w-2xl mx-auto">
-            You pay the creator's listed price. No hidden markup, no agency fees, no surprises.
-            The price you see on a creator's profile is the price you pay.
+            Creators keep 100% of their listed price. We add a small service fee on the brand side
+            to cover payments, escrow, and platform infrastructure. No hidden markup.
           </p>
           <div className="bg-neutral-50 rounded-3xl border border-neutral-200 p-8 sm:p-12 max-w-lg mx-auto">
             <div className="text-sm font-medium text-neutral-400 uppercase tracking-wider mb-2">For Brands</div>
-            <div className="font-display text-4xl font-bold text-neutral-900 mb-2">$0</div>
-            <div className="text-neutral-500 mb-6">Free to browse and book</div>
+            <div className="font-display text-4xl font-bold text-neutral-900 mb-2">10% service fee</div>
+            <div className="text-neutral-500 mb-6">Only charged when you book a creator</div>
             <ul className="space-y-3 text-left">
               {[
-                "No platform fee for brands",
-                "Pay only the creator's listed price",
-                "Escrow protection included",
+                "Creators get 100% of their listed rate",
+                "Small service fee covers escrow + platform",
+                "Still cheaper than any agency (they charge 15-30%)",
                 "Full usage rights on all deliverables",
-                "Unlimited bookings",
+                "Unlimited browsing and messaging",
               ].map((item) => (
                 <li key={item} className="flex items-start gap-3">
                   <div className="mt-0.5"><CheckIcon /></div>
