@@ -81,8 +81,8 @@ function UserMenu() {
           <Link href="/dashboard" onClick={() => setOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
             Dashboard
           </Link>
-          <Link href={user.slug ? `/creators/${user.slug}` : "/dashboard"} onClick={() => setOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
-            My Profile
+          <Link href={user.slug ? `/u/${user.slug}` : "/dashboard"} onClick={() => setOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
+            My Link in Bio
           </Link>
           <Link href="/dashboard/settings" onClick={() => setOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
             Settings
@@ -161,7 +161,7 @@ export function Header({ theme = "light" }: { theme?: HeaderTheme }) {
             {user ? (
               <>
                 <Link href="/dashboard" className={`px-4 py-2.5 text-sm font-medium rounded-xl ${t.mobileLink}`} onClick={() => setMobileOpen(false)}>Dashboard</Link>
-                <Link href={user.slug ? `/creators/${user.slug}` : "/dashboard"} className={`px-4 py-2.5 text-sm font-medium rounded-xl ${t.mobileLink}`} onClick={() => setMobileOpen(false)}>My Profile</Link>
+                <Link href={user.slug ? `/u/${user.slug}` : "/dashboard"} className={`px-4 py-2.5 text-sm font-medium rounded-xl ${t.mobileLink}`} onClick={() => setMobileOpen(false)}>My Link in Bio</Link>
               </>
             ) : (
               <>
