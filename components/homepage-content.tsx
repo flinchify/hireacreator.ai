@@ -44,7 +44,7 @@ export function HomepageContent({
   return (
     <>
       {/* Hero — creator-first */}
-      <section className="relative pt-32 sm:pt-40 pb-20 sm:pb-28 overflow-hidden">
+      <section className="relative pt-40 sm:pt-52 pb-20 sm:pb-28 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-neutral-50 to-white" />
         <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="font-display text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight text-neutral-900 leading-[1.1]">

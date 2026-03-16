@@ -116,7 +116,7 @@ export function SnapchatIcon(props: IconProps) {
 export function KickIcon(props: IconProps) {
   return (
     <Icon {...props}>
-      <path d="M1.333 0C.597 0 0 .597 0 1.333v21.334C0 23.403.597 24 1.333 24h21.334c.736 0 1.333-.597 1.333-1.333V1.333C24 .597 23.403 0 22.667 0H1.333zm5.334 5.333H10v4l1.333-1.333h1.334v1.333L10 12l2.667 2.667v1.333h-1.334L10 14.667v2.666H6.667V5.333z" />
+      <path fillRule="evenodd" clipRule="evenodd" d="M2 0a2 2 0 00-2 2v20a2 2 0 002 2h20a2 2 0 002-2V2a2 2 0 00-2-2H2zm5.5 5h3v5L13 7.5h3L12 12l4 4.5h-3l-2.5-2.5V19h-3V5z" />
     </Icon>
   );
 }

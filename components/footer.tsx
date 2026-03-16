@@ -6,24 +6,15 @@ const footerLinks = {
     { label: "Browse Creators", href: "/browse" },
     { label: "For Brands", href: "/for-brands" },
     { label: "For Creators", href: "/for-creators" },
-    { label: "API", href: "/api" },
+    { label: "Pricing", href: "/pricing" },
   ],
   Resources: [
-    { label: "Help Center", href: "/help" },
     { label: "Blog", href: "/blog" },
-    { label: "Creator Guides", href: "/guides" },
-    { label: "API Docs", href: "/api#docs" },
-  ],
-  Company: [
-    { label: "About", href: "/about" },
-    { label: "Careers", href: "/careers" },
-    { label: "Press", href: "/press" },
-    { label: "Contact", href: "/contact" },
+    { label: "API Docs", href: "/api" },
   ],
   Legal: [
     { label: "Privacy Policy", href: "/privacy" },
     { label: "Terms of Service", href: "/terms" },
-    { label: "Cookie Policy", href: "/cookies" },
   ],
 };
 
