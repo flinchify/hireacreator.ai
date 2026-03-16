@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useAuth } from "@/components/auth-context";
 import { CreatorCard } from "@/components/creator-card";
 import { AnimateOnScroll, StaggerChildren } from "@/components/animate-on-scroll";
@@ -46,9 +47,14 @@ export function HomepageContent({
       <section className="relative pt-32 sm:pt-40 pb-20 sm:pb-28 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-neutral-50 to-white" />
         <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-neutral-900 mb-8">
-            <span className="text-white font-bold text-xl font-display">H</span>
-          </div>
+          <Image
+            src="/logo-512.png"
+            alt="HireACreator"
+            width={56}
+            height={56}
+            className="w-14 h-14 mx-auto mb-8"
+            priority
+          />
 
           <h1 className="font-display text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight text-neutral-900 leading-[1.1]">
             Your talent deserves<br className="hidden sm:block" /> more than a link in bio

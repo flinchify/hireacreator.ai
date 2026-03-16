@@ -63,16 +63,15 @@ export function Header({ theme = "light" }: { theme?: HeaderTheme }) {
           </Link>
         </div>
 
-        <Link href="/" className={`md:absolute md:left-1/2 md:-translate-x-1/2 flex items-center gap-2 font-display font-bold text-lg ${t.logo}`}>
+        <Link href="/" className={`md:absolute md:left-1/2 md:-translate-x-1/2 flex items-center ${t.logo}`}>
           <Image
             src="/logo-512.png"
-            alt="H"
-            width={28}
-            height={28}
-            className="w-7 h-7"
+            alt="HireACreator"
+            width={32}
+            height={32}
+            className="w-8 h-8"
             priority
           />
-          HireACreator
         </Link>
 
         <div className="hidden md:flex items-center gap-2">
