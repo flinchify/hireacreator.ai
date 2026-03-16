@@ -56,10 +56,10 @@ export function Header({ theme = "light" }: { theme?: HeaderTheme }) {
             For Brands
           </Link>
           <Link
-            href="/api"
+            href="/pricing"
             className={`px-4 py-2 text-sm font-medium rounded-full border border-transparent transition-all ${t.link}`}
           >
-            API
+            Pricing
           </Link>
         </div>
 
@@ -115,8 +115,8 @@ export function Header({ theme = "light" }: { theme?: HeaderTheme }) {
             <Link href="/for-brands" className={`px-4 py-2.5 text-sm font-medium rounded-xl ${t.mobileLink}`} onClick={() => setMobileOpen(false)}>
               For Brands
             </Link>
-            <Link href="/api" className={`px-4 py-2.5 text-sm font-medium rounded-xl ${t.mobileLink}`} onClick={() => setMobileOpen(false)}>
-              API
+            <Link href="/pricing" className={`px-4 py-2.5 text-sm font-medium rounded-xl ${t.mobileLink}`} onClick={() => setMobileOpen(false)}>
+              Pricing
             </Link>
             <div className={`border-t my-2 ${t.mobileDivider}`} />
             <button
