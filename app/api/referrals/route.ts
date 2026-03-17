@@ -21,6 +21,10 @@ export async function GET() {
 
   const sql = getDb();
 
+  // Get user's credit balance
+  const balanceRow = await sql`SELECT credit_balance_cents FROM users WHERE id = ${user.id}`;
+  const creditBalanceCents = (balanceRow[0]?.credit_balance_cents as number) || 0;
+
   const referrals = await sql`
     SELECT r.*, u.full_name, u.email, u.avatar_url, u.subscription_tier, u.created_at AS user_created
     FROM referrals r
@@ -65,6 +69,7 @@ export async function GET() {
       totalReferrals: stats[0]?.total_referrals || 0,
       activePaying: stats[0]?.active_paying || 0,
       totalEarnedCents: stats[0]?.total_earned_cents || 0,
+      creditBalanceCents,
       monthlyEstimateCents,
     },
     referrals: referrals.map(r => ({

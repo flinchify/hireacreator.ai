@@ -394,7 +394,7 @@ function ReferralSection() {
       </div>
 
       <p className="text-xs text-neutral-500 mb-4 leading-relaxed">
-        Earn 20% of every subscription payment from people you refer — for 12 months. Share your link and get paid monthly.
+        Earn 20% of every subscription payment as platform credits from people you refer — for 12 months. Use credits toward your own Pro plan, animations, or boosted listings.
       </p>
 
       {/* Referral link */}
@@ -416,8 +416,8 @@ function ReferralSection() {
           <div className="text-[10px] text-neutral-500">Paying</div>
         </div>
         <div className="text-center py-2.5 bg-neutral-50 rounded-xl">
-          <div className="font-display text-lg font-bold text-neutral-900">${(data.stats.totalEarnedCents / 100).toFixed(2)}</div>
-          <div className="text-[10px] text-neutral-500">Earned</div>
+          <div className="font-display text-lg font-bold text-emerald-600">${((data.stats.creditBalanceCents || 0) / 100).toFixed(2)}</div>
+          <div className="text-[10px] text-neutral-500">Credits</div>
         </div>
       </div>
 
@@ -436,7 +436,7 @@ function ReferralSection() {
               {r.avatar ? <img src={r.avatar} alt="" className="w-7 h-7 rounded-full object-cover" /> : <div className="w-7 h-7 rounded-full bg-neutral-200 flex items-center justify-center"><span className="text-[10px] font-bold text-neutral-400">{(r.name || "?")[0]}</span></div>}
               <div className="flex-1 min-w-0">
                 <div className="text-xs font-medium text-neutral-900 truncate">{r.name}</div>
-                <div className="text-[10px] text-neutral-400">{r.tier === "free" ? "Free" : r.tier} · ${(r.totalEarnedCents / 100).toFixed(2)} earned</div>
+                <div className="text-[10px] text-neutral-400">{r.tier === "free" ? "Free" : r.tier} · ${(r.totalEarnedCents / 100).toFixed(2)} credited</div>
               </div>
               <span className={`text-[9px] font-bold uppercase px-1.5 py-0.5 rounded-full ${r.status === "active" ? "bg-emerald-100 text-emerald-700" : r.status === "churned" ? "bg-red-100 text-red-700" : "bg-neutral-100 text-neutral-500"}`}>
                 {r.status === "signed_up" ? "Free" : r.status}
@@ -445,6 +445,10 @@ function ReferralSection() {
           ))}
         </div>
       )}
+
+      <p className="text-[9px] text-neutral-300 mt-4 leading-relaxed">
+        Referral credits can be applied to subscriptions, animations, and boosted listings. Credits are non-transferable and have no cash value. Referral program terms are subject to change.
+      </p>
     </Card>
   );
 }

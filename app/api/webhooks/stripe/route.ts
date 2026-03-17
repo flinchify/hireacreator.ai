@@ -114,15 +114,15 @@ export async function POST(request: Request) {
             if (ref.length > 0) {
               const commission = Math.floor(amountCents * (ref[0].commission_percent as number) / 100);
               if (commission > 0) {
-                // Log the commission
+                // Log the commission + add as platform credits
                 await sql`
-                  INSERT INTO referral_commissions (referral_id, referrer_id, amount_cents, source_event, stripe_invoice_id)
-                  VALUES (${ref[0].id}, ${ref[0].referrer_id}, ${commission}, ${'invoice.paid'}, ${invoice.id})
+                  INSERT INTO referral_commissions (referral_id, referrer_id, amount_cents, source_event, stripe_invoice_id, credited)
+                  VALUES (${ref[0].id}, ${ref[0].referrer_id}, ${commission}, ${'invoice.paid'}, ${invoice.id}, true)
                 `;
-                // Update totals
+                // Update totals + add credits to referrer's balance
                 await sql`UPDATE referrals SET total_earned_cents = total_earned_cents + ${commission} WHERE id = ${ref[0].id}`;
-                await sql`UPDATE users SET referral_earnings_cents = referral_earnings_cents + ${commission} WHERE id = ${ref[0].referrer_id}`;
-                console.log(`Referral commission: $${(commission / 100).toFixed(2)} to referrer ${ref[0].referrer_id}`);
+                await sql`UPDATE users SET referral_earnings_cents = referral_earnings_cents + ${commission}, credit_balance_cents = credit_balance_cents + ${commission} WHERE id = ${ref[0].referrer_id}`;
+                console.log(`Referral credit: $${(commission / 100).toFixed(2)} added to referrer ${ref[0].referrer_id}`);
               }
             }
           }
