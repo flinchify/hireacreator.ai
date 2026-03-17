@@ -37,6 +37,16 @@ const ONBOARDING_TEMPLATES = [
   { id: "bento", name: "Bento", dark: true },
   { id: "showcase", name: "Showcase", dark: false },
   { id: "split", name: "Split", dark: false },
+  { id: "aurora", name: "Aurora", dark: true },
+  { id: "brutalist", name: "Brutalist", dark: false },
+  { id: "sunset", name: "Sunset", dark: true },
+  { id: "terminal", name: "Terminal", dark: true },
+  { id: "pastel", name: "Pastel", dark: false },
+  { id: "magazine", name: "Magazine", dark: false },
+  { id: "retro", name: "Retro", dark: true },
+  { id: "midnight", name: "Midnight", dark: true },
+  { id: "clay", name: "Clay", dark: false },
+  { id: "gradient-mesh", name: "Gradient Mesh", dark: true },
 ];
 
 export function OnboardingFlow() {
@@ -202,13 +212,13 @@ export function OnboardingFlow() {
             </div>
           )}
           <div className="flex flex-col gap-3">
-            <button onClick={() => router.push("/dashboard")} className="w-full py-3.5 bg-neutral-900 text-white font-semibold text-sm rounded-full hover:bg-neutral-800 transition-colors">
+            <a href="/dashboard" className="w-full py-3.5 bg-neutral-900 text-white font-semibold text-sm rounded-full hover:bg-neutral-800 transition-colors text-center block">
               Go to Dashboard
-            </button>
+            </a>
             {user?.slug && (
-              <button onClick={() => router.push(`/u/${user.slug}`)} className="w-full py-3.5 bg-neutral-100 text-neutral-900 font-semibold text-sm rounded-full hover:bg-neutral-200 transition-colors">
+              <a href={`/u/${user.slug}`} className="w-full py-3.5 bg-neutral-100 text-neutral-900 font-semibold text-sm rounded-full hover:bg-neutral-200 transition-colors text-center block">
                 View My Link in Bio
-              </button>
+              </a>
             )}
           </div>
         </div>

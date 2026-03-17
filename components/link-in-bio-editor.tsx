@@ -22,14 +22,24 @@ type Settings = {
 
 /* ── Constants ── */
 const TEMPLATES = [
-  { id: "minimal", name: "Minimal", dark: false, preview: "bg-neutral-200" },
-  { id: "glass", name: "Glass", dark: true, preview: "bg-gradient-to-br from-neutral-800 to-neutral-950" },
-  { id: "bold", name: "Bold", dark: true, preview: "bg-neutral-950" },
-  { id: "showcase", name: "Showcase", dark: false, preview: "bg-neutral-100" },
-  { id: "neon", name: "Neon", dark: true, preview: "bg-black" },
-  { id: "collage", name: "Collage", dark: true, preview: "bg-gradient-to-br from-neutral-700 to-neutral-900" },
-  { id: "bento", name: "Bento", dark: true, preview: "bg-neutral-950" },
-  { id: "split", name: "Split", dark: false, preview: "bg-white" },
+  { id: "minimal", name: "Minimal", dark: false },
+  { id: "glass", name: "Glass", dark: true },
+  { id: "bold", name: "Bold", dark: true },
+  { id: "showcase", name: "Showcase", dark: false },
+  { id: "neon", name: "Neon", dark: true },
+  { id: "collage", name: "Collage", dark: true },
+  { id: "bento", name: "Bento", dark: true },
+  { id: "split", name: "Split", dark: false },
+  { id: "aurora", name: "Aurora", dark: true },
+  { id: "brutalist", name: "Brutalist", dark: false },
+  { id: "sunset", name: "Sunset", dark: true },
+  { id: "terminal", name: "Terminal", dark: true },
+  { id: "pastel", name: "Pastel", dark: false },
+  { id: "magazine", name: "Magazine", dark: false },
+  { id: "retro", name: "Retro", dark: true },
+  { id: "midnight", name: "Midnight", dark: true },
+  { id: "clay", name: "Clay", dark: false },
+  { id: "gradient-mesh", name: "Gradient Mesh", dark: true },
 ];
 
 const FONTS = [
@@ -60,6 +70,18 @@ const GRADIENTS = [
   "linear-gradient(135deg, #232526 0%, #414345 100%)",
   "linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)",
   "linear-gradient(135deg, #fc5c7d 0%, #6a82fb 100%)",
+  "linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%)",
+  "linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%)",
+  "linear-gradient(135deg, #fd79a8 0%, #e84393 100%)",
+  "linear-gradient(135deg, #00b894 0%, #00cec9 100%)",
+  "linear-gradient(135deg, #fdcb6e 0%, #e17055 100%)",
+  "linear-gradient(135deg, #0984e3 0%, #6c5ce7 100%)",
+  "linear-gradient(135deg, #2d3436 0%, #636e72 100%)",
+  "linear-gradient(135deg, #b33939 0%, #e74c3c 50%, #f39c12 100%)",
+  "linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%)",
+  "linear-gradient(135deg, #11998e 0%, #38ef7d 100%)",
+  "linear-gradient(135deg, #c471f5 0%, #fa71cd 100%)",
+  "linear-gradient(135deg, #f6d365 0%, #fda085 100%)",
 ];
 
 const ACCENT_COLORS = [
@@ -417,7 +439,227 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
     </div>
   );
 
-  /* ═══ FALLBACK — generic centered layout ═══ */
+  /* ═══ AURORA — Animated gradient bg, centered, ethereal ═══ */
+  if (tpl === "aurora") return (
+    <div className="relative w-full min-h-full overflow-hidden" style={{ fontFamily, background: "linear-gradient(135deg, #0f0c29, #302b63, #24243e)" }}>
+      <div className="absolute top-0 left-1/4 w-40 h-40 rounded-full bg-purple-500/20 blur-3xl" />
+      <div className="absolute bottom-10 right-0 w-48 h-48 rounded-full bg-teal-400/15 blur-3xl" />
+      <div className="absolute top-1/2 left-0 w-32 h-32 rounded-full bg-pink-500/10 blur-3xl" />
+      <BgLayers />
+      <div className="relative z-10 flex flex-col items-center pt-10 px-5 pb-8 max-w-[440px] mx-auto">
+        <Avatar size="w-16 h-16" borderCol="rgba(167,139,250,0.4)" />
+        <h2 className="mt-3 text-sm font-bold" style={{ color: textCol || "#fff" }}>{name}</h2>
+        <p className="text-[10px]" style={{ color: textMuted }}>{headline}</p>
+        <div className="mt-3"><Socials light /></div>
+        <div className="w-full mt-4 space-y-2">{services.map((s: any, i: number) => (
+          <div key={i} className="w-full py-2.5 px-3 text-[11px] font-medium" style={{ borderRadius: btnRadius, background: "rgba(255,255,255,0.06)", border: "1px solid rgba(167,139,250,0.15)", backdropFilter: "blur(12px)", color: textCol || "#fff" }}>
+            <div className="flex items-center justify-between"><span>{s.title}</span><span style={{ opacity: 0.4 }}>${s.price}</span></div>
+          </div>
+        ))}</div>
+        <div className="w-full mt-4"><CTAButton altStyle={{ borderRadius: btnRadius, background: "linear-gradient(135deg, #a78bfa, #818cf8)", color: "#fff", width: "100%", padding: "10px 0", fontSize: "11px", fontWeight: 700 }} /></div>
+      </div>
+    </div>
+  );
+
+  /* ═══ BRUTALIST — White bg, thick black borders, raw typography ═══ */
+  if (tpl === "brutalist") return (
+    <div className="relative w-full min-h-full bg-white" style={{ fontFamily }}>
+      <BgLayers />
+      <div className="relative z-10 flex flex-col items-center pt-8 px-5 pb-8 max-w-[440px] mx-auto">
+        <div className="w-20 h-20 border-[3px] border-black overflow-hidden">{avatar ? <img src={avatar} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full bg-neutral-100 flex items-center justify-center text-2xl font-black">{name[0]}</div>}</div>
+        <h2 className="mt-3 text-lg font-black uppercase tracking-widest" style={{ color: textCol }}>{name}</h2>
+        <p className="text-[10px] uppercase tracking-wider" style={{ color: textMuted }}>{headline}</p>
+        <div className="flex gap-2 mt-3">{socials.slice(0, 5).map((s: any, i: number) => (
+          <div key={i} className="w-7 h-7 border-2 border-black flex items-center justify-center"><PlatformIcon platform={s.platform} size={14} className="text-black" /></div>
+        ))}</div>
+        <div className="w-full mt-4 space-y-2">{services.map((s: any, i: number) => (
+          <div key={i} className="w-full py-3 px-4 text-[11px] font-bold uppercase tracking-wide border-[2px] border-black" style={{ color: textCol }}>
+            <div className="flex items-center justify-between"><span>{s.title}</span><span>${s.price}</span></div>
+          </div>
+        ))}</div>
+        <div className="w-full mt-4"><CTAButton altStyle={{ background: "#000", color: "#fff", width: "100%", padding: "12px 0", fontSize: "11px", fontWeight: 900, textTransform: "uppercase" as const, letterSpacing: "0.1em", border: "2px solid #000" }} /></div>
+      </div>
+    </div>
+  );
+
+  /* ═══ SUNSET — Warm gradient, rounded everything ═══ */
+  if (tpl === "sunset") return (
+    <div className="relative w-full min-h-full overflow-hidden" style={{ fontFamily, background: "linear-gradient(180deg, #ff6b6b 0%, #ee5a24 40%, #f39c12 100%)" }}>
+      <BgLayers />
+      <div className="relative z-10 flex flex-col items-center pt-10 px-5 pb-8 max-w-[440px] mx-auto">
+        <Avatar size="w-16 h-16" borderCol="rgba(255,255,255,0.4)" />
+        <h2 className="mt-3 text-sm font-bold text-white" style={{ color: textCol }}>{name}</h2>
+        <p className="text-[10px] text-white/60" style={{ color: textMuted }}>{headline}</p>
+        <div className="mt-3"><Socials light /></div>
+        <div className="w-full mt-4 space-y-2">{services.map((s: any, i: number) => (
+          <div key={i} className="w-full py-2.5 px-3 text-[11px] font-medium" style={{ borderRadius: "9999px", background: "rgba(255,255,255,0.2)", border: "1px solid rgba(255,255,255,0.15)", color: textCol || "#fff" }}>
+            <div className="flex items-center justify-between"><span>{s.title}</span><span style={{ opacity: 0.5 }}>${s.price}</span></div>
+          </div>
+        ))}</div>
+        <div className="w-full mt-4"><CTAButton altStyle={{ borderRadius: "9999px", background: "#fff", color: "#ee5a24", width: "100%", padding: "10px 0", fontSize: "11px", fontWeight: 700 }} /></div>
+      </div>
+    </div>
+  );
+
+  /* ═══ TERMINAL — Hacker green-on-black, monospace ═══ */
+  if (tpl === "terminal") return (
+    <div className="relative w-full min-h-full bg-[#0a0a0a] overflow-hidden" style={{ fontFamily: "'Space Grotesk', monospace" }}>
+      <div className="absolute inset-0 opacity-[0.03]" style={{backgroundImage:"repeating-linear-gradient(0deg, #00ff00 0px, transparent 1px, transparent 3px)"}}/>
+      <BgLayers />
+      <div className="relative z-10 flex flex-col items-center pt-8 px-5 pb-8 max-w-[440px] mx-auto">
+        <div className="text-[10px] text-green-500/50 self-start mb-3 font-mono">$ cat profile.json</div>
+        <Avatar size="w-14 h-14" borderCol="#22c55e" />
+        <h2 className="mt-3 text-sm font-bold text-green-400" style={{ color: textCol }}>{name}</h2>
+        <p className="text-[10px] text-green-500/50 font-mono" style={{ color: textMuted }}>&gt; {headline}</p>
+        <div className="flex gap-1.5 mt-3">{socials.slice(0, 5).map((s: any, i: number) => (
+          <div key={i} className="w-7 h-7 rounded border border-green-500/30 bg-green-500/5 flex items-center justify-center"><PlatformIcon platform={s.platform} size={14} className="text-green-400/60" /></div>
+        ))}</div>
+        <div className="w-full mt-4 space-y-2">{services.map((s: any, i: number) => (
+          <div key={i} className="w-full py-2.5 px-3 text-[11px] font-mono border border-green-500/20 bg-green-500/5" style={{ borderRadius: "4px", color: textCol || "#4ade80" }}>
+            <div className="flex items-center justify-between"><span>{'>'} {s.title}</span><span className="text-green-500/40">${s.price}</span></div>
+          </div>
+        ))}</div>
+        <div className="w-full mt-4"><CTAButton altStyle={{ borderRadius: "4px", background: "#22c55e", color: "#000", width: "100%", padding: "10px 0", fontSize: "11px", fontWeight: 700, fontFamily: "monospace" }} /></div>
+      </div>
+    </div>
+  );
+
+  /* ═══ PASTEL — Soft pastel bg, rounded cards, playful ═══ */
+  if (tpl === "pastel") return (
+    <div className="relative w-full min-h-full" style={{ fontFamily, background: "linear-gradient(180deg, #fce4ec 0%, #e8eaf6 50%, #e0f7fa 100%)" }}>
+      <BgLayers />
+      <div className="relative z-10 flex flex-col items-center pt-10 px-5 pb-8 max-w-[440px] mx-auto">
+        <Avatar size="w-16 h-16" borderCol="#fff" />
+        <h2 className="mt-3 text-sm font-bold text-neutral-800" style={{ color: textCol }}>{name}</h2>
+        <p className="text-[10px] text-neutral-500" style={{ color: textMuted }}>{headline}</p>
+        <div className="mt-3"><Socials /></div>
+        <div className="w-full mt-4 space-y-2">{services.map((s: any, i: number) => (
+          <div key={i} className="w-full py-2.5 px-3 text-[11px] font-medium bg-white/70 border border-white shadow-sm" style={{ borderRadius: "20px", color: textCol || "#1a1a1a", backdropFilter: "blur(4px)" }}>
+            <div className="flex items-center justify-between"><span>{s.title}</span><span style={{ opacity: 0.4 }}>${s.price}</span></div>
+          </div>
+        ))}</div>
+        <div className="w-full mt-4"><CTAButton altStyle={{ borderRadius: "9999px", background: "#6c5ce7", color: "#fff", width: "100%", padding: "10px 0", fontSize: "11px", fontWeight: 700 }} /></div>
+      </div>
+    </div>
+  );
+
+  /* ═══ MAGAZINE — Editorial, left-aligned, serif feel ═══ */
+  if (tpl === "magazine") return (
+    <div className="relative w-full min-h-full bg-[#fafaf8]" style={{ fontFamily }}>
+      <BgLayers />
+      <div className="relative z-10 max-w-[440px] mx-auto px-6 pt-8 pb-8">
+        <div className="flex items-start gap-4 mb-6">
+          <Avatar size="w-14 h-14" borderCol="transparent" />
+          <div className="text-left">
+            <h2 className="text-base font-bold" style={{ color: textCol }}>{name}</h2>
+            <p className="text-[10px] mt-0.5" style={{ color: textMuted }}>{headline}</p>
+            <div className="flex gap-1.5 mt-2">{socials.slice(0, 4).map((s: any, i: number) => (
+              <div key={i} className="w-6 h-6 rounded-full bg-neutral-100 flex items-center justify-center"><PlatformIcon platform={s.platform} size={12} className="text-neutral-400" /></div>
+            ))}</div>
+          </div>
+        </div>
+        <div className="w-full h-[1px] bg-neutral-200 mb-4" />
+        <div className="space-y-0">{services.map((s: any, i: number) => (
+          <div key={i} className="flex items-center justify-between py-3 border-b border-neutral-200" style={{ color: textCol }}>
+            <span className="text-[12px] font-medium">{s.title}</span><span className="text-[11px]" style={{ color: textMuted }}>${s.price}</span>
+          </div>
+        ))}</div>
+        <div className="mt-5"><CTAButton /></div>
+      </div>
+    </div>
+  );
+
+  /* ═══ RETRO — 80s/synthwave, neon pink + purple ═══ */
+  if (tpl === "retro") return (
+    <div className="relative w-full min-h-full overflow-hidden" style={{ fontFamily, background: "linear-gradient(180deg, #1a0533 0%, #2d1b69 50%, #0f0c29 100%)" }}>
+      {/* Grid floor */}
+      <div className="absolute bottom-0 left-0 right-0 h-1/2 opacity-20" style={{backgroundImage:"linear-gradient(rgba(236,72,153,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(236,72,153,0.3) 1px, transparent 1px)", backgroundSize:"30px 30px", transform:"perspective(200px) rotateX(40deg)", transformOrigin:"bottom"}}/>
+      <BgLayers />
+      <div className="relative z-10 flex flex-col items-center pt-10 px-5 pb-8 max-w-[440px] mx-auto">
+        <Avatar size="w-16 h-16" borderCol="#ec4899" />
+        <h2 className="mt-3 text-sm font-bold" style={{ color: textCol || "#f472b6" }}>{name}</h2>
+        <p className="text-[10px]" style={{ color: textMuted || "#a78bfa80" }}>{headline}</p>
+        <div className="flex gap-1.5 mt-3">{socials.slice(0, 5).map((s: any, i: number) => (
+          <div key={i} className="w-7 h-7 rounded-full border border-pink-500/30 bg-pink-500/10 flex items-center justify-center"><PlatformIcon platform={s.platform} size={14} className="text-pink-400/60" /></div>
+        ))}</div>
+        <div className="w-full mt-4 space-y-2">{services.map((s: any, i: number) => (
+          <div key={i} className="w-full py-2.5 px-3 text-[11px] font-medium border border-pink-500/20 bg-pink-500/5" style={{ borderRadius: btnRadius, color: textCol || "#f9a8d4" }}>
+            <div className="flex items-center justify-between"><span>{s.title}</span><span className="text-purple-400/50">${s.price}</span></div>
+          </div>
+        ))}</div>
+        <div className="w-full mt-4"><CTAButton altStyle={{ borderRadius: btnRadius, background: "linear-gradient(90deg, #ec4899, #a855f7)", color: "#fff", width: "100%", padding: "10px 0", fontSize: "11px", fontWeight: 700 }} /></div>
+      </div>
+    </div>
+  );
+
+  /* ═══ MIDNIGHT — Deep navy, gold accents ═══ */
+  if (tpl === "midnight") return (
+    <div className="relative w-full min-h-full bg-[#0a1628]" style={{ fontFamily }}>
+      <BgLayers />
+      <div className="relative z-10 flex flex-col items-center pt-10 px-5 pb-8 max-w-[440px] mx-auto">
+        <Avatar size="w-16 h-16" borderCol="#d4a574" />
+        <h2 className="mt-3 text-sm font-bold" style={{ color: textCol || "#f5f0e8" }}>{name}</h2>
+        <p className="text-[10px]" style={{ color: textMuted || "#d4a57480" }}>{headline}</p>
+        <div className="flex gap-1.5 mt-3">{socials.slice(0, 5).map((s: any, i: number) => (
+          <div key={i} className="w-7 h-7 rounded-full border border-amber-600/30 bg-amber-600/5 flex items-center justify-center"><PlatformIcon platform={s.platform} size={14} className="text-amber-500/60" /></div>
+        ))}</div>
+        <div className="w-full mt-4 space-y-2">{services.map((s: any, i: number) => (
+          <div key={i} className="w-full py-2.5 px-3 text-[11px] font-medium bg-white/[0.04] border border-amber-600/15" style={{ borderRadius: btnRadius, color: textCol || "#f5f0e8" }}>
+            <div className="flex items-center justify-between"><span>{s.title}</span><span className="text-amber-500/50">${s.price}</span></div>
+          </div>
+        ))}</div>
+        <div className="w-full mt-4"><CTAButton altStyle={{ borderRadius: btnRadius, background: "linear-gradient(135deg, #d4a574, #b8860b)", color: "#0a1628", width: "100%", padding: "10px 0", fontSize: "11px", fontWeight: 700 }} /></div>
+      </div>
+    </div>
+  );
+
+  /* ═══ CLAY — Soft 3D clay/neumorphic, light bg ═══ */
+  if (tpl === "clay") return (
+    <div className="relative w-full min-h-full bg-[#e8e4df]" style={{ fontFamily }}>
+      <BgLayers />
+      <div className="relative z-10 flex flex-col items-center pt-10 px-5 pb-8 max-w-[440px] mx-auto">
+        <div className="w-16 h-16 rounded-2xl overflow-hidden" style={{ boxShadow: "6px 6px 12px #c5c1bc, -6px -6px 12px #fff" }}>
+          {avatar ? <img src={avatar} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full bg-[#e8e4df] flex items-center justify-center text-xl font-bold text-neutral-400">{name[0]}</div>}
+        </div>
+        <h2 className="mt-3 text-sm font-bold text-neutral-700" style={{ color: textCol }}>{name}</h2>
+        <p className="text-[10px] text-neutral-400" style={{ color: textMuted }}>{headline}</p>
+        <div className="flex gap-1.5 mt-3">{socials.slice(0, 5).map((s: any, i: number) => (
+          <div key={i} className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ boxShadow: "3px 3px 6px #c5c1bc, -3px -3px 6px #fff" }}><PlatformIcon platform={s.platform} size={14} className="text-neutral-500" /></div>
+        ))}</div>
+        <div className="w-full mt-4 space-y-2.5">{services.map((s: any, i: number) => (
+          <div key={i} className="w-full py-2.5 px-3 text-[11px] font-medium" style={{ borderRadius: "16px", boxShadow: "4px 4px 10px #c5c1bc, -4px -4px 10px #fff", color: textCol || "#525252" }}>
+            <div className="flex items-center justify-between"><span>{s.title}</span><span style={{ opacity: 0.4 }}>${s.price}</span></div>
+          </div>
+        ))}</div>
+        <div className="w-full mt-4"><CTAButton altStyle={{ borderRadius: "16px", background: "#525252", color: "#e8e4df", width: "100%", padding: "10px 0", fontSize: "11px", fontWeight: 700, boxShadow: "4px 4px 10px #c5c1bc, -4px -4px 10px #fff" }} /></div>
+      </div>
+    </div>
+  );
+
+  /* ═══ GRADIENT MESH — Colorful mesh gradient bg ═══ */
+  if (tpl === "gradient-mesh") return (
+    <div className="relative w-full min-h-full overflow-hidden" style={{ fontFamily, background: "#000" }}>
+      <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[50%] rounded-full bg-purple-600/40 blur-[80px]" />
+      <div className="absolute top-[30%] right-[-10%] w-[50%] h-[40%] rounded-full bg-blue-500/30 blur-[80px]" />
+      <div className="absolute bottom-[-10%] left-[20%] w-[50%] h-[40%] rounded-full bg-emerald-500/25 blur-[80px]" />
+      <div className="absolute top-[10%] left-[40%] w-[30%] h-[30%] rounded-full bg-pink-500/20 blur-[60px]" />
+      <BgLayers />
+      <div className="relative z-10 flex flex-col items-center pt-10 px-5 pb-8 max-w-[440px] mx-auto">
+        <Avatar size="w-16 h-16" borderCol="rgba(255,255,255,0.3)" />
+        <h2 className="mt-3 text-sm font-bold text-white" style={{ color: textCol }}>{name}</h2>
+        <p className="text-[10px] text-white/50" style={{ color: textMuted }}>{headline}</p>
+        <div className="mt-3"><Socials light /></div>
+        <div className="w-full mt-4 space-y-2">{services.map((s: any, i: number) => (
+          <div key={i} className="w-full py-2.5 px-3 text-[11px] font-medium" style={{ borderRadius: btnRadius, background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.1)", backdropFilter: "blur(12px)", color: textCol || "#fff" }}>
+            <div className="flex items-center justify-between"><span>{s.title}</span><span style={{ opacity: 0.4 }}>${s.price}</span></div>
+          </div>
+        ))}</div>
+        <div className="w-full mt-4"><CTAButton altStyle={{ borderRadius: btnRadius, background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.2)", backdropFilter: "blur(12px)", color: "#fff", width: "100%", padding: "10px 0", fontSize: "11px", fontWeight: 700 }} /></div>
+      </div>
+    </div>
+  );
+
+  /* ═══ FALLBACK ═══ */
   return (
     <div className="relative w-full min-h-full overflow-hidden" style={{ fontFamily, background: dark ? "#0a0a0a" : "#e5e5e5", ...getBgStyle() }}>
       <BgLayers />
@@ -1102,6 +1344,159 @@ function EditorTemplateMini({ id }: { id: string }) {
           </div>
           <div className="w-full h-3.5 rounded-full bg-neutral-900 mt-auto" />
         </div>
+      </div>
+    </div>
+  );
+
+  /* AURORA — Dark with colorful blurred orbs */
+  if (id === "aurora") return (
+    <div className={`${c}`} style={{ background: "linear-gradient(135deg, #0f0c29, #302b63, #24243e)" }}>
+      <div className="absolute top-1 left-2 w-8 h-8 rounded-full bg-purple-500/30 blur-lg" />
+      <div className="absolute bottom-3 right-1 w-10 h-10 rounded-full bg-teal-400/20 blur-xl" />
+      <div className="absolute top-1/2 left-0 w-6 h-6 rounded-full bg-pink-500/20 blur-lg" />
+      <div className="relative z-10 flex flex-col items-center justify-center h-full px-2">
+        <div className="w-8 h-8 rounded-full bg-white/15 border-2 border-purple-400/30" />
+        <div className="w-10 h-1 rounded-full bg-white/30 mt-1" />
+        <div className="w-full space-y-1 mt-2 px-1">
+          <div className="h-4 rounded-lg bg-white/[0.06] border border-purple-400/15" />
+          <div className="h-4 rounded-lg bg-white/[0.06] border border-purple-400/15" />
+        </div>
+        <div className="w-full h-3.5 rounded-full mt-1.5 mx-1" style={{ background: "linear-gradient(135deg, #a78bfa, #818cf8)" }} />
+      </div>
+    </div>
+  );
+
+  /* BRUTALIST — White, thick black borders, raw */
+  if (id === "brutalist") return (
+    <div className={`${c} bg-white flex flex-col items-center pt-3 px-2`}>
+      <div className="w-9 h-9 border-[2px] border-black bg-neutral-100" />
+      <div className="w-12 h-1.5 bg-black mt-1.5" />
+      <div className="w-8 h-0.5 bg-neutral-400 mt-0.5" />
+      <div className="flex gap-1 mt-1.5">{[1,2,3].map(i=><div key={i} className="w-4 h-4 border-[1.5px] border-black"/>)}</div>
+      <div className="w-full space-y-1 mt-2">
+        <div className="h-5 border-[2px] border-black" />
+        <div className="h-5 border-[2px] border-black" />
+      </div>
+      <div className="w-full h-4 bg-black mt-1.5" />
+    </div>
+  );
+
+  /* SUNSET — Warm red-orange-yellow gradient */
+  if (id === "sunset") return (
+    <div className={`${c} flex flex-col items-center justify-center px-2`} style={{ background: "linear-gradient(180deg, #ff6b6b 0%, #ee5a24 40%, #f39c12 100%)" }}>
+      <div className="w-8 h-8 rounded-full bg-white/20 border-2 border-white/30" />
+      <div className="w-10 h-1 rounded-full bg-white/40 mt-1" />
+      <div className="w-full space-y-1 mt-2">
+        <div className="h-4 rounded-full bg-white/20 border border-white/15" />
+        <div className="h-4 rounded-full bg-white/20 border border-white/15" />
+      </div>
+      <div className="w-full h-3.5 rounded-full bg-white mt-1.5" />
+    </div>
+  );
+
+  /* TERMINAL — Green on black, monospace feel */
+  if (id === "terminal") return (
+    <div className={`${c} bg-[#0a0a0a] flex flex-col items-center pt-2 px-2`}>
+      <div className="absolute inset-0 opacity-[0.04]" style={{backgroundImage:"repeating-linear-gradient(0deg, #00ff00 0px, transparent 1px, transparent 3px)"}}/>
+      <div className="relative z-10 flex flex-col items-center w-full">
+        <div className="w-full h-1 bg-green-500/20 rounded-full mb-1.5" />
+        <div className="w-8 h-8 rounded border border-green-500/40 bg-green-500/5" />
+        <div className="w-10 h-1 rounded-full bg-green-400/40 mt-1" />
+        <div className="w-full space-y-1 mt-2">
+          <div className="h-4 rounded-sm border border-green-500/20 bg-green-500/5 flex items-center px-1"><div className="w-1 h-1 rounded-full bg-green-400 mr-1"/><div className="w-6 h-0.5 bg-green-400/30 rounded-full"/></div>
+          <div className="h-4 rounded-sm border border-green-500/20 bg-green-500/5 flex items-center px-1"><div className="w-1 h-1 rounded-full bg-green-400 mr-1"/><div className="w-8 h-0.5 bg-green-400/30 rounded-full"/></div>
+        </div>
+        <div className="w-full h-3.5 bg-green-500 rounded-sm mt-1.5" />
+      </div>
+    </div>
+  );
+
+  /* PASTEL — Soft pink/blue/teal gradient, playful */
+  if (id === "pastel") return (
+    <div className={`${c} flex flex-col items-center justify-center px-2`} style={{ background: "linear-gradient(180deg, #fce4ec 0%, #e8eaf6 50%, #e0f7fa 100%)" }}>
+      <div className="w-8 h-8 rounded-full bg-white/80 border-2 border-white shadow-sm" />
+      <div className="w-10 h-1 rounded-full bg-neutral-700/30 mt-1" />
+      <div className="w-full space-y-1 mt-2">
+        <div className="h-4 rounded-2xl bg-white/70 border border-white shadow-sm" />
+        <div className="h-4 rounded-2xl bg-white/70 border border-white shadow-sm" />
+      </div>
+      <div className="w-full h-3.5 rounded-full mt-1.5" style={{ background: "#6c5ce7" }} />
+    </div>
+  );
+
+  /* MAGAZINE — Editorial, left-aligned with divider lines */
+  if (id === "magazine") return (
+    <div className={`${c} bg-[#fafaf8] flex flex-col pt-3 px-2`}>
+      <div className="flex items-start gap-1.5 mb-1.5">
+        <div className="w-7 h-7 rounded-full bg-neutral-200 shrink-0" />
+        <div className="pt-0.5"><div className="w-10 h-1 bg-neutral-800 rounded-full"/><div className="w-6 h-0.5 bg-neutral-300 rounded-full mt-0.5"/></div>
+      </div>
+      <div className="w-full h-[1px] bg-neutral-200 my-1" />
+      <div className="space-y-0">
+        <div className="flex items-center justify-between py-1.5 border-b border-neutral-200"><div className="w-10 h-0.5 bg-neutral-600 rounded-full"/><div className="w-4 h-0.5 bg-neutral-400 rounded-full"/></div>
+        <div className="flex items-center justify-between py-1.5 border-b border-neutral-200"><div className="w-8 h-0.5 bg-neutral-600 rounded-full"/><div className="w-4 h-0.5 bg-neutral-400 rounded-full"/></div>
+        <div className="flex items-center justify-between py-1.5 border-b border-neutral-200"><div className="w-12 h-0.5 bg-neutral-600 rounded-full"/><div className="w-4 h-0.5 bg-neutral-400 rounded-full"/></div>
+      </div>
+      <div className="w-full h-4 rounded-full bg-neutral-900 mt-2" />
+    </div>
+  );
+
+  /* RETRO — Synthwave purple/pink, grid floor */
+  if (id === "retro") return (
+    <div className={`${c}`} style={{ background: "linear-gradient(180deg, #1a0533 0%, #2d1b69 50%, #0f0c29 100%)" }}>
+      <div className="absolute bottom-0 left-0 right-0 h-1/3 opacity-20" style={{backgroundImage:"linear-gradient(rgba(236,72,153,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(236,72,153,0.4) 1px, transparent 1px)", backgroundSize:"12px 12px", transform:"perspective(100px) rotateX(30deg)", transformOrigin:"bottom"}}/>
+      <div className="relative z-10 flex flex-col items-center justify-center h-full px-2">
+        <div className="w-8 h-8 rounded-full border-2 border-pink-500 shadow-[0_0_10px_rgba(236,72,153,0.4)]" />
+        <div className="w-10 h-1 rounded-full bg-pink-400/50 mt-1" />
+        <div className="w-full space-y-1 mt-2">
+          <div className="h-4 rounded-lg border border-pink-500/20 bg-pink-500/5" />
+          <div className="h-4 rounded-lg border border-pink-500/20 bg-pink-500/5" />
+        </div>
+        <div className="w-full h-3.5 rounded-full mt-1.5" style={{ background: "linear-gradient(90deg, #ec4899, #a855f7)" }} />
+      </div>
+    </div>
+  );
+
+  /* MIDNIGHT — Deep navy, gold accents */
+  if (id === "midnight") return (
+    <div className={`${c} bg-[#0a1628] flex flex-col items-center justify-center px-2`}>
+      <div className="w-8 h-8 rounded-full border-2 border-amber-600/50 bg-amber-600/5" />
+      <div className="w-10 h-1 rounded-full bg-amber-100/40 mt-1" />
+      <div className="w-full space-y-1 mt-2">
+        <div className="h-4 rounded-lg bg-white/[0.04] border border-amber-600/15" />
+        <div className="h-4 rounded-lg bg-white/[0.04] border border-amber-600/15" />
+      </div>
+      <div className="w-full h-3.5 rounded-full mt-1.5" style={{ background: "linear-gradient(135deg, #d4a574, #b8860b)" }} />
+    </div>
+  );
+
+  /* CLAY — Neumorphic, soft shadows */
+  if (id === "clay") return (
+    <div className={`${c} bg-[#e8e4df] flex flex-col items-center justify-center px-2`}>
+      <div className="w-8 h-8 rounded-xl bg-[#e8e4df]" style={{ boxShadow: "3px 3px 6px #c5c1bc, -3px -3px 6px #fff" }} />
+      <div className="w-10 h-1 rounded-full bg-neutral-500/30 mt-1.5" />
+      <div className="w-full space-y-1.5 mt-2">
+        <div className="h-5 rounded-xl bg-[#e8e4df]" style={{ boxShadow: "2px 2px 5px #c5c1bc, -2px -2px 5px #fff" }} />
+        <div className="h-5 rounded-xl bg-[#e8e4df]" style={{ boxShadow: "2px 2px 5px #c5c1bc, -2px -2px 5px #fff" }} />
+      </div>
+      <div className="w-full h-4 rounded-xl bg-neutral-600 mt-1.5" style={{ boxShadow: "2px 2px 5px #c5c1bc, -2px -2px 5px #fff" }} />
+    </div>
+  );
+
+  /* GRADIENT MESH — Colorful blurred blobs on black */
+  if (id === "gradient-mesh") return (
+    <div className={`${c} bg-black overflow-hidden`}>
+      <div className="absolute top-[-10%] left-[-5%] w-[50%] h-[40%] rounded-full bg-purple-600/40 blur-xl" />
+      <div className="absolute top-[30%] right-[-5%] w-[40%] h-[30%] rounded-full bg-blue-500/30 blur-xl" />
+      <div className="absolute bottom-[-5%] left-[20%] w-[40%] h-[30%] rounded-full bg-emerald-500/25 blur-xl" />
+      <div className="relative z-10 flex flex-col items-center justify-center h-full px-2">
+        <div className="w-8 h-8 rounded-full bg-white/15 border border-white/20" />
+        <div className="w-10 h-1 rounded-full bg-white/30 mt-1" />
+        <div className="w-full space-y-1 mt-2">
+          <div className="h-4 rounded-lg bg-white/[0.08] border border-white/10" />
+          <div className="h-4 rounded-lg bg-white/[0.08] border border-white/10" />
+        </div>
+        <div className="w-full h-3.5 rounded-full bg-white/15 border border-white/20 mt-1.5" />
       </div>
     </div>
   );
