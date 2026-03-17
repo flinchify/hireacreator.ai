@@ -68,6 +68,14 @@ const animations = [
     tag: "Smooth",
     tagColor: "text-blue-700 bg-blue-100",
   },
+  {
+    id: "trading-candles",
+    name: "Trading Candles",
+    desc: "Candlestick chart builds up, then your profile rises like a green candle.",
+    gradient: "from-emerald-300 via-green-100 to-lime-200",
+    tag: "Creative",
+    tagColor: "text-fuchsia-700 bg-fuchsia-100",
+  },
 ];
 
 async function purchase(type: string) {
@@ -209,6 +217,40 @@ function AnimationPreview({ id, playing }: { id: string; playing: boolean }) {
         <div className={base}>
           <div style={{ animation: "morphShape 1.5s ease-in-out forwards" }}>
             <MockCard />
+          </div>
+        </div>
+      );
+
+    case "trading-candles":
+      return (
+        <div className={base}>
+          <div className="flex items-end gap-[3px] h-full pt-6 pb-3 px-4">
+            {/* Candlestick chart */}
+            {[
+              { h: 45, body: 25, top: 8, color: "#ef4444", delay: 0 },
+              { h: 55, body: 30, top: 5, color: "#22c55e", delay: 0.08 },
+              { h: 35, body: 20, top: 10, color: "#ef4444", delay: 0.16 },
+              { h: 60, body: 28, top: 8, color: "#22c55e", delay: 0.24 },
+              { h: 40, body: 22, top: 6, color: "#ef4444", delay: 0.32 },
+              { h: 50, body: 32, top: 4, color: "#22c55e", delay: 0.40 },
+              { h: 30, body: 18, top: 5, color: "#ef4444", delay: 0.48 },
+              { h: 70, body: 40, top: 6, color: "#22c55e", delay: 0.56 },
+            ].map((c, i) => (
+              <div key={i} className="flex flex-col items-center flex-1" style={{ animation: `candleGrow 0.5s ease-out ${c.delay}s both` }}>
+                {/* Wick top */}
+                <div style={{ width: 1, height: c.top, background: c.color, opacity: 0.5 }} />
+                {/* Body */}
+                <div style={{ width: "100%", height: c.body, background: c.color, borderRadius: 2, minWidth: 6 }} />
+                {/* Wick bottom */}
+                <div style={{ width: 1, height: c.h - c.body - c.top, background: c.color, opacity: 0.5 }} />
+              </div>
+            ))}
+          </div>
+          {/* Profile card rises as the last green candle */}
+          <div className="absolute inset-0 flex items-center justify-center z-10">
+            <div style={{ animation: "candleReveal 0.6s ease-out 0.7s both" }}>
+              <MockCard />
+            </div>
           </div>
         </div>
       );
@@ -485,6 +527,17 @@ export function AnimationsContent() {
           40% { border-radius: 30%; transform: scale(0.8) rotate(90deg); opacity: 0.8; }
           70% { border-radius: 20%; transform: scale(1.05) rotate(20deg); opacity: 1; }
           100% { border-radius: 0; transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        /* Trading Candles */
+        @keyframes candleGrow {
+          0% { transform: scaleY(0); opacity: 0; transform-origin: bottom; }
+          100% { transform: scaleY(1); opacity: 1; transform-origin: bottom; }
+        }
+        @keyframes candleReveal {
+          0% { opacity: 0; transform: translateY(20px) scale(0.8); }
+          60% { opacity: 1; transform: translateY(-5px) scale(1.02); }
+          100% { opacity: 1; transform: translateY(0) scale(1); }
         }
       `}</style>
     </div>
