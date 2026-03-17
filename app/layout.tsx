@@ -40,8 +40,36 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const orgSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "HireACreator",
+    url: "https://hireacreator.ai",
+    logo: "https://hireacreator.ai/logo-h-180.png",
+    description: "The creator marketplace where brands book creators directly and creators keep 100% of their earnings. 0% commission for creators.",
+    foundingDate: "2026",
+    sameAs: ["https://x.com/hireacreatorAI"],
+  };
+
+  const websiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "HireACreator",
+    url: "https://hireacreator.ai",
+    description: "The creator marketplace where creators keep 100% of their earnings. Find and book creators for UGC, video, photography, design, and more.",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: "https://hireacreator.ai/browse?q={search_term_string}",
+      "query-input": "required name=search_term_string",
+    },
+  };
+
   return (
     <html lang="en">
+      <head>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }} />
+      </head>
       <body className="min-h-screen">
         <ClientLayout>{children}</ClientLayout>
       </body>

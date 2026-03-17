@@ -11,8 +11,11 @@ const footerLinks = {
   Resources: [
     { label: "Blog", href: "/blog" },
     { label: "API Docs", href: "/api" },
+    { label: "Compare", href: "/compare" },
   ],
-  Legal: [
+  Company: [
+    { label: "About", href: "/about" },
+    { label: "Contact", href: "/contact" },
     { label: "Privacy Policy", href: "/privacy" },
     { label: "Terms of Service", href: "/terms" },
   ],

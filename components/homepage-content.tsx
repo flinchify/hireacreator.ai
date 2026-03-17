@@ -47,13 +47,13 @@ export function HomepageContent({
         <div className="absolute inset-0 bg-gradient-to-b from-neutral-50 to-white" />
         <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="font-display text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight text-neutral-900 leading-[1.1]">
-            Your talent deserves<br className="hidden sm:block" /> more than a link in bio
+            The creator marketplace<br className="hidden sm:block" /> where you keep 100%
           </h1>
 
           <p className="mt-6 text-lg sm:text-xl text-neutral-500 max-w-2xl mx-auto leading-relaxed">
             Stop undercharging on Fiverr. Stop getting ghosted on DMs.
-            Get a profile that sells your work, a calendar that fills itself,
-            and brands that come to you.
+            Book creators directly, get a link-in-bio that converts,
+            and keep every dollar you earn — 0% commission, always.
           </p>
 
           <div className="mt-10 mb-2">
@@ -455,6 +455,47 @@ export function HomepageContent({
           </div>
         </div>
       </AnimateOnScroll>
+
+      {/* FAQ */}
+      <AnimateOnScroll as="section" className="bg-neutral-50 border-t border-neutral-100">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+          <h2 className="font-display text-3xl font-bold text-neutral-900 text-center mb-10">
+            Frequently asked questions
+          </h2>
+          <div className="space-y-3">
+            {[
+              { q: "Is HireACreator really free for creators?", a: "Yes. Creators pay 0% commission on every booking. Brands pay a small service fee, not creators. There are optional paid upgrades (Creator Pro at $19/mo) for premium features, but the core platform is free." },
+              { q: "How is this different from Fiverr or Upwork?", a: "Fiverr takes 20% of your earnings. Upwork takes 10-20%. HireACreator takes 0% from creators. You also get a built-in link-in-bio page, portfolio showcase, and direct bookings without back-and-forth messaging." },
+              { q: "How do payments work?", a: "Payments are processed via Stripe. Brands pay upfront, funds are held in escrow, and released to creators via Stripe Connect once work is delivered. No payout delays, no minimum thresholds." },
+              { q: "Can I use HireACreator as my link-in-bio?", a: "Absolutely. Every creator gets a customizable link-in-bio page with 8 templates, video backgrounds, button styling, and portfolio sections. Put it in your Instagram, TikTok, or Twitter bio." },
+              { q: "Do you have an API for AI agents?", a: "Yes. HireACreator offers both MCP (Model Context Protocol) and REST API access. AI agents can search creators, filter by category, and initiate bookings programmatically." },
+              { q: "What types of creators can join?", a: "UGC creators, videographers, photographers, social media managers, graphic designers, editors, TikTok creators, YouTube creators, Instagram creators — anyone selling creative services." },
+            ].map((item, i) => (
+              <details key={i} className="group p-5 rounded-xl bg-white border border-neutral-200 hover:border-neutral-300 transition-colors">
+                <summary className="text-sm font-semibold text-neutral-900 cursor-pointer list-none flex items-center justify-between">
+                  {item.q}
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="shrink-0 ml-2 text-neutral-400 group-open:rotate-180 transition-transform"><polyline points="6 9 12 15 18 9" /></svg>
+                </summary>
+                <p className="mt-3 text-sm text-neutral-500 leading-relaxed">{item.a}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </AnimateOnScroll>
+
+      {/* Homepage FAQ Schema */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: [
+          { "@type": "Question", name: "Is HireACreator really free for creators?", acceptedAnswer: { "@type": "Answer", text: "Yes. Creators pay 0% commission on every booking. Brands pay a small service fee, not creators." } },
+          { "@type": "Question", name: "How is HireACreator different from Fiverr or Upwork?", acceptedAnswer: { "@type": "Answer", text: "Fiverr takes 20% of your earnings. Upwork takes 10-20%. HireACreator takes 0% from creators. You also get a built-in link-in-bio page, portfolio showcase, and direct bookings." } },
+          { "@type": "Question", name: "How do payments work on HireACreator?", acceptedAnswer: { "@type": "Answer", text: "Payments are processed via Stripe. Brands pay upfront, funds are held in escrow, and released to creators via Stripe Connect once work is delivered." } },
+          { "@type": "Question", name: "Can I use HireACreator as my link-in-bio?", acceptedAnswer: { "@type": "Answer", text: "Yes. Every creator gets a customizable link-in-bio page with 8 templates, video backgrounds, button styling, and portfolio sections." } },
+          { "@type": "Question", name: "Does HireACreator have an API for AI agents?", acceptedAnswer: { "@type": "Answer", text: "Yes. HireACreator offers both MCP (Model Context Protocol) and REST API access for AI agents to search creators, filter by category, and initiate bookings." } },
+          { "@type": "Question", name: "What types of creators can join HireACreator?", acceptedAnswer: { "@type": "Answer", text: "UGC creators, videographers, photographers, social media managers, graphic designers, editors, TikTok creators, YouTube creators, Instagram creators — anyone selling creative services." } },
+        ],
+      })}} />
 
       {/* Final CTA */}
       <AnimateOnScroll as="section" className="bg-white border-t border-neutral-100">
