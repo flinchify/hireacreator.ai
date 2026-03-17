@@ -4,6 +4,13 @@ import { getGoogleAuthUrl } from "@/lib/google-auth";
 import { checkIpRateLimit } from "@/lib/login-rate-limit";
 
 export async function GET(request: Request) {
+  // Block in-app browsers — Google OAuth won't work in them
+  const ua = request.headers.get("user-agent") || "";
+  if (/FBAN|FBAV|Instagram|Line\/|Snapchat|Twitter|TikTok|Musical|BytedanceWebview|Telegram/i.test(ua)) {
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://hireacreator.ai";
+    return NextResponse.redirect(`${appUrl}/?auth_error=inapp_browser`);
+  }
+
   // Rate limit
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "0.0.0.0";
   if (!checkIpRateLimit(ip)) {
