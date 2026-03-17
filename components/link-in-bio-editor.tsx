@@ -119,102 +119,315 @@ const CARD_STYLES = [
 
 /* ── Mini Preview ── */
 function MiniPreview({ settings, creator }: { settings: Settings; creator: any }) {
-  const [animKey, setAnimKey] = useState(0);
   const dark = TEMPLATES.find(t => t.id === settings.template)?.dark ?? false;
   const accent = settings.accent || "#6366f1";
   const btnRadius = BUTTON_SHAPES.find(s => s.id === settings.buttonShape)?.radius || "16px";
   const fontFamily = FONTS.find(f => f.id === settings.font)?.css || "'Plus Jakarta Sans', sans-serif";
   const textCol = settings.textColor || (dark ? "#ffffff" : "#171717");
+  const textMuted = settings.textColor ? `${settings.textColor}99` : (dark ? "rgba(255,255,255,0.5)" : "rgba(23,23,23,0.5)");
+
+  const name = creator.full_name || creator.name || "Your Name";
+  const headline = creator.headline || "Creator / Content Maker";
+  const avatar = creator.avatar_url || creator.avatar;
+  const socials = (creator.socials || []).length > 0 ? creator.socials : [{ platform: "instagram" }, { platform: "tiktok" }, { platform: "youtube" }];
+  const services = creator.services?.length > 0 ? creator.services.slice(0, 3) : [
+    { title: "UGC Video Package", price: 299 },
+    { title: "Product Photography", price: 199 },
+    { title: "Social Media Audit", price: 99 },
+  ];
 
   function getBgStyle(): React.CSSProperties {
     if (settings.bgType === "gradient" && settings.bgValue) return { background: settings.bgValue };
     if (settings.bgType === "solid" && settings.bgValue) return { background: settings.bgValue };
     if (settings.bgType === "image" && settings.bgValue) return { backgroundImage: `url(${settings.bgValue})`, backgroundSize: "cover", backgroundPosition: "center" };
     if (settings.bgType === "photos" && settings.bgImages.length > 0) return {};
-    if (dark) return { background: "#0a0a0a" };
-    return { background: "#e5e5e5" };
+    return {};
+  }
+  const hasBgMedia = settings.bgType === "image" || settings.bgType === "video" || settings.bgType === "photos";
+
+  function Avatar({ size, shape, borderCol }: { size: string; shape?: string; borderCol?: string }) {
+    const cls = shape === "square" ? "rounded-2xl" : "rounded-full";
+    return avatar
+      ? <img src={avatar} alt="" className={`${size} ${cls} object-cover shadow-lg`} style={{ border: `2px solid ${borderCol || (dark ? "rgba(255,255,255,0.2)" : "#fff")}` }} />
+      : <div className={`${size} ${cls} flex items-center justify-center text-lg font-bold shadow-lg ${dark ? "bg-white/10 text-white/60" : "bg-neutral-200 text-neutral-400"}`} style={{ border: `2px solid ${borderCol || (dark ? "rgba(255,255,255,0.2)" : "#fff")}` }}>{name[0]}</div>;
   }
 
-  const name = creator.full_name || creator.name || "Your Name";
-  const headline = creator.headline || "Creator / Content Maker";
-  const avatar = creator.avatar_url || creator.avatar;
+  function Socials({ light, shape }: { light?: boolean; shape?: string }) {
+    const cls = shape === "square" ? "rounded-lg" : "rounded-full";
+    return (
+      <div className="flex gap-1.5 flex-wrap justify-center">
+        {socials.slice(0, 5).map((s: any, i: number) => (
+          <div key={i} className={`w-7 h-7 ${cls} flex items-center justify-center ${light ? "bg-white/10 border border-white/[0.08]" : "bg-neutral-100"}`}>
+            <PlatformIcon platform={s.platform} size={14} className={light ? "text-white/60" : "text-neutral-500"} />
+          </div>
+        ))}
+      </div>
+    );
+  }
 
-  return (
-    <div className="relative w-full min-h-full overflow-hidden" style={{ ...getBgStyle(), fontFamily }}>
-      {settings.bgType === "video" && settings.bgVideo && (
-        <video src={settings.bgVideo} autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover" />
-      )}
-      {/* Multi-photo collage background */}
+  function ServiceCard({ s, i }: { s: any; i: number }) {
+    const cardStyle = settings.cardStyle;
+    const cardBg = cardStyle === "filled" ? (dark ? "rgba(255,255,255,0.12)" : accent) :
+                   cardStyle === "glass" ? (dark ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.8)") :
+                   cardStyle === "shadow" ? (dark ? "rgba(255,255,255,0.08)" : "#fff") :
+                   dark ? "rgba(255,255,255,0.08)" : "#fff";
+    const cardBorder = cardStyle === "outlined" ? `1px solid ${dark ? "rgba(255,255,255,0.15)" : accent}` :
+                       cardStyle === "shadow" ? "none" : `1px solid ${dark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)"}`;
+    const cardShadow = cardStyle === "shadow" ? "0 4px 20px rgba(0,0,0,0.12)" : "none";
+    return (
+      <div className="w-full py-2.5 px-3 text-[11px] font-medium text-left" style={{ borderRadius: btnRadius, background: cardBg, border: cardBorder, boxShadow: cardShadow, color: cardStyle === "filled" && !dark ? "#fff" : textCol, backdropFilter: cardStyle === "glass" ? "blur(10px)" : undefined }}>
+        <div className="flex items-center justify-between"><span>{s.title}</span><span style={{ opacity: 0.4 }}>${s.price}</span></div>
+      </div>
+    );
+  }
+
+  function CTAButton({ text, altStyle }: { text?: string; altStyle?: React.CSSProperties }) {
+    return <button className="w-full py-2.5 text-[11px] font-bold" style={altStyle || { borderRadius: btnRadius, background: dark ? "#fff" : "#171717", color: dark ? "#171717" : "#fff" }}>{text || "View Full Profile"}</button>;
+  }
+
+  // Shared bg layers
+  function BgLayers() {
+    return <>
+      {settings.bgType === "video" && settings.bgVideo && <video src={settings.bgVideo} autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover" />}
       {settings.bgType === "photos" && settings.bgImages.length > 0 && (
         <div className="absolute inset-0 grid grid-cols-2 gap-0.5 opacity-30">
-          {settings.bgImages.slice(0, 10).map((img, i) => (
-            <div key={i} className="overflow-hidden">
-              <img src={img} alt="" className="w-full h-full object-cover" onError={e => (e.currentTarget.style.display = "none")} />
-            </div>
-          ))}
+          {settings.bgImages.slice(0, 10).map((img, i) => <div key={i} className="overflow-hidden"><img src={img} alt="" className="w-full h-full object-cover" onError={e => (e.currentTarget.style.display = "none")} /></div>)}
         </div>
       )}
-      {(settings.bgType === "video" || settings.bgType === "image" || settings.bgType === "photos") && (
-        <div className="absolute inset-0 bg-black/40" />
-      )}
-      <div className="relative z-10 flex flex-col items-center pt-10 px-4 pb-8">
-        <div className={`w-16 h-16 rounded-full overflow-hidden border-2 shadow-lg`} style={{ borderColor: dark ? "rgba(255,255,255,0.2)" : "#fff" }}>
-          {avatar ? <img src={avatar} alt="" className="w-full h-full object-cover" /> : <div className={`w-full h-full flex items-center justify-center text-xl font-bold ${dark ? "bg-white/10 text-white/60" : "bg-neutral-200 text-neutral-400"}`}>{name[0]}</div>}
+      {hasBgMedia && <div className="absolute inset-0 bg-black/40" />}
+    </>;
+  }
+
+  const tpl = settings.template;
+
+  /* ═══ MINIMAL — White card on grey, cover, centered avatar ═══ */
+  if (tpl === "minimal") return (
+    <div className="relative w-full min-h-full bg-neutral-200 flex items-start justify-center sm:py-2 sm:px-2" style={{ fontFamily, ...((hasBgMedia || settings.bgType === "gradient" || settings.bgType === "solid") ? getBgStyle() : {}) }}>
+      <BgLayers />
+      <div className="relative z-10 w-full sm:max-w-[400px] bg-white sm:rounded-2xl shadow-xl overflow-hidden">
+        <div className="h-20 bg-gradient-to-br from-neutral-100 to-neutral-200 relative">
+          {creator.cover_url && <img src={creator.cover_url} alt="" className="w-full h-full object-cover" />}
+          <svg viewBox="0 0 100 12" className="absolute -bottom-[1px] left-0 w-full" preserveAspectRatio="none"><path d="M0 12 Q25 2 50 9 Q75 16 100 5 L100 12 Z" fill="white"/></svg>
         </div>
-        <h2 className="mt-3 text-sm font-bold" style={{ color: textCol }}>{name}</h2>
-        <p className="text-[10px] mt-0.5" style={{ color: textCol, opacity: 0.5 }}>{headline}</p>
-        {/* Socials */}
-        <div className="flex gap-1.5 mt-3">
-          {(creator.socials || []).length > 0
-            ? (creator.socials || []).slice(0, 6).map((s: any, i: number) => (
-                <div key={i} className={`w-7 h-7 rounded-full flex items-center justify-center ${dark ? "bg-white/10" : "bg-neutral-200/80"}`}>
-                  <PlatformIcon platform={s.platform} size={14} className={dark ? "text-white/60" : "text-neutral-500"} />
-                </div>
-              ))
-            : ["instagram", "tiktok", "youtube"].map(p => (
-                <div key={p} className={`w-7 h-7 rounded-full flex items-center justify-center ${dark ? "bg-white/10" : "bg-neutral-200/80"}`}>
-                  <PlatformIcon platform={p} size={14} className={dark ? "text-white/60" : "text-neutral-500"} />
-                </div>
-              ))
+        <div className="flex flex-col items-center px-4 pb-6 -mt-8">
+          <Avatar size="w-16 h-16" borderCol="#fff" />
+          <h2 className="mt-2 text-sm font-bold" style={{ color: textCol }}>{name}</h2>
+          <p className="text-[10px]" style={{ color: textMuted }}>{headline}</p>
+          <div className="mt-3"><Socials /></div>
+          <div className="w-full mt-4 space-y-2">{services.map((s: any, i: number) => <ServiceCard key={i} s={s} i={i} />)}</div>
+          <div className="w-full mt-4"><CTAButton /></div>
+        </div>
+      </div>
+    </div>
+  );
+
+  /* ═══ GLASS — Full-bleed gradient, frosted cards ═══ */
+  if (tpl === "glass") return (
+    <div className="relative w-full min-h-full overflow-hidden" style={{ fontFamily, background: (settings.bgType === "gradient" && settings.bgValue) ? settings.bgValue : (settings.bgType === "solid" && settings.bgValue) ? settings.bgValue : "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" }}>
+      <BgLayers />
+      <div className="absolute top-10 right-4 w-24 h-24 rounded-full bg-pink-400/20 blur-2xl" />
+      <div className="absolute bottom-10 left-2 w-32 h-32 rounded-full bg-blue-400/15 blur-3xl" />
+      <div className="relative z-10 flex flex-col items-center pt-10 px-5 pb-8 max-w-[440px] mx-auto">
+        <Avatar size="w-16 h-16" borderCol="rgba(255,255,255,0.25)" />
+        <h2 className="mt-3 text-sm font-bold text-white" style={{ color: textCol }}>{name}</h2>
+        <p className="text-[10px] text-white/50" style={{ color: textMuted }}>{headline}</p>
+        <div className="mt-3"><Socials light /></div>
+        <div className="w-full mt-4 space-y-2">{services.map((s: any, i: number) => (
+          <div key={i} className="w-full py-2.5 px-3 text-[11px] font-medium text-center" style={{ borderRadius: btnRadius, background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.08)", color: textCol, backdropFilter: "blur(12px)" }}>
+            <div className="flex items-center justify-between"><span>{s.title}</span><span style={{ opacity: 0.4 }}>${s.price}</span></div>
+          </div>
+        ))}</div>
+        <div className="w-full mt-4"><CTAButton altStyle={{ borderRadius: btnRadius, background: "#fff", color: "#171717", width: "100%", padding: "10px 0", fontSize: "11px", fontWeight: 700 }} /></div>
+      </div>
+    </div>
+  );
+
+  /* ═══ BOLD — Dark, big square avatar, accent accent accent ═══ */
+  if (tpl === "bold") return (
+    <div className="relative w-full min-h-full bg-neutral-950 overflow-hidden" style={{ fontFamily, ...((settings.bgType !== "gradient" && settings.bgType !== "solid") ? {} : getBgStyle()) }}>
+      <BgLayers />
+      <div className="absolute top-0 right-0 w-1/3 h-full -skew-x-12 translate-x-8" style={{ background: `${accent}10` }} />
+      <div className="relative z-10 flex flex-col items-center pt-8 px-5 pb-8 max-w-[440px] mx-auto">
+        <Avatar size="w-20 h-20" shape="square" borderCol={accent} />
+        <h2 className="mt-3 text-base font-black text-white tracking-tight" style={{ color: textCol }}>{name}</h2>
+        <p className="text-[10px] mt-0.5" style={{ color: accent }}>@{creator.slug?.split("-")[0] || "creator"}</p>
+        <p className="text-[10px] mt-1" style={{ color: textMuted }}>{headline}</p>
+        <div className="mt-3"><Socials light shape="square" /></div>
+        <div className="w-8 h-[2px] mt-4 mb-3" style={{ background: accent }} />
+        <div className="w-full space-y-2">{services.map((s: any, i: number) => (
+          <div key={i} className="w-full py-2.5 px-3 text-[11px] font-medium text-left bg-neutral-900 border border-neutral-800" style={{ borderRadius: btnRadius, color: textCol }}>
+            <div className="flex items-center justify-between"><span>{s.title}</span><span style={{ color: accent }}>${s.price}</span></div>
+          </div>
+        ))}</div>
+        <div className="w-full mt-4"><CTAButton altStyle={{ borderRadius: btnRadius, background: accent, color: "#fff", width: "100%", padding: "10px 0", fontSize: "11px", fontWeight: 700 }} /></div>
+      </div>
+    </div>
+  );
+
+  /* ═══ NEON — Black, glowing ring, scanlines ═══ */
+  if (tpl === "neon") return (
+    <div className="relative w-full min-h-full bg-black overflow-hidden" style={{ fontFamily }}>
+      <BgLayers />
+      <div className="absolute inset-0 opacity-[0.03]" style={{backgroundImage:"repeating-linear-gradient(0deg, " + accent + " 0px, transparent 1px, transparent 4px)"}}/>
+      <div className="absolute top-2 left-2 w-4 h-[1px]" style={{background:`${accent}50`}}/><div className="absolute top-2 left-2 w-[1px] h-4" style={{background:`${accent}50`}}/>
+      <div className="absolute bottom-2 right-2 w-4 h-[1px]" style={{background:`${accent}50`}}/><div className="absolute bottom-2 right-2 w-[1px] h-4" style={{background:`${accent}50`}}/>
+      <div className="relative z-10 flex flex-col items-center pt-8 px-5 pb-8 max-w-[440px] mx-auto">
+        <div className="relative">
+          <div className="absolute inset-0 rounded-full scale-[1.35]" style={{ border: `1px solid ${accent}30` }} />
+          {avatar
+            ? <img src={avatar} alt="" className="w-16 h-16 rounded-full object-cover" style={{ border: `2px solid ${accent}`, boxShadow: `0 0 20px ${accent}40` }} />
+            : <div className="w-16 h-16 rounded-full bg-neutral-900 flex items-center justify-center text-lg font-bold text-white/50" style={{ border: `2px solid ${accent}`, boxShadow: `0 0 20px ${accent}40` }}>{name[0]}</div>
           }
         </div>
-        {/* Buttons */}
-        <div className="w-full mt-4 space-y-2 px-2">
-          {(creator.services?.length > 0 ? creator.services.slice(0, 3) : [
-            { title: "UGC Video Package", price: 299 },
-            { title: "Product Photography", price: 199 },
-            { title: "Social Media Audit", price: 99 },
-          ]).map((s: any, i: number) => {
-            const cardBg = settings.cardStyle === "filled" ? (dark ? "rgba(255,255,255,0.12)" : accent) :
-                           settings.cardStyle === "glass" ? (dark ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.8)") :
-                           settings.cardStyle === "shadow" ? (dark ? "rgba(255,255,255,0.08)" : "#fff") :
-                           dark ? "rgba(255,255,255,0.08)" : "#fff";
-            const cardBorder = settings.cardStyle === "outlined" ? `1px solid ${dark ? "rgba(255,255,255,0.15)" : accent}` :
-                               settings.cardStyle === "shadow" ? "none" : `1px solid ${dark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)"}`;
-            const cardShadow = settings.cardStyle === "shadow" ? "0 4px 20px rgba(0,0,0,0.12)" : "none";
-            return (
-              <button key={i} onClick={() => setAnimKey(k => k + 1)} className="w-full py-2.5 px-3 text-[11px] font-medium transition-all text-left" style={{
-                borderRadius: btnRadius,
-                background: cardBg,
-                border: cardBorder,
-                boxShadow: cardShadow,
-                color: settings.cardStyle === "filled" && !dark ? "#fff" : textCol,
-                backdropFilter: settings.cardStyle === "glass" ? "blur(10px)" : undefined,
-                animation: animKey > 0 ? getAnim(settings.buttonAnim) : undefined,
-              }}>
-                <div className="flex items-center justify-between">
-                  <span>{s.title}</span>
-                  <span style={{ opacity: 0.4 }}>${s.price}</span>
-                </div>
-              </button>
-            );
-          })}
+        <h2 className="mt-3 text-sm font-bold text-white" style={{ color: textCol }}>{name}</h2>
+        <p className="text-[10px] mt-0.5" style={{ color: accent }}>@{creator.slug?.split("-")[0] || "creator"}</p>
+        <p className="text-[10px] mt-1" style={{ color: textMuted }}>{headline}</p>
+        <div className="flex gap-1.5 mt-3">{socials.slice(0, 5).map((s: any, i: number) => (
+          <div key={i} className="w-7 h-7 rounded-full flex items-center justify-center" style={{ border: `1px solid ${accent}30`, background: `${accent}10` }}>
+            <PlatformIcon platform={s.platform} size={14} className="text-neutral-300" />
+          </div>
+        ))}</div>
+        <div className="w-full mt-4 space-y-2">{services.map((s: any, i: number) => (
+          <div key={i} className="w-full py-2.5 px-3 text-[11px] font-medium text-center" style={{ borderRadius: btnRadius, border: `1px solid ${accent}25`, background: `${accent}08`, boxShadow: `0 0 12px ${accent}10`, color: textCol }}>
+            <div className="flex items-center justify-between"><span>{s.title}</span><span style={{ color: `${accent}99` }}>${s.price}</span></div>
+          </div>
+        ))}</div>
+        <div className="w-full mt-4"><CTAButton altStyle={{ borderRadius: btnRadius, background: accent, color: "#000", width: "100%", padding: "10px 0", fontSize: "11px", fontWeight: 700, boxShadow: `0 0 20px ${accent}40` }} /></div>
+      </div>
+    </div>
+  );
+
+  /* ═══ COLLAGE — Photo mosaic bg, frosted card ═══ */
+  if (tpl === "collage") return (
+    <div className="relative w-full min-h-full overflow-hidden" style={{ fontFamily }}>
+      {settings.bgType === "photos" && settings.bgImages.length > 0 ? (
+        <div className="absolute inset-[-5%] grid grid-cols-3 auto-rows-fr rotate-[-4deg] scale-110">
+          {settings.bgImages.slice(0, 12).map((img, i) => <div key={i} className="overflow-hidden"><img src={img} alt="" className="w-full h-full object-cover brightness-[0.4] saturate-75" /></div>)}
         </div>
-        <button className="mt-4 px-6 py-2.5 text-[11px] font-bold" style={{
-          borderRadius: btnRadius,
-          background: settings.template === "bold" || settings.template === "neon" ? accent : dark ? "#fff" : "#171717",
-          color: settings.template === "bold" || settings.template === "neon" ? "#fff" : dark ? "#171717" : "#fff",
-        }}>View Full Profile</button>
+      ) : (
+        <div className="absolute inset-0 bg-gradient-to-br from-neutral-900 to-neutral-950" />
+      )}
+      <div className="absolute inset-0 bg-black/30" />
+      <div className="relative z-10 flex flex-col items-center pt-10 px-5 pb-8 max-w-[440px] mx-auto">
+        <div className="w-full bg-black/30 rounded-2xl p-5 border border-white/10 flex flex-col items-center" style={{backdropFilter:"blur(12px)"}}>
+          <Avatar size="w-14 h-14" shape="square" borderCol="rgba(255,255,255,0.2)" />
+          <h2 className="mt-2 text-sm font-bold text-white" style={{ color: textCol }}>{name}</h2>
+          <p className="text-[10px] text-white/50" style={{ color: textMuted }}>{headline}</p>
+          <div className="mt-2"><Socials light /></div>
+        </div>
+        <div className="w-full mt-3 space-y-2">{services.map((s: any, i: number) => (
+          <div key={i} className="w-full py-2.5 px-3 text-[11px] font-medium text-center" style={{ borderRadius: btnRadius, background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", backdropFilter: "blur(8px)", color: textCol }}>
+            <div className="flex items-center justify-between"><span>{s.title}</span><span style={{ opacity: 0.4 }}>${s.price}</span></div>
+          </div>
+        ))}</div>
+        <div className="w-full mt-4"><CTAButton altStyle={{ borderRadius: btnRadius, background: "rgba(255,255,255,0.9)", color: "#171717", width: "100%", padding: "10px 0", fontSize: "11px", fontWeight: 700 }} /></div>
+      </div>
+    </div>
+  );
+
+  /* ═══ BENTO — Dark grid layout ═══ */
+  if (tpl === "bento") return (
+    <div className="relative w-full min-h-full bg-neutral-950 p-3" style={{ fontFamily }}>
+      <BgLayers />
+      <div className="relative z-10 max-w-[440px] mx-auto grid grid-cols-4 gap-2 auto-rows-[60px]">
+        {/* Identity card */}
+        <div className="col-span-4 row-span-2 rounded-2xl overflow-hidden relative flex items-center gap-3 px-4" style={{ background: `${accent}10`, border: `1px solid ${accent}20` }}>
+          <Avatar size="w-12 h-12" shape="square" borderCol={`${accent}40`} />
+          <div>
+            <h2 className="text-sm font-bold text-white" style={{ color: textCol }}>{name}</h2>
+            <p className="text-[9px]" style={{ color: textMuted }}>{headline}</p>
+          </div>
+        </div>
+        {/* Socials */}
+        <div className="col-span-2 row-span-1 rounded-xl bg-neutral-900 border border-neutral-800 flex items-center justify-center gap-1.5">
+          {socials.slice(0, 4).map((s: any, i: number) => (
+            <div key={i} className="w-6 h-6 rounded bg-neutral-800 flex items-center justify-center"><PlatformIcon platform={s.platform} size={12} className="text-neutral-400" /></div>
+          ))}
+        </div>
+        {/* Location */}
+        <div className="col-span-2 row-span-1 rounded-xl bg-neutral-900 border border-neutral-800 flex items-center justify-center">
+          <span className="text-[9px]" style={{ color: textMuted }}>{creator.location || "hireacreator.ai"}</span>
+        </div>
+        {/* Service cards */}
+        {services.slice(0, 2).map((s: any, i: number) => (
+          <div key={i} className="col-span-2 row-span-1 rounded-xl px-3 flex items-center justify-between" style={{ border: `1px solid ${accent}25`, background: `${accent}08` }}>
+            <span className="text-[10px] font-medium truncate" style={{ color: textCol }}>{s.title}</span>
+            <span className="text-[9px]" style={{ color: textMuted }}>${s.price}</span>
+          </div>
+        ))}
+        {/* CTA */}
+        <div className="col-span-4 row-span-1 rounded-xl flex items-center justify-center font-bold text-[11px] text-white" style={{ background: accent, borderRadius: btnRadius }}>View Full Profile</div>
+      </div>
+    </div>
+  );
+
+  /* ═══ SHOWCASE — Light, 2-col grid ═══ */
+  if (tpl === "showcase") return (
+    <div className="relative w-full min-h-full bg-neutral-100 flex items-start justify-center sm:py-2 sm:px-2" style={{ fontFamily }}>
+      <BgLayers />
+      <div className="relative z-10 w-full sm:max-w-[400px] bg-white sm:rounded-2xl shadow-xl overflow-hidden">
+        <div className="px-4 pb-6 pt-6 text-center">
+          <Avatar size="w-14 h-14" shape="square" borderCol="transparent" />
+          <h2 className="mt-2 text-sm font-bold" style={{ color: textCol }}>{name}</h2>
+          <p className="text-[10px]" style={{ color: textMuted }}>{headline}</p>
+          <div className="mt-3"><Socials shape="square" /></div>
+          <div className="grid grid-cols-2 gap-2 mt-4">{services.map((s: any, i: number) => (
+            <div key={i} className="rounded-xl bg-neutral-50 border border-neutral-200 p-3 text-left">
+              <div className="text-[11px] font-semibold" style={{ color: textCol }}>{s.title}</div>
+              <div className="text-[9px] mt-1" style={{ color: textMuted }}>${s.price}</div>
+            </div>
+          ))}</div>
+          <div className="mt-4"><CTAButton /></div>
+        </div>
+      </div>
+    </div>
+  );
+
+  /* ═══ SPLIT — Left hero, right content ═══ */
+  if (tpl === "split") return (
+    <div className="relative w-full min-h-full bg-white" style={{ fontFamily }}>
+      <div className="min-h-full flex">
+        <div className="w-[42%] relative">
+          {creator.cover_url ? <img src={creator.cover_url} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full bg-gradient-to-b from-neutral-300 to-neutral-400" />}
+          <svg viewBox="0 0 12 100" className="absolute top-0 -right-[1px] h-full w-3" preserveAspectRatio="none"><polygon points="0,0 12,6 12,94 0,100" fill="white"/></svg>
+        </div>
+        <div className="w-[58%] flex flex-col px-4 py-6 relative">
+          <div className="absolute -left-5 top-4">
+            <Avatar size="w-10 h-10" borderCol="#fff" />
+          </div>
+          <div className="ml-4">
+            <h2 className="text-sm font-bold" style={{ color: textCol }}>{name}</h2>
+            <p className="text-[9px]" style={{ color: textMuted }}>{headline}</p>
+          </div>
+          <div className="flex flex-wrap gap-1 mt-3">{socials.slice(0, 4).map((s: any, i: number) => (
+            <div key={i} className="flex items-center gap-1 px-2 py-1 rounded-full bg-neutral-50 border border-neutral-200">
+              <PlatformIcon platform={s.platform} size={10} className="text-neutral-500" />
+              <span className="text-[8px] text-neutral-600 font-medium">{s.handle || s.platform}</span>
+            </div>
+          ))}</div>
+          <div className="mt-3 space-y-1.5 flex-1">{services.map((s: any, i: number) => (
+            <div key={i} className="flex items-center justify-between px-3 py-2 bg-neutral-50 border border-neutral-200" style={{ borderRadius: btnRadius }}>
+              <span className="text-[10px] font-medium" style={{ color: textCol }}>{s.title}</span>
+              <span className="text-[9px]" style={{ color: textMuted }}>${s.price}</span>
+            </div>
+          ))}</div>
+          <div className="mt-3"><CTAButton /></div>
+        </div>
+      </div>
+    </div>
+  );
+
+  /* ═══ FALLBACK — generic centered layout ═══ */
+  return (
+    <div className="relative w-full min-h-full overflow-hidden" style={{ fontFamily, background: dark ? "#0a0a0a" : "#e5e5e5", ...getBgStyle() }}>
+      <BgLayers />
+      <div className="relative z-10 flex flex-col items-center pt-10 px-4 pb-8">
+        <Avatar size="w-16 h-16" />
+        <h2 className="mt-3 text-sm font-bold" style={{ color: textCol }}>{name}</h2>
+        <p className="text-[10px]" style={{ color: textMuted }}>{headline}</p>
+        <div className="mt-3"><Socials light={dark} /></div>
+        <div className="w-full mt-4 space-y-2">{services.map((s: any, i: number) => <ServiceCard key={i} s={s} i={i} />)}</div>
+        <div className="w-full mt-4"><CTAButton /></div>
       </div>
     </div>
   );
