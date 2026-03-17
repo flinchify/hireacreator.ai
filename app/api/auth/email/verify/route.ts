@@ -41,11 +41,12 @@ export async function POST(request: Request) {
       // Create new user
       const emailPrefix = cleanEmail.split("@")[0].replace(/[^a-z0-9]/gi, "-").toLowerCase().slice(0, 20);
       const slug = emailPrefix + "-" + crypto.randomBytes(4).toString("hex");
-      const refCode = crypto.randomBytes(6).toString("hex"); // unique random code
+      const refCode = crypto.randomBytes(6).toString("hex");
+      const defaultName = cleanEmail.split("@")[0].replace(/[^a-z0-9]/gi, " ").replace(/\b\w/g, (c: string) => c.toUpperCase()).trim() || "New User";
 
       users = await sql`
-        INSERT INTO users (email, slug, role, email_verified, email_verified_at, referral_code)
-        VALUES (${cleanEmail}, ${slug}, ${authCode.role || 'creator'}, true, NOW(), ${refCode})
+        INSERT INTO users (email, full_name, slug, role, email_verified, email_verified_at, referral_code)
+        VALUES (${cleanEmail}, ${defaultName}, ${slug}, ${authCode.role || 'creator'}, true, NOW(), ${refCode})
         RETURNING *
       `;
 
