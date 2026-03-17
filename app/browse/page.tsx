@@ -1,17 +1,30 @@
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { getCreators } from "@/lib/queries";
+import { getDb } from "@/lib/db";
 import { CATEGORIES } from "@/lib/types";
 import type { Creator } from "@/lib/types";
 import { BrowseContent } from "@/components/browse-content";
 import { BrowseEmptyState } from "@/components/browse-empty-state";
 
+export const dynamic = "force-dynamic";
+
 export default async function BrowsePage() {
-  let creators: Creator[] = [];
+  // Check if marketplace is open
+  let marketplaceOpen = true;
   try {
-    creators = await getCreators();
-  } catch {
-    creators = [];
+    const sql = getDb();
+    const rows = await sql`SELECT value FROM site_settings WHERE key = 'marketplace_open'`;
+    if (rows.length > 0) marketplaceOpen = rows[0].value === "true";
+  } catch {}
+
+  let creators: Creator[] = [];
+  if (marketplaceOpen) {
+    try {
+      creators = await getCreators();
+    } catch {
+      creators = [];
+    }
   }
 
   return (
@@ -29,7 +42,9 @@ export default async function BrowsePage() {
           </p>
         </div>
 
-        {creators.length > 0 ? (
+        {!marketplaceOpen ? (
+          <BrowseEmptyState />
+        ) : creators.length > 0 ? (
           <BrowseContent creators={creators} categories={[...CATEGORIES]} />
         ) : (
           <BrowseEmptyState />

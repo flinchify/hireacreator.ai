@@ -369,120 +369,6 @@ function EditButton({ onClick, label }: { onClick: () => void; label?: string })
   );
 }
 
-/* ───── Link in Bio Editor ───── */
-const TEMPLATES = [
-  { id: "minimal", name: "Minimal", desc: "Clean white card", preview: "bg-neutral-200" },
-  { id: "glass", name: "Glass", desc: "Frosted on blurred bg", preview: "bg-gradient-to-br from-neutral-800 to-neutral-900" },
-  { id: "bold", name: "Bold", desc: "Dark with accent color", preview: "bg-neutral-950" },
-  { id: "showcase", name: "Showcase", desc: "2-column media grid", preview: "bg-neutral-100" },
-  { id: "neon", name: "Neon", desc: "Futuristic glow", preview: "bg-black" },
-  { id: "collage", name: "Collage", desc: "Portfolio as background", preview: "bg-gradient-to-br from-neutral-700 to-neutral-900" },
-  { id: "bento", name: "Bento", desc: "Apple-style grid", preview: "bg-neutral-950" },
-  { id: "split", name: "Split", desc: "Magazine hero layout", preview: "bg-white border border-neutral-200" },
-];
-
-const ACCENT_COLORS = [
-  "#171717", "#6366f1", "#22d3ee", "#ef4444", "#f97316",
-  "#22c55e", "#a855f7", "#ec4899", "#eab308", "#14b8a6",
-];
-
-function LinkInBioEditor({ user }: { user: any }) {
-  const [template, setTemplate] = useState(user.linkBioTemplate || "minimal");
-  const [accent, setAccent] = useState(user.linkBioAccent || "#171717");
-  const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
-
-  async function save(newTemplate?: string, newAccent?: string) {
-    setSaving(true);
-    const t = newTemplate || template;
-    const a = newAccent || accent;
-    await fetch("/api/profile", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ link_bio_template: t, link_bio_accent: a }),
-    });
-    setSaving(false);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
-  }
-
-  function selectTemplate(id: string) {
-    setTemplate(id);
-    save(id, accent);
-  }
-
-  function selectAccent(color: string) {
-    setAccent(color);
-    save(template, color);
-  }
-
-  const showAccent = ["bold", "neon", "bento"].includes(template);
-
-  return (
-    <Card className="p-4 sm:p-5">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="font-display font-semibold text-neutral-900 text-sm">Link in Bio</h3>
-        <div className="flex items-center gap-2">
-          {saved && <span className="text-[10px] text-emerald-600 font-medium">Saved</span>}
-          {user.slug && (
-            <Link href={`/u/${user.slug}`} className="text-[11px] text-blue-600 hover:text-blue-800 font-medium transition-colors">
-              Preview →
-            </Link>
-          )}
-        </div>
-      </div>
-
-      {/* Template grid */}
-      <div className="grid grid-cols-4 gap-2 mb-4">
-        {TEMPLATES.map(t => (
-          <button
-            key={t.id}
-            onClick={() => selectTemplate(t.id)}
-            className={`group relative rounded-xl overflow-hidden transition-all ${
-              template === t.id ? "ring-2 ring-neutral-900 ring-offset-1" : "hover:ring-1 hover:ring-neutral-300"
-            }`}
-          >
-            <div className={`aspect-[3/4] ${t.preview} flex items-center justify-center`}>
-              {/* Mini preview mockup */}
-              <div className={`w-5 h-5 rounded-full ${t.preview.includes("950") || t.preview.includes("900") || t.preview.includes("black") ? "bg-white/20" : "bg-neutral-300"}`} />
-            </div>
-            <div className="px-1.5 py-1.5 bg-white">
-              <div className="text-[9px] font-bold text-neutral-900 truncate">{t.name}</div>
-              <div className="text-[8px] text-neutral-400 truncate">{t.desc}</div>
-            </div>
-            {template === t.id && (
-              <div className="absolute top-1 right-1 w-4 h-4 rounded-full bg-neutral-900 flex items-center justify-center">
-                <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" /></svg>
-              </div>
-            )}
-          </button>
-        ))}
-      </div>
-
-      {/* Accent color picker — only for templates that use it */}
-      {showAccent && (
-        <div>
-          <label className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Accent Color</label>
-          <div className="flex items-center gap-2 mt-2 flex-wrap">
-            {ACCENT_COLORS.map(c => (
-              <button
-                key={c}
-                onClick={() => selectAccent(c)}
-                className={`w-7 h-7 rounded-full transition-all hover:scale-110 ${
-                  accent === c ? "ring-2 ring-offset-2 ring-neutral-900 scale-110" : ""
-                }`}
-                style={{ background: c }}
-              />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {saving && <div className="mt-3 flex items-center gap-1.5"><div className="w-3 h-3 border-2 border-neutral-300 border-t-neutral-900 rounded-full animate-spin" /><span className="text-[10px] text-neutral-400">Saving...</span></div>}
-    </Card>
-  );
-}
-
 /* ───── Referral Program ───── */
 function ReferralSection() {
   const [data, setData] = useState<any>(null);
@@ -856,24 +742,31 @@ export function DashboardContent() {
               )}
             </div>
 
-            {/* Link in Bio Editor */}
-            <LinkInBioEditor user={user} />
+            {/* Link in Bio — quick access */}
+            <Card className="p-4 sm:p-5">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="font-display font-semibold text-neutral-900 text-sm">Link in Bio</h3>
+                <Link href="/dashboard/link-in-bio" className="text-[11px] text-blue-600 hover:text-blue-800 font-medium">Edit →</Link>
+              </div>
+              <p className="text-xs text-neutral-400 mb-3">Template, background, button style, colors</p>
+              <Link href="/dashboard/link-in-bio" className="block w-full py-2.5 bg-neutral-900 text-white text-xs font-medium text-center rounded-xl hover:bg-neutral-800 transition-colors">
+                Open Editor
+              </Link>
+            </Card>
 
             {/* Quick actions */}
             <Card className="p-4 sm:p-5">
               <h3 className="font-display font-semibold text-neutral-900 text-sm mb-3">Quick Actions</h3>
               <div className="space-y-2">
-                {user.slug && (
-                  <Link href={`/u/${user.slug}`} className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-neutral-50 transition-colors group">
-                    <div className="w-8 h-8 rounded-lg bg-neutral-100 flex items-center justify-center shrink-0 group-hover:bg-neutral-200 transition-colors">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                    </div>
-                    <div>
-                      <div className="text-sm font-medium text-neutral-900">Link in Bio</div>
-                      <div className="text-[10px] text-neutral-400">Preview your page</div>
-                    </div>
-                  </Link>
-                )}
+                <Link href="/dashboard/link-in-bio" className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-neutral-50 transition-colors group">
+                  <div className="w-8 h-8 rounded-lg bg-neutral-100 flex items-center justify-center shrink-0 group-hover:bg-neutral-200 transition-colors">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4 9.5-9.5z" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                  </div>
+                  <div>
+                    <div className="text-sm font-medium text-neutral-900">Edit Link in Bio</div>
+                    <div className="text-[10px] text-neutral-400">Templates, backgrounds, buttons</div>
+                  </div>
+                </Link>
                 <Link href="/animations" className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-neutral-50 transition-colors group">
                   <div className="w-8 h-8 rounded-lg bg-neutral-100 flex items-center justify-center shrink-0 group-hover:bg-neutral-200 transition-colors">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83" /></svg>
@@ -903,6 +796,36 @@ export function DashboardContent() {
                 </Link>
               </div>
             </Card>
+
+            {/* Admin — only for admin role */}
+            {user.role === "admin" && (
+              <Card className="p-4 sm:p-5 border-purple-200 bg-purple-50/30">
+                <h3 className="font-display font-semibold text-neutral-900 text-sm mb-3 flex items-center gap-2">
+                  <span className="px-1.5 py-0.5 bg-purple-100 text-purple-700 text-[9px] font-bold rounded-full uppercase">Admin</span>
+                  Admin Panel
+                </h3>
+                <div className="space-y-2">
+                  <Link href="/dashboard/settings" className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white transition-colors group">
+                    <div className="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center shrink-0">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-purple-600"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                    </div>
+                    <div>
+                      <div className="text-sm font-medium text-neutral-900">Users</div>
+                      <div className="text-[10px] text-neutral-400">Manage, ban, export CSV</div>
+                    </div>
+                  </Link>
+                  <Link href="/dashboard/settings" className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white transition-colors group">
+                    <div className="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center shrink-0">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-purple-600"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                    </div>
+                    <div>
+                      <div className="text-sm font-medium text-neutral-900">Marketplace Toggle</div>
+                      <div className="text-[10px] text-neutral-400">Open/close the marketplace</div>
+                    </div>
+                  </Link>
+                </div>
+              </Card>
+            )}
 
             {/* Your Links */}
             {user.slug && (

@@ -64,6 +64,11 @@ export async function PATCH(request: Request) {
       visible_in_marketplace = COALESCE(${body.visible_in_marketplace ?? null}, visible_in_marketplace),
       link_bio_template = COALESCE(${body.link_bio_template ?? null}, link_bio_template),
       link_bio_accent = COALESCE(${body.link_bio_accent ?? null}, link_bio_accent),
+      link_bio_bg_type = COALESCE(${body.link_bio_bg_type ?? null}, link_bio_bg_type),
+      link_bio_bg_value = ${body.link_bio_bg_value !== undefined ? body.link_bio_bg_value : user.link_bio_bg_value},
+      link_bio_bg_video = ${body.link_bio_bg_video !== undefined ? body.link_bio_bg_video : user.link_bio_bg_video},
+      link_bio_button_shape = COALESCE(${body.link_bio_button_shape ?? null}, link_bio_button_shape),
+      link_bio_button_anim = COALESCE(${body.link_bio_button_anim ?? null}, link_bio_button_anim),
       updated_at = NOW()
     WHERE id = ${user.id}
   `;

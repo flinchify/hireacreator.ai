@@ -41,18 +41,26 @@ export async function POST(request: Request) {
   const ext = file.name.split(".").pop() || "jpg";
   const path = `${type}/${user.id}-${Date.now()}.${ext}`;
 
-  const blob = await put(path, file, {
-    access: "public",
-    addRandomSuffix: false,
-  });
+  try {
+    const blob = await put(path, file, {
+      access: "public",
+      addRandomSuffix: false,
+    });
 
-  // Update user profile
-  const sql = getDb();
-  if (type === "avatar") {
-    await sql`UPDATE users SET avatar_url = ${blob.url}, updated_at = NOW() WHERE id = ${user.id}`;
-  } else if (type === "cover") {
-    await sql`UPDATE users SET cover_url = ${blob.url}, updated_at = NOW() WHERE id = ${user.id}`;
+    // Update user profile
+    const sql2 = getDb();
+    if (type === "avatar") {
+      await sql2`UPDATE users SET avatar_url = ${blob.url}, updated_at = NOW() WHERE id = ${user.id}`;
+    } else if (type === "cover") {
+      await sql2`UPDATE users SET cover_url = ${blob.url}, updated_at = NOW() WHERE id = ${user.id}`;
+    }
+
+    return NextResponse.json({ url: blob.url });
+  } catch (err: any) {
+    console.error("Upload error:", err);
+    if (err.message?.includes("BLOB_READ_WRITE_TOKEN") || err.message?.includes("No token")) {
+      return NextResponse.json({ error: "blob_not_configured", message: "Image storage not configured. Go to Vercel Dashboard > Storage > Create Blob Store and add the BLOB_READ_WRITE_TOKEN env var." }, { status: 500 });
+    }
+    return NextResponse.json({ error: "upload_failed", message: err.message || "Upload failed" }, { status: 500 });
   }
-
-  return NextResponse.json({ url: blob.url });
 }

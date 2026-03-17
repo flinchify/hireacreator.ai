@@ -566,6 +566,8 @@ function AdminTab() {
   const [loadingUsers, setLoadingUsers] = useState(true);
   const [selected, setSelected] = useState<any | null>(null);
   const [actionLoading, setActionLoading] = useState("");
+  const [marketplaceOpen, setMarketplaceOpen] = useState(true);
+  const [toggleLoading, setToggleLoading] = useState(false);
 
   function loadUsers(p: number = page, q: string = search) {
     setLoadingUsers(true);
@@ -583,6 +585,25 @@ function AdminTab() {
   }
 
   useEffect(() => { loadUsers(1, ""); }, []);
+
+  // Load marketplace status
+  useEffect(() => {
+    fetch("/api/admin/settings").then(r => r.json()).then(d => {
+      if (d.marketplace_open !== undefined) setMarketplaceOpen(d.marketplace_open === "true");
+    }).catch(() => {});
+  }, []);
+
+  async function toggleMarketplace() {
+    setToggleLoading(true);
+    const newVal = !marketplaceOpen;
+    await fetch("/api/admin/settings", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ marketplace_open: newVal ? "true" : "false" }),
+    });
+    setMarketplaceOpen(newVal);
+    setToggleLoading(false);
+  }
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
@@ -613,6 +634,25 @@ function AdminTab() {
 
   return (
     <div className="space-y-6">
+      {/* Marketplace Toggle */}
+      <Card className="p-4 sm:p-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="font-semibold text-neutral-900 text-sm">Marketplace Status</h3>
+            <p className="text-xs text-neutral-500 mt-0.5">
+              {marketplaceOpen ? "Marketplace is live — creators are visible to brands." : "Marketplace is closed — browse page shows coming soon."}
+            </p>
+          </div>
+          <button
+            onClick={toggleMarketplace}
+            disabled={toggleLoading}
+            className={`relative w-14 h-7 rounded-full transition-colors ${marketplaceOpen ? "bg-emerald-500" : "bg-neutral-300"}`}
+          >
+            <div className={`absolute top-0.5 w-6 h-6 bg-white rounded-full shadow transition-transform ${marketplaceOpen ? "translate-x-7" : "translate-x-0.5"}`} />
+          </button>
+        </div>
+      </Card>
+
       {/* Stats */}
       <Card className="p-4 sm:p-6">
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
