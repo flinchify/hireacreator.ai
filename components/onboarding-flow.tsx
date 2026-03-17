@@ -417,7 +417,7 @@ export function OnboardingFlow() {
             <h1 className="font-display text-2xl font-bold text-neutral-900 mb-1">Choose your style</h1>
             <p className="text-sm text-neutral-500 mb-6">Pick a template — you can customize it later.</p>
 
-            <div className="grid grid-cols-2 gap-3 mb-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mb-4">
               {ONBOARDING_TEMPLATES.map(t => (
                 <button
                   key={t.id}
@@ -517,7 +517,7 @@ export function OnboardingFlow() {
 
 /* ── Template mini previews with distinctive shapes ── */
 function TemplateMiniPreview({ id }: { id: string }) {
-  const s = "aspect-[3/4] overflow-hidden relative";
+  const s = "aspect-[3/5] overflow-hidden relative";
 
   /* MINIMAL — White card, wavy cover edge, round avatar */
   if (id === "minimal") return (
@@ -695,6 +695,159 @@ function TemplateMiniPreview({ id }: { id: string }) {
           </div>
           <div className="w-full h-5 rounded-full bg-neutral-900 mt-auto" />
         </div>
+      </div>
+    </div>
+  );
+
+  /* AURORA — Dark with colorful blurred orbs */
+  if (id === "aurora") return (
+    <div className={`${s}`} style={{ background: "linear-gradient(135deg, #0f0c29, #302b63, #24243e)" }}>
+      <div className="absolute top-1 left-2 w-8 h-8 rounded-full bg-purple-500/30 blur-lg" />
+      <div className="absolute bottom-3 right-1 w-10 h-10 rounded-full bg-teal-400/20 blur-xl" />
+      <div className="absolute top-1/2 left-0 w-6 h-6 rounded-full bg-pink-500/20 blur-lg" />
+      <div className="relative z-10 flex flex-col items-center justify-center h-full px-2">
+        <div className="w-9 h-9 rounded-full bg-white/15 border-2 border-purple-400/30" />
+        <div className="w-11 h-1.5 rounded-full bg-white/30 mt-1.5" />
+        <div className="w-full space-y-1.5 mt-2 px-1">
+          <div className="h-5 rounded-lg bg-white/[0.06] border border-purple-400/15" />
+          <div className="h-5 rounded-lg bg-white/[0.06] border border-purple-400/15" />
+        </div>
+        <div className="w-full h-4 rounded-full mt-2 mx-1" style={{ background: "linear-gradient(135deg, #a78bfa, #818cf8)" }} />
+      </div>
+    </div>
+  );
+
+  /* BRUTALIST — White, thick black borders */
+  if (id === "brutalist") return (
+    <div className={`${s} bg-white flex flex-col items-center pt-4 px-2`}>
+      <div className="w-10 h-10 border-[2px] border-black bg-neutral-100" />
+      <div className="w-14 h-2 bg-black mt-2" />
+      <div className="w-8 h-0.5 bg-neutral-400 mt-1" />
+      <div className="flex gap-1 mt-2">{[1,2,3].map(i=><div key={i} className="w-5 h-5 border-[1.5px] border-black"/>)}</div>
+      <div className="w-full space-y-1.5 mt-3 px-1">
+        <div className="h-6 border-[2px] border-black" />
+        <div className="h-6 border-[2px] border-black" />
+      </div>
+      <div className="w-full h-5 bg-black mt-2 mx-1" />
+    </div>
+  );
+
+  /* SUNSET — Warm gradient */
+  if (id === "sunset") return (
+    <div className={`${s} flex flex-col items-center justify-center px-2`} style={{ background: "linear-gradient(180deg, #ff6b6b 0%, #ee5a24 40%, #f39c12 100%)" }}>
+      <div className="w-9 h-9 rounded-full bg-white/20 border-2 border-white/30" />
+      <div className="w-11 h-1.5 rounded-full bg-white/40 mt-1.5" />
+      <div className="w-full space-y-1.5 mt-3">
+        <div className="h-5 rounded-full bg-white/20 border border-white/15" />
+        <div className="h-5 rounded-full bg-white/20 border border-white/15" />
+      </div>
+      <div className="w-full h-4 rounded-full bg-white mt-2" />
+    </div>
+  );
+
+  /* TERMINAL — Green on black */
+  if (id === "terminal") return (
+    <div className={`${s} bg-[#0a0a0a] flex flex-col items-center pt-3 px-2`}>
+      <div className="absolute inset-0 opacity-[0.04]" style={{backgroundImage:"repeating-linear-gradient(0deg, #00ff00 0px, transparent 1px, transparent 3px)"}}/>
+      <div className="relative z-10 flex flex-col items-center w-full">
+        <div className="w-full h-1.5 bg-green-500/20 rounded-full mb-2" />
+        <div className="w-9 h-9 rounded border border-green-500/40 bg-green-500/5" />
+        <div className="w-11 h-1.5 rounded-full bg-green-400/40 mt-1.5" />
+        <div className="w-full space-y-1.5 mt-3">
+          <div className="h-5 rounded-sm border border-green-500/20 bg-green-500/5 flex items-center px-1"><div className="w-1.5 h-1.5 rounded-full bg-green-400 mr-1"/><div className="w-8 h-0.5 bg-green-400/30 rounded-full"/></div>
+          <div className="h-5 rounded-sm border border-green-500/20 bg-green-500/5 flex items-center px-1"><div className="w-1.5 h-1.5 rounded-full bg-green-400 mr-1"/><div className="w-10 h-0.5 bg-green-400/30 rounded-full"/></div>
+        </div>
+        <div className="w-full h-4 bg-green-500 rounded-sm mt-2" />
+      </div>
+    </div>
+  );
+
+  /* PASTEL — Soft gradient */
+  if (id === "pastel") return (
+    <div className={`${s} flex flex-col items-center justify-center px-2`} style={{ background: "linear-gradient(180deg, #fce4ec 0%, #e8eaf6 50%, #e0f7fa 100%)" }}>
+      <div className="w-9 h-9 rounded-full bg-white/80 border-2 border-white shadow-sm" />
+      <div className="w-11 h-1.5 rounded-full bg-neutral-700/30 mt-1.5" />
+      <div className="w-full space-y-1.5 mt-3">
+        <div className="h-5 rounded-2xl bg-white/70 border border-white shadow-sm" />
+        <div className="h-5 rounded-2xl bg-white/70 border border-white shadow-sm" />
+      </div>
+      <div className="w-full h-4 rounded-full mt-2" style={{ background: "#6c5ce7" }} />
+    </div>
+  );
+
+  /* MAGAZINE — Editorial, left-aligned */
+  if (id === "magazine") return (
+    <div className={`${s} bg-[#fafaf8] flex flex-col pt-4 px-2`}>
+      <div className="flex items-start gap-2 mb-2">
+        <div className="w-8 h-8 rounded-full bg-neutral-200 shrink-0" />
+        <div className="pt-0.5"><div className="w-12 h-1.5 bg-neutral-800 rounded-full"/><div className="w-7 h-0.5 bg-neutral-300 rounded-full mt-1"/></div>
+      </div>
+      <div className="w-full h-[1px] bg-neutral-200 my-1.5" />
+      <div className="space-y-0">
+        <div className="flex items-center justify-between py-2 border-b border-neutral-200"><div className="w-12 h-0.5 bg-neutral-600 rounded-full"/><div className="w-4 h-0.5 bg-neutral-400 rounded-full"/></div>
+        <div className="flex items-center justify-between py-2 border-b border-neutral-200"><div className="w-10 h-0.5 bg-neutral-600 rounded-full"/><div className="w-4 h-0.5 bg-neutral-400 rounded-full"/></div>
+        <div className="flex items-center justify-between py-2 border-b border-neutral-200"><div className="w-14 h-0.5 bg-neutral-600 rounded-full"/><div className="w-4 h-0.5 bg-neutral-400 rounded-full"/></div>
+      </div>
+      <div className="w-full h-5 rounded-full bg-neutral-900 mt-3" />
+    </div>
+  );
+
+  /* RETRO — Synthwave */
+  if (id === "retro") return (
+    <div className={`${s}`} style={{ background: "linear-gradient(180deg, #1a0533 0%, #2d1b69 50%, #0f0c29 100%)" }}>
+      <div className="absolute bottom-0 left-0 right-0 h-1/3 opacity-20" style={{backgroundImage:"linear-gradient(rgba(236,72,153,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(236,72,153,0.4) 1px, transparent 1px)", backgroundSize:"12px 12px", transform:"perspective(100px) rotateX(30deg)", transformOrigin:"bottom"}}/>
+      <div className="relative z-10 flex flex-col items-center justify-center h-full px-2">
+        <div className="w-9 h-9 rounded-full border-2 border-pink-500 shadow-[0_0_10px_rgba(236,72,153,0.4)]" />
+        <div className="w-11 h-1.5 rounded-full bg-pink-400/50 mt-1.5" />
+        <div className="w-full space-y-1.5 mt-3">
+          <div className="h-5 rounded-lg border border-pink-500/20 bg-pink-500/5" />
+          <div className="h-5 rounded-lg border border-pink-500/20 bg-pink-500/5" />
+        </div>
+        <div className="w-full h-4 rounded-full mt-2" style={{ background: "linear-gradient(90deg, #ec4899, #a855f7)" }} />
+      </div>
+    </div>
+  );
+
+  /* MIDNIGHT — Navy + gold */
+  if (id === "midnight") return (
+    <div className={`${s} bg-[#0a1628] flex flex-col items-center justify-center px-2`}>
+      <div className="w-9 h-9 rounded-full border-2 border-amber-600/50 bg-amber-600/5" />
+      <div className="w-11 h-1.5 rounded-full bg-amber-100/40 mt-1.5" />
+      <div className="w-full space-y-1.5 mt-3">
+        <div className="h-5 rounded-lg bg-white/[0.04] border border-amber-600/15" />
+        <div className="h-5 rounded-lg bg-white/[0.04] border border-amber-600/15" />
+      </div>
+      <div className="w-full h-4 rounded-full mt-2" style={{ background: "linear-gradient(135deg, #d4a574, #b8860b)" }} />
+    </div>
+  );
+
+  /* CLAY — Neumorphic */
+  if (id === "clay") return (
+    <div className={`${s} bg-[#e8e4df] flex flex-col items-center justify-center px-2`}>
+      <div className="w-9 h-9 rounded-xl bg-[#e8e4df]" style={{ boxShadow: "3px 3px 6px #c5c1bc, -3px -3px 6px #fff" }} />
+      <div className="w-11 h-1.5 rounded-full bg-neutral-500/30 mt-2" />
+      <div className="w-full space-y-2 mt-3">
+        <div className="h-6 rounded-xl bg-[#e8e4df]" style={{ boxShadow: "2px 2px 5px #c5c1bc, -2px -2px 5px #fff" }} />
+        <div className="h-6 rounded-xl bg-[#e8e4df]" style={{ boxShadow: "2px 2px 5px #c5c1bc, -2px -2px 5px #fff" }} />
+      </div>
+      <div className="w-full h-5 rounded-xl bg-neutral-600 mt-2" style={{ boxShadow: "2px 2px 5px #c5c1bc, -2px -2px 5px #fff" }} />
+    </div>
+  );
+
+  /* GRADIENT MESH — Colorful blobs on black */
+  if (id === "gradient-mesh") return (
+    <div className={`${s} bg-black overflow-hidden`}>
+      <div className="absolute top-[-10%] left-[-5%] w-[50%] h-[40%] rounded-full bg-purple-600/40 blur-xl" />
+      <div className="absolute top-[30%] right-[-5%] w-[40%] h-[30%] rounded-full bg-blue-500/30 blur-xl" />
+      <div className="absolute bottom-[-5%] left-[20%] w-[40%] h-[30%] rounded-full bg-emerald-500/25 blur-xl" />
+      <div className="relative z-10 flex flex-col items-center justify-center h-full px-2">
+        <div className="w-9 h-9 rounded-full bg-white/15 border border-white/20" />
+        <div className="w-11 h-1.5 rounded-full bg-white/30 mt-1.5" />
+        <div className="w-full space-y-1.5 mt-3">
+          <div className="h-5 rounded-lg bg-white/[0.08] border border-white/10" />
+          <div className="h-5 rounded-lg bg-white/[0.08] border border-white/10" />
+        </div>
+        <div className="w-full h-4 rounded-full bg-white/15 border border-white/20 mt-2" />
       </div>
     </div>
   );
