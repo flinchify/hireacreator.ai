@@ -369,6 +369,120 @@ function EditButton({ onClick, label }: { onClick: () => void; label?: string })
   );
 }
 
+/* ───── Link in Bio Editor ───── */
+const TEMPLATES = [
+  { id: "minimal", name: "Minimal", desc: "Clean white card", preview: "bg-neutral-200" },
+  { id: "glass", name: "Glass", desc: "Frosted on blurred bg", preview: "bg-gradient-to-br from-neutral-800 to-neutral-900" },
+  { id: "bold", name: "Bold", desc: "Dark with accent color", preview: "bg-neutral-950" },
+  { id: "showcase", name: "Showcase", desc: "2-column media grid", preview: "bg-neutral-100" },
+  { id: "neon", name: "Neon", desc: "Futuristic glow", preview: "bg-black" },
+  { id: "collage", name: "Collage", desc: "Portfolio as background", preview: "bg-gradient-to-br from-neutral-700 to-neutral-900" },
+  { id: "bento", name: "Bento", desc: "Apple-style grid", preview: "bg-neutral-950" },
+  { id: "split", name: "Split", desc: "Magazine hero layout", preview: "bg-white border border-neutral-200" },
+];
+
+const ACCENT_COLORS = [
+  "#171717", "#6366f1", "#22d3ee", "#ef4444", "#f97316",
+  "#22c55e", "#a855f7", "#ec4899", "#eab308", "#14b8a6",
+];
+
+function LinkInBioEditor({ user }: { user: any }) {
+  const [template, setTemplate] = useState(user.linkBioTemplate || "minimal");
+  const [accent, setAccent] = useState(user.linkBioAccent || "#171717");
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+
+  async function save(newTemplate?: string, newAccent?: string) {
+    setSaving(true);
+    const t = newTemplate || template;
+    const a = newAccent || accent;
+    await fetch("/api/profile", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ link_bio_template: t, link_bio_accent: a }),
+    });
+    setSaving(false);
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
+  }
+
+  function selectTemplate(id: string) {
+    setTemplate(id);
+    save(id, accent);
+  }
+
+  function selectAccent(color: string) {
+    setAccent(color);
+    save(template, color);
+  }
+
+  const showAccent = ["bold", "neon", "bento"].includes(template);
+
+  return (
+    <Card className="p-4 sm:p-5">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="font-display font-semibold text-neutral-900 text-sm">Link in Bio</h3>
+        <div className="flex items-center gap-2">
+          {saved && <span className="text-[10px] text-emerald-600 font-medium">Saved</span>}
+          {user.slug && (
+            <Link href={`/u/${user.slug}`} className="text-[11px] text-blue-600 hover:text-blue-800 font-medium transition-colors">
+              Preview →
+            </Link>
+          )}
+        </div>
+      </div>
+
+      {/* Template grid */}
+      <div className="grid grid-cols-4 gap-2 mb-4">
+        {TEMPLATES.map(t => (
+          <button
+            key={t.id}
+            onClick={() => selectTemplate(t.id)}
+            className={`group relative rounded-xl overflow-hidden transition-all ${
+              template === t.id ? "ring-2 ring-neutral-900 ring-offset-1" : "hover:ring-1 hover:ring-neutral-300"
+            }`}
+          >
+            <div className={`aspect-[3/4] ${t.preview} flex items-center justify-center`}>
+              {/* Mini preview mockup */}
+              <div className={`w-5 h-5 rounded-full ${t.preview.includes("950") || t.preview.includes("900") || t.preview.includes("black") ? "bg-white/20" : "bg-neutral-300"}`} />
+            </div>
+            <div className="px-1.5 py-1.5 bg-white">
+              <div className="text-[9px] font-bold text-neutral-900 truncate">{t.name}</div>
+              <div className="text-[8px] text-neutral-400 truncate">{t.desc}</div>
+            </div>
+            {template === t.id && (
+              <div className="absolute top-1 right-1 w-4 h-4 rounded-full bg-neutral-900 flex items-center justify-center">
+                <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" /></svg>
+              </div>
+            )}
+          </button>
+        ))}
+      </div>
+
+      {/* Accent color picker — only for templates that use it */}
+      {showAccent && (
+        <div>
+          <label className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Accent Color</label>
+          <div className="flex items-center gap-2 mt-2 flex-wrap">
+            {ACCENT_COLORS.map(c => (
+              <button
+                key={c}
+                onClick={() => selectAccent(c)}
+                className={`w-7 h-7 rounded-full transition-all hover:scale-110 ${
+                  accent === c ? "ring-2 ring-offset-2 ring-neutral-900 scale-110" : ""
+                }`}
+                style={{ background: c }}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {saving && <div className="mt-3 flex items-center gap-1.5"><div className="w-3 h-3 border-2 border-neutral-300 border-t-neutral-900 rounded-full animate-spin" /><span className="text-[10px] text-neutral-400">Saving...</span></div>}
+    </Card>
+  );
+}
+
 /* ───── Referral Program ───── */
 function ReferralSection() {
   const [data, setData] = useState<any>(null);
@@ -741,6 +855,9 @@ export function DashboardContent() {
                 </Card>
               )}
             </div>
+
+            {/* Link in Bio Editor */}
+            <LinkInBioEditor user={user} />
 
             {/* Quick actions */}
             <Card className="p-4 sm:p-5">
