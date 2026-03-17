@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
 import { PlatformIcon } from "./icons/platforms";
 
@@ -707,32 +707,38 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
   const videoRef = useRef<HTMLInputElement>(null);
   const photosRef = useRef<HTMLInputElement>(null);
 
-  const save = useCallback(async (updates: Partial<Settings>) => {
-    const next = { ...settings, ...updates };
+  // Use ref for latest settings so save never has stale closure
+  const settingsRef = useRef(settings);
+  settingsRef.current = settings;
+
+  async function save(updates: Partial<Settings>) {
+    const next = { ...settingsRef.current, ...updates };
     setSettings(next);
     setSaving(true);
-    await fetch("/api/profile", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        link_bio_template: next.template,
-        link_bio_accent: next.accent,
-        link_bio_bg_type: next.bgType,
-        link_bio_bg_value: next.bgValue,
-        link_bio_bg_video: next.bgVideo,
-        link_bio_bg_images: JSON.stringify(next.bgImages),
-        link_bio_button_shape: next.buttonShape,
-        link_bio_button_anim: next.buttonAnim,
-        link_bio_font: next.font,
-        link_bio_text_color: next.textColor,
-        link_bio_intro_anim: next.introAnim,
-        link_bio_card_style: next.cardStyle,
-      }),
-    });
+    try {
+      await fetch("/api/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          link_bio_template: next.template,
+          link_bio_accent: next.accent,
+          link_bio_bg_type: next.bgType,
+          link_bio_bg_value: next.bgValue,
+          link_bio_bg_video: next.bgVideo,
+          link_bio_bg_images: JSON.stringify(next.bgImages),
+          link_bio_button_shape: next.buttonShape,
+          link_bio_button_anim: next.buttonAnim,
+          link_bio_font: next.font,
+          link_bio_text_color: next.textColor,
+          link_bio_intro_anim: next.introAnim,
+          link_bio_card_style: next.cardStyle,
+        }),
+      });
+    } catch (e) { console.error("Save failed:", e); }
     setSaving(false);
     setSaved(true);
     setTimeout(() => setSaved(false), 1500);
-  }, [settings]);
+  }
 
   async function uploadImage(file: File, purpose: "bg" | "photos") {
     setUploading(true);
@@ -1100,7 +1106,7 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
               {previewMode === "mobile" && (
                 <div className="mx-auto w-[280px] h-[560px] bg-black rounded-[2.5rem] shadow-2xl border-[6px] border-neutral-800 overflow-hidden relative">
                   <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[90px] h-[22px] bg-black rounded-b-2xl z-50" />
-                  <div className="w-full h-full overflow-y-auto rounded-[2rem]"><MiniPreview settings={settings} creator={user} /></div>
+                  <div className="w-full h-full overflow-y-auto rounded-[2rem]"><MiniPreview key={`${settings.template}-${settings.font}-${settings.textColor}-${settings.bgType}-${settings.cardStyle}`} settings={settings} creator={user} /></div>
                   <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-[100px] h-[4px] bg-white/30 rounded-full z-50" />
                 </div>
               )}
@@ -1112,7 +1118,7 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
                   </div>
                   <div className="w-full h-[450px] border border-t-0 border-neutral-200 rounded-b-xl overflow-y-auto bg-neutral-100">
                     <div className="flex items-start justify-center py-6 min-h-full">
-                      <div className="w-[400px] bg-white rounded-2xl shadow-lg overflow-hidden"><MiniPreview settings={settings} creator={user} /></div>
+                      <div className="w-[400px] bg-white rounded-2xl shadow-lg overflow-hidden"><MiniPreview key={`d-${settings.template}-${settings.font}-${settings.textColor}-${settings.bgType}-${settings.cardStyle}`} settings={settings} creator={user} /></div>
                     </div>
                   </div>
                 </div>
