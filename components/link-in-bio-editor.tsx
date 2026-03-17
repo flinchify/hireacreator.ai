@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useRef } from "react";
 import Link from "next/link";
+import { PlatformIcon } from "./icons/platforms";
 
 /* ── Types ── */
 type Settings = {
@@ -94,15 +95,18 @@ const BUTTON_ANIMS = [
 ];
 
 const INTRO_ANIMS = [
-  { id: "none", name: "None", desc: "No animation" },
-  { id: "fade-up", name: "Fade Up", desc: "Content slides up smoothly" },
-  { id: "fade-scale", name: "Scale In", desc: "Grows from center" },
-  { id: "slide-left", name: "Slide Left", desc: "Content enters from right" },
-  { id: "blur-in", name: "Blur In", desc: "Focus from blur" },
-  { id: "typewriter", name: "Typewriter", desc: "Name types itself" },
-  { id: "spotlight", name: "Spotlight", desc: "Light reveals content" },
-  { id: "glitch", name: "Glitch", desc: "Digital glitch effect" },
-  { id: "particles", name: "Particles", desc: "Particle burst on load" },
+  { id: "none", name: "None", desc: "No animation", free: true },
+  { id: "fade-up", name: "Fade Up", desc: "Content slides up smoothly", free: true },
+  { id: "fade-scale", name: "Scale In", desc: "Grows from center", free: true },
+  { id: "spotlight", name: "Spotlight", desc: "Light reveals your page", free: false },
+  { id: "glitch", name: "Glitch", desc: "Digital glitch effect", free: false },
+  { id: "particle-burst", name: "Particle Burst", desc: "Particles explode then settle", free: false },
+  { id: "typewriter", name: "Typewriter", desc: "Name types itself letter by letter", free: false },
+  { id: "wave", name: "Wave", desc: "Content ripples into view", free: false },
+  { id: "neon", name: "Neon Flicker", desc: "Neon sign turning on", free: false },
+  { id: "cinema", name: "Cinema", desc: "Cinematic letterbox reveal", free: false },
+  { id: "morph", name: "Morph", desc: "Shapes morph into your profile", free: false },
+  { id: "trading-candles", name: "Trading Candles", desc: "Candlestick chart rises up", free: false },
 ];
 
 const CARD_STYLES = [
@@ -162,14 +166,14 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
         {/* Socials */}
         <div className="flex gap-1.5 mt-3">
           {(creator.socials || []).length > 0
-            ? (creator.socials || []).slice(0, 5).map((s: any, i: number) => (
+            ? (creator.socials || []).slice(0, 6).map((s: any, i: number) => (
                 <div key={i} className={`w-7 h-7 rounded-full flex items-center justify-center ${dark ? "bg-white/10" : "bg-neutral-200/80"}`}>
-                  <div className={`w-3 h-3 rounded-sm ${dark ? "bg-white/30" : "bg-neutral-400"}`} />
+                  <PlatformIcon platform={s.platform} size={14} className={dark ? "text-white/60" : "text-neutral-500"} />
                 </div>
               ))
-            : ["ig", "tt", "yt"].map(p => (
+            : ["instagram", "tiktok", "youtube"].map(p => (
                 <div key={p} className={`w-7 h-7 rounded-full flex items-center justify-center ${dark ? "bg-white/10" : "bg-neutral-200/80"}`}>
-                  <div className={`w-3 h-3 rounded-sm ${dark ? "bg-white/30" : "bg-neutral-400"}`} />
+                  <PlatformIcon platform={p} size={14} className={dark ? "text-white/60" : "text-neutral-500"} />
                 </div>
               ))
           }
@@ -570,22 +574,44 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
             {section === "animation" && (
               <div className="bg-white rounded-2xl border border-neutral-200/60 p-5">
                 <h2 className="text-sm font-bold text-neutral-900 mb-1">Intro Animation</h2>
-                <p className="text-[11px] text-neutral-400 mb-4">Plays once when someone visits your link-in-bio page.</p>
-                <div className="grid grid-cols-1 gap-2">
-                  {INTRO_ANIMS.map(a => (
-                    <button key={a.id} onClick={() => save({ introAnim: a.id })} className={`flex items-center gap-3 p-3.5 rounded-xl text-left transition-all ${settings.introAnim === a.id ? "bg-neutral-900 text-white" : "bg-neutral-50 text-neutral-600 hover:bg-neutral-100"}`}>
-                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm ${settings.introAnim === a.id ? "bg-white/10" : "bg-neutral-200/60"}`}>
-                        {a.id === "none" ? "—" : a.id === "fade-up" ? "↑" : a.id === "fade-scale" ? "⊕" : a.id === "slide-left" ? "←" : a.id === "blur-in" ? "◎" : a.id === "typewriter" ? "⌨" : a.id === "spotlight" ? "💡" : a.id === "glitch" ? "⚡" : "✨"}
-                      </div>
-                      <div>
-                        <div className="text-xs font-bold">{a.name}</div>
-                        <div className={`text-[10px] ${settings.introAnim === a.id ? "text-white/50" : "text-neutral-400"}`}>{a.desc}</div>
-                      </div>
-                      {settings.introAnim === a.id && (
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="ml-auto"><path d="M5 13l4 4L19 7" strokeLinecap="round" /></svg>
-                      )}
-                    </button>
-                  ))}
+                <p className="text-[11px] text-neutral-400 mb-4">Plays once when someone visits your link in bio. Premium animations are $4.99 each from the <Link href="/animations" className="text-blue-600 hover:underline">animations store</Link>.</p>
+                <div className="space-y-1.5">
+                  {INTRO_ANIMS.map(a => {
+                    const owned = a.free || (user.owned_animations || []).includes?.(a.id) || user.role === "admin";
+                    const isActive = settings.introAnim === a.id;
+                    return (
+                      <button
+                        key={a.id}
+                        onClick={() => owned ? save({ introAnim: a.id }) : undefined}
+                        className={`flex items-center gap-3 p-3 rounded-xl text-left transition-all w-full ${
+                          isActive ? "bg-neutral-900 text-white" :
+                          owned ? "bg-neutral-50 text-neutral-600 hover:bg-neutral-100" :
+                          "bg-neutral-50/50 text-neutral-400 cursor-default"
+                        }`}
+                      >
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs font-bold">{a.name}</span>
+                            {!a.free && !owned && (
+                              <span className="px-1.5 py-0.5 bg-amber-100 text-amber-700 text-[8px] font-bold rounded-full">$4.99</span>
+                            )}
+                            {!a.free && owned && (
+                              <span className="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-[8px] font-bold rounded-full">OWNED</span>
+                            )}
+                          </div>
+                          <div className={`text-[10px] ${isActive ? "text-white/50" : "text-neutral-400"}`}>{a.desc}</div>
+                        </div>
+                        {isActive && (
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="shrink-0"><path d="M5 13l4 4L19 7" strokeLinecap="round" /></svg>
+                        )}
+                        {!a.free && !owned && (
+                          <Link href="/animations" className="px-3 py-1.5 bg-neutral-900 text-white text-[10px] font-bold rounded-full shrink-0 hover:bg-neutral-800" onClick={e => e.stopPropagation()}>
+                            Get
+                          </Link>
+                        )}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             )}

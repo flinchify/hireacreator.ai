@@ -90,14 +90,25 @@ export function OnboardingFlow() {
     setStep("socials");
   }
 
+  function extractHandle(url: string, platform: string): string {
+    // Try to get handle from URL, fallback to URL or platform
+    try {
+      const u = new URL(url);
+      const parts = u.pathname.split("/").filter(Boolean);
+      if (parts.length > 0) return parts[parts.length - 1].replace("@", "");
+    } catch {}
+    return url.replace(/^@/, "") || platform;
+  }
+
   async function saveSocials() {
     setSaving(true);
-    // Save each social link
     for (const s of socials) {
+      if (!s.url) continue;
+      const handle = extractHandle(s.url, s.platform);
       await fetch("/api/profile/socials", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ platform: s.platform, url: s.url }),
+        body: JSON.stringify({ platform: s.platform, handle: handle, url: s.url }),
       });
     }
     setSaving(false);

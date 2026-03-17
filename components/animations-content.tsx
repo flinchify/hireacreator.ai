@@ -292,13 +292,13 @@ export function AnimationsContent() {
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83" />
                 </svg>
-                Profile Animations
+                Link in Bio Animations
               </div>
               <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-neutral-900 tracking-tight leading-[1.1] mb-5">
                 First impressions<br />that stick
               </h1>
               <p className="text-neutral-500 text-lg leading-relaxed mb-8 max-w-md">
-                A custom intro animation plays once when someone visits your profile.
+                A custom intro animation plays once when someone visits your link in bio.
                 Stand out from every other creator page on the internet.
               </p>
               <div className="flex items-center gap-6 text-sm text-neutral-400">
@@ -360,7 +360,7 @@ export function AnimationsContent() {
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
             <div>
               <h2 className="font-display text-2xl font-bold text-neutral-900">Pre-made collection</h2>
-              <p className="text-sm text-neutral-500 mt-1">Hover or tap to preview. Plays once when someone visits your profile.</p>
+              <p className="text-sm text-neutral-500 mt-1">Hover or tap to preview. Plays once when someone visits your link in bio.</p>
             </div>
             <div className="flex gap-1 overflow-x-auto pb-1">
               {tags.map(t => (

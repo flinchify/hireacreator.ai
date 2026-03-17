@@ -12,7 +12,14 @@ async function getUser() {
     JOIN auth_sessions s ON s.user_id = u.id
     WHERE s.token = ${token} AND s.expires_at > NOW()
   `;
-  return rows.length > 0 ? rows[0] : null;
+  if (rows.length === 0) return null;
+  const user = rows[0];
+  const [socials, services, animations] = await Promise.all([
+    sql`SELECT * FROM social_connections WHERE user_id = ${user.id}`,
+    sql`SELECT * FROM services WHERE user_id = ${user.id}`,
+    sql`SELECT animation_type FROM profile_animations WHERE user_id = ${user.id}`,
+  ]);
+  return { ...user, socials, services, owned_animations: animations.map((a: any) => a.animation_type) };
 }
 
 export default async function LinkInBioEditorPage() {
