@@ -486,15 +486,23 @@ export function DashboardContent() {
           </div>
 
           {/* Action buttons */}
-          <div className="mt-4 sm:mt-0 sm:pb-1 flex gap-2">
+          <div className="mt-4 sm:mt-0 sm:pb-1 flex gap-2 flex-wrap">
             <EditButton onClick={() => setEditProfile(true)} label="Edit Profile" />
             {user.slug && (
-              <Link href={`/creators/${user.slug}`}>
-                <button className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-neutral-600 bg-white/80 backdrop-blur-sm border border-neutral-200 rounded-full hover:bg-neutral-100 transition-all shadow-sm active:scale-95">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>
-                  View Public
-                </button>
-              </Link>
+              <>
+                <Link href={`/u/${user.slug}`}>
+                  <button className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-neutral-600 bg-white/80 backdrop-blur-sm border border-neutral-200 rounded-full hover:bg-neutral-100 transition-all shadow-sm active:scale-95">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                    Link in Bio
+                  </button>
+                </Link>
+                <Link href={`/creators/${user.slug}`}>
+                  <button className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-neutral-600 bg-white/80 backdrop-blur-sm border border-neutral-200 rounded-full hover:bg-neutral-100 transition-all shadow-sm active:scale-95">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>
+                    Full Profile
+                  </button>
+                </Link>
+              </>
             )}
           </div>
         </div>
@@ -651,15 +659,17 @@ export function DashboardContent() {
             <Card className="p-4 sm:p-5">
               <h3 className="font-display font-semibold text-neutral-900 text-sm mb-3">Quick Actions</h3>
               <div className="space-y-2">
-                <Link href="/browse" className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-neutral-50 transition-colors group">
-                  <div className="w-8 h-8 rounded-lg bg-neutral-100 flex items-center justify-center shrink-0 group-hover:bg-neutral-200 transition-colors">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" /></svg>
-                  </div>
-                  <div>
-                    <div className="text-sm font-medium text-neutral-900">Browse Creators</div>
-                    <div className="text-[10px] text-neutral-400">Hire other creators</div>
-                  </div>
-                </Link>
+                {user.slug && (
+                  <Link href={`/u/${user.slug}`} className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-neutral-50 transition-colors group">
+                    <div className="w-8 h-8 rounded-lg bg-neutral-100 flex items-center justify-center shrink-0 group-hover:bg-neutral-200 transition-colors">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                    </div>
+                    <div>
+                      <div className="text-sm font-medium text-neutral-900">Link in Bio</div>
+                      <div className="text-[10px] text-neutral-400">Preview your page</div>
+                    </div>
+                  </Link>
+                )}
                 <Link href="/animations" className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-neutral-50 transition-colors group">
                   <div className="w-8 h-8 rounded-lg bg-neutral-100 flex items-center justify-center shrink-0 group-hover:bg-neutral-200 transition-colors">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83" /></svg>
@@ -678,26 +688,59 @@ export function DashboardContent() {
                     <div className="text-[10px] text-neutral-400">Unlock Pro features</div>
                   </div>
                 </Link>
+                <Link href="/dashboard/settings" className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-neutral-50 transition-colors group">
+                  <div className="w-8 h-8 rounded-lg bg-neutral-100 flex items-center justify-center shrink-0 group-hover:bg-neutral-200 transition-colors">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12.22 2h-.44a2 2 0 00-2 2v.18a2 2 0 01-1 1.73l-.43.25a2 2 0 01-2 0l-.15-.08a2 2 0 00-2.73.73l-.22.38a2 2 0 00.73 2.73l.15.1a2 2 0 011 1.72v.51a2 2 0 01-1 1.74l-.15.09a2 2 0 00-.73 2.73l.22.38a2 2 0 002.73.73l.15-.08a2 2 0 012 0l.43.25a2 2 0 011 1.73V20a2 2 0 002 2h.44a2 2 0 002-2v-.18a2 2 0 011-1.73l.43-.25a2 2 0 012 0l.15.08a2 2 0 002.73-.73l.22-.39a2 2 0 00-.73-2.73l-.15-.08a2 2 0 01-1-1.74v-.5a2 2 0 011-1.74l.15-.09a2 2 0 00.73-2.73l-.22-.38a2 2 0 00-2.73-.73l-.15.08a2 2 0 01-2 0l-.43-.25a2 2 0 01-1-1.73V4a2 2 0 00-2-2z" /><circle cx="12" cy="12" r="3" /></svg>
+                  </div>
+                  <div>
+                    <div className="text-sm font-medium text-neutral-900">Settings</div>
+                    <div className="text-[10px] text-neutral-400">Account, security, privacy</div>
+                  </div>
+                </Link>
               </div>
             </Card>
 
-            {/* Share profile */}
+            {/* Your Links */}
             {user.slug && (
               <Card className="p-4 sm:p-5">
-                <h3 className="font-semibold text-neutral-900 text-sm mb-2.5">Share your profile</h3>
-                <div className="flex items-center gap-2">
-                  <input
-                    readOnly
-                    value={`hireacreator.ai/creators/${user.slug}`}
-                    className="flex-1 text-xs bg-neutral-50 border border-neutral-200 rounded-lg px-3 py-2 text-neutral-600 truncate"
-                  />
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    onClick={() => navigator.clipboard?.writeText(`https://hireacreator.ai/creators/${user.slug}`)}
-                  >
-                    Copy
-                  </Button>
+                <h3 className="font-display font-semibold text-neutral-900 text-sm mb-3">Your Links</h3>
+                <div className="space-y-3">
+                  {/* Link in Bio */}
+                  <div>
+                    <label className="text-[10px] font-medium text-neutral-400 uppercase tracking-wider">Link in Bio</label>
+                    <div className="flex items-center gap-2 mt-1">
+                      <input readOnly value={`hireacreator.ai/u/${user.slug}`} className="flex-1 text-xs bg-neutral-50 border border-neutral-200 rounded-lg px-3 py-2 text-neutral-600 truncate" />
+                      <Button variant="secondary" size="sm" onClick={() => navigator.clipboard?.writeText(`https://hireacreator.ai/u/${user.slug}`)}>Copy</Button>
+                    </div>
+                    <Link href={`/u/${user.slug}`} className="inline-block mt-1.5 text-[11px] text-blue-600 hover:text-blue-800 transition-colors">Preview your link in bio →</Link>
+                  </div>
+                  {/* Full Profile */}
+                  <div>
+                    <label className="text-[10px] font-medium text-neutral-400 uppercase tracking-wider">Full Profile</label>
+                    <div className="flex items-center gap-2 mt-1">
+                      <input readOnly value={`hireacreator.ai/creators/${user.slug}`} className="flex-1 text-xs bg-neutral-50 border border-neutral-200 rounded-lg px-3 py-2 text-neutral-600 truncate" />
+                      <Button variant="secondary" size="sm" onClick={() => navigator.clipboard?.writeText(`https://hireacreator.ai/creators/${user.slug}`)}>Copy</Button>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            )}
+
+            {/* Connected socials summary */}
+            {socials.length > 0 && (
+              <Card className="p-4 sm:p-5">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="font-display font-semibold text-neutral-900 text-sm">Connected</h3>
+                  <EditButton onClick={() => setEditSocials(true)} label="Edit" />
+                </div>
+                <div className="space-y-2">
+                  {socials.map((s: any) => (
+                    <a key={s.id} href={s.url || "#"} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-neutral-50 transition-colors">
+                      <PlatformIcon platform={s.platform} size={18} className="text-neutral-500 shrink-0" />
+                      <span className="text-xs text-neutral-700 truncate">{s.handle}</span>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-neutral-300 shrink-0 ml-auto"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                    </a>
+                  ))}
                 </div>
               </Card>
             )}
