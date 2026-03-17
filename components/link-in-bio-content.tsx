@@ -262,6 +262,229 @@ function EmptyState({ light }: { light?: boolean }) {
 }
 
 /* ═══════════════════════════════════════════════
+   TEMPLATE 6 — COLLAGE (Portfolio IS the background)
+   Mosaic of portfolio images behind content
+   ═══════════════════════════════════════════════ */
+function TemplateCollage({ creator }: { creator: Creator }) {
+  const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
+  const images = creator.portfolio.filter(p => p.image).map(p => p.image!);
+  // Fill to at least 9 tiles by repeating
+  const tiles = images.length > 0 ? Array.from({ length: 12 }, (_, i) => images[i % images.length]) : [];
+
+  return (
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Collage background — mosaic of portfolio images */}
+      {tiles.length > 0 ? (
+        <div className="fixed inset-0 z-0 grid grid-cols-3 sm:grid-cols-4 auto-rows-fr">
+          {tiles.map((img, i) => (
+            <div key={i} className="relative overflow-hidden">
+              <img src={img} alt="" className="w-full h-full object-cover scale-110" style={{ filter: "brightness(0.4) saturate(0.7)" }} />
+            </div>
+          ))}
+        </div>
+      ) : creator.cover ? (
+        <div className="fixed inset-0 z-0"><img src={creator.cover} alt="" className="w-full h-full object-cover brightness-[0.35]" /></div>
+      ) : (
+        <div className="fixed inset-0 z-0 bg-gradient-to-br from-neutral-900 to-neutral-950" />
+      )}
+      {/* Noise overlay for texture */}
+      <div className="fixed inset-0 z-[1] opacity-20" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E\")" }} />
+
+      <div className="relative z-10 max-w-[460px] mx-auto px-5 pt-14 pb-10 min-h-screen flex flex-col">
+        {/* Frosted avatar card */}
+        <div className="text-center mb-8 bg-black/30 backdrop-blur-xl rounded-3xl p-6 border border-white/10">
+          {creator.avatar ? <img src={creator.avatar} alt="" className="w-20 h-20 rounded-2xl object-cover mx-auto shadow-2xl ring-2 ring-white/20" /> : <div className="w-20 h-20 rounded-2xl bg-white/10 flex items-center justify-center mx-auto"><span className="text-3xl font-bold text-white/70">{(creator.name || "?")[0]}</span></div>}
+          <div className="mt-3 flex items-center justify-center gap-1.5"><h1 className="font-display text-xl font-bold text-white">{creator.name || "Your Name"}</h1>{creator.isVerified && <VerifiedBadge light />}{creator.isPro && <ProBadge />}</div>
+          {creator.headline && <p className="mt-1.5 text-sm text-white/60">{creator.headline}</p>}
+          {creator.location && <p className="mt-1 text-xs text-white/40">📍 {creator.location}</p>}
+          {creator.isOnline && <OnlineDot light />}
+          {creator.socials.length > 0 && <div className="flex items-center justify-center gap-2.5 mt-4 flex-wrap">{creator.socials.map(s => <a key={s.platform} href={s.url || "#"} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center hover:bg-white/20 transition-all"><PlatformIcon platform={s.platform} size={16} className="text-white/70" /></a>)}</div>}
+        </div>
+        {creator.bio && <p className="text-sm text-white/50 text-center mb-6">{creator.bio}</p>}
+        {/* Services — frosted pills */}
+        <div className="flex-1 space-y-2.5">
+          {creator.services.map(s => <a key={s.id} href={`/creators/${creator.slug}`} className="block bg-black/30 backdrop-blur-xl border border-white/10 rounded-2xl px-5 py-4 text-center hover:bg-black/40 transition-all"><div className="font-medium text-white">{s.title}</div><div className="text-xs text-white/40 mt-0.5">{priceLabel(s.price, s.deliveryDays)}</div></a>)}
+          {isEmpty && <EmptyState light />}
+          {!isEmpty && <a href={`/creators/${creator.slug}`} className="block w-full mt-4 bg-white/90 text-neutral-900 font-semibold text-sm text-center rounded-full py-3.5 hover:bg-white transition-all shadow-lg backdrop-blur-sm">View Full Profile</a>}
+        </div>
+        <Branding light />
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════
+   TEMPLATE 7 — BENTO (Apple-style grid boxes)
+   Different sized boxes for different content
+   ═══════════════════════════════════════════════ */
+function TemplateBento({ creator }: { creator: Creator }) {
+  const accent = creator.linkBioAccent || "#171717";
+  const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
+  const hasPortfolio = creator.portfolio.length > 0;
+
+  return (
+    <div className="min-h-screen bg-neutral-950 p-3 sm:p-5">
+      <div className="max-w-[520px] mx-auto">
+        {/* Bento grid */}
+        <div className="grid grid-cols-4 gap-2.5 sm:gap-3 auto-rows-[80px] sm:auto-rows-[90px]">
+
+          {/* Identity — wide card, 2 rows */}
+          <div className="col-span-4 row-span-2 rounded-3xl overflow-hidden relative" style={{ background: `linear-gradient(135deg, ${accent}15, ${accent}05)`, border: `1px solid ${accent}20` }}>
+            {creator.cover && <img src={creator.cover} alt="" className="absolute inset-0 w-full h-full object-cover opacity-20" />}
+            <div className="relative h-full flex items-center gap-4 px-5 sm:px-6">
+              {creator.avatar ? <img src={creator.avatar} alt="" className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover shadow-xl shrink-0" /> : <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white/10 flex items-center justify-center shrink-0"><span className="text-2xl font-bold text-white/60">{(creator.name || "?")[0]}</span></div>}
+              <div>
+                <div className="flex items-center gap-1.5"><h1 className="font-display text-lg sm:text-xl font-bold text-white">{creator.name || "Your Name"}</h1>{creator.isVerified && <VerifiedBadge light />}{creator.isPro && <ProBadge />}</div>
+                <p className="text-xs text-white/40 mt-0.5">@{creator.slug?.split("-")[0]}</p>
+                {creator.headline && <p className="text-xs text-white/50 mt-1 line-clamp-2">{creator.headline}</p>}
+                {creator.isOnline && <div className="flex items-center gap-1 mt-1.5"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" /><span className="text-[9px] text-emerald-400 font-medium">Online</span></div>}
+              </div>
+            </div>
+          </div>
+
+          {/* Bio box — if exists */}
+          {creator.bio && (
+            <div className="col-span-4 row-span-1 rounded-2xl bg-neutral-900 border border-neutral-800 px-4 flex items-center">
+              <p className="text-xs text-neutral-400 line-clamp-2 leading-relaxed">{creator.bio}</p>
+            </div>
+          )}
+
+          {/* Social icons — compact row */}
+          {creator.socials.length > 0 && (
+            <div className="col-span-2 row-span-1 rounded-2xl bg-neutral-900 border border-neutral-800 flex items-center justify-center gap-2 px-3">
+              {creator.socials.slice(0, 5).map(s => <a key={s.platform} href={s.url || "#"} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-lg bg-neutral-800 flex items-center justify-center hover:bg-neutral-700 transition-all"><PlatformIcon platform={s.platform} size={14} className="text-neutral-400" /></a>)}
+            </div>
+          )}
+
+          {/* Location or stats box */}
+          <div className={`${creator.socials.length > 0 ? "col-span-2" : "col-span-4"} row-span-1 rounded-2xl bg-neutral-900 border border-neutral-800 flex items-center justify-center px-3`}>
+            {creator.location ? <span className="text-xs text-neutral-500">📍 {creator.location}</span> : creator.rating > 0 ? <span className="text-xs text-neutral-500 flex items-center gap-1"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" className="text-amber-400"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg> {creator.rating.toFixed(1)} ({creator.reviewCount})</span> : <span className="text-xs text-neutral-600">hireacreator.ai</span>}
+          </div>
+
+          {/* Portfolio images as bento tiles */}
+          {hasPortfolio && creator.portfolio.slice(0, 4).map((p, i) => (
+            <div key={p.id} className={`${i === 0 ? "col-span-2 row-span-2" : "col-span-2 row-span-2"} rounded-2xl overflow-hidden bg-neutral-900 border border-neutral-800`}>
+              {p.image ? <img src={p.image} alt={p.title} className="w-full h-full object-cover hover:scale-105 transition-transform" /> : <div className="w-full h-full flex items-center justify-center text-neutral-700 text-xs">{p.title}</div>}
+            </div>
+          ))}
+
+          {/* Service cards */}
+          {creator.services.map((s, i) => (
+            <a key={s.id} href={`/creators/${creator.slug}`} className={`${i === 0 && creator.services.length > 1 ? "col-span-2" : "col-span-2"} row-span-1 rounded-2xl border px-4 flex items-center justify-between hover:bg-white/5 transition-all`} style={{ borderColor: `${accent}25`, background: `${accent}08` }}>
+              <div>
+                <div className="text-sm font-medium text-white truncate">{s.title}</div>
+                <div className="text-[10px] text-neutral-500">{priceLabel(s.price, s.deliveryDays)}</div>
+              </div>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-neutral-600 shrink-0"><path d="M9 18l6-6-6-6" strokeLinecap="round" /></svg>
+            </a>
+          ))}
+
+          {/* CTA */}
+          {!isEmpty && (
+            <a href={`/creators/${creator.slug}`} className="col-span-4 row-span-1 rounded-2xl font-semibold text-sm text-center flex items-center justify-center text-white transition-all hover:opacity-90" style={{ background: accent }}>View Full Profile</a>
+          )}
+
+          {isEmpty && (
+            <a href="/dashboard" className="col-span-4 row-span-1 rounded-2xl bg-white font-semibold text-sm text-center flex items-center justify-center text-neutral-900 hover:bg-neutral-100 transition-all">Set Up Your Profile</a>
+          )}
+        </div>
+
+        <Branding light />
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════
+   TEMPLATE 8 — SPLIT (Hero image left, content right)
+   Magazine-style split layout on desktop, stacked on mobile
+   ═══════════════════════════════════════════════ */
+function TemplateSplit({ creator }: { creator: Creator }) {
+  const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
+  const heroImage = creator.cover || (creator.portfolio.length > 0 && creator.portfolio[0].image) || null;
+
+  return (
+    <div className="min-h-screen bg-white">
+      <div className="min-h-screen flex flex-col sm:flex-row">
+        {/* Left — full-height hero image */}
+        <div className="sm:w-[45%] sm:sticky sm:top-0 sm:h-screen relative">
+          {heroImage ? (
+            <img src={heroImage} alt="" className="w-full h-[35vh] sm:h-full object-cover" />
+          ) : (
+            <div className="w-full h-[35vh] sm:h-full bg-gradient-to-br from-neutral-200 to-neutral-300" />
+          )}
+          {/* Gradient overlay on mobile for text readability */}
+          <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-white to-transparent sm:hidden" />
+          {/* Name overlay on image (mobile) */}
+          <div className="absolute bottom-4 left-5 right-5 sm:hidden">
+            <div className="flex items-center gap-2">
+              {creator.avatar && <img src={creator.avatar} alt="" className="w-12 h-12 rounded-full border-2 border-white object-cover shadow-lg" />}
+              <div>
+                <div className="flex items-center gap-1"><h1 className="font-display text-lg font-bold text-neutral-900">{creator.name || "Your Name"}</h1>{creator.isVerified && <VerifiedBadge />}</div>
+                <p className="text-[10px] text-neutral-500">@{creator.slug?.split("-")[0]}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Right — scrollable content */}
+        <div className="sm:w-[55%] sm:overflow-y-auto sm:h-screen">
+          <div className="px-6 sm:px-8 lg:px-10 py-6 sm:py-10">
+            {/* Desktop identity (hidden on mobile since it's overlaid on image) */}
+            <div className="hidden sm:block mb-8">
+              <div className="flex items-center gap-3 mb-3">
+                {creator.avatar ? <img src={creator.avatar} alt="" className="w-16 h-16 rounded-2xl object-cover shadow-md" /> : <div className="w-16 h-16 rounded-2xl bg-neutral-100 flex items-center justify-center"><span className="text-xl font-bold text-neutral-400">{(creator.name || "?")[0]}</span></div>}
+                <div>
+                  <div className="flex items-center gap-1.5"><h1 className="font-display text-2xl font-bold text-neutral-900">{creator.name || "Your Name"}</h1>{creator.isVerified && <VerifiedBadge />}{creator.isPro && <ProBadge />}</div>
+                  <p className="text-xs text-neutral-400">@{creator.slug?.split("-")[0]}</p>
+                </div>
+              </div>
+              {creator.headline && <p className="text-sm text-neutral-600 leading-relaxed">{creator.headline}</p>}
+              {creator.location && <p className="text-xs text-neutral-400 mt-1">📍 {creator.location}</p>}
+              {creator.isOnline && <OnlineDot />}
+            </div>
+
+            {/* Mobile headline (below image) */}
+            <div className="sm:hidden mb-5">
+              {creator.headline && <p className="text-sm text-neutral-600">{creator.headline}</p>}
+              {creator.location && <p className="text-xs text-neutral-400 mt-1">📍 {creator.location}</p>}
+              {creator.isOnline && <OnlineDot />}
+            </div>
+
+            {/* Social links as horizontal pills */}
+            {creator.socials.length > 0 && (
+              <div className="flex flex-wrap gap-2 mb-6">{creator.socials.map(s => <a key={s.platform} href={s.url || "#"} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-3 py-2 bg-neutral-50 border border-neutral-200 rounded-full hover:bg-neutral-100 transition-all"><PlatformIcon platform={s.platform} size={14} className="text-neutral-500" /><span className="text-xs text-neutral-600 font-medium">{s.handle || s.platform}</span></a>)}</div>
+            )}
+
+            {creator.bio && <p className="text-sm text-neutral-500 mb-6 leading-relaxed">{creator.bio}</p>}
+
+            {/* Services as editorial cards */}
+            {creator.services.length > 0 && (
+              <div className="mb-6">
+                <h2 className="text-xs font-bold text-neutral-900 uppercase tracking-wider mb-3">Services</h2>
+                <div className="space-y-2">{creator.services.map(s => <a key={s.id} href={`/creators/${creator.slug}`} className="flex items-center justify-between px-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl hover:bg-neutral-100 transition-all"><div><div className="font-medium text-neutral-900 text-sm">{s.title}</div><div className="text-xs text-neutral-400 mt-0.5">{priceLabel(s.price, s.deliveryDays)}</div></div><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-neutral-300"><path d="M9 18l6-6-6-6" strokeLinecap="round" /></svg></a>)}</div>
+              </div>
+            )}
+
+            {/* Portfolio — horizontal scroll row */}
+            {creator.portfolio.length > 0 && (
+              <div className="mb-6">
+                <h2 className="text-xs font-bold text-neutral-900 uppercase tracking-wider mb-3">Work</h2>
+                <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 snap-x">{creator.portfolio.slice(0, 8).map(p => <div key={p.id} className="w-28 h-28 sm:w-32 sm:h-32 rounded-2xl overflow-hidden bg-neutral-100 shrink-0 snap-start">{p.image ? <img src={p.image} alt={p.title} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-neutral-300 text-[10px]">{p.title}</div>}</div>)}</div>
+              </div>
+            )}
+
+            {isEmpty && <EmptyState light={false} />}
+            {!isEmpty && <a href={`/creators/${creator.slug}`} className="block w-full bg-neutral-900 text-white font-semibold text-sm text-center rounded-full py-3.5 hover:opacity-90 transition-all shadow-lg">View Full Profile</a>}
+            <Branding />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════
    MAIN EXPORT — picks template based on user pref
    ═══════════════════════════════════════════════ */
 export function LinkInBioContent({ creator }: { creator: Creator }) {
@@ -275,6 +498,9 @@ export function LinkInBioContent({ creator }: { creator: Creator }) {
     bold: TemplateBold,
     showcase: TemplateShowcase,
     neon: TemplateNeon,
+    collage: TemplateCollage,
+    bento: TemplateBento,
+    split: TemplateSplit,
   }[template] || TemplateMinimal;
 
   return (
