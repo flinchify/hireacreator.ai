@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { exchangeCodeForTokens, getGoogleUser } from "@/lib/google-auth";
 import { getDb } from "@/lib/db";
 import { checkLoginRateLimit, checkIpRateLimit } from "@/lib/login-rate-limit";
+import crypto from "crypto";
 
 export async function GET(request: Request) {
   // Rate limit by IP
@@ -77,14 +78,12 @@ export async function GET(request: Request) {
     } else {
       // New user — create account
       isNewUser = true;
-      const slug = googleUser.email
-        .split("@")[0]
-        .toLowerCase()
-        .replace(/[^a-z0-9]/g, "-")
-        .slice(0, 50) + "-" + Date.now().toString(36);
+      // Clean slug — no random suffix unless collision
+      let slug = googleUser.email.split("@")[0].replace(/[^a-z0-9]/gi, "").toLowerCase().slice(0, 30);
+      const slugExists = await sql`SELECT id FROM users WHERE slug = ${slug}`;
+      if (slugExists.length > 0) slug = slug + Date.now().toString(36).slice(-4);
 
-      // Generate referral code
-      const refCode = slug.split("-")[0] || Math.random().toString(36).slice(2, 8);
+      const refCode = crypto.randomBytes(6).toString("hex");
 
       const result = await sql`
         INSERT INTO users (email, full_name, slug, avatar_url, role, referral_code)

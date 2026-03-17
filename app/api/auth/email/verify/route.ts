@@ -39,8 +39,10 @@ export async function POST(request: Request) {
     if (users.length === 0) {
       isNewUser = true;
       // Create new user
-      const emailPrefix = cleanEmail.split("@")[0].replace(/[^a-z0-9]/gi, "-").toLowerCase().slice(0, 20);
-      const slug = emailPrefix + "-" + crypto.randomBytes(4).toString("hex");
+      // Generate clean slug — no random suffix unless collision
+      let slug = cleanEmail.split("@")[0].replace(/[^a-z0-9]/gi, "").toLowerCase().slice(0, 30);
+      const slugExists = await sql`SELECT id FROM users WHERE slug = ${slug}`;
+      if (slugExists.length > 0) slug = slug + crypto.randomInt(10, 99);
       const refCode = crypto.randomBytes(6).toString("hex");
       const defaultName = cleanEmail.split("@")[0].replace(/[^a-z0-9]/gi, " ").replace(/\b\w/g, (c: string) => c.toUpperCase()).trim() || "New User";
 
