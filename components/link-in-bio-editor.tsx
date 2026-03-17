@@ -180,7 +180,7 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
     template: user.link_bio_template || "minimal",
     accent: user.link_bio_accent || "#6366f1",
     bgType: user.link_bio_bg_type || "gradient",
-    bgValue: user.link_bio_bg_value || "",
+    bgValue: (user.link_bio_bg_value && user.link_bio_bg_value.startsWith("http")) ? user.link_bio_bg_value : "",
     bgVideo: user.link_bio_bg_video || "",
     buttonShape: user.link_bio_button_shape || "rounded",
     buttonAnim: user.link_bio_button_anim || "none",
@@ -189,6 +189,7 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
   const [saved, setSaved] = useState(false);
   const [section, setSection] = useState("template");
   const [uploading, setUploading] = useState(false);
+  const [previewMode, setPreviewMode] = useState<"mobile" | "desktop">("mobile");
   const fileRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLInputElement>(null);
 
@@ -371,9 +372,9 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
                         </>
                       )}
                     </button>
-                    {settings.bgValue && settings.bgType === "image" && (
+                    {settings.bgValue && settings.bgType === "image" && settings.bgValue.startsWith("http") && (
                       <div className="relative rounded-xl overflow-hidden aspect-video">
-                        <img src={settings.bgValue} alt="" className="w-full h-full object-cover" />
+                        <img src={settings.bgValue} alt="" className="w-full h-full object-cover" onError={e => (e.currentTarget.style.display = "none")} />
                         <button onClick={() => save({ bgValue: "" })} className="absolute top-2 right-2 w-7 h-7 bg-black/60 rounded-full flex items-center justify-center hover:bg-black/80">
                           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" /></svg>
                         </button>
@@ -462,26 +463,59 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
             )}
           </div>
 
-          {/* Right — Live preview in phone */}
+          {/* Right — Live preview */}
           <div className="lg:w-[45%] lg:sticky lg:top-20 lg:self-start">
             <div className="bg-white rounded-2xl border border-neutral-200/60 p-4">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-semibold text-neutral-400">Live Preview</span>
+                {/* Device toggle */}
+                <div className="flex items-center gap-1 p-0.5 bg-neutral-100 rounded-lg">
+                  <button onClick={() => setPreviewMode("mobile")} className={`p-1.5 rounded-md transition-all ${previewMode === "mobile" ? "bg-white shadow-sm" : "hover:bg-neutral-200/50"}`}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={previewMode === "mobile" ? "text-neutral-900" : "text-neutral-400"}><rect x="5" y="2" width="14" height="20" rx="2" strokeLinecap="round" /><line x1="12" y1="18" x2="12.01" y2="18" strokeLinecap="round" /></svg>
+                  </button>
+                  <button onClick={() => setPreviewMode("desktop")} className={`p-1.5 rounded-md transition-all ${previewMode === "desktop" ? "bg-white shadow-sm" : "hover:bg-neutral-200/50"}`}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={previewMode === "desktop" ? "text-neutral-900" : "text-neutral-400"}><rect x="2" y="3" width="20" height="14" rx="2" strokeLinecap="round" /><line x1="8" y1="21" x2="16" y2="21" strokeLinecap="round" /><line x1="12" y1="17" x2="12" y2="21" strokeLinecap="round" /></svg>
+                  </button>
+                </div>
                 {user.slug && (
                   <Link href={`/u/${user.slug}`} target="_blank" className="text-[11px] text-blue-600 font-medium hover:text-blue-800">Open →</Link>
                 )}
               </div>
-              {/* Phone frame */}
-              <div className="mx-auto w-[280px] h-[560px] bg-black rounded-[2.5rem] shadow-2xl border-[6px] border-neutral-800 overflow-hidden relative">
-                {/* Notch */}
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[90px] h-[22px] bg-black rounded-b-2xl z-50" />
-                {/* Content */}
-                <div className="w-full h-full overflow-y-auto rounded-[2rem]">
-                  <MiniPreview settings={settings} creator={user} />
+
+              {/* Mobile preview */}
+              {previewMode === "mobile" && (
+                <div className="mx-auto w-[280px] h-[560px] bg-black rounded-[2.5rem] shadow-2xl border-[6px] border-neutral-800 overflow-hidden relative">
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[90px] h-[22px] bg-black rounded-b-2xl z-50" />
+                  <div className="w-full h-full overflow-y-auto rounded-[2rem]">
+                    <MiniPreview settings={settings} creator={user} />
+                  </div>
+                  <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-[100px] h-[4px] bg-white/30 rounded-full z-50" />
                 </div>
-                {/* Home indicator */}
-                <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-[100px] h-[4px] bg-white/30 rounded-full z-50" />
-              </div>
+              )}
+
+              {/* Desktop preview */}
+              {previewMode === "desktop" && (
+                <div className="mx-auto">
+                  {/* Browser chrome */}
+                  <div className="bg-neutral-200 rounded-t-xl px-3 py-2 flex items-center gap-2">
+                    <div className="flex gap-1.5">
+                      <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
+                      <div className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
+                      <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
+                    </div>
+                    <div className="flex-1 bg-white rounded-md px-2 py-1 text-[8px] text-neutral-400 truncate">
+                      hireacreator.ai/u/{user.slug || "yourname"}
+                    </div>
+                  </div>
+                  {/* Desktop viewport */}
+                  <div className="w-full h-[450px] border border-t-0 border-neutral-200 rounded-b-xl overflow-y-auto bg-neutral-100">
+                    <div className="flex items-start justify-center py-6 min-h-full">
+                      <div className="w-[400px] bg-white rounded-2xl shadow-lg overflow-hidden">
+                        <MiniPreview settings={settings} creator={user} />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
