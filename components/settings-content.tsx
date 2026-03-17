@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { useAuth } from "./auth-context";
 import { Button } from "./ui/button";
 import { Card } from "./ui/card";
@@ -855,7 +856,9 @@ function AdminTab() {
 /* ───── Main Settings ───── */
 export function SettingsContent() {
   const { user, loading } = useAuth();
-  const [tab, setTab] = useState<Tab>("account");
+  const searchParams = useSearchParams();
+  const initialTab = (searchParams.get("tab") as Tab) || "account";
+  const [tab, setTab] = useState<Tab>(initialTab);
   const [settings, setSettings] = useState<Settings | null>(null);
   const [loadingSettings, setLoadingSettings] = useState(true);
 

@@ -805,7 +805,7 @@ export function DashboardContent() {
                   Admin Panel
                 </h3>
                 <div className="space-y-2">
-                  <Link href="/dashboard/settings" className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white transition-colors group">
+                  <Link href="/dashboard/settings?tab=admin" className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white transition-colors group">
                     <div className="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center shrink-0">
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-purple-600"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" strokeLinecap="round" strokeLinejoin="round" /></svg>
                     </div>
@@ -814,7 +814,7 @@ export function DashboardContent() {
                       <div className="text-[10px] text-neutral-400">Manage, ban, export CSV</div>
                     </div>
                   </Link>
-                  <Link href="/dashboard/settings" className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white transition-colors group">
+                  <Link href="/dashboard/settings?tab=admin" className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white transition-colors group">
                     <div className="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center shrink-0">
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-purple-600"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" strokeLinecap="round" strokeLinejoin="round" /></svg>
                     </div>
