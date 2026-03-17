@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import type { Creator } from "@/lib/types";
+import { useAuth } from "@/components/auth-context";
 import { PlatformIcon } from "./icons/platforms";
 
 function VerifiedBadge() {
@@ -56,6 +58,8 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 }
 
 export function LinkInBioContent({ creator }: { creator: Creator }) {
+  const { user } = useAuth();
+  const isOwner = user && creator.id && user.id === creator.id;
   const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0 && creator.portfolio.length === 0;
   const hasServices = creator.services.length > 0;
   const hasSocials = creator.socials.length > 0;
@@ -63,8 +67,21 @@ export function LinkInBioContent({ creator }: { creator: Creator }) {
 
   return (
     <div className="min-h-screen bg-neutral-200 dark:bg-neutral-900">
+
+      {/* Owner banner — only visible to the signed-in owner */}
+      {isOwner && (
+        <div className="fixed top-0 left-0 right-0 z-50 bg-neutral-900 text-white px-4 py-2.5 flex items-center justify-between">
+          <span className="text-xs text-white/60">Previewing your link in bio</span>
+          <div className="flex items-center gap-2">
+            <Link href="/dashboard" className="px-3.5 py-1.5 text-xs font-medium bg-white text-neutral-900 rounded-full hover:bg-neutral-100 transition-colors">
+              Back to Dashboard
+            </Link>
+          </div>
+        </div>
+      )}
+
       {/* Desktop: subtle pattern bg. Mobile: clean */}
-      <div className="min-h-screen flex items-start sm:items-center justify-center sm:py-8 sm:px-4">
+      <div className={`min-h-screen flex items-start sm:items-center justify-center sm:py-8 sm:px-4 ${isOwner ? "pt-[44px]" : ""}`}>
 
         {/* Card container — full screen on mobile, contained card on desktop */}
         <div className="w-full sm:max-w-[460px] sm:rounded-3xl sm:shadow-2xl sm:shadow-black/10 bg-white dark:bg-neutral-950 min-h-screen sm:min-h-0 sm:max-h-[92vh] sm:overflow-y-auto relative">
