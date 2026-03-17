@@ -62,6 +62,8 @@ export async function PATCH(request: Request) {
       cover_url = ${body.cover_url !== undefined ? body.cover_url : user.cover_url},
       is_online = COALESCE(${body.is_online ?? null}, is_online),
       visible_in_marketplace = COALESCE(${body.visible_in_marketplace ?? null}, visible_in_marketplace),
+      link_bio_template = COALESCE(${body.link_bio_template ?? null}, link_bio_template),
+      link_bio_accent = COALESCE(${body.link_bio_accent ?? null}, link_bio_accent),
       updated_at = NOW()
     WHERE id = ${user.id}
   `;

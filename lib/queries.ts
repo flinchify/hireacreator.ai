@@ -38,6 +38,8 @@ function assembleCreator(
     businessName: (user.business_name as string) || null,
     businessUrl: (user.business_url as string) || null,
     allowMessages: user.privacy_allow_messages !== false,
+    linkBioTemplate: (user.link_bio_template as string) || "minimal",
+    linkBioAccent: (user.link_bio_accent as string) || "#171717",
     socials: socials.map((s) => ({
       platform: s.platform as string,
       handle: s.handle as string,
