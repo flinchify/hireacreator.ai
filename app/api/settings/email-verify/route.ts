@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { getDb } from "@/lib/db";
+import { sendVerificationEmail } from "@/lib/email";
 import crypto from "crypto";
 
 async function getUser() {
@@ -41,13 +42,17 @@ export async function POST() {
     VALUES (${user.id}, ${token})
   `;
 
-  // TODO: Send email via Resend when configured
-  // For now, return the token (in production, this would be emailed)
+  // Send verification email via Resend
+  try {
+    await sendVerificationEmail(user.email, token);
+  } catch (err) {
+    console.error("Resend verification email error:", err);
+    return NextResponse.json({ error: "email_failed", message: "Failed to send verification email. Please try again." }, { status: 500 });
+  }
+
   return NextResponse.json({
     success: true,
     message: "Verification email sent. Check your inbox.",
-    // Remove this in production:
-    _devToken: process.env.NODE_ENV !== "production" ? token : undefined,
   });
 }
 
