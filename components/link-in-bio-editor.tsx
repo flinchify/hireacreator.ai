@@ -695,172 +695,197 @@ function AnimTestButton({ shape, anim }: { shape: string; anim: string }) {
 function EditorTemplateMini({ id }: { id: string }) {
   const c = "aspect-[3/4] overflow-hidden relative";
 
-  /* MINIMAL — White card on grey bg, cover bar, centered avatar, white bordered service rows */
+  /* MINIMAL — White card on grey, wavy cover edge, round avatar */
   if (id === "minimal") return (
     <div className={`${c} bg-neutral-200 flex items-center justify-center p-1.5`}>
-      <div className="w-full h-full bg-white rounded-lg flex flex-col items-center overflow-hidden">
-        <div className="w-full h-6 bg-gradient-to-br from-neutral-100 to-neutral-200" />
-        <div className="w-7 h-7 rounded-full bg-neutral-300 -mt-3.5 border-2 border-white z-10" />
+      <div className="w-full h-full bg-white rounded-lg flex flex-col items-center overflow-hidden relative">
+        <div className="w-full h-8 bg-gradient-to-br from-neutral-100 to-neutral-200 relative">
+          <svg viewBox="0 0 100 12" className="absolute -bottom-[1px] left-0 w-full" preserveAspectRatio="none"><path d="M0 12 Q25 0 50 8 Q75 16 100 4 L100 12 Z" fill="white"/></svg>
+        </div>
+        <div className="w-8 h-8 rounded-full bg-neutral-300 -mt-4 border-[3px] border-white z-10 shrink-0" />
         <div className="w-10 h-1 rounded-full bg-neutral-800 mt-1" />
         <div className="w-7 h-0.5 rounded-full bg-neutral-300 mt-0.5" />
         <div className="flex gap-1 mt-1.5">{[1,2,3].map(i=><div key={i} className="w-4 h-4 rounded-full bg-neutral-100"/>)}</div>
         <div className="w-full px-1.5 mt-1.5 space-y-1">
-          <div className="h-4 rounded bg-neutral-50 border border-neutral-200 flex items-center px-1.5"><div className="w-2.5 h-2.5 rounded bg-neutral-200 mr-1"/><div className="w-6 h-0.5 bg-neutral-300 rounded-full"/></div>
-          <div className="h-4 rounded bg-neutral-50 border border-neutral-200 flex items-center px-1.5"><div className="w-2.5 h-2.5 rounded bg-neutral-200 mr-1"/><div className="w-8 h-0.5 bg-neutral-300 rounded-full"/></div>
+          <div className="h-5 rounded-xl bg-neutral-50 border border-neutral-200" />
+          <div className="h-5 rounded-xl bg-neutral-50 border border-neutral-200" />
         </div>
         <div className="w-[calc(100%-12px)] h-4 rounded-full bg-neutral-900 mt-1.5 mb-1.5" />
       </div>
     </div>
   );
 
-  /* GLASS — Full-bleed blurred bg, frosted translucent cards, no container */
+  /* GLASS — Gradient with floating blurred orbs, frosted cards */
   if (id === "glass") return (
-    <div className={`${c} flex flex-col items-center justify-center gap-1 px-2`} style={{ background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" }}>
-      <div className="w-8 h-8 rounded-full bg-white/20 border-2 border-white/20 shadow-lg" />
-      <div className="w-10 h-1 rounded-full bg-white/40" />
-      <div className="w-7 h-0.5 rounded-full bg-white/20" />
-      <div className="flex gap-1 mt-1">{[1,2,3].map(i=><div key={i} className="w-4 h-4 rounded-full bg-white/10 border border-white/10"/>)}</div>
-      <div className="w-full space-y-1 mt-1.5">
-        <div className="h-5 rounded-lg bg-white/[0.08] border border-white/[0.08] text-center flex items-center justify-center"><div className="w-10 h-0.5 bg-white/25 rounded-full"/></div>
-        <div className="h-5 rounded-lg bg-white/[0.08] border border-white/[0.08] text-center flex items-center justify-center"><div className="w-8 h-0.5 bg-white/25 rounded-full"/></div>
+    <div className={`${c} flex flex-col items-center justify-center px-2`} style={{ background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" }}>
+      {/* Floating orbs */}
+      <div className="absolute top-2 right-1 w-8 h-8 rounded-full bg-pink-400/30 blur-md" />
+      <div className="absolute bottom-4 left-0 w-10 h-10 rounded-full bg-blue-400/20 blur-lg" />
+      <div className="absolute top-1/2 left-1/2 w-6 h-6 rounded-full bg-white/10 blur-md" />
+      <div className="relative z-10 flex flex-col items-center w-full">
+        <div className="w-9 h-9 rounded-full bg-white/20 border-2 border-white/25 shadow-lg" />
+        <div className="w-10 h-1 rounded-full bg-white/40 mt-1.5" />
+        <div className="w-7 h-0.5 rounded-full bg-white/20 mt-0.5" />
+        <div className="flex gap-1 mt-1.5">{[1,2,3].map(i=><div key={i} className="w-4 h-4 rounded-full bg-white/10 border border-white/15"/>)}</div>
+        <div className="w-full space-y-1 mt-2">
+          <div className="h-5 rounded-xl bg-white/[0.08] border border-white/[0.12]" />
+          <div className="h-5 rounded-xl bg-white/[0.08] border border-white/[0.12]" />
+        </div>
+        <div className="w-full h-4 rounded-full bg-white mt-1.5" />
       </div>
-      <div className="w-full h-4 rounded-full bg-white mt-1" />
     </div>
   );
 
-  /* BOLD — Dark bg, big squared avatar with accent border, accent service cards, accent CTA */
+  /* BOLD — Dark, hexagonal avatar frame, accent stripe, chunky cards */
   if (id === "bold") return (
-    <div className={`${c} bg-neutral-950 flex flex-col items-center pt-3 px-2`}>
-      <div className="w-10 h-10 rounded-lg bg-neutral-800 border-2 border-indigo-500" />
-      <div className="w-12 h-1.5 rounded-full bg-white mt-1.5" />
-      <div className="w-5 h-0.5 rounded-full bg-indigo-400 mt-0.5" />
-      <div className="flex gap-1 mt-1.5">{[1,2,3].map(i=><div key={i} className="w-4 h-4 rounded bg-neutral-900 border border-neutral-800"/>)}</div>
-      <div className="w-8 h-[1px] bg-indigo-500 mt-2 mb-1.5" />
-      <div className="w-full space-y-1">
-        <div className="h-5 rounded-lg bg-neutral-900 border border-neutral-800 flex items-center justify-between px-1.5"><div className="w-8 h-0.5 bg-white/60 rounded-full"/><div className="w-3 h-0.5 bg-indigo-400 rounded-full"/></div>
-        <div className="h-5 rounded-lg bg-neutral-900 border border-neutral-800 flex items-center justify-between px-1.5"><div className="w-6 h-0.5 bg-white/60 rounded-full"/><div className="w-3 h-0.5 bg-indigo-400 rounded-full"/></div>
+    <div className={`${c} bg-neutral-950 flex flex-col items-center pt-2.5 px-2`}>
+      {/* Diagonal accent stripe */}
+      <div className="absolute top-0 right-0 w-12 h-full bg-indigo-500/[0.07] -skew-x-12 translate-x-3" />
+      <div className="relative z-10 flex flex-col items-center w-full">
+        {/* Hexagonal avatar */}
+        <svg viewBox="0 0 40 44" className="w-11 h-12 shrink-0">
+          <polygon points="20,2 38,12 38,32 20,42 2,32 2,12" fill="#1a1a1a" stroke="#6366f1" strokeWidth="2.5"/>
+          <circle cx="20" cy="22" r="8" fill="#6366f1" opacity="0.2"/>
+        </svg>
+        <div className="w-12 h-1.5 rounded-full bg-white mt-1.5" />
+        <div className="w-5 h-0.5 rounded-full bg-indigo-400 mt-0.5" />
+        <div className="flex gap-1 mt-1.5">{[1,2,3].map(i=><div key={i} className="w-4 h-4 rounded bg-neutral-900 border border-neutral-800"/>)}</div>
+        <div className="w-8 h-[2px] bg-indigo-500 mt-2 mb-1.5" />
+        <div className="w-full space-y-1">
+          <div className="h-5 rounded-lg bg-neutral-900 border border-neutral-800" />
+          <div className="h-5 rounded-lg bg-neutral-900 border border-neutral-800" />
+        </div>
+        <div className="w-full h-4 rounded-full bg-indigo-500 mt-1.5" />
       </div>
-      <div className="w-full h-4 rounded-full bg-indigo-500 mt-1.5" />
     </div>
   );
 
-  /* NEON — Black bg, glowing avatar ring, neon-bordered cards, glow CTA */
+  /* NEON — Black, ring avatar with animated glow, scanline overlay */
   if (id === "neon") return (
     <div className={`${c} bg-black flex flex-col items-center pt-3 px-2`}>
-      <div className="w-9 h-9 rounded-full border-2 border-cyan-400 shadow-[0_0_12px_rgba(34,211,238,0.5)]" />
-      <div className="w-10 h-1 rounded-full bg-white mt-1.5" />
-      <div className="w-5 h-0.5 rounded-full bg-cyan-400 mt-0.5" />
-      <div className="flex gap-1 mt-1.5">{[1,2,3].map(i=><div key={i} className="w-4 h-4 rounded-full border border-cyan-400/30 bg-cyan-400/10"/>)}</div>
-      <div className="w-full space-y-1 mt-2">
-        <div className="h-5 rounded-lg border border-cyan-400/25 bg-cyan-400/[0.06] shadow-[0_0_8px_rgba(34,211,238,0.08)] flex items-center justify-center"><div className="w-10 h-0.5 bg-white/30 rounded-full"/></div>
-        <div className="h-5 rounded-lg border border-cyan-400/15 bg-cyan-400/[0.04] flex items-center justify-center"><div className="w-8 h-0.5 bg-white/20 rounded-full"/></div>
+      {/* Scanlines */}
+      <div className="absolute inset-0 opacity-[0.04]" style={{backgroundImage:"repeating-linear-gradient(0deg, #22d3ee 0px, transparent 1px, transparent 3px)"}}/>
+      {/* Corner accents */}
+      <div className="absolute top-1 left-1 w-3 h-[1px] bg-cyan-400/40"/><div className="absolute top-1 left-1 w-[1px] h-3 bg-cyan-400/40"/>
+      <div className="absolute bottom-1 right-1 w-3 h-[1px] bg-cyan-400/40"/><div className="absolute bottom-1 right-1 w-[1px] h-3 bg-cyan-400/40"/>
+      <div className="relative z-10 flex flex-col items-center w-full">
+        {/* Double-ring avatar */}
+        <div className="relative w-10 h-10">
+          <div className="absolute inset-0 rounded-full border border-cyan-400/20 scale-[1.3]" />
+          <div className="w-full h-full rounded-full border-2 border-cyan-400 shadow-[0_0_14px_rgba(34,211,238,0.5)]" />
+        </div>
+        <div className="w-10 h-1 rounded-full bg-white mt-1.5" />
+        <div className="w-5 h-0.5 rounded-full bg-cyan-400 mt-0.5" />
+        <div className="flex gap-1 mt-1.5">{[1,2,3].map(i=><div key={i} className="w-4 h-4 rounded-full border border-cyan-400/30 bg-cyan-400/10"/>)}</div>
+        <div className="w-full space-y-1 mt-2">
+          <div className="h-5 rounded-lg border border-cyan-400/25 bg-cyan-400/[0.06] shadow-[0_0_8px_rgba(34,211,238,0.08)]" />
+          <div className="h-5 rounded-lg border border-cyan-400/15 bg-cyan-400/[0.04]" />
+        </div>
+        <div className="w-full h-4 rounded-full bg-cyan-400 mt-1.5 shadow-[0_0_14px_rgba(34,211,238,0.4)]" />
       </div>
-      <div className="w-full h-4 rounded-full bg-cyan-400 mt-1.5 shadow-[0_0_12px_rgba(34,211,238,0.4)]" />
     </div>
   );
 
-  /* COLLAGE — Photo mosaic bg, dark overlay, frosted card with avatar + info */
+  /* COLLAGE — Tilted photo grid, film grain, frosted badge card */
   if (id === "collage") return (
     <div className={`${c}`}>
-      <div className="absolute inset-0 grid grid-cols-3 grid-rows-3 gap-[1px]">
-        <div className="bg-rose-400"/><div className="bg-sky-300"/><div className="bg-amber-300"/>
-        <div className="bg-emerald-300"/><div className="bg-violet-400"/><div className="bg-orange-300"/>
-        <div className="bg-teal-300"/><div className="bg-pink-300"/><div className="bg-indigo-300"/>
+      <div className="absolute inset-[-10%] grid grid-cols-3 grid-rows-3 gap-[2px] rotate-[-6deg] scale-[1.15]">
+        <div className="bg-rose-400 rounded-sm"/><div className="bg-sky-300 rounded-sm"/><div className="bg-amber-300 rounded-sm"/>
+        <div className="bg-emerald-300 rounded-sm"/><div className="bg-violet-400 rounded-sm"/><div className="bg-orange-300 rounded-sm"/>
+        <div className="bg-teal-300 rounded-sm"/><div className="bg-pink-300 rounded-sm"/><div className="bg-indigo-300 rounded-sm"/>
       </div>
       <div className="absolute inset-0 bg-black/55" />
-      <div className="absolute inset-0 opacity-10" style={{backgroundImage:"url(\"data:image/svg+xml,%3Csvg viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")"}}/>
       <div className="relative z-10 flex flex-col items-center justify-center h-full px-2">
-        <div className="w-full bg-black/30 rounded-xl p-2 border border-white/10 flex flex-col items-center">
-          <div className="w-7 h-7 rounded-lg bg-white/20 border border-white/20" />
-          <div className="w-10 h-1 rounded-full bg-white/40 mt-1" />
+        <div className="w-full bg-black/40 rounded-2xl p-2.5 border border-white/10 flex flex-col items-center" style={{backdropFilter:"blur(8px)"}}>
+          {/* Diamond avatar */}
+          <div className="w-8 h-8 rotate-45 rounded-md bg-white/20 border border-white/25 overflow-hidden flex items-center justify-center">
+            <div className="w-5 h-5 rounded-full bg-white/15 -rotate-45"/>
+          </div>
+          <div className="w-10 h-1 rounded-full bg-white/40 mt-1.5" />
           <div className="w-6 h-0.5 rounded-full bg-white/20 mt-0.5" />
-          <div className="flex gap-1 mt-1">{[1,2,3].map(i=><div key={i} className="w-3 h-3 rounded bg-white/10"/>)}</div>
+          <div className="flex gap-1 mt-1">{[1,2,3].map(i=><div key={i} className="w-3.5 h-3.5 rounded-md bg-white/10"/>)}</div>
         </div>
         <div className="w-full space-y-1 mt-1.5">
-          <div className="h-4 rounded-lg bg-black/30 border border-white/10 flex items-center justify-center"><div className="w-8 h-0.5 bg-white/30 rounded-full"/></div>
-          <div className="h-4 rounded-lg bg-black/30 border border-white/10 flex items-center justify-center"><div className="w-6 h-0.5 bg-white/30 rounded-full"/></div>
+          <div className="h-4 rounded-xl bg-black/40 border border-white/10" style={{backdropFilter:"blur(4px)"}} />
+          <div className="h-4 rounded-xl bg-black/40 border border-white/10" style={{backdropFilter:"blur(4px)"}} />
         </div>
-        <div className="w-full h-3.5 rounded-full bg-white/90 mt-1.5" />
+        <div className="w-full h-4 rounded-full bg-white/90 mt-1.5" />
       </div>
     </div>
   );
 
-  /* BENTO — Dark bg, grid of different-sized boxes, avatar+name in wide card */
+  /* BENTO — Dark, varied box sizes, rounded avatar in pill card, staggered grid */
   if (id === "bento") return (
     <div className={`${c} bg-neutral-950 p-1.5`}>
       <div className="w-full h-full grid grid-cols-4 gap-[3px] auto-rows-fr">
-        {/* Identity wide card */}
-        <div className="col-span-4 row-span-2 rounded-md bg-white/[0.04] border border-white/[0.08] flex items-center gap-1.5 px-2">
-          <div className="w-6 h-6 rounded bg-neutral-700 shrink-0" />
-          <div><div className="w-8 h-1 bg-white/50 rounded-full"/><div className="w-5 h-0.5 bg-white/20 rounded-full mt-0.5"/></div>
+        <div className="col-span-4 row-span-2 rounded-lg bg-white/[0.04] border border-white/[0.08] flex items-center gap-2 px-2">
+          <div className="w-7 h-7 rounded-lg bg-neutral-700 shrink-0" />
+          <div><div className="w-10 h-1.5 bg-white/50 rounded-full"/><div className="w-6 h-1 bg-white/20 rounded-full mt-1"/></div>
         </div>
-        {/* Socials box */}
-        <div className="col-span-2 row-span-1 rounded-md bg-neutral-900 border border-neutral-800 flex items-center justify-center gap-1">
-          {[1,2,3].map(i=><div key={i} className="w-3 h-3 rounded bg-neutral-800"/>)}
+        <div className="col-span-2 row-span-1 rounded-lg bg-neutral-900 border border-neutral-800 flex items-center justify-center gap-1">
+          {[1,2,3].map(i=><div key={i} className="w-3.5 h-3.5 rounded bg-neutral-800"/>)}
         </div>
-        {/* Location box */}
-        <div className="col-span-2 row-span-1 rounded-md bg-neutral-900 border border-neutral-800 flex items-center justify-center">
-          <div className="w-6 h-0.5 bg-neutral-600 rounded-full"/>
+        <div className="col-span-2 row-span-1 rounded-lg bg-neutral-900 border border-neutral-800 flex items-center justify-center">
+          <div className="w-8 h-1 bg-neutral-600 rounded-full"/>
         </div>
-        {/* Portfolio tiles */}
-        <div className="col-span-2 row-span-2 rounded-md bg-gradient-to-br from-violet-900/40 to-violet-800/20 border border-violet-500/20" />
-        <div className="col-span-2 row-span-2 rounded-md bg-gradient-to-br from-neutral-800 to-neutral-900 border border-neutral-800" />
-        {/* Service card */}
-        <div className="col-span-2 row-span-1 rounded-md bg-violet-600/15 border border-violet-500/25 flex items-center justify-center">
+        <div className="col-span-2 row-span-2 rounded-lg bg-gradient-to-br from-violet-900/40 to-violet-800/20 border border-violet-500/20" />
+        <div className="col-span-2 row-span-2 rounded-lg bg-gradient-to-br from-neutral-800 to-neutral-900 border border-neutral-800" />
+        <div className="col-span-2 row-span-1 rounded-lg bg-violet-600/15 border border-violet-500/25 flex items-center justify-center">
           <div className="w-8 h-0.5 bg-white/30 rounded-full"/>
         </div>
-        {/* CTA */}
-        <div className="col-span-2 row-span-1 rounded-md bg-neutral-200 flex items-center justify-center">
+        <div className="col-span-2 row-span-1 rounded-lg bg-neutral-200 flex items-center justify-center">
           <div className="w-6 h-0.5 bg-neutral-700 rounded-full"/>
         </div>
       </div>
     </div>
   );
 
-  /* SHOWCASE — Light, squared avatar, 2-col portfolio grid at top, 2-col services, dark CTA */
+  /* SHOWCASE — Light, rounded square avatar, staggered 2-col masonry feel */
   if (id === "showcase") return (
     <div className={`${c} bg-neutral-100 flex items-center justify-center p-1.5`}>
       <div className="w-full h-full bg-white rounded-lg flex flex-col items-center overflow-hidden px-1.5 pt-2 pb-1.5">
         <div className="flex items-center gap-1.5 w-full mb-1.5">
-          <div className="w-6 h-6 rounded-lg bg-neutral-200 shrink-0" />
+          <div className="w-7 h-7 rounded-xl bg-neutral-200 shrink-0" />
           <div><div className="w-8 h-1 bg-neutral-800 rounded-full"/><div className="w-5 h-0.5 bg-neutral-300 rounded-full mt-0.5"/></div>
         </div>
-        <div className="flex gap-1 mb-1.5">{[1,2,3].map(i=><div key={i} className="w-3.5 h-3.5 rounded bg-neutral-100 border border-neutral-200"/>)}</div>
-        {/* 2-col portfolio */}
+        <div className="flex gap-1 mb-1.5">{[1,2,3].map(i=><div key={i} className="w-4 h-4 rounded-lg bg-neutral-100 border border-neutral-200"/>)}</div>
+        {/* 2-col masonry */}
         <div className="w-full grid grid-cols-2 gap-[3px] mb-1.5">
-          <div className="aspect-[4/3] rounded bg-gradient-to-br from-neutral-100 to-neutral-200"/>
-          <div className="aspect-[4/3] rounded bg-gradient-to-br from-neutral-200 to-neutral-100"/>
+          <div className="aspect-[4/3] rounded-lg bg-gradient-to-br from-neutral-100 to-neutral-200">
+            <div className="w-full h-full rounded-lg flex items-end p-1"><div className="w-6 h-0.5 bg-neutral-400 rounded-full"/></div>
+          </div>
+          <div className="aspect-[4/3] rounded-lg bg-gradient-to-br from-neutral-200 to-neutral-100">
+            <div className="w-full h-full rounded-lg flex items-end p-1"><div className="w-4 h-0.5 bg-neutral-400 rounded-full"/></div>
+          </div>
         </div>
-        {/* 2-col services */}
         <div className="w-full grid grid-cols-2 gap-[3px] mb-1.5">
-          <div className="h-5 rounded bg-neutral-50 border border-neutral-200 flex items-center px-1"><div className="w-6 h-0.5 bg-neutral-400 rounded-full"/></div>
-          <div className="h-5 rounded bg-neutral-50 border border-neutral-200 flex items-center px-1"><div className="w-5 h-0.5 bg-neutral-400 rounded-full"/></div>
+          <div className="h-5 rounded-lg bg-neutral-50 border border-neutral-200" />
+          <div className="h-5 rounded-lg bg-neutral-50 border border-neutral-200" />
         </div>
         <div className="w-full h-4 rounded-full bg-neutral-900 mt-auto" />
       </div>
     </div>
   );
 
-  /* SPLIT — Left image hero, right content column, magazine editorial */
+  /* SPLIT — Diagonal cut between image and content, overlapping avatar */
   if (id === "split") return (
     <div className={`${c}`}>
       <div className="flex w-full h-full">
         <div className="w-[42%] bg-gradient-to-b from-neutral-300 to-neutral-400 relative">
-          <div className="absolute bottom-2 left-1.5 flex items-center gap-1">
-            <div className="w-4 h-4 rounded-full bg-white/40"/>
-            <div className="w-5 h-0.5 bg-white/60 rounded-full"/>
-          </div>
+          {/* Diagonal edge */}
+          <svg viewBox="0 0 10 100" className="absolute top-0 -right-[1px] h-full w-2" preserveAspectRatio="none"><polygon points="0,0 10,5 10,95 0,100" fill="white"/></svg>
         </div>
-        <div className="w-[58%] bg-white flex flex-col justify-center gap-1 px-2 py-2">
-          <div className="flex items-center gap-1">
-            <div className="w-5 h-5 rounded-lg bg-neutral-200 shrink-0"/>
-            <div><div className="w-8 h-1 bg-neutral-800 rounded-full"/><div className="w-5 h-0.5 bg-neutral-300 rounded-full mt-0.5"/></div>
+        <div className="w-[58%] bg-white flex flex-col justify-center gap-1 px-2 py-2 relative">
+          {/* Avatar overlapping the split */}
+          <div className="absolute -left-3 top-3 w-6 h-6 rounded-full bg-neutral-300 border-2 border-white shadow-md z-10"/>
+          <div className="ml-2">
+            <div className="w-10 h-1.5 bg-neutral-800 rounded-full"/>
+            <div className="w-6 h-0.5 bg-neutral-300 rounded-full mt-0.5"/>
           </div>
-          <div className="flex gap-0.5 mt-0.5">{[1,2,3].map(i=><div key={i} className="px-1 py-0.5 rounded-full bg-neutral-50 border border-neutral-200"><div className="w-3 h-0.5 bg-neutral-400 rounded-full"/></div>)}</div>
-          <div className="text-[4px] text-neutral-400 leading-tight mt-0.5">Services</div>
-          <div className="space-y-0.5">
-            <div className="h-4 rounded bg-neutral-50 border border-neutral-200 flex items-center px-1"><div className="w-8 h-0.5 bg-neutral-400 rounded-full"/></div>
-            <div className="h-4 rounded bg-neutral-50 border border-neutral-200 flex items-center px-1"><div className="w-6 h-0.5 bg-neutral-400 rounded-full"/></div>
+          <div className="flex gap-0.5 mt-0.5 ml-2">{[1,2].map(i=><div key={i} className="px-1.5 py-0.5 rounded-full bg-neutral-50 border border-neutral-200"><div className="w-4 h-0.5 bg-neutral-400 rounded-full"/></div>)}</div>
+          <div className="space-y-0.5 mt-1">
+            <div className="h-4 rounded-lg bg-neutral-50 border border-neutral-200" />
+            <div className="h-4 rounded-lg bg-neutral-50 border border-neutral-200" />
           </div>
           <div className="w-full h-3.5 rounded-full bg-neutral-900 mt-auto" />
         </div>
