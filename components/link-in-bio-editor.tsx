@@ -1154,7 +1154,7 @@ function AnimTestButton({ shape, anim }: { shape: string; anim: string }) {
 }
 
 function EditorTemplateMini({ id }: { id: string }) {
-  const c = "aspect-[3/4] overflow-hidden relative";
+  const c = "aspect-[3/5] overflow-hidden relative";
 
   /* MINIMAL — White card on grey, wavy cover edge, round avatar */
   if (id === "minimal") return (
