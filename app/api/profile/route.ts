@@ -70,6 +70,11 @@ export async function PATCH(request: Request) {
       link_bio_button_shape = COALESCE(${body.link_bio_button_shape ?? null}, link_bio_button_shape),
       link_bio_button_anim = COALESCE(${body.link_bio_button_anim ?? null}, link_bio_button_anim),
       onboarding_complete = COALESCE(${body.onboarding_complete ?? null}, onboarding_complete),
+      link_bio_font = COALESCE(${body.link_bio_font ?? null}, link_bio_font),
+      link_bio_text_color = ${body.link_bio_text_color !== undefined ? body.link_bio_text_color : user.link_bio_text_color},
+      link_bio_bg_images = ${body.link_bio_bg_images !== undefined ? body.link_bio_bg_images : user.link_bio_bg_images},
+      link_bio_intro_anim = COALESCE(${body.link_bio_intro_anim ?? null}, link_bio_intro_anim),
+      link_bio_card_style = COALESCE(${body.link_bio_card_style ?? null}, link_bio_card_style),
       updated_at = NOW()
     WHERE id = ${user.id}
   `;

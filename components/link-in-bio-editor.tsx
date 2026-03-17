@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback, useRef } from "react";
 import Link from "next/link";
-import type { Creator } from "@/lib/types";
 
 /* ── Types ── */
 type Settings = {
@@ -11,20 +10,40 @@ type Settings = {
   bgType: string;
   bgValue: string;
   bgVideo: string;
+  bgImages: string[]; // multiple photo URLs
   buttonShape: string;
   buttonAnim: string;
+  font: string;
+  textColor: string;
+  introAnim: string;
+  cardStyle: string;
 };
 
-/* ── Templates ── */
-const TEMPLATES: { id: string; name: string; desc: string; dark: boolean; preview: string }[] = [
-  { id: "minimal", name: "Minimal", desc: "Clean white card", dark: false, preview: "bg-neutral-200" },
-  { id: "glass", name: "Glass", desc: "Frosted blur", dark: true, preview: "bg-gradient-to-br from-neutral-800 to-neutral-950" },
-  { id: "bold", name: "Bold", desc: "Dark + accent", dark: true, preview: "bg-neutral-950" },
-  { id: "showcase", name: "Showcase", desc: "Media grid", dark: false, preview: "bg-neutral-100" },
-  { id: "neon", name: "Neon", desc: "Futuristic glow", dark: true, preview: "bg-black" },
-  { id: "collage", name: "Collage", desc: "Photo mosaic", dark: true, preview: "bg-gradient-to-br from-neutral-700 to-neutral-900" },
-  { id: "bento", name: "Bento", desc: "Grid boxes", dark: true, preview: "bg-neutral-950" },
-  { id: "split", name: "Split", desc: "Magazine layout", dark: false, preview: "bg-white" },
+/* ── Constants ── */
+const TEMPLATES = [
+  { id: "minimal", name: "Minimal", dark: false, preview: "bg-neutral-200" },
+  { id: "glass", name: "Glass", dark: true, preview: "bg-gradient-to-br from-neutral-800 to-neutral-950" },
+  { id: "bold", name: "Bold", dark: true, preview: "bg-neutral-950" },
+  { id: "showcase", name: "Showcase", dark: false, preview: "bg-neutral-100" },
+  { id: "neon", name: "Neon", dark: true, preview: "bg-black" },
+  { id: "collage", name: "Collage", dark: true, preview: "bg-gradient-to-br from-neutral-700 to-neutral-900" },
+  { id: "bento", name: "Bento", dark: true, preview: "bg-neutral-950" },
+  { id: "split", name: "Split", dark: false, preview: "bg-white" },
+];
+
+const FONTS = [
+  { id: "jakarta", name: "Jakarta", css: "'Plus Jakarta Sans', sans-serif" },
+  { id: "outfit", name: "Outfit", css: "'Outfit', sans-serif" },
+  { id: "inter", name: "Inter", css: "'Inter', sans-serif" },
+  { id: "dm-sans", name: "DM Sans", css: "'DM Sans', sans-serif" },
+  { id: "poppins", name: "Poppins", css: "'Poppins', sans-serif" },
+  { id: "space-grotesk", name: "Space Grotesk", css: "'Space Grotesk', sans-serif" },
+  { id: "sora", name: "Sora", css: "'Sora', sans-serif" },
+  { id: "manrope", name: "Manrope", css: "'Manrope', sans-serif" },
+  { id: "clash", name: "Clash Display", css: "'Clash Display', sans-serif" },
+  { id: "satoshi", name: "Satoshi", css: "'Satoshi', sans-serif" },
+  { id: "cabinet", name: "Cabinet Grotesk", css: "'Cabinet Grotesk', sans-serif" },
+  { id: "general-sans", name: "General Sans", css: "'General Sans', sans-serif" },
 ];
 
 const GRADIENTS = [
@@ -44,7 +63,18 @@ const GRADIENTS = [
 
 const ACCENT_COLORS = [
   "#6366f1", "#22d3ee", "#ef4444", "#f97316", "#22c55e",
-  "#a855f7", "#ec4899", "#eab308", "#14b8a6", "#171717",
+  "#a855f7", "#ec4899", "#eab308", "#14b8a6", "#171717", "#ffffff",
+];
+
+const TEXT_COLORS = [
+  { id: "", name: "Auto", color: "" },
+  { id: "#ffffff", name: "White", color: "#ffffff" },
+  { id: "#f5f5f5", name: "Light", color: "#f5f5f5" },
+  { id: "#171717", name: "Dark", color: "#171717" },
+  { id: "#0a0a0a", name: "Black", color: "#0a0a0a" },
+  { id: "#6366f1", name: "Indigo", color: "#6366f1" },
+  { id: "#ec4899", name: "Pink", color: "#ec4899" },
+  { id: "#22d3ee", name: "Cyan", color: "#22d3ee" },
 ];
 
 const BUTTON_SHAPES = [
@@ -63,127 +93,151 @@ const BUTTON_ANIMS = [
   { id: "glow", name: "Glow" },
 ];
 
-/* ── Mini preview component (renders inline, not iframe) ── */
+const INTRO_ANIMS = [
+  { id: "none", name: "None", desc: "No animation" },
+  { id: "fade-up", name: "Fade Up", desc: "Content slides up smoothly" },
+  { id: "fade-scale", name: "Scale In", desc: "Grows from center" },
+  { id: "slide-left", name: "Slide Left", desc: "Content enters from right" },
+  { id: "blur-in", name: "Blur In", desc: "Focus from blur" },
+  { id: "typewriter", name: "Typewriter", desc: "Name types itself" },
+  { id: "spotlight", name: "Spotlight", desc: "Light reveals content" },
+  { id: "glitch", name: "Glitch", desc: "Digital glitch effect" },
+  { id: "particles", name: "Particles", desc: "Particle burst on load" },
+];
+
+const CARD_STYLES = [
+  { id: "default", name: "Default" },
+  { id: "outlined", name: "Outlined" },
+  { id: "filled", name: "Filled" },
+  { id: "shadow", name: "Shadow" },
+  { id: "glass", name: "Glass" },
+];
+
+/* ── Mini Preview ── */
 function MiniPreview({ settings, creator }: { settings: Settings; creator: any }) {
   const [animKey, setAnimKey] = useState(0);
   const dark = TEMPLATES.find(t => t.id === settings.template)?.dark ?? false;
   const accent = settings.accent || "#6366f1";
   const btnRadius = BUTTON_SHAPES.find(s => s.id === settings.buttonShape)?.radius || "16px";
+  const fontFamily = FONTS.find(f => f.id === settings.font)?.css || "'Plus Jakarta Sans', sans-serif";
+  const textCol = settings.textColor || (dark ? "#ffffff" : "#171717");
 
-  /* Background style */
   function getBgStyle(): React.CSSProperties {
     if (settings.bgType === "gradient" && settings.bgValue) return { background: settings.bgValue };
     if (settings.bgType === "solid" && settings.bgValue) return { background: settings.bgValue };
     if (settings.bgType === "image" && settings.bgValue) return { backgroundImage: `url(${settings.bgValue})`, backgroundSize: "cover", backgroundPosition: "center" };
-    if (settings.template === "glass" || settings.template === "collage") return { background: "linear-gradient(135deg, #1a1a2e, #16213e)" };
+    if (settings.bgType === "photos" && settings.bgImages.length > 0) return {};
     if (dark) return { background: "#0a0a0a" };
     return { background: "#e5e5e5" };
   }
 
-  const name = creator.name || "Your Name";
+  const name = creator.full_name || creator.name || "Your Name";
   const headline = creator.headline || "Creator / Content Maker";
   const avatar = creator.avatar_url || creator.avatar;
 
   return (
-    <div className="relative w-full h-full overflow-hidden" style={getBgStyle()}>
-      {/* Video bg */}
+    <div className="relative w-full min-h-full overflow-hidden" style={{ ...getBgStyle(), fontFamily }}>
       {settings.bgType === "video" && settings.bgVideo && (
         <video src={settings.bgVideo} autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover" />
       )}
-      {/* Overlay for dark templates */}
-      {(settings.bgType === "video" || settings.bgType === "image") && (
-        <div className="absolute inset-0 bg-black/40" />
-      )}
-      {/* Content */}
-      <div className="relative z-10 flex flex-col items-center pt-10 px-4 h-full">
-        {/* Avatar */}
-        <div className={`w-16 h-16 rounded-full overflow-hidden border-2 ${dark ? "border-white/20" : "border-white"} shadow-lg`}>
-          {avatar ? (
-            <img src={avatar} alt="" className="w-full h-full object-cover" />
-          ) : (
-            <div className={`w-full h-full flex items-center justify-center text-xl font-bold ${dark ? "bg-white/10 text-white/60" : "bg-neutral-200 text-neutral-400"}`}>{name[0]}</div>
-          )}
-        </div>
-        {/* Name */}
-        <h2 className={`mt-3 text-sm font-bold ${dark ? "text-white" : "text-neutral-900"}`}>{name}</h2>
-        <p className={`text-[10px] mt-0.5 ${dark ? "text-white/50" : "text-neutral-500"}`}>{headline}</p>
-
-        {/* Socials */}
-        <div className="flex gap-1.5 mt-3">
-          {["instagram", "tiktok", "youtube"].map(p => (
-            <div key={p} className={`w-7 h-7 rounded-full flex items-center justify-center ${dark ? "bg-white/10" : "bg-neutral-200/80"}`}>
-              <div className={`w-3 h-3 rounded-sm ${dark ? "bg-white/30" : "bg-neutral-400"}`} />
+      {/* Multi-photo collage background */}
+      {settings.bgType === "photos" && settings.bgImages.length > 0 && (
+        <div className="absolute inset-0 grid grid-cols-2 gap-0.5 opacity-30">
+          {settings.bgImages.slice(0, 10).map((img, i) => (
+            <div key={i} className="overflow-hidden">
+              <img src={img} alt="" className="w-full h-full object-cover" onError={e => (e.currentTarget.style.display = "none")} />
             </div>
           ))}
         </div>
-
-        {/* Service buttons */}
+      )}
+      {(settings.bgType === "video" || settings.bgType === "image" || settings.bgType === "photos") && (
+        <div className="absolute inset-0 bg-black/40" />
+      )}
+      <div className="relative z-10 flex flex-col items-center pt-10 px-4 pb-8">
+        <div className={`w-16 h-16 rounded-full overflow-hidden border-2 shadow-lg`} style={{ borderColor: dark ? "rgba(255,255,255,0.2)" : "#fff" }}>
+          {avatar ? <img src={avatar} alt="" className="w-full h-full object-cover" /> : <div className={`w-full h-full flex items-center justify-center text-xl font-bold ${dark ? "bg-white/10 text-white/60" : "bg-neutral-200 text-neutral-400"}`}>{name[0]}</div>}
+        </div>
+        <h2 className="mt-3 text-sm font-bold" style={{ color: textCol }}>{name}</h2>
+        <p className="text-[10px] mt-0.5" style={{ color: textCol, opacity: 0.5 }}>{headline}</p>
+        {/* Socials */}
+        <div className="flex gap-1.5 mt-3">
+          {(creator.socials || []).length > 0
+            ? (creator.socials || []).slice(0, 5).map((s: any, i: number) => (
+                <div key={i} className={`w-7 h-7 rounded-full flex items-center justify-center ${dark ? "bg-white/10" : "bg-neutral-200/80"}`}>
+                  <div className={`w-3 h-3 rounded-sm ${dark ? "bg-white/30" : "bg-neutral-400"}`} />
+                </div>
+              ))
+            : ["ig", "tt", "yt"].map(p => (
+                <div key={p} className={`w-7 h-7 rounded-full flex items-center justify-center ${dark ? "bg-white/10" : "bg-neutral-200/80"}`}>
+                  <div className={`w-3 h-3 rounded-sm ${dark ? "bg-white/30" : "bg-neutral-400"}`} />
+                </div>
+              ))
+          }
+        </div>
+        {/* Buttons */}
         <div className="w-full mt-4 space-y-2 px-2">
           {(creator.services?.length > 0 ? creator.services.slice(0, 3) : [
             { title: "UGC Video Package", price: 299 },
             { title: "Product Photography", price: 199 },
             { title: "Social Media Audit", price: 99 },
-          ]).map((s: any, i: number) => (
-            <button
-              key={i}
-              onClick={() => setAnimKey(k => k + 1)}
-              className={`w-full py-2.5 px-3 text-[11px] font-medium transition-all ${
-                dark
-                  ? settings.template === "bold" || settings.template === "neon"
-                    ? "bg-white/[0.08] border border-white/[0.08] text-white hover:bg-white/[0.14]"
-                    : "bg-white/10 text-white hover:bg-white/20"
-                  : "bg-white border border-neutral-200 text-neutral-900 hover:bg-neutral-50 shadow-sm"
-              }`}
-              style={{
+          ]).map((s: any, i: number) => {
+            const cardBg = settings.cardStyle === "filled" ? (dark ? "rgba(255,255,255,0.12)" : accent) :
+                           settings.cardStyle === "glass" ? (dark ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.8)") :
+                           settings.cardStyle === "shadow" ? (dark ? "rgba(255,255,255,0.08)" : "#fff") :
+                           dark ? "rgba(255,255,255,0.08)" : "#fff";
+            const cardBorder = settings.cardStyle === "outlined" ? `1px solid ${dark ? "rgba(255,255,255,0.15)" : accent}` :
+                               settings.cardStyle === "shadow" ? "none" : `1px solid ${dark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)"}`;
+            const cardShadow = settings.cardStyle === "shadow" ? "0 4px 20px rgba(0,0,0,0.12)" : "none";
+            return (
+              <button key={i} onClick={() => setAnimKey(k => k + 1)} className="w-full py-2.5 px-3 text-[11px] font-medium transition-all text-left" style={{
                 borderRadius: btnRadius,
+                background: cardBg,
+                border: cardBorder,
+                boxShadow: cardShadow,
+                color: settings.cardStyle === "filled" && !dark ? "#fff" : textCol,
+                backdropFilter: settings.cardStyle === "glass" ? "blur(10px)" : undefined,
                 animation: animKey > 0 ? getAnim(settings.buttonAnim) : undefined,
-              }}
-            >
-              <div className="flex items-center justify-between">
-                <span>{s.title}</span>
-                <span className={dark ? "text-white/40" : "text-neutral-400"}>${s.price}</span>
-              </div>
-            </button>
-          ))}
+              }}>
+                <div className="flex items-center justify-between">
+                  <span>{s.title}</span>
+                  <span style={{ opacity: 0.4 }}>${s.price}</span>
+                </div>
+              </button>
+            );
+          })}
         </div>
-
-        {/* CTA */}
-        <button
-          className="mt-4 px-6 py-2.5 text-[11px] font-bold transition-all"
-          style={{
-            borderRadius: btnRadius,
-            background: settings.template === "bold" || settings.template === "neon" ? accent : dark ? "#fff" : "#171717",
-            color: settings.template === "bold" || settings.template === "neon" ? "#fff" : dark ? "#171717" : "#fff",
-          }}
-        >
-          View Full Profile
-        </button>
+        <button className="mt-4 px-6 py-2.5 text-[11px] font-bold" style={{
+          borderRadius: btnRadius,
+          background: settings.template === "bold" || settings.template === "neon" ? accent : dark ? "#fff" : "#171717",
+          color: settings.template === "bold" || settings.template === "neon" ? "#fff" : dark ? "#171717" : "#fff",
+        }}>View Full Profile</button>
       </div>
     </div>
   );
 }
 
 function getAnim(id: string): string | undefined {
-  const anims: Record<string, string> = {
-    bounce: "edBounce 0.4s ease",
-    pulse: "edPulse 0.35s ease",
-    shake: "edShake 0.3s ease",
-    scale: "edScale 0.35s ease",
-    glow: "edGlow 0.5s ease",
-  };
-  return anims[id];
+  const m: Record<string, string> = { bounce: "edBounce 0.4s ease", pulse: "edPulse 0.35s ease", shake: "edShake 0.3s ease", scale: "edScale 0.35s ease", glow: "edGlow 0.5s ease" };
+  return m[id];
 }
 
 /* ── Main Editor ── */
 export function LinkInBioEditorContent({ user }: { user: any }) {
+  const parseBgImages = (v: string): string[] => { try { return JSON.parse(v || "[]"); } catch { return []; } };
+
   const [settings, setSettings] = useState<Settings>({
     template: user.link_bio_template || "minimal",
     accent: user.link_bio_accent || "#6366f1",
     bgType: user.link_bio_bg_type || "gradient",
-    bgValue: (user.link_bio_bg_value && user.link_bio_bg_value.startsWith("http")) ? user.link_bio_bg_value : "",
+    bgValue: (user.link_bio_bg_value?.startsWith("http") || user.link_bio_bg_value?.startsWith("linear")) ? user.link_bio_bg_value : "",
     bgVideo: user.link_bio_bg_video || "",
+    bgImages: parseBgImages(user.link_bio_bg_images),
     buttonShape: user.link_bio_button_shape || "rounded",
     buttonAnim: user.link_bio_button_anim || "none",
+    font: user.link_bio_font || "jakarta",
+    textColor: user.link_bio_text_color || "",
+    introAnim: user.link_bio_intro_anim || "none",
+    cardStyle: user.link_bio_card_style || "default",
   });
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -192,6 +246,7 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
   const [previewMode, setPreviewMode] = useState<"mobile" | "desktop">("mobile");
   const fileRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLInputElement>(null);
+  const photosRef = useRef<HTMLInputElement>(null);
 
   const save = useCallback(async (updates: Partial<Settings>) => {
     const next = { ...settings, ...updates };
@@ -206,8 +261,13 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
         link_bio_bg_type: next.bgType,
         link_bio_bg_value: next.bgValue,
         link_bio_bg_video: next.bgVideo,
+        link_bio_bg_images: JSON.stringify(next.bgImages),
         link_bio_button_shape: next.buttonShape,
         link_bio_button_anim: next.buttonAnim,
+        link_bio_font: next.font,
+        link_bio_text_color: next.textColor,
+        link_bio_intro_anim: next.introAnim,
+        link_bio_card_style: next.cardStyle,
       }),
     });
     setSaving(false);
@@ -215,8 +275,7 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
     setTimeout(() => setSaved(false), 1500);
   }, [settings]);
 
-  /* Image upload for background */
-  async function uploadBgImage(file: File) {
+  async function uploadImage(file: File, purpose: "bg" | "photos") {
     setUploading(true);
     const fd = new FormData();
     fd.append("file", file);
@@ -224,12 +283,13 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
     const res = await fetch("/api/upload", { method: "POST", body: fd });
     const data = await res.json();
     setUploading(false);
-    if (data.url) save({ bgType: "image", bgValue: data.url });
-    else alert(data.message || "Upload failed");
+    if (data.url) {
+      if (purpose === "bg") save({ bgType: "image", bgValue: data.url });
+      else save({ bgImages: [...settings.bgImages, data.url] });
+    } else alert(data.message || "Upload failed");
   }
 
-  /* Video upload for background */
-  async function uploadBgVideo(file: File) {
+  async function uploadVideo(file: File) {
     setUploading(true);
     const fd = new FormData();
     fd.append("file", file);
@@ -241,18 +301,25 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
     else alert(data.message || "Upload failed");
   }
 
+  function removePhoto(idx: number) {
+    const next = settings.bgImages.filter((_, i) => i !== idx);
+    save({ bgImages: next });
+  }
+
   const sections = [
     { id: "template", name: "Template" },
     { id: "background", name: "Background" },
+    { id: "typography", name: "Typography" },
     { id: "buttons", name: "Buttons" },
+    { id: "animation", name: "Animation" },
     { id: "colors", name: "Colors" },
   ];
 
   return (
     <div className="min-h-screen bg-neutral-100">
-      {/* Hidden file inputs */}
-      <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif" className="hidden" onChange={e => { if (e.target.files?.[0]) uploadBgImage(e.target.files[0]); }} />
-      <input ref={videoRef} type="file" accept="video/mp4,video/webm" className="hidden" onChange={e => { if (e.target.files?.[0]) uploadBgVideo(e.target.files[0]); }} />
+      <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif" className="hidden" onChange={e => { if (e.target.files?.[0]) uploadImage(e.target.files[0], "bg"); }} />
+      <input ref={videoRef} type="file" accept="video/mp4,video/webm" className="hidden" onChange={e => { if (e.target.files?.[0]) uploadVideo(e.target.files[0]); }} />
+      <input ref={photosRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple className="hidden" onChange={e => { if (e.target.files) Array.from(e.target.files).forEach(f => uploadImage(f, "photos")); }} />
 
       {/* Top bar */}
       <div className="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-neutral-200/60">
@@ -277,27 +344,24 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-5">
         <div className="flex flex-col lg:flex-row gap-5">
-
           {/* Left — Editor */}
           <div className="lg:w-[55%] space-y-4">
-
-            {/* Section tabs */}
-            <div className="flex gap-1 p-1 bg-white rounded-2xl border border-neutral-200/60">
+            {/* Section tabs — scrollable */}
+            <div className="flex gap-1 p-1 bg-white rounded-2xl border border-neutral-200/60 overflow-x-auto">
               {sections.map(s => (
-                <button key={s.id} onClick={() => setSection(s.id)} className={`flex-1 py-2.5 rounded-xl text-xs font-semibold text-center transition-all ${section === s.id ? "bg-neutral-900 text-white" : "text-neutral-400 hover:text-neutral-700"}`}>
+                <button key={s.id} onClick={() => setSection(s.id)} className={`flex-shrink-0 py-2.5 px-4 rounded-xl text-xs font-semibold text-center transition-all whitespace-nowrap ${section === s.id ? "bg-neutral-900 text-white" : "text-neutral-400 hover:text-neutral-700"}`}>
                   {s.name}
                 </button>
               ))}
             </div>
 
-            {/* ── Template ── */}
+            {/* ─── TEMPLATE ─── */}
             {section === "template" && (
               <div className="bg-white rounded-2xl border border-neutral-200/60 p-5">
                 <h2 className="text-sm font-bold text-neutral-900 mb-4">Choose Template</h2>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   {TEMPLATES.map(t => (
                     <button key={t.id} onClick={() => save({ template: t.id })} className={`relative rounded-2xl overflow-hidden transition-all active:scale-95 ${settings.template === t.id ? "ring-2 ring-neutral-900 ring-offset-2" : "hover:ring-1 hover:ring-neutral-300"}`}>
-                      {/* Mini visual preview */}
                       <div className={`aspect-[3/4] ${t.preview} flex flex-col items-center justify-center gap-1 p-2`}>
                         <div className={`w-8 h-8 rounded-full ${t.dark ? "bg-white/20" : "bg-neutral-300/60"}`} />
                         <div className={`w-14 h-1 rounded-full ${t.dark ? "bg-white/15" : "bg-neutral-300/40"}`} />
@@ -319,31 +383,28 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
               </div>
             )}
 
-            {/* ── Background ── */}
+            {/* ─── BACKGROUND ─── */}
             {section === "background" && (
               <div className="bg-white rounded-2xl border border-neutral-200/60 p-5 space-y-5">
-                {/* Type selector */}
                 <div>
                   <h2 className="text-sm font-bold text-neutral-900 mb-3">Background</h2>
                   <div className="flex flex-wrap gap-2">
-                    {["gradient", "solid", "image", "video"].map(t => (
+                    {["gradient", "solid", "image", "photos", "video"].map(t => (
                       <button key={t} onClick={() => save({ bgType: t })} className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${settings.bgType === t ? "bg-neutral-900 text-white" : "bg-neutral-100 text-neutral-500 hover:bg-neutral-200"}`}>
-                        {t[0].toUpperCase() + t.slice(1)}
+                        {t === "photos" ? "Photo Collage" : t[0].toUpperCase() + t.slice(1)}
                       </button>
                     ))}
                   </div>
                 </div>
 
-                {/* Gradient */}
                 {settings.bgType === "gradient" && (
                   <div className="grid grid-cols-6 gap-2">
                     {GRADIENTS.map((g, i) => (
-                      <button key={i} onClick={() => save({ bgValue: g })} className={`aspect-square rounded-xl transition-all hover:scale-105 active:scale-95 ${settings.bgValue === g ? "ring-2 ring-neutral-900 ring-offset-2" : ""}`} style={{ background: g }} />
+                      <button key={i} onClick={() => save({ bgValue: g })} className={`aspect-square rounded-xl transition-all hover:scale-105 ${settings.bgValue === g ? "ring-2 ring-neutral-900 ring-offset-2" : ""}`} style={{ background: g }} />
                     ))}
                   </div>
                 )}
 
-                {/* Solid */}
                 {settings.bgType === "solid" && (
                   <div>
                     <div className="flex flex-wrap gap-2.5">
@@ -358,21 +419,18 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
                   </div>
                 )}
 
-                {/* Image upload */}
                 {settings.bgType === "image" && (
                   <div className="space-y-3">
                     <button onClick={() => fileRef.current?.click()} disabled={uploading} className="w-full py-8 border-2 border-dashed border-neutral-300 rounded-2xl text-center hover:border-neutral-400 hover:bg-neutral-50 transition-all">
-                      {uploading ? (
-                        <div className="flex items-center justify-center gap-2"><div className="w-5 h-5 border-2 border-neutral-300 border-t-neutral-900 rounded-full animate-spin" /><span className="text-xs text-neutral-400">Uploading...</span></div>
-                      ) : (
+                      {uploading ? <Spinner /> : (
                         <>
                           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="mx-auto text-neutral-300 mb-2"><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><path d="M21 15l-5-5L5 21" /></svg>
-                          <div className="text-xs font-medium text-neutral-500">Click to upload image</div>
+                          <div className="text-xs font-medium text-neutral-500">Upload background image</div>
                           <div className="text-[10px] text-neutral-400 mt-1">JPG, PNG, WebP, GIF up to 5MB</div>
                         </>
                       )}
                     </button>
-                    {settings.bgValue && settings.bgType === "image" && settings.bgValue.startsWith("http") && (
+                    {settings.bgValue && settings.bgValue.startsWith("http") && (
                       <div className="relative rounded-xl overflow-hidden aspect-video">
                         <img src={settings.bgValue} alt="" className="w-full h-full object-cover" onError={e => (e.currentTarget.style.display = "none")} />
                         <button onClick={() => save({ bgValue: "" })} className="absolute top-2 right-2 w-7 h-7 bg-black/60 rounded-full flex items-center justify-center hover:bg-black/80">
@@ -383,16 +441,40 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
                   </div>
                 )}
 
-                {/* Video upload */}
+                {/* Photo collage — multiple uploads */}
+                {settings.bgType === "photos" && (
+                  <div className="space-y-3">
+                    <p className="text-[11px] text-neutral-400">Upload up to 10 photos. They'll tile as your background collage.</p>
+                    <button onClick={() => photosRef.current?.click()} disabled={uploading || settings.bgImages.length >= 10} className="w-full py-6 border-2 border-dashed border-neutral-300 rounded-2xl text-center hover:border-neutral-400 hover:bg-neutral-50 transition-all disabled:opacity-50">
+                      {uploading ? <Spinner /> : (
+                        <>
+                          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="mx-auto text-neutral-300 mb-1.5"><path d="M12 5v14M5 12h14" strokeLinecap="round" /></svg>
+                          <div className="text-xs font-medium text-neutral-500">Add photos ({settings.bgImages.length}/10)</div>
+                        </>
+                      )}
+                    </button>
+                    {settings.bgImages.length > 0 && (
+                      <div className="grid grid-cols-5 gap-2">
+                        {settings.bgImages.map((img, i) => (
+                          <div key={i} className="relative aspect-square rounded-xl overflow-hidden group">
+                            <img src={img} alt="" className="w-full h-full object-cover" />
+                            <button onClick={() => removePhoto(i)} className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" /></svg>
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 {settings.bgType === "video" && (
                   <div className="space-y-3">
                     <button onClick={() => videoRef.current?.click()} disabled={uploading} className="w-full py-8 border-2 border-dashed border-neutral-300 rounded-2xl text-center hover:border-neutral-400 hover:bg-neutral-50 transition-all">
-                      {uploading ? (
-                        <div className="flex items-center justify-center gap-2"><div className="w-5 h-5 border-2 border-neutral-300 border-t-neutral-900 rounded-full animate-spin" /><span className="text-xs text-neutral-400">Uploading...</span></div>
-                      ) : (
+                      {uploading ? <Spinner /> : (
                         <>
                           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="mx-auto text-neutral-300 mb-2"><polygon points="5 3 19 12 5 21 5 3" /></svg>
-                          <div className="text-xs font-medium text-neutral-500">Click to upload video</div>
+                          <div className="text-xs font-medium text-neutral-500">Upload background video</div>
                           <div className="text-[10px] text-neutral-400 mt-1">MP4, WebM up to 5MB</div>
                         </>
                       )}
@@ -410,10 +492,53 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
               </div>
             )}
 
-            {/* ── Buttons ── */}
+            {/* ─── TYPOGRAPHY ─── */}
+            {section === "typography" && (
+              <div className="bg-white rounded-2xl border border-neutral-200/60 p-5 space-y-6">
+                <div>
+                  <h2 className="text-sm font-bold text-neutral-900 mb-3">Font</h2>
+                  <div className="grid grid-cols-2 gap-2">
+                    {FONTS.map(f => (
+                      <button key={f.id} onClick={() => save({ font: f.id })} className={`p-3 rounded-xl text-left transition-all ${settings.font === f.id ? "bg-neutral-900 text-white" : "bg-neutral-50 text-neutral-600 hover:bg-neutral-100"}`}>
+                        <div className="text-base font-bold" style={{ fontFamily: f.css }}>{f.name}</div>
+                        <div className="text-[10px] mt-0.5 opacity-50" style={{ fontFamily: f.css }}>The quick brown fox</div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <h2 className="text-sm font-bold text-neutral-900 mb-3">Text Color</h2>
+                  <div className="flex flex-wrap gap-2">
+                    {TEXT_COLORS.map(c => (
+                      <button key={c.id || "auto"} onClick={() => save({ textColor: c.id })} className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium transition-all ${settings.textColor === c.id ? "ring-2 ring-neutral-900 ring-offset-1" : "bg-neutral-50 hover:bg-neutral-100"}`}>
+                        {c.id ? <div className="w-4 h-4 rounded-full border border-neutral-200" style={{ background: c.color }} /> : <div className="w-4 h-4 rounded-full bg-gradient-to-r from-neutral-900 to-neutral-200 border border-neutral-200" />}
+                        <span>{c.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                  <div className="mt-3 flex items-center gap-2">
+                    <input type="color" value={settings.textColor || "#171717"} onChange={e => save({ textColor: e.target.value })} className="w-8 h-8 rounded cursor-pointer border-0" />
+                    <span className="text-xs text-neutral-400">Custom text color</span>
+                  </div>
+                </div>
+
+                <div>
+                  <h2 className="text-sm font-bold text-neutral-900 mb-3">Card Style</h2>
+                  <div className="grid grid-cols-5 gap-2">
+                    {CARD_STYLES.map(c => (
+                      <button key={c.id} onClick={() => save({ cardStyle: c.id })} className={`py-2.5 rounded-xl text-[10px] font-semibold transition-all ${settings.cardStyle === c.id ? "bg-neutral-900 text-white" : "bg-neutral-50 text-neutral-500 hover:bg-neutral-100"}`}>
+                        {c.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ─── BUTTONS ─── */}
             {section === "buttons" && (
               <div className="bg-white rounded-2xl border border-neutral-200/60 p-5 space-y-6">
-                {/* Shape */}
                 <div>
                   <h2 className="text-sm font-bold text-neutral-900 mb-3">Button Shape</h2>
                   <div className="grid grid-cols-4 gap-2">
@@ -424,8 +549,6 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
                     ))}
                   </div>
                 </div>
-
-                {/* Animation */}
                 <div>
                   <h2 className="text-sm font-bold text-neutral-900 mb-3">Click Animation</h2>
                   <div className="grid grid-cols-3 gap-2">
@@ -436,28 +559,50 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
                     ))}
                   </div>
                 </div>
-
-                {/* Live test */}
                 <div className="p-4 bg-neutral-50 rounded-xl text-center">
-                  <p className="text-[10px] text-neutral-400 mb-2">Tap to preview animation</p>
-                  <AnimTestButton shape={settings.buttonShape} anim={settings.buttonAnim} accent={settings.accent} />
+                  <p className="text-[10px] text-neutral-400 mb-2">Tap to preview</p>
+                  <AnimTestButton shape={settings.buttonShape} anim={settings.buttonAnim} />
                 </div>
               </div>
             )}
 
-            {/* ── Colors ── */}
+            {/* ─── ANIMATION ─── */}
+            {section === "animation" && (
+              <div className="bg-white rounded-2xl border border-neutral-200/60 p-5">
+                <h2 className="text-sm font-bold text-neutral-900 mb-1">Intro Animation</h2>
+                <p className="text-[11px] text-neutral-400 mb-4">Plays once when someone visits your link-in-bio page.</p>
+                <div className="grid grid-cols-1 gap-2">
+                  {INTRO_ANIMS.map(a => (
+                    <button key={a.id} onClick={() => save({ introAnim: a.id })} className={`flex items-center gap-3 p-3.5 rounded-xl text-left transition-all ${settings.introAnim === a.id ? "bg-neutral-900 text-white" : "bg-neutral-50 text-neutral-600 hover:bg-neutral-100"}`}>
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm ${settings.introAnim === a.id ? "bg-white/10" : "bg-neutral-200/60"}`}>
+                        {a.id === "none" ? "—" : a.id === "fade-up" ? "↑" : a.id === "fade-scale" ? "⊕" : a.id === "slide-left" ? "←" : a.id === "blur-in" ? "◎" : a.id === "typewriter" ? "⌨" : a.id === "spotlight" ? "💡" : a.id === "glitch" ? "⚡" : "✨"}
+                      </div>
+                      <div>
+                        <div className="text-xs font-bold">{a.name}</div>
+                        <div className={`text-[10px] ${settings.introAnim === a.id ? "text-white/50" : "text-neutral-400"}`}>{a.desc}</div>
+                      </div>
+                      {settings.introAnim === a.id && (
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="ml-auto"><path d="M5 13l4 4L19 7" strokeLinecap="round" /></svg>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* ─── COLORS ─── */}
             {section === "colors" && (
               <div className="bg-white rounded-2xl border border-neutral-200/60 p-5">
                 <h2 className="text-sm font-bold text-neutral-900 mb-1">Accent Color</h2>
-                <p className="text-[11px] text-neutral-400 mb-4">Used by Bold, Neon, and Bento templates for highlights.</p>
+                <p className="text-[11px] text-neutral-400 mb-4">Used by Bold, Neon, and Bento templates. Also used for Filled and Outlined card styles.</p>
                 <div className="flex flex-wrap gap-2.5">
                   {ACCENT_COLORS.map(c => (
-                    <button key={c} onClick={() => save({ accent: c })} className={`w-10 h-10 rounded-xl transition-all hover:scale-110 active:scale-95 ${settings.accent === c ? "ring-2 ring-offset-2 ring-neutral-900 scale-110" : ""}`} style={{ background: c }} />
+                    <button key={c} onClick={() => save({ accent: c })} className={`w-10 h-10 rounded-xl transition-all hover:scale-110 active:scale-95 ${settings.accent === c ? "ring-2 ring-offset-2 ring-neutral-900 scale-110" : ""} ${c === "#ffffff" ? "border border-neutral-200" : ""}`} style={{ background: c }} />
                   ))}
                 </div>
                 <div className="mt-4 flex items-center gap-2">
                   <input type="color" value={settings.accent} onChange={e => save({ accent: e.target.value })} className="w-10 h-10 rounded-lg cursor-pointer border-0" />
-                  <span className="text-xs text-neutral-400">Custom color</span>
+                  <span className="text-xs text-neutral-400">Custom accent</span>
                 </div>
               </div>
             )}
@@ -467,51 +612,32 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
           <div className="lg:w-[45%] lg:sticky lg:top-20 lg:self-start">
             <div className="bg-white rounded-2xl border border-neutral-200/60 p-4">
               <div className="flex items-center justify-between mb-3">
-                {/* Device toggle */}
                 <div className="flex items-center gap-1 p-0.5 bg-neutral-100 rounded-lg">
                   <button onClick={() => setPreviewMode("mobile")} className={`p-1.5 rounded-md transition-all ${previewMode === "mobile" ? "bg-white shadow-sm" : "hover:bg-neutral-200/50"}`}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={previewMode === "mobile" ? "text-neutral-900" : "text-neutral-400"}><rect x="5" y="2" width="14" height="20" rx="2" strokeLinecap="round" /><line x1="12" y1="18" x2="12.01" y2="18" strokeLinecap="round" /></svg>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={previewMode === "mobile" ? "text-neutral-900" : "text-neutral-400"}><rect x="5" y="2" width="14" height="20" rx="2" /><line x1="12" y1="18" x2="12.01" y2="18" strokeLinecap="round" /></svg>
                   </button>
                   <button onClick={() => setPreviewMode("desktop")} className={`p-1.5 rounded-md transition-all ${previewMode === "desktop" ? "bg-white shadow-sm" : "hover:bg-neutral-200/50"}`}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={previewMode === "desktop" ? "text-neutral-900" : "text-neutral-400"}><rect x="2" y="3" width="20" height="14" rx="2" strokeLinecap="round" /><line x1="8" y1="21" x2="16" y2="21" strokeLinecap="round" /><line x1="12" y1="17" x2="12" y2="21" strokeLinecap="round" /></svg>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={previewMode === "desktop" ? "text-neutral-900" : "text-neutral-400"}><rect x="2" y="3" width="20" height="14" rx="2" /><line x1="8" y1="21" x2="16" y2="21" /><line x1="12" y1="17" x2="12" y2="21" /></svg>
                   </button>
                 </div>
-                {user.slug && (
-                  <Link href={`/u/${user.slug}`} target="_blank" className="text-[11px] text-blue-600 font-medium hover:text-blue-800">Open →</Link>
-                )}
+                {user.slug && <Link href={`/u/${user.slug}`} target="_blank" className="text-[11px] text-blue-600 font-medium hover:text-blue-800">Open →</Link>}
               </div>
-
-              {/* Mobile preview */}
               {previewMode === "mobile" && (
                 <div className="mx-auto w-[280px] h-[560px] bg-black rounded-[2.5rem] shadow-2xl border-[6px] border-neutral-800 overflow-hidden relative">
                   <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[90px] h-[22px] bg-black rounded-b-2xl z-50" />
-                  <div className="w-full h-full overflow-y-auto rounded-[2rem]">
-                    <MiniPreview settings={settings} creator={user} />
-                  </div>
+                  <div className="w-full h-full overflow-y-auto rounded-[2rem]"><MiniPreview settings={settings} creator={user} /></div>
                   <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-[100px] h-[4px] bg-white/30 rounded-full z-50" />
                 </div>
               )}
-
-              {/* Desktop preview */}
               {previewMode === "desktop" && (
                 <div className="mx-auto">
-                  {/* Browser chrome */}
                   <div className="bg-neutral-200 rounded-t-xl px-3 py-2 flex items-center gap-2">
-                    <div className="flex gap-1.5">
-                      <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
-                      <div className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
-                      <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
-                    </div>
-                    <div className="flex-1 bg-white rounded-md px-2 py-1 text-[8px] text-neutral-400 truncate">
-                      hireacreator.ai/u/{user.slug || "yourname"}
-                    </div>
+                    <div className="flex gap-1.5"><div className="w-2.5 h-2.5 rounded-full bg-red-400" /><div className="w-2.5 h-2.5 rounded-full bg-yellow-400" /><div className="w-2.5 h-2.5 rounded-full bg-green-400" /></div>
+                    <div className="flex-1 bg-white rounded-md px-2 py-1 text-[8px] text-neutral-400 truncate">hireacreator.ai/u/{user.slug || "yourname"}</div>
                   </div>
-                  {/* Desktop viewport */}
                   <div className="w-full h-[450px] border border-t-0 border-neutral-200 rounded-b-xl overflow-y-auto bg-neutral-100">
                     <div className="flex items-start justify-center py-6 min-h-full">
-                      <div className="w-[400px] bg-white rounded-2xl shadow-lg overflow-hidden">
-                        <MiniPreview settings={settings} creator={user} />
-                      </div>
+                      <div className="w-[400px] bg-white rounded-2xl shadow-lg overflow-hidden"><MiniPreview settings={settings} creator={user} /></div>
                     </div>
                   </div>
                 </div>
@@ -532,20 +658,15 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
   );
 }
 
-/* Button animation test */
-function AnimTestButton({ shape, anim, accent }: { shape: string; anim: string; accent: string }) {
+function Spinner() {
+  return <div className="flex items-center justify-center gap-2"><div className="w-5 h-5 border-2 border-neutral-300 border-t-neutral-900 rounded-full animate-spin" /><span className="text-xs text-neutral-400">Uploading...</span></div>;
+}
+
+function AnimTestButton({ shape, anim }: { shape: string; anim: string }) {
   const [key, setKey] = useState(0);
   const radius = BUTTON_SHAPES.find(s => s.id === shape)?.radius || "16px";
   return (
-    <button
-      key={key}
-      onClick={() => setKey(k => k + 1)}
-      className="w-full py-3 bg-neutral-900 text-white text-sm font-semibold transition-all"
-      style={{
-        borderRadius: radius,
-        animation: key > 0 ? getAnim(anim) : undefined,
-      }}
-    >
+    <button key={key} onClick={() => setKey(k => k + 1)} className="w-full py-3 bg-neutral-900 text-white text-sm font-semibold" style={{ borderRadius: radius, animation: key > 0 ? getAnim(anim) : undefined }}>
       Example Button
     </button>
   );
