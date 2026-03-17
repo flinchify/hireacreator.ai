@@ -77,6 +77,17 @@ export type Creator = {
   is18PlusContent: boolean;
   linkBioTemplate: string;
   linkBioAccent: string;
+  linkBioFont: string;
+  linkBioTextColor: string;
+  linkBioBgType: string;
+  linkBioBgValue: string;
+  linkBioBgVideo: string;
+  linkBioBgImages: string[];
+  linkBioButtonShape: string;
+  linkBioButtonAnim: string;
+  linkBioCardStyle: string;
+  linkBioIntroAnim: string;
+  calendarEnabled: boolean;
   socials: Social[];
   services: Service[];
   portfolio: PortfolioItem[];
