@@ -171,7 +171,7 @@ export async function getCreatorBySlug(
       WHERE r.creator_id = ${user.id}
       ORDER BY r.created_at DESC
     `,
-    sql`SELECT * FROM bio_links WHERE user_id = ${user.id} AND is_visible = TRUE ORDER BY position ASC`,
+    sql`SELECT * FROM bio_links WHERE user_id = ${user.id} AND is_visible = TRUE AND (is_archived = FALSE OR is_archived IS NULL) ORDER BY position ASC`,
   ]);
 
   return assembleCreator(user, socials, services, portfolio, reviewRows, bioLinks);

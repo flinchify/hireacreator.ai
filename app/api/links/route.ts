@@ -19,7 +19,7 @@ export async function GET() {
     const user = await getUser();
     if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
     const sql = getDb();
-    const links = await sql`SELECT * FROM bio_links WHERE user_id = ${user.id} ORDER BY position ASC, created_at ASC`;
+    const links = await sql`SELECT * FROM bio_links WHERE user_id = ${user.id} ORDER BY is_archived ASC, position ASC, created_at ASC`;
     return NextResponse.json({ links });
   } catch (e: any) {
     return NextResponse.json({ error: "server_error" }, { status: 500 });
@@ -74,7 +74,7 @@ export async function PATCH(request: Request) {
     }
 
     // Update single link
-    const { id, title, url, thumbnailUrl, icon, isVisible, isPinned, scheduleStart, scheduleEnd } = body;
+    const { id, title, url, thumbnailUrl, icon, isVisible, isPinned, isArchived, scheduleStart, scheduleEnd } = body;
     if (!id) return NextResponse.json({ error: "id required" }, { status: 400 });
 
     if (url) {
@@ -89,6 +89,7 @@ export async function PATCH(request: Request) {
         icon = ${icon !== undefined ? (icon || null) : null},
         is_visible = COALESCE(${isVisible ?? null}, is_visible),
         is_pinned = COALESCE(${isPinned ?? null}, is_pinned),
+        is_archived = COALESCE(${isArchived ?? null}, is_archived),
         schedule_start = ${scheduleStart !== undefined ? scheduleStart : null},
         schedule_end = ${scheduleEnd !== undefined ? scheduleEnd : null},
         updated_at = NOW()
