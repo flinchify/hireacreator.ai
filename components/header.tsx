@@ -81,9 +81,14 @@ function UserMenu() {
           <Link href="/dashboard" onClick={() => setOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
             Dashboard
           </Link>
-          <Link href={user.slug ? `/u/${user.slug}` : "/dashboard"} onClick={() => setOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
-            My Link in Bio
+          <Link href="/messages" onClick={() => setOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
+            Messages
           </Link>
+          {user.role !== "brand" && (
+            <Link href={user.slug ? `/u/${user.slug}` : "/dashboard"} onClick={() => setOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
+              My Link in Bio
+            </Link>
+          )}
           <Link href="/dashboard/settings" onClick={() => setOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
             Settings
           </Link>
@@ -110,12 +115,20 @@ export function Header({ theme = "light" }: { theme?: HeaderTheme }) {
     <header className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-4xl">
       <nav className={`flex items-center justify-between px-6 py-3 rounded-full border ${t.nav}`}>
         <div className="hidden md:flex items-center gap-1">
-          <Link href="/browse" className={`px-4 py-2 text-sm font-medium rounded-full border border-transparent transition-all ${t.link}`}>
-            Creators
-          </Link>
-          <Link href="/for-brands" className={`px-4 py-2 text-sm font-medium rounded-full border border-transparent transition-all ${t.link}`}>
-            For Brands
-          </Link>
+          {user?.role === "brand" ? (
+            <Link href="/browse" className={`px-4 py-2 text-sm font-medium rounded-full border border-transparent transition-all ${t.link}`}>
+              Explore
+            </Link>
+          ) : (
+            <Link href="/browse" className={`px-4 py-2 text-sm font-medium rounded-full border border-transparent transition-all ${t.link}`}>
+              Creators
+            </Link>
+          )}
+          {!user && (
+            <Link href="/for-brands" className={`px-4 py-2 text-sm font-medium rounded-full border border-transparent transition-all ${t.link}`}>
+              For Brands
+            </Link>
+          )}
           <Link href="/pricing" className={`px-4 py-2 text-sm font-medium rounded-full border border-transparent transition-all ${t.link}`}>
             Pricing
           </Link>
@@ -162,14 +175,17 @@ export function Header({ theme = "light" }: { theme?: HeaderTheme }) {
       {mobileOpen && (
         <div className={`md:hidden mt-2 rounded-2xl border p-4 shadow-lg ${t.mobileMenu}`}>
           <div className="flex flex-col gap-1">
-            <Link href="/browse" className={`px-4 py-2.5 text-sm font-medium rounded-xl ${t.mobileLink}`} onClick={() => setMobileOpen(false)}>Creators</Link>
-            <Link href="/for-brands" className={`px-4 py-2.5 text-sm font-medium rounded-xl ${t.mobileLink}`} onClick={() => setMobileOpen(false)}>For Brands</Link>
+            <Link href="/browse" className={`px-4 py-2.5 text-sm font-medium rounded-xl ${t.mobileLink}`} onClick={() => setMobileOpen(false)}>
+              {user?.role === "brand" ? "Explore" : "Creators"}
+            </Link>
+            {!user && <Link href="/for-brands" className={`px-4 py-2.5 text-sm font-medium rounded-xl ${t.mobileLink}`} onClick={() => setMobileOpen(false)}>For Brands</Link>}
             <Link href="/pricing" className={`px-4 py-2.5 text-sm font-medium rounded-xl ${t.mobileLink}`} onClick={() => setMobileOpen(false)}>Pricing</Link>
             <div className={`border-t my-2 ${t.mobileDivider}`} />
             {user ? (
               <>
                 <Link href="/dashboard" className={`px-4 py-2.5 text-sm font-medium rounded-xl ${t.mobileLink}`} onClick={() => setMobileOpen(false)}>Dashboard</Link>
-                <Link href={user.slug ? `/u/${user.slug}` : "/dashboard"} className={`px-4 py-2.5 text-sm font-medium rounded-xl ${t.mobileLink}`} onClick={() => setMobileOpen(false)}>My Link in Bio</Link>
+                <Link href="/messages" className={`px-4 py-2.5 text-sm font-medium rounded-xl ${t.mobileLink}`} onClick={() => setMobileOpen(false)}>Messages</Link>
+                {user.role !== "brand" && <Link href={user.slug ? `/u/${user.slug}` : "/dashboard"} className={`px-4 py-2.5 text-sm font-medium rounded-xl ${t.mobileLink}`} onClick={() => setMobileOpen(false)}>My Link in Bio</Link>}
               </>
             ) : (
               <>

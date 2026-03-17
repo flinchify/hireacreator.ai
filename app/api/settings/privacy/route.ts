@@ -30,6 +30,7 @@ export async function PATCH(request: Request) {
       privacy_allow_messages = COALESCE(${body.allowMessages ?? null}, privacy_allow_messages),
       privacy_searchable = COALESCE(${body.searchable ?? null}, privacy_searchable),
       visible_in_marketplace = COALESCE(${body.profilePublic ?? null}, visible_in_marketplace),
+      is_18_plus_content = COALESCE(${body.is18Plus ?? null}, is_18_plus_content),
       updated_at = NOW()
     WHERE id = ${user.id}
   `;

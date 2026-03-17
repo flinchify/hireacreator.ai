@@ -38,6 +38,7 @@ function assembleCreator(
     businessName: (user.business_name as string) || null,
     businessUrl: (user.business_url as string) || null,
     allowMessages: user.privacy_allow_messages !== false,
+    is18PlusContent: (user.is_18_plus_content as boolean) || false,
     linkBioTemplate: (user.link_bio_template as string) || "minimal",
     linkBioAccent: (user.link_bio_accent as string) || "#171717",
     socials: socials.map((s) => ({
@@ -78,12 +79,12 @@ export async function getCreators(): Promise<Creator[]> {
   const sql = getDb();
   const users = await sql`
     SELECT u.* FROM users u
-    WHERE u.role IN ('creator', 'admin')
+    WHERE u.role IN ('creator', 'admin', 'brand')
       AND u.visible_in_marketplace = TRUE
       AND (u.is_banned IS NULL OR u.is_banned = FALSE)
       AND u.email_verified = TRUE
-      AND u.avatar_url IS NOT NULL
-      AND EXISTS (SELECT 1 FROM social_connections sc WHERE sc.user_id = u.id)
+      AND (u.avatar_url IS NOT NULL OR u.role = 'brand')
+      AND (EXISTS (SELECT 1 FROM social_connections sc WHERE sc.user_id = u.id) OR u.role = 'brand')
     ORDER BY u.is_featured DESC, u.rating DESC
   `;
 
@@ -106,9 +107,8 @@ export async function getFeaturedCreators(): Promise<Creator[]> {
   const sql = getDb();
   const users = await sql`
     SELECT * FROM users
-    WHERE role IN ('creator', 'admin') AND is_featured = TRUE AND visible_in_marketplace = TRUE
+    WHERE role IN ('creator', 'admin', 'brand') AND is_featured = TRUE AND visible_in_marketplace = TRUE
       AND (is_banned IS NULL OR is_banned = FALSE)
-      AND created_at <= NOW() - INTERVAL '31 days'
     ORDER BY rating DESC
     LIMIT 4
   `;
@@ -133,7 +133,7 @@ export async function getCreatorBySlug(
 ): Promise<Creator | null> {
   const sql = getDb();
   const users = await sql`
-    SELECT * FROM users WHERE slug = ${slug} AND role IN ('creator', 'admin') LIMIT 1
+    SELECT * FROM users WHERE slug = ${slug} AND role IN ('creator', 'admin', 'brand') LIMIT 1
   `;
 
   if (users.length === 0) return null;

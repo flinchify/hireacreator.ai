@@ -70,29 +70,58 @@ export default function TermsPage() {
             <li>Existing earned credits will be honored for 90 days following any program changes, unless forfeited due to policy violations.</li>
           </ul>
 
-          <h2>9. Prohibited Conduct</h2>
+          <h2>9. Messaging and Communication</h2>
           <ul>
-            <li>You may not use the Platform for any unlawful purpose.</li>
-            <li>You may not circumvent Platform fees by arranging off-platform payments.</li>
-            <li>You may not create fake accounts, fake reviews, or manipulate search rankings.</li>
-            <li>You may not harass, abuse, or threaten other users.</li>
-            <li>You may not scrape, crawl, or collect data from the Platform without authorization.</li>
-            <li>You may not upload malicious content, malware, or infringing material.</li>
+            <li>Users must confirm they are 18 years or older before accessing the messaging feature.</li>
+            <li>All messages are subject to automated content moderation. Messages containing prohibited language, hate speech, threats, or explicit content will be blocked.</li>
+            <li>Users may report messages that violate our guidelines. Reported messages will be reviewed by our moderation team.</li>
+            <li>HireACreator administrators reserve the right to view all reported conversations for safety and moderation purposes.</li>
+            <li><strong>No liability for messages:</strong> HireACreator is not liable for any information shared, leaked, or stolen through in-platform messaging. Users are responsible for the content they share.</li>
+            <li>We strongly recommend that all business transactions be conducted through our escrow system. Any deals conducted outside of escrow are between the parties involved and are outside of HireACreator{"'"}s control.</li>
+            <li>Images shared in messages are the responsibility of the sender. Sharing explicit, illegal, or non-consensual content is strictly prohibited and will result in immediate account termination.</li>
           </ul>
 
-          <h2>10. Intellectual Property</h2>
+          <h2>10. Content Standards and Age Restrictions</h2>
+          <ul>
+            <li><strong>No nudity:</strong> Nudity is strictly prohibited on the Platform, including in profiles, portfolios, link-in-bio pages, services, and messaging.</li>
+            <li>Creators may mark their profile as containing 18+ content if their services or redirected links involve mature themes. An age warning will be displayed to visitors.</li>
+            <li>Creators may include links to external sites in their profiles. Users who follow these links do so at their own risk. HireACreator is not responsible for content on external websites.</li>
+            <li>Users acknowledge that external links leave the Platform and that HireACreator has no control over third-party content, services, or transactions conducted off-site.</li>
+            <li>Any off-site transactions, losses, disputes, or damages resulting from interactions initiated through the Platform but conducted externally are solely between the parties involved.</li>
+          </ul>
+
+          <h2>11. Prohibited Conduct</h2>
+          <ul>
+            <li>You may not use the Platform for any unlawful purpose.</li>
+            <li>You may not circumvent Platform fees by arranging off-platform payments for services booked through the Platform.</li>
+            <li>You may not create fake accounts, fake reviews, or manipulate search rankings.</li>
+            <li>You may not harass, abuse, threaten, or send unsolicited explicit content to other users.</li>
+            <li>You may not scrape, crawl, or collect data from the Platform without authorization.</li>
+            <li>You may not upload malicious content, malware, nudity, or infringing material.</li>
+            <li>You may not use the messaging system to solicit off-platform payments, share illegal content, or engage in fraudulent activity.</li>
+          </ul>
+
+          <h2>12. Intellectual Property</h2>
           <p>The HireACreator name, logo, and platform design are the property of HireACreator. You may not use our branding without written permission. User-generated content (profiles, portfolios, reviews) remains the property of the respective users.</p>
 
-          <h2>11. Account Termination</h2>
+          <h2>13. Account Termination</h2>
           <p>We reserve the right to suspend or terminate accounts that violate these terms, engage in fraud, or harm the Platform community. You may delete your account at any time through your Settings page.</p>
 
-          <h2>12. Limitation of Liability</h2>
-          <p>HireACreator is provided "as is" without warranty. We are not liable for any indirect, incidental, or consequential damages arising from your use of the Platform. Our total liability is limited to the amount you have paid to us in the 12 months preceding the claim.</p>
+          <h2>14. Limitation of Liability</h2>
+          <p>HireACreator is provided "as is" without warranty. We are not liable for any indirect, incidental, or consequential damages arising from your use of the Platform, including but not limited to:</p>
+          <ul>
+            <li>Information shared, leaked, or stolen through messaging or any other platform feature.</li>
+            <li>Financial losses from transactions conducted off-platform or without using our escrow system.</li>
+            <li>Content on external websites linked from creator profiles.</li>
+            <li>Disputes between users arising from off-platform dealings.</li>
+            <li>Any loss or damage resulting from reliance on content posted by other users.</li>
+          </ul>
+          <p>Our total liability is limited to the amount you have paid to us in the 12 months preceding the claim.</p>
 
-          <h2>13. Governing Law</h2>
+          <h2>15. Governing Law</h2>
           <p>These terms are governed by the laws of New South Wales, Australia. Any disputes will be resolved in the courts of New South Wales.</p>
 
-          <h2>14. Contact</h2>
+          <h2>16. Contact</h2>
           <p>Questions about these terms? Contact us at <a href="mailto:hello@hireacreator.ai" className="text-neutral-900 underline">hello@hireacreator.ai</a>.</p>
         </div>
       </div>

@@ -74,6 +74,7 @@ export type Creator = {
   businessName: string | null;
   businessUrl: string | null;
   allowMessages: boolean;
+  is18PlusContent: boolean;
   linkBioTemplate: string;
   linkBioAccent: string;
   socials: Social[];

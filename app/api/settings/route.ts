@@ -42,6 +42,7 @@ export async function GET() {
       showLocation: user.privacy_show_location !== false,
       allowMessages: user.privacy_allow_messages !== false,
       searchable: user.privacy_searchable !== false,
+      is18Plus: user.is_18_plus_content || false,
     },
     createdAt: user.created_at,
   });

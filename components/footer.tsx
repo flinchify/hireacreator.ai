@@ -3,15 +3,17 @@ import Image from "next/image";
 
 const footerLinks = {
   Platform: [
-    { label: "Browse Creators", href: "/browse" },
-    { label: "For Brands", href: "/for-brands" },
+    { label: "Browse Marketplace", href: "/browse" },
+    { label: "How It Works", href: "/how-it-works" },
     { label: "For Creators", href: "/for-creators" },
+    { label: "For Brands", href: "/for-brands" },
     { label: "Pricing", href: "/pricing" },
   ],
   Resources: [
     { label: "Blog", href: "/blog" },
     { label: "API Docs", href: "/api" },
     { label: "Compare", href: "/compare" },
+    { label: "Animations", href: "/animations" },
   ],
   Company: [
     { label: "About", href: "/about" },

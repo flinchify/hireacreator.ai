@@ -25,6 +25,7 @@ interface Settings {
     showLocation: boolean;
     allowMessages: boolean;
     searchable: boolean;
+    is18Plus: boolean;
   };
   createdAt: string;
 }
@@ -366,6 +367,7 @@ function PrivacyTab({ settings, refresh }: { settings: Settings; refresh: () => 
         showLocation: privacy.showLocation,
         allowMessages: privacy.allowMessages,
         searchable: privacy.searchable,
+        is18Plus: privacy.is18Plus,
       }),
     });
     if (res.ok) {
@@ -424,6 +426,19 @@ function PrivacyTab({ settings, refresh }: { settings: Settings; refresh: () => 
             onChange={v => setPrivacy({ ...privacy, showEarnings: v })}
             label="Show Earnings"
             desc="Show total earnings on your profile. Most creators keep this private."
+          />
+        </div>
+      </Card>
+
+      <Card className="p-4 sm:p-6">
+        <h3 className="font-display font-bold text-neutral-900 mb-1">Content Settings</h3>
+        <p className="text-xs text-neutral-500 mb-2">Content classification for your profile</p>
+        <div className="divide-y divide-neutral-100">
+          <Toggle
+            checked={privacy.is18Plus}
+            onChange={v => setPrivacy({ ...privacy, is18Plus: v })}
+            label="18+ Content Warning"
+            desc="Enable this if your profile contains links or content not suitable for users under 18. Visitors will see an age warning before viewing your profile."
           />
         </div>
       </Card>

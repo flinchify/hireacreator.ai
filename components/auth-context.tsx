@@ -3,7 +3,7 @@
 import { createContext, useContext, useState, useCallback, useEffect } from "react";
 
 type AuthTab = "login" | "signup";
-type AuthRole = "creator" | "brand" | "agent";
+type AuthRole = "creator" | "brand" | "business" | "agent";
 
 export interface User {
   id: string;
