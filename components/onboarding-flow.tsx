@@ -5,12 +5,27 @@ import { useAuth } from "./auth-context";
 import { PlatformIcon } from "./icons/platforms";
 import { useRouter } from "next/navigation";
 
-type Step = "profile" | "socials" | "about" | "design" | "done";
+type Step = "profile" | "socials" | "about" | "design" | "animation" | "done";
 
 const PLATFORMS = [
   "instagram", "tiktok", "youtube", "twitter", "linkedin",
   "twitch", "kick", "snapchat", "pinterest", "dribbble",
   "behance", "github", "spotify", "soundcloud", "website",
+];
+
+const ONBOARDING_ANIMATIONS = [
+  { id: "none", name: "None", desc: "No intro animation", free: true },
+  { id: "fade-up", name: "Fade Up", desc: "Content slides up smoothly", free: true },
+  { id: "fade-scale", name: "Scale In", desc: "Grows from center", free: true },
+  { id: "spotlight", name: "Spotlight", desc: "Light reveals your page", free: false },
+  { id: "glitch", name: "Glitch", desc: "Digital glitch effect", free: false },
+  { id: "particle-burst", name: "Particle Burst", desc: "Particles explode then settle", free: false },
+  { id: "typewriter", name: "Typewriter", desc: "Name types itself", free: false },
+  { id: "wave", name: "Wave", desc: "Content ripples into view", free: false },
+  { id: "neon", name: "Neon Flicker", desc: "Neon sign turning on", free: false },
+  { id: "cinema", name: "Cinema", desc: "Cinematic letterbox reveal", free: false },
+  { id: "morph", name: "Morph", desc: "Shapes morph into your page", free: false },
+  { id: "trading-candles", name: "Trading Candles", desc: "Candlestick chart rises up", free: false },
 ];
 
 const ONBOARDING_TEMPLATES = [
@@ -50,6 +65,9 @@ export function OnboardingFlow() {
   // Design
   const [template, setTemplate] = useState("minimal");
 
+  // Animation
+  const [introAnim, setIntroAnim] = useState("none");
+
   useEffect(() => {
     if (user?.name) setDisplayName(user.name);
     if (user?.avatar) { setAvatarUrl(user.avatar); setAvatarPreview(user.avatar); }
@@ -61,6 +79,7 @@ export function OnboardingFlow() {
     { id: "socials", label: "Socials", num: 2 },
     { id: "about", label: "About", num: 3 },
     { id: "design", label: "Design", num: 4 },
+    { id: "animation", label: "Animation", num: 5 },
   ];
 
   const currentIdx = steps.findIndex(s => s.id === step);
@@ -131,8 +150,19 @@ export function OnboardingFlow() {
     await fetch("/api/profile", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ link_bio_template: template }),
+    });
+    setSaving(false);
+    setStep("animation");
+  }
+
+  async function saveAnimation() {
+    setSaving(true);
+    await fetch("/api/profile", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        link_bio_template: template,
+        link_bio_intro_anim: introAnim,
         onboarding_complete: true,
       }),
     });
@@ -412,6 +442,65 @@ export function OnboardingFlow() {
               </button>
               <button
                 onClick={saveDesign}
+                disabled={saving}
+                className="flex-1 py-3.5 bg-neutral-900 text-white font-semibold text-sm rounded-full hover:bg-neutral-800 transition-colors disabled:opacity-40"
+              >
+                {saving ? "Saving..." : "Continue"}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ── Step 5: Animation ── */}
+        {step === "animation" && (
+          <div className="flex-1 flex flex-col">
+            <h1 className="font-display text-2xl font-bold text-neutral-900 mb-1">Add an intro animation</h1>
+            <p className="text-sm text-neutral-500 mb-6">Plays once when someone visits your link in bio. Pick a free one now, or browse premium animations later.</p>
+
+            <div className="space-y-2 mb-4">
+              {ONBOARDING_ANIMATIONS.map(a => {
+                const selectable = a.free;
+                const selected = introAnim === a.id;
+                return (
+                  <button
+                    key={a.id}
+                    onClick={() => selectable ? setIntroAnim(a.id) : undefined}
+                    className={`flex items-center gap-3 p-3.5 rounded-xl text-left transition-all w-full ${
+                      selected ? "bg-neutral-900 text-white" :
+                      selectable ? "bg-neutral-50 text-neutral-600 hover:bg-neutral-100" :
+                      "bg-neutral-50/60 text-neutral-400"
+                    }`}
+                  >
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold">{a.name}</span>
+                        {a.free && a.id !== "none" && (
+                          <span className="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-[8px] font-bold rounded-full">FREE</span>
+                        )}
+                        {!a.free && (
+                          <span className="px-1.5 py-0.5 bg-amber-100 text-amber-700 text-[8px] font-bold rounded-full">$4.99</span>
+                        )}
+                      </div>
+                      <div className={`text-[10px] mt-0.5 ${selected ? "text-white/50" : "text-neutral-400"}`}>{a.desc}</div>
+                    </div>
+                    {selected && (
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="shrink-0"><path d="M5 13l4 4L19 7" strokeLinecap="round" /></svg>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+
+            <a href="/animations" target="_blank" className="text-center text-xs text-blue-600 font-medium hover:text-blue-800 mb-4 block">
+              Browse all premium animations in the store →
+            </a>
+
+            <div className="mt-auto pt-6 flex gap-3">
+              <button onClick={() => setStep("design")} className="px-6 py-3.5 bg-neutral-100 text-neutral-700 font-semibold text-sm rounded-full hover:bg-neutral-200 transition-colors">
+                Back
+              </button>
+              <button
+                onClick={saveAnimation}
                 disabled={saving}
                 className="flex-1 py-3.5 bg-neutral-900 text-white font-semibold text-sm rounded-full hover:bg-neutral-800 transition-colors disabled:opacity-40"
               >
