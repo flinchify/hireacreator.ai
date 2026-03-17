@@ -369,6 +369,86 @@ function EditButton({ onClick, label }: { onClick: () => void; label?: string })
   );
 }
 
+/* ───── Referral Program ───── */
+function ReferralSection() {
+  const [data, setData] = useState<any>(null);
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/referrals").then(r => r.json()).then(setData).catch(() => {});
+  }, []);
+
+  if (!data || !data.referralCode) return null;
+
+  function copy() {
+    navigator.clipboard.writeText(data.referralLink);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
+
+  return (
+    <Card className="p-4 sm:p-6">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="font-display text-base sm:text-lg font-semibold text-neutral-900">Referral Program</h2>
+        <span className="text-[10px] font-bold uppercase px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full">20% recurring</span>
+      </div>
+
+      <p className="text-xs text-neutral-500 mb-4 leading-relaxed">
+        Earn 20% of every subscription payment from people you refer — for 12 months. Share your link and get paid monthly.
+      </p>
+
+      {/* Referral link */}
+      <div className="flex items-center gap-2 mb-4">
+        <input readOnly value={data.referralLink} className="flex-1 text-xs bg-neutral-50 border border-neutral-200 rounded-lg px-3 py-2.5 text-neutral-600 truncate" />
+        <Button onClick={copy} size="sm" variant={copied ? "secondary" : "primary"}>
+          {copied ? "Copied!" : "Copy"}
+        </Button>
+      </div>
+
+      {/* Stats grid */}
+      <div className="grid grid-cols-3 gap-3 mb-4">
+        <div className="text-center py-2.5 bg-neutral-50 rounded-xl">
+          <div className="font-display text-lg font-bold text-neutral-900">{data.stats.totalReferrals}</div>
+          <div className="text-[10px] text-neutral-500">Referred</div>
+        </div>
+        <div className="text-center py-2.5 bg-neutral-50 rounded-xl">
+          <div className="font-display text-lg font-bold text-emerald-600">{data.stats.activePaying}</div>
+          <div className="text-[10px] text-neutral-500">Paying</div>
+        </div>
+        <div className="text-center py-2.5 bg-neutral-50 rounded-xl">
+          <div className="font-display text-lg font-bold text-neutral-900">${(data.stats.totalEarnedCents / 100).toFixed(2)}</div>
+          <div className="text-[10px] text-neutral-500">Earned</div>
+        </div>
+      </div>
+
+      {data.stats.monthlyEstimateCents > 0 && (
+        <div className="text-center py-2 bg-emerald-50 border border-emerald-200 rounded-xl mb-4">
+          <div className="text-xs text-emerald-700 font-medium">Estimated monthly: <span className="font-bold">${(data.stats.monthlyEstimateCents / 100).toFixed(2)}/mo</span></div>
+        </div>
+      )}
+
+      {/* Referral list */}
+      {data.referrals.length > 0 && (
+        <div className="border-t border-neutral-100 pt-3 space-y-2">
+          <h3 className="text-xs font-medium text-neutral-500 mb-2">Your referrals</h3>
+          {data.referrals.slice(0, 5).map((r: any) => (
+            <div key={r.id} className="flex items-center gap-2.5 py-1.5">
+              {r.avatar ? <img src={r.avatar} alt="" className="w-7 h-7 rounded-full object-cover" /> : <div className="w-7 h-7 rounded-full bg-neutral-200 flex items-center justify-center"><span className="text-[10px] font-bold text-neutral-400">{(r.name || "?")[0]}</span></div>}
+              <div className="flex-1 min-w-0">
+                <div className="text-xs font-medium text-neutral-900 truncate">{r.name}</div>
+                <div className="text-[10px] text-neutral-400">{r.tier === "free" ? "Free" : r.tier} · ${(r.totalEarnedCents / 100).toFixed(2)} earned</div>
+              </div>
+              <span className={`text-[9px] font-bold uppercase px-1.5 py-0.5 rounded-full ${r.status === "active" ? "bg-emerald-100 text-emerald-700" : r.status === "churned" ? "bg-red-100 text-red-700" : "bg-neutral-100 text-neutral-500"}`}>
+                {r.status === "signed_up" ? "Free" : r.status}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+    </Card>
+  );
+}
+
 /* ───── Main Dashboard ───── */
 export function DashboardContent() {
   const { user, loading, refreshUser } = useAuth();
@@ -621,6 +701,9 @@ export function DashboardContent() {
                 </div>
               )}
             </Card>
+
+            {/* Referral Program */}
+            <ReferralSection />
           </div>
 
           {/* Right column (sidebar) — services + quick actions */}

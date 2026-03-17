@@ -38,12 +38,28 @@ export async function POST(request: Request) {
     // Create new user
     const slug = cleanEmail.split("@")[0].replace(/[^a-z0-9]/gi, "-").toLowerCase().slice(0, 30)
       + "-" + crypto.randomBytes(4).toString("hex");
+    const refCode = slug.split("-")[0] || crypto.randomBytes(4).toString("hex");
 
     users = await sql`
-      INSERT INTO users (email, slug, role, email_verified, email_verified_at)
-      VALUES (${cleanEmail}, ${slug}, ${authCode.role || 'creator'}, true, NOW())
+      INSERT INTO users (email, slug, role, email_verified, email_verified_at, referral_code)
+      VALUES (${cleanEmail}, ${slug}, ${authCode.role || 'creator'}, true, NOW(), ${refCode})
       RETURNING *
     `;
+
+    // Attribute referral if cookie exists
+    const refCookie = cookies().get("hca_ref")?.value;
+    if (refCookie) {
+      const referrer = await sql`SELECT id FROM users WHERE referral_code = ${refCookie} AND id != ${users[0].id}`;
+      if (referrer.length > 0) {
+        await sql`UPDATE users SET referred_by = ${referrer[0].id} WHERE id = ${users[0].id}`;
+        await sql`
+          INSERT INTO referrals (referrer_id, referred_id, status, commission_percent, expires_at)
+          VALUES (${referrer[0].id}, ${users[0].id}, 'signed_up', 20, NOW() + INTERVAL '12 months')
+          ON CONFLICT DO NOTHING
+        `;
+      }
+      cookies().delete("hca_ref");
+    }
   } else {
     // Mark email as verified since they proved ownership
     await sql`

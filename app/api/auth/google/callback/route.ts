@@ -83,12 +83,30 @@ export async function GET(request: Request) {
         .replace(/[^a-z0-9]/g, "-")
         .slice(0, 50) + "-" + Date.now().toString(36);
 
+      // Generate referral code
+      const refCode = slug.split("-")[0] || Math.random().toString(36).slice(2, 8);
+
       const result = await sql`
-        INSERT INTO users (email, full_name, slug, avatar_url, role)
-        VALUES (${googleUser.email}, ${googleUser.name || googleUser.email.split("@")[0]}, ${slug}, ${googleUser.picture || null}, ${role})
+        INSERT INTO users (email, full_name, slug, avatar_url, role, referral_code)
+        VALUES (${googleUser.email}, ${googleUser.name || googleUser.email.split("@")[0]}, ${slug}, ${googleUser.picture || null}, ${role}, ${refCode})
         RETURNING id
       `;
       userId = result[0].id;
+
+      // Attribute referral if cookie exists
+      const refCookie = cookies().get("hca_ref")?.value;
+      if (refCookie) {
+        const referrer = await sql`SELECT id FROM users WHERE referral_code = ${refCookie} AND id != ${userId}`;
+        if (referrer.length > 0) {
+          await sql`UPDATE users SET referred_by = ${referrer[0].id} WHERE id = ${userId}`;
+          await sql`
+            INSERT INTO referrals (referrer_id, referred_id, status, commission_percent, expires_at)
+            VALUES (${referrer[0].id}, ${userId}, 'signed_up', 20, NOW() + INTERVAL '12 months')
+            ON CONFLICT DO NOTHING
+          `;
+        }
+        cookies().delete("hca_ref");
+      }
     }
 
     // Create session

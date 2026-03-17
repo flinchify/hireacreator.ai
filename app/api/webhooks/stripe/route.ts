@@ -67,8 +67,17 @@ export async function POST(request: Request) {
             api_pro: { field: "subscription_tier", value: "api_pro" },
           };
 
-          // For now just log — subscription_tier column can be added later
-          console.log(`Subscription ${sub.status} for user ${userId}: ${plan}`);
+          const tier = tierMap[plan]?.value || plan;
+          await sql`UPDATE users SET subscription_tier = ${tier}, updated_at = NOW() WHERE id = ${userId}`;
+          console.log(`Subscription ${sub.status} for user ${userId}: ${tier}`);
+
+          // Mark any referral as active (they're paying now)
+          if (sub.status === "active") {
+            await sql`
+              UPDATE referrals SET status = 'active', tier = ${tier}
+              WHERE referred_id = ${userId} AND status = 'signed_up'
+            `;
+          }
         }
         break;
       }
@@ -78,15 +87,46 @@ export async function POST(request: Request) {
         const sub = event.data.object as Stripe.Subscription;
         const userId = sub.metadata?.userId;
         if (userId) {
+          await sql`UPDATE users SET subscription_tier = 'free', updated_at = NOW() WHERE id = ${userId}`;
+          await sql`UPDATE referrals SET status = 'churned', tier = 'free' WHERE referred_id = ${userId} AND status = 'active'`;
           console.log(`Subscription cancelled for user ${userId}`);
         }
         break;
       }
 
-      // Invoice paid (subscription renewals)
+      // Invoice paid (subscription renewals) — trigger referral commissions
       case "invoice.paid": {
         const invoice = event.data.object as Stripe.Invoice;
-        console.log(`Invoice ${invoice.id} paid: $${(invoice.amount_paid / 100).toFixed(2)}`);
+        const amountCents = invoice.amount_paid;
+        console.log(`Invoice ${invoice.id} paid: $${(amountCents / 100).toFixed(2)}`);
+
+        // Find user by Stripe customer ID
+        if (invoice.customer && amountCents > 0) {
+          const payer = await sql`SELECT id FROM users WHERE stripe_customer_id = ${invoice.customer as string}`;
+          if (payer.length > 0) {
+            // Check if this user was referred
+            const ref = await sql`
+              SELECT * FROM referrals
+              WHERE referred_id = ${payer[0].id}
+                AND status = 'active'
+                AND expires_at > NOW()
+            `;
+            if (ref.length > 0) {
+              const commission = Math.floor(amountCents * (ref[0].commission_percent as number) / 100);
+              if (commission > 0) {
+                // Log the commission
+                await sql`
+                  INSERT INTO referral_commissions (referral_id, referrer_id, amount_cents, source_event, stripe_invoice_id)
+                  VALUES (${ref[0].id}, ${ref[0].referrer_id}, ${commission}, ${'invoice.paid'}, ${invoice.id})
+                `;
+                // Update totals
+                await sql`UPDATE referrals SET total_earned_cents = total_earned_cents + ${commission} WHERE id = ${ref[0].id}`;
+                await sql`UPDATE users SET referral_earnings_cents = referral_earnings_cents + ${commission} WHERE id = ${ref[0].referrer_id}`;
+                console.log(`Referral commission: $${(commission / 100).toFixed(2)} to referrer ${ref[0].referrer_id}`);
+              }
+            }
+          }
+        }
         break;
       }
 
