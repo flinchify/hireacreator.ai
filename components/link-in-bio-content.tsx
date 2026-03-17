@@ -5,6 +5,7 @@ import Link from "next/link";
 import type { Creator } from "@/lib/types";
 import { useAuth } from "@/components/auth-context";
 import { PlatformIcon } from "./icons/platforms";
+import { CalendarBooking } from "./calendar-booking";
 
 /* ── Shared small components ── */
 
@@ -513,6 +514,10 @@ export function LinkInBioContent({ creator }: { creator: Creator }) {
       )}
       <div className={isOwner ? "pt-[44px]" : ""}>
         <TemplateComponent creator={creator} />
+        {/* Calendar booking section — renders only if creator has calendar enabled */}
+        <div className="max-w-[460px] mx-auto px-4 pb-8">
+          <CalendarBooking creatorId={creator.id} creatorName={creator.name} />
+        </div>
       </div>
     </div>
   );

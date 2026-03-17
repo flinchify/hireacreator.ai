@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useAuth, User } from "./auth-context";
 import { Button } from "./ui/button";
+import { CalendarManager } from "./calendar-manager";
 import { Card } from "./ui/card";
 import { Input } from "./ui/input";
 import { Badge } from "./ui/badge";
@@ -778,6 +779,11 @@ export function DashboardContent() {
               <Link href="/dashboard/link-in-bio" className="block w-full py-2.5 bg-neutral-900 text-white text-xs font-medium text-center rounded-xl hover:bg-neutral-800 transition-colors">
                 Open Editor
               </Link>
+            </Card>
+
+            {/* Calendar */}
+            <Card className="p-4 sm:p-5">
+              <CalendarManager />
             </Card>
 
             {/* Quick actions */}
