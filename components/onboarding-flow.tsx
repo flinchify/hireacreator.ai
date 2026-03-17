@@ -505,144 +505,169 @@ export function OnboardingFlow() {
   );
 }
 
-/* ── Unique mini previews for each template ── */
+/* ── Unique mini previews for each template — matches actual template layouts ── */
 function TemplateMiniPreview({ id }: { id: string }) {
-  const shared = "aspect-[3/4] flex flex-col items-center p-3 overflow-hidden relative";
+  const s = "aspect-[3/4] overflow-hidden relative";
 
+  /* MINIMAL — White card on grey bg, cover strip, centered round avatar overlapping cover */
   if (id === "minimal") return (
-    <div className={`${shared} bg-[#f5f5f5] justify-center gap-1.5`}>
-      <div className="w-10 h-10 rounded-full bg-neutral-300/60" />
-      <div className="w-14 h-1.5 rounded-full bg-neutral-300/50 mt-1" />
-      <div className="w-10 h-1 rounded-full bg-neutral-300/30" />
-      <div className="w-full space-y-1.5 mt-3">
-        <div className="h-7 rounded-lg bg-white border border-neutral-200/80" />
-        <div className="h-7 rounded-lg bg-white border border-neutral-200/80" />
-        <div className="h-7 rounded-lg bg-white border border-neutral-200/80" />
+    <div className={`${s} bg-neutral-200 flex items-center justify-center p-2`}>
+      <div className="w-full h-full bg-white rounded-xl flex flex-col items-center overflow-hidden">
+        <div className="w-full h-8 bg-gradient-to-br from-neutral-100 to-neutral-200" />
+        <div className="w-9 h-9 rounded-full bg-neutral-300 -mt-4.5 border-[3px] border-white z-10 shrink-0" />
+        <div className="w-12 h-1.5 rounded-full bg-neutral-800 mt-1.5" />
+        <div className="w-8 h-1 rounded-full bg-neutral-300 mt-1" />
+        <div className="flex gap-1.5 mt-2">{[1,2,3].map(i=><div key={i} className="w-5 h-5 rounded-full bg-neutral-100"/>)}</div>
+        <div className="w-full px-2 mt-2 space-y-1.5">
+          <div className="h-5 rounded-lg bg-neutral-50 border border-neutral-200" />
+          <div className="h-5 rounded-lg bg-neutral-50 border border-neutral-200" />
+        </div>
+        <div className="w-[calc(100%-16px)] h-5 rounded-full bg-neutral-900 mt-2 mb-2" />
       </div>
     </div>
   );
 
+  /* GLASS — Full-bleed gradient, no container, frosted cards */
   if (id === "glass") return (
-    <div className={`${shared} justify-center gap-1.5`} style={{ background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" }}>
-      <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm border border-white/30" />
-      <div className="w-14 h-1.5 rounded-full bg-white/30 mt-1" />
-      <div className="w-10 h-1 rounded-full bg-white/15" />
+    <div className={`${s} flex flex-col items-center justify-center px-3`} style={{ background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" }}>
+      <div className="w-10 h-10 rounded-full bg-white/20 border-[3px] border-white/20 shadow-xl" />
+      <div className="w-12 h-1.5 rounded-full bg-white/40 mt-2" />
+      <div className="w-8 h-1 rounded-full bg-white/20 mt-1" />
+      <div className="flex gap-1.5 mt-2">{[1,2,3].map(i=><div key={i} className="w-5 h-5 rounded-full bg-white/10 border border-white/10"/>)}</div>
       <div className="w-full space-y-1.5 mt-3">
-        <div className="h-7 rounded-lg bg-white/10 backdrop-blur border border-white/20" />
-        <div className="h-7 rounded-lg bg-white/10 backdrop-blur border border-white/20" />
-        <div className="h-7 rounded-lg bg-white/10 backdrop-blur border border-white/20" />
+        <div className="h-6 rounded-xl bg-white/[0.08] border border-white/[0.08]" />
+        <div className="h-6 rounded-xl bg-white/[0.08] border border-white/[0.08]" />
       </div>
+      <div className="w-full h-5 rounded-full bg-white mt-2" />
     </div>
   );
 
+  /* BOLD — Dark, big SQUARE avatar with accent border, accent-colored cards */
   if (id === "bold") return (
-    <div className={`${shared} bg-neutral-950 justify-center gap-1.5`}>
-      <div className="w-10 h-10 rounded-full bg-indigo-500/30 border-2 border-indigo-500" />
-      <div className="w-14 h-1.5 rounded-full bg-white/80 mt-1" />
-      <div className="w-10 h-1 rounded-full bg-indigo-400/40" />
-      <div className="w-full space-y-1.5 mt-3">
-        <div className="h-7 rounded-lg bg-indigo-600" />
-        <div className="h-7 rounded-lg bg-indigo-600/70" />
-        <div className="h-7 rounded-lg bg-indigo-600/40" />
+    <div className={`${s} bg-neutral-950 flex flex-col items-center pt-4 px-3`}>
+      <div className="w-12 h-12 rounded-xl bg-neutral-800 border-[3px] border-indigo-500" />
+      <div className="w-14 h-2 rounded-full bg-white mt-2" />
+      <div className="w-6 h-1 rounded-full bg-indigo-400 mt-1" />
+      <div className="flex gap-1.5 mt-2">{[1,2,3].map(i=><div key={i} className="w-5 h-5 rounded-lg bg-neutral-900 border border-neutral-800"/>)}</div>
+      <div className="w-10 h-[2px] bg-indigo-500 mt-3 mb-2" />
+      <div className="w-full space-y-1.5">
+        <div className="h-6 rounded-xl bg-neutral-900 border border-neutral-800" />
+        <div className="h-6 rounded-xl bg-neutral-900 border border-neutral-800" />
       </div>
+      <div className="w-full h-5 rounded-full bg-indigo-500 mt-2" />
     </div>
   );
 
+  /* NEON — Pure black, glowing avatar, neon glow cards */
   if (id === "neon") return (
-    <div className={`${shared} bg-black justify-center gap-1.5`}>
-      <div className="w-10 h-10 rounded-full border-2 border-cyan-400 shadow-[0_0_12px_rgba(34,211,238,0.5)]" />
-      <div className="w-14 h-1.5 rounded-full bg-cyan-400/60 mt-1 shadow-[0_0_8px_rgba(34,211,238,0.4)]" />
-      <div className="w-10 h-1 rounded-full bg-cyan-400/20" />
+    <div className={`${s} bg-black flex flex-col items-center pt-4 px-3`}>
+      <div className="w-10 h-10 rounded-full border-2 border-cyan-400 shadow-[0_0_14px_rgba(34,211,238,0.5)]" />
+      <div className="w-12 h-1.5 rounded-full bg-white mt-2" />
+      <div className="w-6 h-1 rounded-full bg-cyan-400 mt-1" />
+      <div className="flex gap-1.5 mt-2">{[1,2,3].map(i=><div key={i} className="w-5 h-5 rounded-full border border-cyan-400/30 bg-cyan-400/10"/>)}</div>
       <div className="w-full space-y-1.5 mt-3">
-        <div className="h-7 rounded-lg border border-cyan-400/50 bg-cyan-400/5 shadow-[0_0_8px_rgba(34,211,238,0.15)]" />
-        <div className="h-7 rounded-lg border border-cyan-400/30 bg-cyan-400/5" />
-        <div className="h-7 rounded-lg border border-cyan-400/20 bg-cyan-400/5" />
+        <div className="h-6 rounded-xl border border-cyan-400/25 bg-cyan-400/[0.06] shadow-[0_0_10px_rgba(34,211,238,0.1)]" />
+        <div className="h-6 rounded-xl border border-cyan-400/15 bg-cyan-400/[0.04]" />
       </div>
+      <div className="w-full h-5 rounded-full bg-cyan-400 mt-2 shadow-[0_0_14px_rgba(34,211,238,0.4)]" />
     </div>
   );
 
+  /* COLLAGE — Photo mosaic bg, dark overlay, film grain, frosted card */
   if (id === "collage") return (
-    <div className={`${shared} justify-center gap-1.5`}>
-      {/* photo grid bg */}
-      <div className="absolute inset-0 grid grid-cols-3 gap-px opacity-40">
-        <div className="bg-rose-300" /><div className="bg-amber-200" /><div className="bg-sky-300" />
-        <div className="bg-emerald-200" /><div className="bg-violet-300" /><div className="bg-orange-200" />
-        <div className="bg-pink-200" /><div className="bg-teal-300" /><div className="bg-indigo-200" />
+    <div className={`${s}`}>
+      <div className="absolute inset-0 grid grid-cols-3 grid-rows-3 gap-[1px]">
+        <div className="bg-rose-400"/><div className="bg-sky-300"/><div className="bg-amber-300"/>
+        <div className="bg-emerald-300"/><div className="bg-violet-400"/><div className="bg-orange-300"/>
+        <div className="bg-teal-300"/><div className="bg-pink-300"/><div className="bg-indigo-300"/>
       </div>
-      <div className="absolute inset-0 bg-black/50" />
-      <div className="relative z-10 flex flex-col items-center gap-1.5 mt-auto mb-auto">
-        <div className="w-10 h-10 rounded-full bg-white/20 border border-white/40" />
-        <div className="w-14 h-1.5 rounded-full bg-white/50 mt-1" />
-        <div className="w-full space-y-1.5 mt-3 px-1">
-          <div className="h-7 rounded-lg bg-white/15 border border-white/20" />
-          <div className="h-7 rounded-lg bg-white/15 border border-white/20" />
-          <div className="h-7 rounded-lg bg-white/15 border border-white/20" />
+      <div className="absolute inset-0 bg-black/55" />
+      <div className="relative z-10 flex flex-col items-center justify-center h-full px-3">
+        <div className="w-full bg-black/30 rounded-xl p-3 border border-white/10 flex flex-col items-center">
+          <div className="w-8 h-8 rounded-xl bg-white/20 border border-white/20" />
+          <div className="w-12 h-1.5 rounded-full bg-white/40 mt-1.5" />
+          <div className="w-7 h-1 rounded-full bg-white/20 mt-1" />
+          <div className="flex gap-1 mt-1.5">{[1,2,3].map(i=><div key={i} className="w-4 h-4 rounded-md bg-white/10"/>)}</div>
         </div>
+        <div className="w-full space-y-1.5 mt-2">
+          <div className="h-5 rounded-xl bg-black/30 border border-white/10" />
+          <div className="h-5 rounded-xl bg-black/30 border border-white/10" />
+        </div>
+        <div className="w-full h-5 rounded-full bg-white/90 mt-2" />
       </div>
     </div>
   );
 
+  /* BENTO — Dark, grid of different-sized boxes, avatar in wide card, portfolio tiles */
   if (id === "bento") return (
-    <div className={`${shared} bg-neutral-950 justify-start pt-4 gap-1.5`}>
-      <div className="w-full grid grid-cols-3 gap-1">
-        <div className="col-span-1 aspect-square rounded-lg bg-violet-600/30 border border-violet-500/40 flex items-center justify-center">
-          <div className="w-6 h-6 rounded-full bg-violet-400/40" />
+    <div className={`${s} bg-neutral-950 p-2`}>
+      <div className="w-full h-full grid grid-cols-4 gap-1 auto-rows-fr">
+        <div className="col-span-4 row-span-2 rounded-lg bg-white/[0.04] border border-white/[0.08] flex items-center gap-2 px-2">
+          <div className="w-7 h-7 rounded-lg bg-neutral-700 shrink-0" />
+          <div><div className="w-10 h-1.5 bg-white/50 rounded-full"/><div className="w-6 h-1 bg-white/20 rounded-full mt-1"/></div>
         </div>
-        <div className="col-span-2 aspect-[2/1] rounded-lg bg-white/[0.06] border border-white/10 flex items-center justify-center">
-          <div className="w-12 h-1.5 rounded-full bg-white/20" />
+        <div className="col-span-2 row-span-1 rounded-lg bg-neutral-900 border border-neutral-800 flex items-center justify-center gap-1">
+          {[1,2,3].map(i=><div key={i} className="w-3.5 h-3.5 rounded bg-neutral-800"/>)}
         </div>
-        <div className="col-span-2 aspect-[2/1] rounded-lg bg-violet-600/20 border border-violet-500/30" />
-        <div className="col-span-1 aspect-square rounded-lg bg-white/[0.06] border border-white/10" />
-        <div className="col-span-3 h-7 rounded-lg bg-violet-600/30 border border-violet-500/40" />
+        <div className="col-span-2 row-span-1 rounded-lg bg-neutral-900 border border-neutral-800 flex items-center justify-center">
+          <div className="w-8 h-1 bg-neutral-600 rounded-full"/>
+        </div>
+        <div className="col-span-2 row-span-2 rounded-lg bg-gradient-to-br from-violet-900/40 to-violet-800/20 border border-violet-500/20" />
+        <div className="col-span-2 row-span-2 rounded-lg bg-gradient-to-br from-neutral-800 to-neutral-900 border border-neutral-800" />
+        <div className="col-span-4 row-span-1 rounded-lg bg-neutral-200 flex items-center justify-center">
+          <div className="w-10 h-1 bg-neutral-700 rounded-full"/>
+        </div>
       </div>
     </div>
   );
 
+  /* SHOWCASE — Light, squared avatar, 2-col portfolio grid, 2-col services */
   if (id === "showcase") return (
-    <div className={`${shared} bg-[#fafafa] justify-start pt-3 gap-0`}>
-      {/* big hero area */}
-      <div className="w-full h-12 rounded-xl bg-gradient-to-br from-neutral-200 to-neutral-300 mb-2" />
-      <div className="flex items-center gap-2 w-full mb-2">
-        <div className="w-8 h-8 rounded-full bg-neutral-300 shrink-0" />
-        <div className="flex-1">
-          <div className="w-12 h-1.5 rounded-full bg-neutral-300 mb-1" />
-          <div className="w-16 h-1 rounded-full bg-neutral-200" />
+    <div className={`${s} bg-neutral-100 flex items-center justify-center p-2`}>
+      <div className="w-full h-full bg-white rounded-xl flex flex-col items-center overflow-hidden px-2 pt-3 pb-2">
+        <div className="flex items-center gap-2 w-full mb-2">
+          <div className="w-8 h-8 rounded-lg bg-neutral-200 shrink-0" />
+          <div><div className="w-10 h-1.5 bg-neutral-800 rounded-full"/><div className="w-6 h-1 bg-neutral-300 rounded-full mt-1"/></div>
         </div>
+        <div className="flex gap-1.5 mb-2">{[1,2,3].map(i=><div key={i} className="w-4 h-4 rounded-lg bg-neutral-100 border border-neutral-200"/>)}</div>
+        <div className="w-full grid grid-cols-2 gap-1 mb-2">
+          <div className="aspect-[4/3] rounded-lg bg-gradient-to-br from-neutral-100 to-neutral-200"/>
+          <div className="aspect-[4/3] rounded-lg bg-gradient-to-br from-neutral-200 to-neutral-100"/>
+        </div>
+        <div className="w-full grid grid-cols-2 gap-1 mb-2">
+          <div className="h-6 rounded-lg bg-neutral-50 border border-neutral-200" />
+          <div className="h-6 rounded-lg bg-neutral-50 border border-neutral-200" />
+        </div>
+        <div className="w-full h-5 rounded-full bg-neutral-900 mt-auto" />
       </div>
-      <div className="w-full grid grid-cols-2 gap-1">
-        <div className="h-10 rounded-lg bg-white border border-neutral-200 shadow-sm" />
-        <div className="h-10 rounded-lg bg-white border border-neutral-200 shadow-sm" />
-      </div>
-      <div className="w-full h-7 rounded-lg bg-neutral-900 mt-1.5" />
     </div>
   );
 
+  /* SPLIT — Magazine: left 45% image hero, right 55% content with social pills */
   if (id === "split") return (
-    <div className={`${shared} p-0`}>
+    <div className={`${s}`}>
       <div className="flex w-full h-full">
-        <div className="w-[45%] bg-gradient-to-b from-neutral-300 to-neutral-400 flex items-center justify-center">
-          <div className="w-10 h-10 rounded-full bg-white/30" />
+        <div className="w-[43%] bg-gradient-to-b from-neutral-300 to-neutral-400 relative">
+          <div className="absolute bottom-2 left-2 flex items-center gap-1">
+            <div className="w-5 h-5 rounded-full bg-white/40"/>
+            <div className="w-6 h-1 bg-white/60 rounded-full"/>
+          </div>
         </div>
-        <div className="w-[55%] bg-white flex flex-col justify-center gap-1.5 px-2">
-          <div className="w-12 h-1.5 rounded-full bg-neutral-300" />
-          <div className="w-8 h-1 rounded-full bg-neutral-200" />
-          <div className="h-5 rounded bg-neutral-100 border border-neutral-200 mt-1" />
-          <div className="h-5 rounded bg-neutral-100 border border-neutral-200" />
-          <div className="h-5 rounded bg-neutral-900 mt-1" />
+        <div className="w-[57%] bg-white flex flex-col justify-center gap-1.5 px-2.5 py-3">
+          <div className="flex items-center gap-1.5">
+            <div className="w-6 h-6 rounded-lg bg-neutral-200 shrink-0"/>
+            <div><div className="w-10 h-1.5 bg-neutral-800 rounded-full"/><div className="w-6 h-1 bg-neutral-300 rounded-full mt-0.5"/></div>
+          </div>
+          <div className="flex gap-1 mt-1">{[1,2].map(i=><div key={i} className="px-1.5 py-1 rounded-full bg-neutral-50 border border-neutral-200"><div className="w-4 h-0.5 bg-neutral-400 rounded-full"/></div>)}</div>
+          <div className="space-y-1 mt-1">
+            <div className="h-5 rounded-lg bg-neutral-50 border border-neutral-200" />
+            <div className="h-5 rounded-lg bg-neutral-50 border border-neutral-200" />
+          </div>
+          <div className="w-full h-5 rounded-full bg-neutral-900 mt-auto" />
         </div>
       </div>
     </div>
   );
 
-  // fallback
-  return (
-    <div className={`${shared} bg-neutral-100 justify-center gap-1.5`}>
-      <div className="w-10 h-10 rounded-full bg-neutral-300/50" />
-      <div className="w-14 h-1.5 rounded-full bg-neutral-200" />
-      <div className="w-full space-y-1.5 mt-2">
-        <div className="h-7 rounded-lg bg-white border border-neutral-200/60" />
-        <div className="h-7 rounded-lg bg-white border border-neutral-200/60" />
-      </div>
-    </div>
-  );
+  return <div className={`${s} bg-neutral-100 flex items-center justify-center`}><div className="w-10 h-10 rounded-full bg-neutral-300/50" /></div>;
 }
