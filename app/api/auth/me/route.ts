@@ -15,7 +15,8 @@ export async function GET() {
            u.hourly_rate, u.currency, u.is_verified, u.is_featured,
            u.is_online, u.subscription_tier, u.website_url,
            u.business_name, u.business_url, u.has_intro_animation,
-           u.rating, u.review_count, u.total_projects, u.total_earnings
+           u.rating, u.review_count, u.total_projects, u.total_earnings,
+           u.email_verified, u.onboarding_complete
     FROM users u
     JOIN auth_sessions s ON s.user_id = u.id
     WHERE s.token = ${token} AND s.expires_at > NOW()
@@ -54,6 +55,8 @@ export async function GET() {
       reviewCount: u.review_count,
       totalProjects: u.total_projects,
       totalEarnings: u.total_earnings,
+      emailVerified: u.email_verified || false,
+      onboardingComplete: u.onboarding_complete || false,
     },
   });
 }

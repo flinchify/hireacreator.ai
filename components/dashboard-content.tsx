@@ -595,6 +595,32 @@ export function DashboardContent() {
         <div className="grid lg:grid-cols-3 gap-6 pb-20">
           {/* Left column (main) */}
           <div className="lg:col-span-2 space-y-6">
+            {/* Marketplace eligibility banner */}
+            {(() => {
+              const hasAvatar = !!user.avatar;
+              const hasEmail = !!(user as any).emailVerified;
+              const hasSocials = socials && socials.length > 0;
+              const eligible = hasAvatar && hasEmail && hasSocials;
+              if (eligible) return null;
+              const missing: string[] = [];
+              if (!hasAvatar) missing.push("profile picture");
+              if (!hasEmail) missing.push("verified email");
+              if (!hasSocials) missing.push("social media link");
+              return (
+                <Card className="p-4 border-amber-200 bg-amber-50/50">
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center shrink-0 mt-0.5">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-amber-600"><path d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-semibold text-neutral-900">Not visible on marketplace yet</h3>
+                      <p className="text-xs text-neutral-500 mt-0.5">To be discoverable by brands, add: <strong>{missing.join(", ")}</strong></p>
+                    </div>
+                  </div>
+                </Card>
+              );
+            })()}
+
             {/* Stats */}
             <Card className="p-4 sm:p-6">
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">

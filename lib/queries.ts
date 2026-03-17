@@ -77,12 +77,14 @@ function assembleCreator(
 export async function getCreators(): Promise<Creator[]> {
   const sql = getDb();
   const users = await sql`
-    SELECT * FROM users
-    WHERE role IN ('creator', 'admin')
-      AND visible_in_marketplace = TRUE
-      AND (is_banned IS NULL OR is_banned = FALSE)
-      AND created_at <= NOW() - INTERVAL '31 days'
-    ORDER BY is_featured DESC, rating DESC
+    SELECT u.* FROM users u
+    WHERE u.role IN ('creator', 'admin')
+      AND u.visible_in_marketplace = TRUE
+      AND (u.is_banned IS NULL OR u.is_banned = FALSE)
+      AND u.email_verified = TRUE
+      AND u.avatar_url IS NOT NULL
+      AND EXISTS (SELECT 1 FROM social_connections sc WHERE sc.user_id = u.id)
+    ORDER BY u.is_featured DESC, u.rating DESC
   `;
 
   if (users.length === 0) return [];

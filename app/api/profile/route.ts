@@ -69,6 +69,7 @@ export async function PATCH(request: Request) {
       link_bio_bg_video = ${body.link_bio_bg_video !== undefined ? body.link_bio_bg_video : user.link_bio_bg_video},
       link_bio_button_shape = COALESCE(${body.link_bio_button_shape ?? null}, link_bio_button_shape),
       link_bio_button_anim = COALESCE(${body.link_bio_button_anim ?? null}, link_bio_button_anim),
+      onboarding_complete = COALESCE(${body.onboarding_complete ?? null}, onboarding_complete),
       updated_at = NOW()
     WHERE id = ${user.id}
   `;

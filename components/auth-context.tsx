@@ -30,6 +30,8 @@ export interface User {
   reviewCount: number;
   totalProjects: number;
   totalEarnings: number;
+  emailVerified: boolean;
+  onboardingComplete: boolean;
 }
 
 interface AuthContextType {
