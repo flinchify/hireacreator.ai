@@ -711,12 +711,16 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
   const settingsRef = useRef(settings);
   settingsRef.current = settings;
 
+  const [saveError, setSaveError] = useState("");
+
   async function save(updates: Partial<Settings>) {
     const next = { ...settingsRef.current, ...updates };
     setSettings(next);
+    settingsRef.current = next;
     setSaving(true);
+    setSaveError("");
     try {
-      await fetch("/api/profile", {
+      const res = await fetch("/api/profile", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -734,10 +738,19 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
           link_bio_card_style: next.cardStyle,
         }),
       });
-    } catch (e) { console.error("Save failed:", e); }
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        setSaveError(errData.error || `Save failed (${res.status})`);
+        setSaving(false);
+        return;
+      }
+      setSaved(true);
+      setTimeout(() => setSaved(false), 1500);
+    } catch (e: any) {
+      console.error("Save failed:", e);
+      setSaveError("Network error — check your connection");
+    }
     setSaving(false);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 1500);
   }
 
   async function uploadImage(file: File, purpose: "bg" | "photos") {
@@ -797,7 +810,8 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
           </div>
           <div className="flex items-center gap-2">
             {saving && <div className="w-4 h-4 border-2 border-neutral-300 border-t-neutral-900 rounded-full animate-spin" />}
-            {saved && <span className="text-xs text-emerald-600 font-medium">Saved</span>}
+            {saved && <span className="text-xs text-emerald-600 font-medium flex items-center gap-1"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 13l4 4L19 7" strokeLinecap="round" /></svg>Saved</span>}
+            {saveError && <span className="text-xs text-red-600 font-medium">{saveError}</span>}
             {user.slug && (
               <Link href={`/u/${user.slug}`} target="_blank" className="px-4 py-1.5 text-xs font-semibold bg-neutral-900 text-white rounded-full hover:bg-neutral-800 transition-colors">
                 View Live
