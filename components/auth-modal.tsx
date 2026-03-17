@@ -5,6 +5,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { useAuth } from "./auth-context";
 
+function isInAppBrowser(): boolean {
+  if (typeof window === "undefined") return false;
+  const ua = navigator.userAgent || "";
+  return /FBAN|FBAV|Instagram|Line\/|Snapchat|Twitter|TikTok|Musical|BytedanceWebview|Telegram/i.test(ua);
+}
+
 function GoogleIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" className="shrink-0">
@@ -28,7 +34,12 @@ export function AuthModal() {
   const [sending, setSending] = useState(false);
   const [verifying, setVerifying] = useState(false);
   const [error, setError] = useState("");
+  const [inApp, setInApp] = useState(false);
   const backdropRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setInApp(isInAppBrowser());
+  }, []);
 
   useEffect(() => {
     if (isOpen) {
@@ -130,13 +141,32 @@ export function AuthModal() {
               <h2 className="font-display text-xl font-bold text-neutral-900 mb-1">Welcome back</h2>
               <p className="text-sm text-neutral-500 mb-6">Sign in to your account.</p>
 
-              <a href="/api/auth/google" className="flex items-center justify-center gap-2.5 w-full py-3 px-4 bg-white border border-neutral-300 rounded-full text-sm font-medium text-neutral-700 hover:bg-neutral-50 hover:border-neutral-400 transition-all active:scale-[0.98]">
-                <GoogleIcon /> Continue with Google
-              </a>
+              {inApp ? (
+                <div className="mb-1">
+                  <div className="flex items-center gap-2 px-3 py-2.5 bg-amber-50 border border-amber-200 rounded-xl mb-4">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-amber-500 shrink-0"><path d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                    <p className="text-[11px] text-amber-700 leading-relaxed">Google sign-in doesn't work in app browsers. Use email below, or open in Safari/Chrome.</p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      const url = window.location.origin;
+                      window.open(url, "_blank");
+                    }}
+                    className="flex items-center justify-center gap-2.5 w-full py-3 px-4 bg-white border border-neutral-300 rounded-full text-sm font-medium text-neutral-400 cursor-not-allowed opacity-60"
+                    disabled
+                  >
+                    <GoogleIcon /> Continue with Google
+                  </button>
+                </div>
+              ) : (
+                <a href="/api/auth/google" className="flex items-center justify-center gap-2.5 w-full py-3 px-4 bg-white border border-neutral-300 rounded-full text-sm font-medium text-neutral-700 hover:bg-neutral-50 hover:border-neutral-400 transition-all active:scale-[0.98]">
+                  <GoogleIcon /> Continue with Google
+                </a>
+              )}
 
               <div className="relative my-5">
                 <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-neutral-200" /></div>
-                <div className="relative flex justify-center text-xs"><span className="bg-white px-3 text-neutral-400">or</span></div>
+                <div className="relative flex justify-center text-xs"><span className="bg-white px-3 text-neutral-400">{inApp ? "use email instead" : "or"}</span></div>
               </div>
 
               <form onSubmit={sendCode}>
@@ -218,13 +248,25 @@ export function AuthModal() {
                 </div>
               )}
 
-              <a href={`/api/auth/google?role=${role}`} className="flex items-center justify-center gap-2.5 w-full py-3 px-4 bg-white border border-neutral-300 rounded-full text-sm font-medium text-neutral-700 hover:bg-neutral-50 hover:border-neutral-400 transition-all active:scale-[0.98]">
-                <GoogleIcon /> Continue with Google
-              </a>
+              {inApp ? (
+                <div className="mb-1">
+                  <div className="flex items-center gap-2 px-3 py-2.5 bg-amber-50 border border-amber-200 rounded-xl mb-4">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-amber-500 shrink-0"><path d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                    <p className="text-[11px] text-amber-700 leading-relaxed">Google sign-in doesn't work in app browsers. Use email below, or open in Safari/Chrome.</p>
+                  </div>
+                  <button className="flex items-center justify-center gap-2.5 w-full py-3 px-4 bg-white border border-neutral-300 rounded-full text-sm font-medium text-neutral-400 cursor-not-allowed opacity-60" disabled>
+                    <GoogleIcon /> Continue with Google
+                  </button>
+                </div>
+              ) : (
+                <a href={`/api/auth/google?role=${role}`} className="flex items-center justify-center gap-2.5 w-full py-3 px-4 bg-white border border-neutral-300 rounded-full text-sm font-medium text-neutral-700 hover:bg-neutral-50 hover:border-neutral-400 transition-all active:scale-[0.98]">
+                  <GoogleIcon /> Continue with Google
+                </a>
+              )}
 
               <div className="relative my-5">
                 <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-neutral-200" /></div>
-                <div className="relative flex justify-center text-xs"><span className="bg-white px-3 text-neutral-400">or</span></div>
+                <div className="relative flex justify-center text-xs"><span className="bg-white px-3 text-neutral-400">{inApp ? "use email instead" : "or"}</span></div>
               </div>
 
               <form onSubmit={sendCode}>
