@@ -89,17 +89,31 @@ export function AuthModal() {
     if (code.length !== 6) return;
     setVerifying(true);
     setError("");
-    const res = await fetch("/api/auth/email/verify", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, code }),
-    });
-    const data = await res.json();
-    if (data.success) {
-      await refreshUser();
-      close();
-    } else {
-      setError(data.message || "Invalid code.");
+    try {
+      const res = await fetch("/api/auth/email/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, code }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        await refreshUser();
+        // Navigate after login — use window.location for in-app browser compatibility
+        const isNew = data.isNewUser;
+        const slug = data.user?.slug;
+        close();
+        if (isNew && slug) {
+          window.location.href = `/dashboard?welcome=true`;
+        } else {
+          window.location.href = `/dashboard`;
+        }
+        return;
+      } else {
+        setError(data.message || "Invalid code.");
+      }
+    } catch (err) {
+      console.error("Verify error:", err);
+      setError("Something went wrong. Please try again.");
     }
     setVerifying(false);
   }
