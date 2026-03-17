@@ -111,9 +111,9 @@ export function AuthModal() {
       } else {
         setError(data.message || "Invalid code.");
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("Verify error:", err);
-      setError("Something went wrong. Please try again.");
+      setError(err?.message || "Network error. Please check your connection and try again.");
     }
     setVerifying(false);
   }
