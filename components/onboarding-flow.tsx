@@ -414,16 +414,7 @@ export function OnboardingFlow() {
                   onClick={() => setTemplate(t.id)}
                   className={`relative rounded-2xl overflow-hidden transition-all active:scale-95 ${template === t.id ? "ring-2 ring-neutral-900 ring-offset-2" : "hover:ring-1 hover:ring-neutral-300"}`}
                 >
-                  <div className={`aspect-[3/4] flex flex-col items-center justify-center gap-1.5 p-3 ${t.dark ? "bg-neutral-900" : "bg-neutral-100"}`}>
-                    {/* Mini mockup */}
-                    <div className={`w-10 h-10 rounded-full ${t.dark ? "bg-white/15" : "bg-neutral-300/50"}`} />
-                    <div className={`w-16 h-1.5 rounded-full ${t.dark ? "bg-white/10" : "bg-neutral-200"}`} />
-                    <div className="w-full space-y-1.5 mt-2">
-                      <div className={`h-7 rounded-lg ${t.dark ? "bg-white/[0.06]" : "bg-white border border-neutral-200/60"}`} />
-                      <div className={`h-7 rounded-lg ${t.dark ? "bg-white/[0.06]" : "bg-white border border-neutral-200/60"}`} />
-                      <div className={`h-7 rounded-lg ${t.dark ? "bg-white/[0.06]" : "bg-white border border-neutral-200/60"}`} />
-                    </div>
-                  </div>
+                  <TemplateMiniPreview id={t.id} />
                   <div className="p-2 bg-white">
                     <div className="text-[11px] font-bold text-neutral-900">{t.name}</div>
                   </div>
@@ -509,6 +500,148 @@ export function OnboardingFlow() {
             </div>
           </div>
         )}
+      </div>
+    </div>
+  );
+}
+
+/* ── Unique mini previews for each template ── */
+function TemplateMiniPreview({ id }: { id: string }) {
+  const shared = "aspect-[3/4] flex flex-col items-center p-3 overflow-hidden relative";
+
+  if (id === "minimal") return (
+    <div className={`${shared} bg-[#f5f5f5] justify-center gap-1.5`}>
+      <div className="w-10 h-10 rounded-full bg-neutral-300/60" />
+      <div className="w-14 h-1.5 rounded-full bg-neutral-300/50 mt-1" />
+      <div className="w-10 h-1 rounded-full bg-neutral-300/30" />
+      <div className="w-full space-y-1.5 mt-3">
+        <div className="h-7 rounded-lg bg-white border border-neutral-200/80" />
+        <div className="h-7 rounded-lg bg-white border border-neutral-200/80" />
+        <div className="h-7 rounded-lg bg-white border border-neutral-200/80" />
+      </div>
+    </div>
+  );
+
+  if (id === "glass") return (
+    <div className={`${shared} justify-center gap-1.5`} style={{ background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" }}>
+      <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm border border-white/30" />
+      <div className="w-14 h-1.5 rounded-full bg-white/30 mt-1" />
+      <div className="w-10 h-1 rounded-full bg-white/15" />
+      <div className="w-full space-y-1.5 mt-3">
+        <div className="h-7 rounded-lg bg-white/10 backdrop-blur border border-white/20" />
+        <div className="h-7 rounded-lg bg-white/10 backdrop-blur border border-white/20" />
+        <div className="h-7 rounded-lg bg-white/10 backdrop-blur border border-white/20" />
+      </div>
+    </div>
+  );
+
+  if (id === "bold") return (
+    <div className={`${shared} bg-neutral-950 justify-center gap-1.5`}>
+      <div className="w-10 h-10 rounded-full bg-indigo-500/30 border-2 border-indigo-500" />
+      <div className="w-14 h-1.5 rounded-full bg-white/80 mt-1" />
+      <div className="w-10 h-1 rounded-full bg-indigo-400/40" />
+      <div className="w-full space-y-1.5 mt-3">
+        <div className="h-7 rounded-lg bg-indigo-600" />
+        <div className="h-7 rounded-lg bg-indigo-600/70" />
+        <div className="h-7 rounded-lg bg-indigo-600/40" />
+      </div>
+    </div>
+  );
+
+  if (id === "neon") return (
+    <div className={`${shared} bg-black justify-center gap-1.5`}>
+      <div className="w-10 h-10 rounded-full border-2 border-cyan-400 shadow-[0_0_12px_rgba(34,211,238,0.5)]" />
+      <div className="w-14 h-1.5 rounded-full bg-cyan-400/60 mt-1 shadow-[0_0_8px_rgba(34,211,238,0.4)]" />
+      <div className="w-10 h-1 rounded-full bg-cyan-400/20" />
+      <div className="w-full space-y-1.5 mt-3">
+        <div className="h-7 rounded-lg border border-cyan-400/50 bg-cyan-400/5 shadow-[0_0_8px_rgba(34,211,238,0.15)]" />
+        <div className="h-7 rounded-lg border border-cyan-400/30 bg-cyan-400/5" />
+        <div className="h-7 rounded-lg border border-cyan-400/20 bg-cyan-400/5" />
+      </div>
+    </div>
+  );
+
+  if (id === "collage") return (
+    <div className={`${shared} justify-center gap-1.5`}>
+      {/* photo grid bg */}
+      <div className="absolute inset-0 grid grid-cols-3 gap-px opacity-40">
+        <div className="bg-rose-300" /><div className="bg-amber-200" /><div className="bg-sky-300" />
+        <div className="bg-emerald-200" /><div className="bg-violet-300" /><div className="bg-orange-200" />
+        <div className="bg-pink-200" /><div className="bg-teal-300" /><div className="bg-indigo-200" />
+      </div>
+      <div className="absolute inset-0 bg-black/50" />
+      <div className="relative z-10 flex flex-col items-center gap-1.5 mt-auto mb-auto">
+        <div className="w-10 h-10 rounded-full bg-white/20 border border-white/40" />
+        <div className="w-14 h-1.5 rounded-full bg-white/50 mt-1" />
+        <div className="w-full space-y-1.5 mt-3 px-1">
+          <div className="h-7 rounded-lg bg-white/15 border border-white/20" />
+          <div className="h-7 rounded-lg bg-white/15 border border-white/20" />
+          <div className="h-7 rounded-lg bg-white/15 border border-white/20" />
+        </div>
+      </div>
+    </div>
+  );
+
+  if (id === "bento") return (
+    <div className={`${shared} bg-neutral-950 justify-start pt-4 gap-1.5`}>
+      <div className="w-full grid grid-cols-3 gap-1">
+        <div className="col-span-1 aspect-square rounded-lg bg-violet-600/30 border border-violet-500/40 flex items-center justify-center">
+          <div className="w-6 h-6 rounded-full bg-violet-400/40" />
+        </div>
+        <div className="col-span-2 aspect-[2/1] rounded-lg bg-white/[0.06] border border-white/10 flex items-center justify-center">
+          <div className="w-12 h-1.5 rounded-full bg-white/20" />
+        </div>
+        <div className="col-span-2 aspect-[2/1] rounded-lg bg-violet-600/20 border border-violet-500/30" />
+        <div className="col-span-1 aspect-square rounded-lg bg-white/[0.06] border border-white/10" />
+        <div className="col-span-3 h-7 rounded-lg bg-violet-600/30 border border-violet-500/40" />
+      </div>
+    </div>
+  );
+
+  if (id === "showcase") return (
+    <div className={`${shared} bg-[#fafafa] justify-start pt-3 gap-0`}>
+      {/* big hero area */}
+      <div className="w-full h-12 rounded-xl bg-gradient-to-br from-neutral-200 to-neutral-300 mb-2" />
+      <div className="flex items-center gap-2 w-full mb-2">
+        <div className="w-8 h-8 rounded-full bg-neutral-300 shrink-0" />
+        <div className="flex-1">
+          <div className="w-12 h-1.5 rounded-full bg-neutral-300 mb-1" />
+          <div className="w-16 h-1 rounded-full bg-neutral-200" />
+        </div>
+      </div>
+      <div className="w-full grid grid-cols-2 gap-1">
+        <div className="h-10 rounded-lg bg-white border border-neutral-200 shadow-sm" />
+        <div className="h-10 rounded-lg bg-white border border-neutral-200 shadow-sm" />
+      </div>
+      <div className="w-full h-7 rounded-lg bg-neutral-900 mt-1.5" />
+    </div>
+  );
+
+  if (id === "split") return (
+    <div className={`${shared} p-0`}>
+      <div className="flex w-full h-full">
+        <div className="w-[45%] bg-gradient-to-b from-neutral-300 to-neutral-400 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-full bg-white/30" />
+        </div>
+        <div className="w-[55%] bg-white flex flex-col justify-center gap-1.5 px-2">
+          <div className="w-12 h-1.5 rounded-full bg-neutral-300" />
+          <div className="w-8 h-1 rounded-full bg-neutral-200" />
+          <div className="h-5 rounded bg-neutral-100 border border-neutral-200 mt-1" />
+          <div className="h-5 rounded bg-neutral-100 border border-neutral-200" />
+          <div className="h-5 rounded bg-neutral-900 mt-1" />
+        </div>
+      </div>
+    </div>
+  );
+
+  // fallback
+  return (
+    <div className={`${shared} bg-neutral-100 justify-center gap-1.5`}>
+      <div className="w-10 h-10 rounded-full bg-neutral-300/50" />
+      <div className="w-14 h-1.5 rounded-full bg-neutral-200" />
+      <div className="w-full space-y-1.5 mt-2">
+        <div className="h-7 rounded-lg bg-white border border-neutral-200/60" />
+        <div className="h-7 rounded-lg bg-white border border-neutral-200/60" />
       </div>
     </div>
   );
