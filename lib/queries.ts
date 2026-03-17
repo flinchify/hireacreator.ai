@@ -12,7 +12,8 @@ function assembleCreator(
   socials: Record<string, unknown>[] = [],
   services: Record<string, unknown>[] = [],
   portfolio: Record<string, unknown>[] = [],
-  reviews: Record<string, unknown>[] = []
+  reviews: Record<string, unknown>[] = [],
+  bioLinks: Record<string, unknown>[] = []
 ): Creator {
   return {
     id: user.id as string,
@@ -52,6 +53,15 @@ function assembleCreator(
     linkBioCardStyle: (user.link_bio_card_style as string) || "default",
     linkBioIntroAnim: (user.link_bio_intro_anim as string) || "none",
     calendarEnabled: (user.calendar_enabled as boolean) || false,
+    bioLinks: bioLinks.map((l) => ({
+      id: l.id as string,
+      title: l.title as string,
+      url: l.url as string,
+      thumbnailUrl: (l.thumbnail_url as string) || null,
+      isVisible: l.is_visible !== false,
+      isPinned: (l.is_pinned as boolean) || false,
+      clickCount: (l.click_count as number) || 0,
+    })),
     socials: socials.map((s) => ({
       platform: s.platform as string,
       handle: s.handle as string,
@@ -150,7 +160,7 @@ export async function getCreatorBySlug(
   if (users.length === 0) return null;
   const user = users[0];
 
-  const [socials, services, portfolio, reviewRows] = await Promise.all([
+  const [socials, services, portfolio, reviewRows, bioLinks] = await Promise.all([
     sql`SELECT * FROM social_connections WHERE user_id = ${user.id}`,
     sql`SELECT * FROM services WHERE user_id = ${user.id} AND is_active = TRUE ORDER BY price ASC`,
     sql`SELECT * FROM portfolio_items WHERE user_id = ${user.id} ORDER BY sort_order ASC`,
@@ -161,9 +171,10 @@ export async function getCreatorBySlug(
       WHERE r.creator_id = ${user.id}
       ORDER BY r.created_at DESC
     `,
+    sql`SELECT * FROM bio_links WHERE user_id = ${user.id} AND is_visible = TRUE ORDER BY position ASC`,
   ]);
 
-  return assembleCreator(user, socials, services, portfolio, reviewRows);
+  return assembleCreator(user, socials, services, portfolio, reviewRows, bioLinks);
 }
 
 export async function searchCreators(filters?: {

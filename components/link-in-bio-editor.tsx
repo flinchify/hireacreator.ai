@@ -3,6 +3,7 @@
 import { useState, useRef } from "react";
 import Link from "next/link";
 import { PlatformIcon } from "./icons/platforms";
+import { LinkManager } from "./link-manager";
 
 /* ── Types ── */
 type Settings = {
@@ -700,7 +701,7 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
   });
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [section, setSection] = useState("template");
+  const [section, setSection] = useState("links");
   const [uploading, setUploading] = useState(false);
   const [previewMode, setPreviewMode] = useState<"mobile" | "desktop">("mobile");
   const fileRef = useRef<HTMLInputElement>(null);
@@ -785,6 +786,7 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
   }
 
   const sections = [
+    { id: "links", name: "Links" },
     { id: "template", name: "Template" },
     { id: "background", name: "Background" },
     { id: "typography", name: "Typography" },
@@ -833,6 +835,19 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
                 </button>
               ))}
             </div>
+
+            {/* ─── LINKS ─── */}
+            {section === "links" && (
+              <div className="bg-white rounded-2xl border border-neutral-200/60 p-5">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h2 className="text-sm font-bold text-neutral-900">Your Links</h2>
+                    <p className="text-[11px] text-neutral-400 mt-0.5">Add links, drag to reorder, toggle visibility</p>
+                  </div>
+                </div>
+                <LinkManager />
+              </div>
+            )}
 
             {/* ─── TEMPLATE ─── */}
             {section === "template" && (

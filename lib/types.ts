@@ -88,6 +88,7 @@ export type Creator = {
   linkBioCardStyle: string;
   linkBioIntroAnim: string;
   calendarEnabled: boolean;
+  bioLinks: { id: string; title: string; url: string; thumbnailUrl: string | null; isVisible: boolean; isPinned: boolean; clickCount: number }[];
   socials: Social[];
   services: Service[];
   portfolio: PortfolioItem[];

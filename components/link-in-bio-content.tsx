@@ -92,6 +92,44 @@ function SectionLabel({ children, light }: { children: React.ReactNode; light?: 
   return <div className="flex items-center gap-2.5 my-4"><div className={`h-px flex-1 ${light ? "bg-white/10" : "bg-neutral-200"}`} /><span className={`text-[10px] font-semibold uppercase tracking-widest ${light ? "text-white/30" : "text-neutral-400"}`}>{children}</span><div className={`h-px flex-1 ${light ? "bg-white/10" : "bg-neutral-200"}`} /></div>;
 }
 
+/* ── Bio Links Section ── */
+function BioLinksSection({ creator, light }: { creator: Creator; light?: boolean }) {
+  if (!creator.bioLinks || creator.bioLinks.length === 0) return null;
+
+  function trackClick(linkId: string) {
+    fetch("/api/links/click", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ linkId }),
+    }).catch(() => {});
+  }
+
+  return (
+    <div className="space-y-2.5 my-4">
+      {creator.bioLinks.filter(l => l.isVisible).map(link => (
+        <a
+          key={link.id}
+          href={link.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => trackClick(link.id)}
+          className={`group flex items-center gap-3 w-full px-4 py-3.5 transition-all hover:scale-[1.01] ${btnClass(creator.linkBioButtonShape)} ${cardCls(creator.linkBioCardStyle, !!light)}`}
+        >
+          {link.thumbnailUrl && (
+            <img src={link.thumbnailUrl} alt="" className="w-10 h-10 rounded-xl object-cover shrink-0" />
+          )}
+          <div className="flex-1 min-w-0 text-center">
+            <div className={`font-medium text-sm ${light ? "text-white" : "text-neutral-900"}`}>{link.title}</div>
+          </div>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={`shrink-0 ${light ? "text-white/30" : "text-neutral-300"} group-hover:translate-x-0.5 transition-transform`}>
+            <path d="M7 17L17 7M17 7H7M17 7v10" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </a>
+      ))}
+    </div>
+  );
+}
+
 function priceLabel(price: number, days?: number): string {
   if (price === 0) return "Open to offers";
   const p = `$${price}`;
@@ -198,6 +236,7 @@ function TemplateMinimal({ creator }: { creator: Creator }) {
           {creator.isOnline && <OnlineDot />}
           <Socials creator={creator} />
           {creator.bio && <p className="text-sm text-neutral-500 mb-2">{creator.bio}</p>}
+          <BioLinksSection creator={creator} />
           {creator.services.length > 0 && <><SectionLabel>Services</SectionLabel><div className="space-y-2.5">{creator.services.map(s => <ServiceCard key={s.id} service={s} creator={creator} />)}</div></>}
           {creator.portfolio.length > 0 && <><SectionLabel>Portfolio</SectionLabel><div className="grid grid-cols-3 gap-1.5">{creator.portfolio.slice(0, 6).map(p => <div key={p.id} className="aspect-square rounded-xl overflow-hidden bg-neutral-100">{p.image ? <img src={p.image} alt={p.title} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-neutral-300 text-xs">{p.title}</div>}</div>)}</div></>}
           {isEmpty && <EmptyState />}
@@ -236,6 +275,7 @@ function TemplateGlass({ creator }: { creator: Creator }) {
         </div>
         <Socials creator={creator} light />
         {creator.bio && <p className="text-sm text-white/50 text-center mb-6">{creator.bio}</p>}
+        <BioLinksSection creator={creator} light />
         <div className="flex-1 space-y-3">
           {creator.services.map(s => <ServiceCard key={s.id} service={s} creator={creator} light />)}
           {creator.portfolio.length > 0 && <div className="grid grid-cols-3 gap-1.5 pt-2">{creator.portfolio.slice(0, 6).map(p => <div key={p.id} className="aspect-square rounded-xl overflow-hidden bg-white/5">{p.image ? <img src={p.image} alt={p.title} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-white/20 text-xs">{p.title}</div>}</div>)}</div>}
@@ -270,6 +310,7 @@ function TemplateBold({ creator }: { creator: Creator }) {
           {creator.isOnline && <OnlineDot light />}
           <Socials creator={creator} light shape="square" />
           {creator.bio && <p className="text-sm text-neutral-500 mb-4 leading-relaxed">{creator.bio}</p>}
+          <BioLinksSection creator={creator} light />
           {creator.services.length > 0 && <><div className="w-12 h-[2px] mx-auto my-6" style={{ background: accent }} /><div className="space-y-3">{creator.services.map(s => (
             <a key={s.id} href={`/creators/${creator.slug}`} className={`block w-full bg-neutral-900 border border-neutral-800 ${btnClass(creator.linkBioButtonShape)} px-5 py-4 text-left hover:border-neutral-700 transition-all`}>
               <div className="flex items-center justify-between"><span className="font-bold text-white text-[15px]">{s.title}</span><span className="text-xs font-bold" style={{ color: accent }}>{s.price === 0 ? "Offers" : `$${s.price}`}</span></div>
@@ -307,6 +348,7 @@ function TemplateShowcase({ creator }: { creator: Creator }) {
           {creator.isOnline && <OnlineDot />}
           <Socials creator={creator} shape="square" />
           {creator.bio && <p className="text-sm text-neutral-500 mb-4">{creator.bio}</p>}
+          <BioLinksSection creator={creator} />
           {creator.portfolio.length > 0 && <div className="grid grid-cols-2 gap-2 mb-5">{creator.portfolio.slice(0, 6).map(p => <div key={p.id} className="rounded-2xl overflow-hidden bg-neutral-50 border border-neutral-100"><div className="aspect-[4/3]">{p.image ? <img src={p.image} alt={p.title} className="w-full h-full object-cover" /> : <div className="w-full h-full bg-neutral-100 flex items-center justify-center text-neutral-300 text-xs">{p.title}</div>}</div></div>)}</div>}
           {creator.services.length > 0 && <div className="grid grid-cols-2 gap-2 mb-5">{creator.services.map(s => <ServiceCard key={s.id} service={s} creator={creator} />)}</div>}
           {isEmpty && <EmptyState />}
@@ -343,6 +385,7 @@ function TemplateNeon({ creator }: { creator: Creator }) {
           {creator.isOnline && <OnlineDot light />}
           {creator.socials.length > 0 && <div className="flex items-center justify-center gap-2.5 my-5 flex-wrap">{creator.socials.map(s => <a key={s.platform} href={s.url || "#"} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border flex items-center justify-center hover:scale-110 transition-all" style={{ borderColor: `${accent}30`, background: `${accent}10` }}><PlatformIcon platform={s.platform} size={18} className="text-neutral-300" /></a>)}</div>}
           {creator.bio && <p className="text-sm text-neutral-500 mb-4">{creator.bio}</p>}
+          <BioLinksSection creator={creator} light />
           {creator.services.length > 0 && <div className="space-y-3 mb-5">{creator.services.map(s => <a key={s.id} href={`/creators/${creator.slug}`} className={`block w-full ${btnClass(creator.linkBioButtonShape)} px-5 py-4 text-center transition-all hover:scale-[1.02]`} style={{ border: `1px solid ${accent}25`, background: `${accent}08`, boxShadow: `0 0 15px ${accent}10` }}><div className="font-medium text-white text-[15px]">{s.title}</div><div className="text-xs mt-0.5" style={{ color: `${accent}99` }}>{priceLabel(s.price, s.deliveryDays)}</div></a>)}</div>}
           {creator.portfolio.length > 0 && <div className="grid grid-cols-3 gap-1.5 mb-5">{creator.portfolio.slice(0, 6).map(p => <div key={p.id} className="aspect-square rounded-xl overflow-hidden" style={{ border: `1px solid ${accent}15` }}>{p.image ? <img src={p.image} alt={p.title} className="w-full h-full object-cover" /> : <div className="w-full h-full bg-neutral-900 flex items-center justify-center text-neutral-700 text-xs">{p.title}</div>}</div>)}</div>}
           {isEmpty && <EmptyState light />}
@@ -387,6 +430,7 @@ function TemplateCollage({ creator }: { creator: Creator }) {
           <Socials creator={creator} light />
         </div>
         {creator.bio && <p className="text-sm text-white/50 text-center mb-6">{creator.bio}</p>}
+        <BioLinksSection creator={creator} light />
         <div className="flex-1 space-y-2.5">
           {creator.services.map(s => <ServiceCard key={s.id} service={s} creator={creator} light />)}
           {isEmpty && <EmptyState light />}
@@ -513,6 +557,7 @@ function TemplateCustom({ creator }: { creator: Creator }) {
         </div>
         <Socials creator={creator} light={isDarkBg} />
         {creator.bio && <p className={`text-sm text-center mb-6 ${isDarkBg ? "text-white/50" : "text-neutral-500"}`}>{creator.bio}</p>}
+        <BioLinksSection creator={creator} light={isDarkBg} />
         <div className="flex-1 space-y-3">
           {creator.services.map(s => <ServiceCard key={s.id} service={s} creator={creator} light={isDarkBg} accent={accent} />)}
           {creator.portfolio.length > 0 && <div className="grid grid-cols-3 gap-1.5 pt-2">{creator.portfolio.slice(0, 6).map(p => <div key={p.id} className={`aspect-square rounded-xl overflow-hidden ${isDarkBg ? "bg-white/5" : "bg-neutral-100"}`}>{p.image ? <img src={p.image} alt={p.title} className="w-full h-full object-cover" /> : <div className={`w-full h-full flex items-center justify-center text-xs ${isDarkBg ? "text-white/20" : "text-neutral-300"}`}>{p.title}</div>}</div>)}</div>}
