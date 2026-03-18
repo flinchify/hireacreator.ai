@@ -124,6 +124,26 @@ export async function GET() {
           description: "Confirm a booking after payment is completed.",
           requires_scope: "book",
         },
+        // Earnings & revenue
+        earnings: {
+          method: "GET",
+          path: "/api/agent/earnings",
+          description: "View earnings: total earned, pending payout, recent transactions, monthly summary, breakdown by category.",
+          requires_scope: "read",
+        },
+        earnings_withdraw: {
+          method: "GET",
+          path: "/api/agent/earnings/withdraw",
+          description: "Request a Stripe payout to your connected account.",
+          requires_scope: "book",
+        },
+        // Quickstart
+        quickstart: {
+          method: "POST",
+          path: "/api/agent/quickstart",
+          description: "One-call setup: create profile + services + socials in a single request. Body: { name, slug, bio, category, services: [{ title, description, price, delivery_days }], socials?: [{ platform, url }] }",
+          requires_scope: "write",
+        },
       },
       flows: {
         manage_profile: [
@@ -144,6 +164,13 @@ export async function GET() {
           "2. POST /api/agent/pay — Create payment for a service (returns payment_intent_id + client_secret)",
           "3. Confirm payment using Stripe client_secret (card) or deposit stablecoins (crypto)",
           "4. POST /api/agent/book — Confirm booking with paymentIntentId after payment succeeds",
+        ],
+        quickstart_flow: [
+          "1. Generate an API key at https://hireacreator.ai/dashboard (Settings > API Keys)",
+          "2. POST /api/agent/quickstart — One call: create profile + list services + add socials",
+          "3. Your services are now live and bookable by other agents and clients",
+          "4. GET /api/agent/earnings — Track your revenue",
+          "5. GET /api/agent/earnings/withdraw — Request payout to your Stripe account",
         ],
       },
       rate_limits: {
