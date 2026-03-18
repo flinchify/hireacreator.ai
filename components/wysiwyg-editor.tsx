@@ -2,7 +2,6 @@
 
 import { useState, useCallback, useRef, useEffect } from "react";
 import { LinkManager } from "./link-manager";
-import { PlatformIcon } from "./icons/platforms";
 
 /* ══════════════════════════════════════════════════════
    TYPES
@@ -409,186 +408,111 @@ export function WysiwygEditor({ initialData, slug }: { initialData: EditorData; 
     });
   }
 
-  // Background style
-  const bgStyle: React.CSSProperties = {};
-  if (data.link_bio_bg_type === "gradient" && data.link_bio_bg_value) {
-    bgStyle.background = data.link_bio_bg_value;
-  } else if (data.link_bio_bg_type === "solid" && data.link_bio_bg_value) {
-    bgStyle.background = data.link_bio_bg_value;
-  } else if (data.link_bio_bg_type === "image" && data.link_bio_bg_value) {
-    bgStyle.backgroundImage = `url(${data.link_bio_bg_value})`;
-    bgStyle.backgroundSize = "cover";
-    bgStyle.backgroundPosition = "center";
-  }
-
-  const isDark = data.link_bio_bg_type === "gradient" && data.link_bio_bg_value?.includes("#0f") ||
-    data.link_bio_bg_type === "gradient" && data.link_bio_bg_value?.includes("#1a") ||
-    data.link_bio_bg_type === "video" || data.link_bio_bg_type === "image";
-
-  const textColor = isDark ? "text-white" : "text-neutral-900";
-  const subColor = isDark ? "text-white/60" : "text-neutral-500";
-  const accent = data.link_bio_accent || "#171717";
+  // Refresh iframe after save
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const prevStatus = useRef(status);
+  useEffect(() => {
+    if (prevStatus.current === "saving" && status === "saved" && iframeRef.current) {
+      iframeRef.current.src = `/u/${slug}?t=${Date.now()}`;
+    }
+    prevStatus.current = status;
+  }, [status, slug]);
 
   return (
-    <div className="min-h-screen" style={bgStyle}>
+    <div className="min-h-screen bg-[#f8f8fa]">
       <EditorToolbar status={status} errorMsg={errorMsg} slug={slug} onOpenPanel={setPanel} activePanel={panel} onSave={saveNow} />
 
-      {/* Side panel */}
-      {panel && (
-        <div className="fixed top-14 right-0 bottom-0 w-80 bg-white border-l border-neutral-200 z-40 overflow-y-auto shadow-xl">
+      <div className="flex pt-14 min-h-screen">
+        {/* ═══ LEFT SIDEBAR — Controls ═══ */}
+        <div className="w-80 shrink-0 bg-white border-r border-neutral-200 overflow-y-auto" style={{ height: "calc(100vh - 56px)", position: "sticky", top: 56 }}>
           <div className="p-5">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-sm font-bold text-neutral-900 capitalize">{panel}</h2>
-              <button onClick={() => setPanel(null)} className="p-1 rounded-lg hover:bg-neutral-100 text-neutral-400">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" /></svg>
-              </button>
+            {/* Panel selector tabs */}
+            <div className="flex gap-1 mb-5 bg-neutral-100 rounded-xl p-1">
+              {[
+                { id: "design", label: "Design" },
+                { id: "links", label: "Links" },
+                { id: "profile", label: "Profile" },
+              ].map(p => (
+                <button key={p.id} onClick={() => setPanel(panel === p.id ? null : p.id)}
+                  className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-colors ${panel === p.id ? "bg-white text-neutral-900 shadow-sm" : "text-neutral-500 hover:text-neutral-700"}`}>
+                  {p.label}
+                </button>
+              ))}
             </div>
-            {panel === "design" && <DesignPanel data={data} onUpdate={updateField} />}
+
+            {/* Panel content */}
+            {(!panel || panel === "design") && <DesignPanel data={data} onUpdate={updateField} />}
             {panel === "links" && <LinkManager />}
-            {panel === "sections" && <SectionsPanel sections={sections} onToggle={toggleSection} onReorder={reorderSections} />}
+            {panel === "profile" && (
+              <div className="space-y-4">
+                <h3 className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Profile Info</h3>
+                <div>
+                  <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Name</label>
+                  <input value={data.full_name || ""} onChange={e => updateText("full_name", e.target.value)} placeholder="Your Name" className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900/10 text-neutral-900 bg-white mt-1" />
+                </div>
+                <div>
+                  <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Headline</label>
+                  <input value={data.headline || ""} onChange={e => updateText("headline", e.target.value)} placeholder="UGC Creator & Photographer" className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900/10 text-neutral-900 bg-white mt-1" />
+                </div>
+                <div>
+                  <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Bio</label>
+                  <textarea value={data.bio || ""} onChange={e => updateText("bio", e.target.value)} placeholder="Tell people about yourself..." rows={3} className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900/10 text-neutral-900 bg-white mt-1 resize-y" />
+                </div>
+                <div>
+                  <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Location</label>
+                  <input value={data.location || ""} onChange={e => updateText("location", e.target.value)} placeholder="Sydney, AU" className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900/10 text-neutral-900 bg-white mt-1" />
+                </div>
+                <div>
+                  <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Avatar</label>
+                  <label className="flex items-center justify-center gap-2 py-2.5 mt-1 rounded-xl border-2 border-dashed border-neutral-200 cursor-pointer text-xs font-medium text-neutral-500 hover:border-neutral-400 transition-colors">
+                    <input type="file" accept="image/*" className="hidden" onChange={async e => {
+                      const file = e.target.files?.[0]; if (!file) return;
+                      const fd = new FormData(); fd.append("file", file); fd.append("type", "avatar");
+                      const res = await fetch("/api/upload", { method: "POST", body: fd });
+                      if (res.ok) { const d = await res.json(); if (d.url) { setData((prev: any) => ({ ...prev, avatar_url: d.url })); saveNow(); } }
+                    }} />
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                    Upload Photo
+                  </label>
+                </div>
+                <div>
+                  <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Cover Image</label>
+                  <label className="flex items-center justify-center gap-2 py-2.5 mt-1 rounded-xl border-2 border-dashed border-neutral-200 cursor-pointer text-xs font-medium text-neutral-500 hover:border-neutral-400 transition-colors">
+                    <input type="file" accept="image/*" className="hidden" onChange={async e => {
+                      const file = e.target.files?.[0]; if (!file) return;
+                      const fd = new FormData(); fd.append("file", file); fd.append("type", "cover");
+                      const res = await fetch("/api/upload", { method: "POST", body: fd });
+                      if (res.ok) { const d = await res.json(); if (d.url) { setData((prev: any) => ({ ...prev, cover_url: d.url })); saveNow(); } }
+                    }} />
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                    Upload Cover
+                  </label>
+                </div>
+              </div>
+            )}
           </div>
         </div>
-      )}
 
-      {/* ─── THE PAGE (editable) ─── */}
-      <div className="max-w-[480px] mx-auto px-5 pt-20 pb-10 min-h-screen flex flex-col" style={panel ? { marginRight: "max(auto, 340px)" } : {}}>
-        {sections.filter(s => s.enabled).map(section => {
-          switch (section.id) {
-            case "profile":
-              return (
-                <div key="profile" className="text-center mb-6">
-                  {/* Avatar */}
-                  <div className="relative group inline-block">
-                    {data.avatar_url ? (
-                      <img src={data.avatar_url} alt="" className="w-24 h-24 rounded-full object-cover shadow-lg" />
-                    ) : (
-                      <div className={`w-24 h-24 rounded-full flex items-center justify-center shadow-lg ${isDark ? "bg-white/10" : "bg-neutral-100"}`}>
-                        <span className={`text-3xl font-bold ${isDark ? "text-white/60" : "text-neutral-400"}`}>{(data.full_name || "?")[0]}</span>
-                      </div>
-                    )}
-                    <label className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/40 rounded-full cursor-pointer transition-all opacity-0 group-hover:opacity-100">
-                      <input type="file" accept="image/*" className="hidden" onChange={async e => {
-                        const file = e.target.files?.[0]; if (!file) return;
-                        const fd = new FormData(); fd.append("file", file); fd.append("type", "avatar");
-                        const res = await fetch("/api/upload", { method: "POST", body: fd });
-                        const d = await res.json();
-                        if (d.url) setData((prev: any) => ({ ...prev, avatar_url: d.url }));
-                      }} />
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" /><circle cx="12" cy="13" r="4" /></svg>
-                    </label>
-                  </div>
-
-                  {/* Name — inline editable */}
-                  <div className="mt-4">
-                    <InlineText
-                      value={data.full_name || ""}
-                      onChange={v => updateText("full_name", v)}
-                      placeholder="Your Name"
-                      className={`font-display text-xl font-bold ${textColor} block`}
-                      tag="h1"
-                    />
-                  </div>
-
-                  {/* Headline — inline editable */}
-                  <InlineText
-                    value={data.headline || ""}
-                    onChange={v => updateText("headline", v)}
-                    placeholder="Click to add headline"
-                    className={`text-sm mt-1 block ${subColor}`}
-                  />
-
-                  {/* Location — inline editable */}
-                  <InlineText
-                    value={data.location || ""}
-                    onChange={v => updateText("location", v)}
-                    placeholder="Click to add location"
-                    className={`text-xs mt-1 block ${isDark ? "text-white/40" : "text-neutral-400"}`}
-                  />
-                </div>
-              );
-
-            case "socials":
-              return initialData.socials.length > 0 ? (
-                <div key="socials" className="flex items-center justify-center gap-2.5 mb-5 flex-wrap">
-                  {initialData.socials.map((s: any) => (
-                    <a key={s.platform} href={s.url || "#"} target="_blank" rel="noopener noreferrer" aria-label={`Visit ${s.platform}`} className={`w-10 h-10 rounded-full flex items-center justify-center transition-all hover:scale-110 ${isDark ? "bg-white/10 hover:bg-white/20" : "bg-neutral-100 hover:bg-neutral-200"}`}>
-                      <PlatformIcon platform={s.platform} size={18} className={isDark ? "text-white/70" : "text-neutral-500"} />
-                    </a>
-                  ))}
-                  <button onClick={() => setPanel("links")} className={`w-10 h-10 rounded-full flex items-center justify-center border-2 border-dashed transition-all hover:scale-110 ${isDark ? "border-white/20 text-white/30 hover:border-white/40" : "border-neutral-300 text-neutral-300 hover:border-neutral-400"}`}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 5v14M5 12h14" strokeLinecap="round" /></svg>
-                  </button>
-                </div>
-              ) : (
-                <div key="socials" className="text-center mb-5">
-                  <button onClick={() => setPanel("links")} className={`text-xs ${subColor} hover:underline`}>+ Add social links</button>
-                </div>
-              );
-
-            case "bio":
-              return (
-                <div key="bio" className="mb-6">
-                  <InlineText
-                    value={data.bio || ""}
-                    onChange={v => updateText("bio", v)}
-                    placeholder="Click to write your bio. Tell people who you are and what you do."
-                    className={`text-sm text-center leading-relaxed block ${subColor}`}
-                    tag="p"
-                    multiline
-                  />
-                </div>
-              );
-
-            case "links":
-              return (
-                <div key="links" className="mb-6">
-                  {initialData.bioLinks.length > 0 ? (
-                    <div className="space-y-2.5">
-                      {initialData.bioLinks.map((link: any) => (
-                        <a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer" className={`block w-full px-5 py-3.5 text-center font-medium text-sm transition-all hover:scale-[1.02] rounded-xl ${isDark ? "bg-white/10 text-white hover:bg-white/15" : "bg-neutral-100 text-neutral-900 hover:bg-neutral-200"}`}>
-                          {link.title}
-                        </a>
-                      ))}
-                    </div>
-                  ) : (
-                    <button onClick={() => setPanel("links")} className={`w-full py-4 border-2 border-dashed rounded-xl text-sm font-medium transition-all hover:scale-[1.01] ${isDark ? "border-white/20 text-white/40 hover:border-white/30" : "border-neutral-300 text-neutral-400 hover:border-neutral-400"}`}>
-                      + Add your first link
-                    </button>
-                  )}
-                </div>
-              );
-
-            case "services":
-              return initialData.services.length > 0 ? (
-                <div key="services" className="space-y-2.5 mb-6">
-                  {initialData.services.map((s: any) => (
-                    <div key={s.id} className={`px-5 py-4 rounded-xl ${isDark ? "bg-white/5 border border-white/10" : "bg-white border border-neutral-200"}`}>
-                      <div className="flex items-center justify-between">
-                        <span className={`font-medium text-sm ${isDark ? "text-white" : "text-neutral-900"}`}>{s.title}</span>
-                        <span className={`text-sm font-bold ${isDark ? "text-white" : "text-neutral-900"}`}>{Number(s.price) === 0 ? "Free" : `$${s.price}`}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : null;
-
-            case "calendar":
-              return (
-                <div key="calendar" className={`mb-6 px-5 py-4 rounded-xl text-center ${isDark ? "bg-white/5 border border-white/10" : "bg-white border border-neutral-200"}`}>
-                  <p className={`text-sm font-medium ${isDark ? "text-white" : "text-neutral-900"}`}>Book a session</p>
-                  <p className={`text-xs mt-1 ${subColor}`}>Calendar booking widget appears here</p>
-                </div>
-              );
-
-            default: return null;
-          }
-        })}
-
-        {/* Branding */}
-        <div className="mt-auto pt-8 text-center">
-          <a href="/" className={`text-[10px] font-medium ${isDark ? "text-white/20" : "text-neutral-300"}`}>
-            Powered by HireACreator.ai
-          </a>
+        {/* ═══ RIGHT — Live Preview (iframe) ═══ */}
+        <div className="flex-1 flex items-start justify-center py-8 px-4">
+          <div className="w-full max-w-[420px]">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-bold text-neutral-900">Live Preview</h3>
+              <button onClick={() => { if (iframeRef.current) iframeRef.current.src = `/u/${slug}?t=${Date.now()}`; }} className="text-[11px] text-neutral-400 hover:text-neutral-600 font-medium flex items-center gap-1">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M23 4v6h-6M1 20v-6h6" strokeLinecap="round" strokeLinejoin="round" /><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                Refresh
+              </button>
+            </div>
+            <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-neutral-200">
+              <iframe
+                ref={iframeRef}
+                src={`/u/${slug}?t=${Date.now()}`}
+                className="w-full border-0"
+                style={{ height: "calc(100vh - 160px)", minHeight: "600px" }}
+                title="Live Preview"
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>
