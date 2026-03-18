@@ -363,6 +363,7 @@ export function DashboardContent() {
   const [editServices, setEditServices] = useState(false);
   const [socials, setSocials] = useState<any[]>([]);
   const [services, setServices] = useState<any[]>([]);
+  const [dataLoaded, setDataLoaded] = useState(false);
   const [copied, setCopied] = useState(false);
   const [uploadError, setUploadError] = useState("");
 
@@ -385,7 +386,7 @@ export function DashboardContent() {
   }
 
   const loadData = useCallback(() => {
-    fetch("/api/profile").then(r => r.json()).then(d => { if (d.socials) setSocials(d.socials); if (d.services) setServices(d.services); }).catch(() => {});
+    fetch("/api/profile").then(r => r.json()).then(d => { if (d.socials) setSocials(d.socials); if (d.services) setServices(d.services); setDataLoaded(true); }).catch(() => { setDataLoaded(true); });
   }, []);
 
   useEffect(() => { if (user) loadData(); }, [user, loadData]);
@@ -522,8 +523,8 @@ export function DashboardContent() {
               <div className="grid lg:grid-cols-[1fr,320px] gap-8">
                 {/* Left — stats + about + socials */}
                 <div className="space-y-6">
-                  {/* Eligibility banner */}
-                  {(() => {
+                  {/* Eligibility banner — only show after data has loaded to prevent flash */}
+                  {dataLoaded && (() => {
                     const missing: string[] = [];
                     if (!user.avatar) missing.push("profile picture");
                     if (!(user as any).emailVerified) missing.push("verified email");
