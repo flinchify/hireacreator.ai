@@ -238,10 +238,10 @@ export function DashboardContent() {
 
   return (
     <div className="min-h-screen bg-[#f8f8fa]">
-      <div className="flex pt-16">
+      <div className="flex">
 
         {/* ═══ LEFT SIDEBAR (desktop only) ═══ */}
-        <aside className="hidden lg:flex flex-col w-[220px] shrink-0 border-r border-neutral-200 bg-white min-h-[calc(100vh-4rem)] sticky top-16">
+        <aside className="hidden lg:flex flex-col w-[220px] shrink-0 border-r border-neutral-200 bg-white min-h-screen sticky top-0 pt-20">
           <div className="flex-1 px-3 py-6">
             <p className="text-[10px] font-semibold text-neutral-400 uppercase tracking-wider px-3 mb-2">Main</p>
             {NAV_MAIN.map(n => (
@@ -281,8 +281,8 @@ export function DashboardContent() {
 
           {/* ─── Profile Header ─── */}
           <div className="bg-white border-b border-neutral-200">
-            {/* Cover */}
-            <div className="relative h-40 sm:h-48">
+            {/* Cover — extends behind floating header */}
+            <div className="relative h-52 sm:h-56">
               {user.cover ? <img src={user.cover} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full bg-gradient-to-br from-neutral-200 via-neutral-100 to-neutral-300" />}
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
               <label className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-black/40 backdrop-blur-sm border border-white/20 rounded-full hover:bg-black/60 transition-all cursor-pointer">
