@@ -349,7 +349,7 @@ export function WysiwygEditor({ initialData, slug }: { initialData: EditorData; 
       )}
 
       {/* ─── THE PAGE (editable) ─── */}
-      <div className={`max-w-[480px] mx-auto px-5 pt-20 pb-10 min-h-screen flex flex-col ${panel ? "mr-80" : ""}`}>
+      <div className="max-w-[480px] mx-auto px-5 pt-20 pb-10 min-h-screen flex flex-col" style={panel ? { marginRight: "max(auto, 340px)" } : {}}>
         {sections.filter(s => s.enabled).map(section => {
           switch (section.id) {
             case "profile":

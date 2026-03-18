@@ -257,16 +257,16 @@ export function HomepageContent({
       )}
 
       {/* For Brands */}
-      <AnimateOnScroll as="section" id="for-brands" className="bg-neutral-950 text-white">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
-          <div className="max-w-2xl mb-14">
-            <div className="text-sm font-medium text-neutral-500 uppercase tracking-wider mb-4">
+      <AnimateOnScroll as="section" id="for-brands" className="bg-white">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28 border-t border-neutral-100">
+          <div className="text-center mb-14">
+            <div className="text-sm font-medium text-neutral-400 uppercase tracking-wider mb-4">
               For Brands & Agencies
             </div>
-            <h2 className="font-display text-3xl sm:text-4xl font-bold leading-tight mb-4">
+            <h2 className="font-display text-3xl sm:text-4xl font-bold text-neutral-900 leading-tight mb-4">
               Stop scrolling Instagram for creators
             </h2>
-            <p className="text-neutral-400 text-lg leading-relaxed">
+            <p className="text-neutral-500 text-lg leading-relaxed max-w-2xl mx-auto">
               Search by niche, audience size, engagement rate, and budget.
               Book in minutes, not weeks. Payments are held in Stripe escrow
               and released when you approve the deliverables.
@@ -274,32 +274,35 @@ export function HomepageContent({
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div className="bg-neutral-900 rounded-2xl p-6 border border-neutral-800">
-              <div className="text-2xl font-display font-bold text-white mb-1">Search</div>
-              <p className="text-sm text-neutral-400">
+            <div className="group bg-gradient-to-br from-neutral-50 to-white rounded-2xl p-6 border border-neutral-200 hover:border-neutral-300 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+              <div className="w-10 h-10 rounded-xl bg-neutral-900 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35" strokeLinecap="round" /></svg></div>
+              <div className="text-lg font-display font-bold text-neutral-900 mb-1">Search</div>
+              <p className="text-sm text-neutral-500">
                 Filter by category, platform, location, rate, and engagement.
                 Find exactly who you need.
               </p>
             </div>
-            <div className="bg-neutral-900 rounded-2xl p-6 border border-neutral-800">
-              <div className="text-2xl font-display font-bold text-white mb-1">Book</div>
-              <p className="text-sm text-neutral-400">
+            <div className="group bg-gradient-to-br from-neutral-50 to-white rounded-2xl p-6 border border-neutral-200 hover:border-neutral-300 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+              <div className="w-10 h-10 rounded-xl bg-neutral-900 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18" strokeLinecap="round" /></svg></div>
+              <div className="text-lg font-display font-bold text-neutral-900 mb-1">Book</div>
+              <p className="text-sm text-neutral-500">
                 Pick a service, submit your brief, pay securely.
                 Funds held in escrow until you approve.
               </p>
             </div>
-            <div className="bg-neutral-900 rounded-2xl p-6 border border-neutral-800">
-              <div className="text-2xl font-display font-bold text-white mb-1">Ship</div>
-              <p className="text-sm text-neutral-400">
+            <div className="group bg-gradient-to-br from-neutral-50 to-white rounded-2xl p-6 border border-neutral-200 hover:border-neutral-300 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+              <div className="w-10 h-10 rounded-xl bg-neutral-900 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14" strokeLinecap="round" /><path d="M22 4L12 14.01l-3-3" strokeLinecap="round" strokeLinejoin="round" /></svg></div>
+              <div className="text-lg font-display font-bold text-neutral-900 mb-1">Ship</div>
+              <p className="text-sm text-neutral-500">
                 Get deliverables on schedule with full usage rights.
                 Leave a review. Rebook.
               </p>
             </div>
           </div>
 
-          <div className="mt-10">
+          <div className="mt-10 text-center">
             <Link href="/browse">
-              <button className="px-8 py-3.5 text-base font-medium text-neutral-900 bg-white rounded-full hover:bg-neutral-100 transition-colors">
+              <button className="px-8 py-3.5 text-base font-medium text-white bg-neutral-900 rounded-full hover:bg-neutral-800 transition-colors shadow-lg shadow-neutral-900/10">
                 Find a Creator
               </button>
             </Link>
