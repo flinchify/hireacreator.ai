@@ -384,6 +384,119 @@ export function HomepageContent({
         </div>
       </AnimateOnScroll>
 
+      {/* Pricing Preview */}
+      <AnimateOnScroll as="section" id="pricing" className="bg-white border-t border-neutral-100">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
+          <div className="text-center mb-14">
+            <div className="text-sm font-medium text-neutral-400 uppercase tracking-wider mb-4">
+              Pricing
+            </div>
+            <h2 className="font-display text-3xl sm:text-4xl font-bold text-neutral-900 leading-tight mb-4">
+              Free for creators. Transparent for everyone.
+            </h2>
+            <p className="text-neutral-500 text-lg leading-relaxed max-w-2xl mx-auto">
+              Creators keep 100% of their earnings with 0% commission. Upgrade for advanced tools, or stay free forever.
+            </p>
+          </div>
+
+          <StaggerChildren className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto" staggerMs={120}>
+            <div className="aos-stagger-item bg-white rounded-2xl border border-neutral-200 p-8 hover:border-neutral-300 hover:shadow-lg transition-all duration-300">
+              <div className="text-sm font-medium text-neutral-400 uppercase tracking-wider mb-2">Free</div>
+              <div className="flex items-baseline gap-1 mb-4">
+                <span className="font-display text-3xl font-bold text-neutral-900">$0</span>
+                <span className="text-sm text-neutral-400">forever</span>
+              </div>
+              <p className="text-sm text-neutral-500 mb-5">Link-in-bio, services, bookings, and analytics. No strings attached.</p>
+              <ul className="space-y-2.5 mb-6">
+                {[
+                  "8 premium templates",
+                  "Up to 3 services",
+                  "0% commission on earnings",
+                  "Basic analytics + QR code",
+                ].map((f) => (
+                  <li key={f} className="flex items-start gap-2 text-sm text-neutral-600">
+                    <span className="mt-0.5"><CheckIcon /></span>
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <button
+                onClick={() => openSignup("creator")}
+                className="w-full py-2.5 text-sm font-medium rounded-full border border-neutral-300 text-neutral-700 hover:bg-neutral-50 transition-colors"
+              >
+                Get Started Free
+              </button>
+            </div>
+
+            <div className="aos-stagger-item bg-white rounded-2xl border-2 border-neutral-900 p-8 relative hover:shadow-xl transition-all duration-300">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-neutral-900 text-white text-xs font-medium rounded-full">
+                Popular
+              </div>
+              <div className="text-sm font-medium text-neutral-900 uppercase tracking-wider mb-2">Creator Pro</div>
+              <div className="flex items-baseline gap-1 mb-4">
+                <span className="font-display text-3xl font-bold text-neutral-900">$19</span>
+                <span className="text-sm text-neutral-400">/mo</span>
+              </div>
+              <p className="text-sm text-neutral-500 mb-5">Custom domain, advanced analytics, unlimited services, and priority visibility.</p>
+              <ul className="space-y-2.5 mb-6">
+                {[
+                  "Unlimited services",
+                  "Custom domain (yourname.com)",
+                  "Advanced analytics + heatmaps",
+                  "All 11 premium animations",
+                ].map((f) => (
+                  <li key={f} className="flex items-start gap-2 text-sm text-neutral-600">
+                    <span className="mt-0.5"><CheckIcon /></span>
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <Link href="/pricing">
+                <button className="w-full py-2.5 text-sm font-medium rounded-full bg-neutral-900 text-white hover:bg-neutral-800 transition-colors">
+                  See Pro Features
+                </button>
+              </Link>
+            </div>
+
+            <div className="aos-stagger-item bg-white rounded-2xl border border-neutral-200 p-8 hover:border-neutral-300 hover:shadow-lg transition-all duration-300">
+              <div className="text-sm font-medium text-neutral-400 uppercase tracking-wider mb-2">Creator Business</div>
+              <div className="flex items-baseline gap-1 mb-4">
+                <span className="font-display text-3xl font-bold text-neutral-900">$49</span>
+                <span className="text-sm text-neutral-400">/mo</span>
+              </div>
+              <p className="text-sm text-neutral-500 mb-5">Multi-page sites, team collaboration, white-label, and API access.</p>
+              <ul className="space-y-2.5 mb-6">
+                {[
+                  "Multi-page sites (up to 5)",
+                  "Team collaboration",
+                  "White-label solution",
+                  "Revenue dashboard",
+                ].map((f) => (
+                  <li key={f} className="flex items-start gap-2 text-sm text-neutral-600">
+                    <span className="mt-0.5"><CheckIcon /></span>
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <Link href="/pricing">
+                <button className="w-full py-2.5 text-sm font-medium rounded-full border border-neutral-300 text-neutral-700 hover:bg-neutral-50 transition-colors">
+                  See Business Features
+                </button>
+              </Link>
+            </div>
+          </StaggerChildren>
+
+          <div className="mt-10 text-center">
+            <p className="text-sm text-neutral-400 mb-4">
+              Also available: Brand plans from $199/mo and API access at $49/mo
+            </p>
+            <Link href="/pricing" className="inline-flex items-center gap-1 text-sm font-medium text-neutral-900 hover:text-neutral-600 transition-colors">
+              View all plans and compare features <ArrowRightIcon />
+            </Link>
+          </div>
+        </div>
+      </AnimateOnScroll>
+
       {/* Comparison */}
       <AnimateOnScroll as="section" className="bg-neutral-50 border-y border-neutral-100">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
