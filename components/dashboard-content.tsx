@@ -96,7 +96,9 @@ function EditProfileSheet({ user, open, onClose }: { user: User; open: boolean; 
 function SocialsSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [socials, setSocials] = useState<any[]>([]);
   const [adding, setAdding] = useState(false);
-  const [form, setForm] = useState({ platform: "", handle: "", url: "", follower_count: "" });
+  const [refreshing, setRefreshing] = useState(false);
+  const [refreshMsg, setRefreshMsg] = useState("");
+  const [form, setForm] = useState({ platform: "", handle: "", url: "" });
   const inp = "w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900/10 text-neutral-900 bg-white";
 
   useEffect(() => { if (open) fetch("/api/profile").then(r => r.json()).then(d => setSocials(d.socials || [])).catch(() => {}); }, [open]);
@@ -106,13 +108,31 @@ function SocialsSheet({ open, onClose }: { open: boolean; onClose: () => void })
     setAdding(true);
     const res = await fetch("/api/profile/socials", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) });
     const data = await res.json();
-    if (data.id) { setSocials([...socials, { ...form, id: data.id, follower_count: Number(form.follower_count) || 0 }]); setForm({ platform: "", handle: "", url: "", follower_count: "" }); }
+    if (data.id) { setSocials([...socials, { ...form, id: data.id, follower_count: 0 }]); setForm({ platform: "", handle: "", url: "" }); }
     setAdding(false);
   }
 
   async function remove(id: string) {
     await fetch(`/api/profile/socials?id=${id}`, { method: "DELETE" });
     setSocials(socials.filter(s => s.id !== id));
+  }
+
+  async function refreshFollowers() {
+    setRefreshing(true);
+    setRefreshMsg("");
+    try {
+      const res = await fetch("/api/profile/refresh-followers", { method: "POST" });
+      const data = await res.json();
+      if (res.status === 429) { setRefreshMsg(data.message || "Try again later"); return; }
+      if (data.updated) {
+        setSocials(prev => prev.map(s => {
+          const match = data.updated.find((u: any) => u.id === s.id);
+          return match && match.follower_count !== null ? { ...s, follower_count: match.follower_count } : s;
+        }));
+        setRefreshMsg("Followers updated!");
+      }
+    } catch { setRefreshMsg("Failed to refresh"); }
+    finally { setRefreshing(false); }
   }
 
   const platforms = ["instagram","tiktok","youtube","twitter","linkedin","twitch","spotify","pinterest","snapchat","kick","discord","github","website"];
@@ -128,11 +148,19 @@ function SocialsSheet({ open, onClose }: { open: boolean; onClose: () => void })
           </div>
         ))}
         {socials.length === 0 && <p className="text-sm text-neutral-400 text-center py-4">No social links yet.</p>}
+        {socials.length > 0 && (
+          <div className="flex items-center gap-2">
+            <button onClick={refreshFollowers} disabled={refreshing} className="text-xs text-neutral-500 hover:text-neutral-900 transition-colors disabled:opacity-40 flex items-center gap-1">
+              <svg className={`w-3.5 h-3.5 ${refreshing ? "animate-spin" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+              {refreshing ? "Refreshing..." : "Refresh followers"}
+            </button>
+            {refreshMsg && <span className="text-xs text-neutral-400">{refreshMsg}</span>}
+          </div>
+        )}
         <div className="border-t border-neutral-100 pt-4 space-y-3">
           <select value={form.platform} onChange={e => setForm({ ...form, platform: e.target.value })} className={inp}><option value="">Choose platform...</option>{platforms.map(p => <option key={p} value={p}>{p.charAt(0).toUpperCase() + p.slice(1)}</option>)}</select>
           <input placeholder="@handle or username" value={form.handle} onChange={e => setForm({ ...form, handle: e.target.value })} className={inp} />
           <input placeholder="Profile URL (optional)" value={form.url} onChange={e => setForm({ ...form, url: e.target.value })} className={inp} />
-          <input type="number" placeholder="Followers (optional)" value={form.follower_count} onChange={e => setForm({ ...form, follower_count: e.target.value })} className={inp} />
           <button onClick={add} disabled={adding || !form.platform || !form.handle} className="w-full py-2.5 bg-neutral-900 text-white text-sm font-medium rounded-xl hover:bg-neutral-800 transition-colors disabled:opacity-40">{adding ? "Adding..." : "Add Link"}</button>
         </div>
       </div>

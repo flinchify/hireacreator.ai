@@ -71,6 +71,7 @@ function assembleCreator(
       handle: s.handle as string,
       followers: formatFollowers((s.follower_count as number) || 0),
       url: (s.url as string) || undefined,
+      followersRefreshedAt: (s.followers_refreshed_at as string) || null,
     })),
     services: services.map((s) => ({
       id: s.id as string,

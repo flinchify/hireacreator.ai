@@ -21,6 +21,7 @@ export type Social = {
   handle: string;
   followers: string;
   url?: string;
+  followersRefreshedAt?: string | null;
 };
 
 export type Service = {

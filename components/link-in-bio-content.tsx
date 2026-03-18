@@ -237,6 +237,20 @@ function Avatar({ creator, size = "md", shape = "circle", light, accentBorder }:
 /* ══════════════════════════════════════════════════════
    Socials row — shared
    ══════════════════════════════════════════════════════ */
+function isFollowerVerified(s: { followers: string; followersRefreshedAt?: string | null }) {
+  if (!s.followers || s.followers === "0" || !s.followersRefreshedAt) return false;
+  const refreshed = new Date(s.followersRefreshedAt).getTime();
+  return Date.now() - refreshed < 7 * 24 * 60 * 60 * 1000;
+}
+
+function VerifiedCheck({ light }: { light?: boolean }) {
+  return (
+    <svg className={`w-3 h-3 ${light ? "text-green-300" : "text-green-500"}`} viewBox="0 0 20 20" fill="currentColor" aria-label="Verified follower count">
+      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" />
+    </svg>
+  );
+}
+
 function Socials({ creator, light, shape = "circle", showFollowers = false }: { creator: Creator; light?: boolean; shape?: "circle" | "square"; showFollowers?: boolean }) {
   if (creator.socials.length === 0) return null;
   const r = shape === "square" ? "rounded-xl" : "rounded-full";
@@ -248,10 +262,11 @@ function Socials({ creator, light, shape = "circle", showFollowers = false }: { 
             className={`flex items-center gap-2 px-3 py-2 ${r} hover:scale-105 transition-all ${light ? "bg-white/10 hover:bg-white/15" : "bg-neutral-100 hover:bg-neutral-200"}`}>
             <PlatformIcon platform={s.platform} size={16} className={light ? "text-white/80" : "text-neutral-600"} />
             <span className={`text-[11px] font-semibold ${light ? "text-white/70" : "text-neutral-600"}`}>{s.followers}</span>
+            {isFollowerVerified(s) && <VerifiedCheck light={light} />}
           </a>
         ) : (
           <a key={s.platform} href={s.url || "#"} target="_blank" rel="noopener noreferrer" aria-label={`Visit ${s.platform}`}
-            className={`w-10 h-10 ${r} flex items-center justify-center hover:scale-110 transition-all ${light ? "bg-white/10 hover:bg-white/20" : "bg-neutral-100 hover:bg-neutral-200"}`} title={s.followers && s.followers !== "0" ? `${s.followers} followers` : s.handle}>
+            className={`w-10 h-10 ${r} flex items-center justify-center hover:scale-110 transition-all ${light ? "bg-white/10 hover:bg-white/20" : "bg-neutral-100 hover:bg-neutral-200"}`} title={s.followers && s.followers !== "0" ? `${s.followers} followers${isFollowerVerified(s) ? " (verified)" : ""}` : s.handle}>
             <PlatformIcon platform={s.platform} size={18} className={light ? "text-white/80" : "text-neutral-600"} />
           </a>
         )
@@ -1655,7 +1670,7 @@ function IntroAnimation({
         return (
           <div className={`fixed inset-0 z-[9999] flex items-end justify-center gap-3 px-8 pb-[30vh] ${fadeClass}`} style={{ background: "#0a0a0a" }}>
             <style>{`
-              @keyframes candleGrow { 0% { transform:scaleY(0); } 100% { transform:scaleY(1); } }
+              @keyframes candleGrow { 0% { transform:scaleY(0); opacity:0; } 100% { transform:scaleY(1); opacity:1; } }
               @keyframes candleFadeAll { 0%,70% { opacity:1; } 100% { opacity:0; } }
               .intro-candle { transform-origin:bottom; animation: candleGrow 0.6s cubic-bezier(0.34,1.56,0.64,1) forwards; }
               .intro-candles-wrap { animation: candleFadeAll 1.7s ease forwards; }

@@ -42,6 +42,7 @@ CREATE TABLE social_connections (
     handle VARCHAR(255) NOT NULL,
     url TEXT,
     follower_count INTEGER DEFAULT 0,
+    followers_refreshed_at TIMESTAMP WITH TIME ZONE,
     is_verified BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

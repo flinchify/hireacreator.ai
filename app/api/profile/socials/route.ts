@@ -18,7 +18,7 @@ export async function POST(request: Request) {
   if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 
   const body = await request.json().catch(() => ({}));
-  const { platform, handle, url, follower_count } = body;
+  const { platform, handle, url } = body;
 
   if (!platform || !handle) {
     return NextResponse.json({ error: "missing_fields" }, { status: 400 });
@@ -33,7 +33,7 @@ export async function POST(request: Request) {
 
   const result = await sql`
     INSERT INTO social_connections (user_id, platform, handle, url, follower_count)
-    VALUES (${user.id}, ${platform.toLowerCase()}, ${handle}, ${url || null}, ${follower_count ? Number(follower_count) : 0})
+    VALUES (${user.id}, ${platform.toLowerCase()}, ${handle}, ${url || null}, 0)
     RETURNING id
   `;
 
