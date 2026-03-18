@@ -237,6 +237,7 @@ function TemplateMinimal({ creator }: { creator: Creator }) {
           <BioLinksSection creator={creator} />
           {creator.services.length > 0 && <><SectionLabel>Services</SectionLabel><div className="space-y-2.5">{creator.services.map(s => <ServiceCard key={s.id} service={s} creator={creator} />)}</div></>}
           {creator.portfolio.length > 0 && <><SectionLabel>Portfolio</SectionLabel><div className="grid grid-cols-3 gap-1.5">{creator.portfolio.slice(0, 6).map(p => <div key={p.id} className="aspect-square rounded-xl overflow-hidden bg-neutral-100">{p.image ? <img src={p.image} alt={p.title} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-neutral-300 text-xs">{p.title}</div>}</div>)}</div></>}
+          {creator.calendarEnabled && <div className="my-4"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
           {isEmpty && <EmptyState />}
           {!isEmpty && <CTAButton creator={creator} />}
           <Branding />
@@ -305,6 +306,7 @@ function TemplateGlass({ creator }: { creator: Creator }) {
         <div className="flex-1 space-y-3">
           {creator.services.map(s => <ServiceCard key={s.id} service={s} creator={creator} light />)}
           {creator.portfolio.length > 0 && <div className="grid grid-cols-3 gap-1.5 pt-2">{creator.portfolio.slice(0, 6).map(p => <div key={p.id} className="aspect-square rounded-xl overflow-hidden bg-white/5">{p.image ? <img src={p.image} alt={p.title} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-white/20 text-xs">{p.title}</div>}</div>)}</div>}
+          {creator.calendarEnabled && <div className="my-4"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
           {isEmpty && <EmptyState light />}
           {!isEmpty && <CTAButton creator={creator} light />}
         </div>
@@ -344,6 +346,7 @@ function TemplateBold({ creator }: { creator: Creator }) {
             </a>
           ))}</div></>}
           {creator.portfolio.length > 0 && <><div className="w-12 h-[2px] mx-auto my-6" style={{ background: accent }} /><div className="grid grid-cols-2 gap-2">{creator.portfolio.slice(0, 4).map(p => <div key={p.id} className="aspect-square rounded-2xl overflow-hidden bg-neutral-900 border border-neutral-800">{p.image ? <img src={p.image} alt={p.title} className="w-full h-full object-cover hover:scale-105 transition-transform" /> : <div className="w-full h-full flex items-center justify-center text-neutral-700 text-xs">{p.title}</div>}</div>)}</div></>}
+          {creator.calendarEnabled && <div className="my-4"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
           {isEmpty && <EmptyState light />}
           {!isEmpty && <CTAButton creator={creator} light accent={accent} />}
           <Branding light />
@@ -377,6 +380,7 @@ function TemplateShowcase({ creator }: { creator: Creator }) {
           <BioLinksSection creator={creator} />
           {creator.portfolio.length > 0 && <div className="grid grid-cols-2 gap-2 mb-5">{creator.portfolio.slice(0, 6).map(p => <div key={p.id} className="rounded-2xl overflow-hidden bg-neutral-50 border border-neutral-100"><div className="aspect-[4/3]">{p.image ? <img src={p.image} alt={p.title} className="w-full h-full object-cover" /> : <div className="w-full h-full bg-neutral-100 flex items-center justify-center text-neutral-300 text-xs">{p.title}</div>}</div></div>)}</div>}
           {creator.services.length > 0 && <div className="grid grid-cols-2 gap-2 mb-5">{creator.services.map(s => <ServiceCard key={s.id} service={s} creator={creator} />)}</div>}
+          {creator.calendarEnabled && <div className="my-4"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
           {isEmpty && <EmptyState />}
           {!isEmpty && <CTAButton creator={creator} />}
           <Branding />
@@ -414,6 +418,7 @@ function TemplateNeon({ creator }: { creator: Creator }) {
           <BioLinksSection creator={creator} light />
           {creator.services.length > 0 && <div className="space-y-3 mb-5">{creator.services.map(s => <a key={s.id} href={`/creators/${creator.slug}`} className={`block w-full ${btnClass(creator.linkBioButtonShape)} px-5 py-4 text-center transition-all hover:scale-[1.02]`} style={{ border: `1px solid ${accent}25`, background: `${accent}08`, boxShadow: `0 0 15px ${accent}10` }}><div className="font-medium text-white text-[15px]">{s.title}</div><div className="text-xs mt-0.5" style={{ color: `${accent}99` }}>{priceLabel(s.price, s.deliveryDays)}</div></a>)}</div>}
           {creator.portfolio.length > 0 && <div className="grid grid-cols-3 gap-1.5 mb-5">{creator.portfolio.slice(0, 6).map(p => <div key={p.id} className="aspect-square rounded-xl overflow-hidden" style={{ border: `1px solid ${accent}15` }}>{p.image ? <img src={p.image} alt={p.title} className="w-full h-full object-cover" /> : <div className="w-full h-full bg-neutral-900 flex items-center justify-center text-neutral-700 text-xs">{p.title}</div>}</div>)}</div>}
+          {creator.calendarEnabled && <div className="my-4"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
           {isEmpty && <EmptyState light />}
           {!isEmpty && <CTAButton creator={creator} light accent={accent} />}
           <Branding light />
@@ -459,6 +464,7 @@ function TemplateCollage({ creator }: { creator: Creator }) {
         <BioLinksSection creator={creator} light />
         <div className="flex-1 space-y-2.5">
           {creator.services.map(s => <ServiceCard key={s.id} service={s} creator={creator} light />)}
+          {creator.calendarEnabled && <div className="my-4"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
           {isEmpty && <EmptyState light />}
           {!isEmpty && <CTAButton creator={creator} light />}
         </div>
@@ -496,6 +502,7 @@ function TemplateBento({ creator }: { creator: Creator }) {
             </div>
           </div>
           {creator.bio && <div className="col-span-4 row-span-1 rounded-2xl bg-neutral-900 border border-neutral-800 px-4 flex items-center"><p className="text-xs text-neutral-400 line-clamp-2 leading-relaxed">{creator.bio}</p></div>}
+          {creator.bioLinks.filter(l => l.isVisible).length > 0 && creator.bioLinks.filter(l => l.isVisible).map(link => <a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer" className="col-span-2 row-span-1 rounded-2xl bg-neutral-900 border border-neutral-800 px-4 flex items-center justify-center hover:bg-neutral-800/80 transition-all"><span className="text-xs text-neutral-300 font-medium truncate">{link.title}</span></a>)}
           {creator.socials.length > 0 && <div className="col-span-2 row-span-1 rounded-2xl bg-neutral-900 border border-neutral-800 flex items-center justify-center gap-2 px-3">{creator.socials.slice(0, 5).map(s => <a key={s.platform} href={s.url || "#"} target="_blank" rel="noopener noreferrer" aria-label={`Visit ${s.platform}`} className="w-8 h-8 rounded-lg bg-neutral-800 flex items-center justify-center hover:bg-neutral-700 transition-all"><PlatformIcon platform={s.platform} size={14} className="text-neutral-400" /></a>)}</div>}
           <div className={`${creator.socials.length > 0 ? "col-span-2" : "col-span-4"} row-span-1 rounded-2xl bg-neutral-900 border border-neutral-800 flex items-center justify-center px-3`}>{creator.location ? <span className="text-xs text-neutral-500 flex items-center gap-1"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>{creator.location}</span> : <span className="text-xs text-neutral-600">hireacreator.ai</span>}</div>
           {hasPortfolio && creator.portfolio.slice(0, 4).map((p) => <div key={p.id} className="col-span-2 row-span-2 rounded-2xl overflow-hidden bg-neutral-900 border border-neutral-800">{p.image ? <img src={p.image} alt={p.title} className="w-full h-full object-cover hover:scale-105 transition-transform" /> : <div className="w-full h-full flex items-center justify-center text-neutral-700 text-xs">{p.title}</div>}</div>)}
@@ -547,8 +554,11 @@ function TemplateSplit({ creator }: { creator: Creator }) {
             </div>
             {creator.socials.length > 0 && <div className="flex flex-wrap gap-2 mb-6">{creator.socials.map(s => <a key={s.platform} href={s.url || "#"} target="_blank" rel="noopener noreferrer" aria-label={`Visit ${s.platform}`} className="flex items-center gap-2 px-3 py-2 bg-neutral-50 border border-neutral-200 rounded-full hover:bg-neutral-100 transition-all"><PlatformIcon platform={s.platform} size={14} className="text-neutral-500" /><span className="text-xs text-neutral-600 font-medium">{s.handle || s.platform}</span></a>)}</div>}
             {creator.bio && <p className="text-sm text-neutral-500 mb-6 leading-relaxed">{creator.bio}</p>}
+            <BioLinksSection creator={creator} />
             {creator.services.length > 0 && <div className="mb-6"><h2 className="text-xs font-bold text-neutral-900 uppercase tracking-wider mb-3">Services</h2><div className="space-y-2">{creator.services.map(s => <ServiceCard key={s.id} service={s} creator={creator} />)}</div></div>}
+            {creator.calendarEnabled && <div className="mb-6"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
             {creator.portfolio.length > 0 && <div className="mb-6"><h2 className="text-xs font-bold text-neutral-900 uppercase tracking-wider mb-3">Work</h2><div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 snap-x">{creator.portfolio.slice(0, 8).map(p => <div key={p.id} className="w-28 h-28 sm:w-32 sm:h-32 rounded-2xl overflow-hidden bg-neutral-100 shrink-0 snap-start">{p.image ? <img src={p.image} alt={p.title} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-neutral-300 text-[10px]">{p.title}</div>}</div>)}</div></div>}
+            {creator.calendarEnabled && <div className="my-4"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
             {isEmpty && <EmptyState />}
             {!isEmpty && <CTAButton creator={creator} />}
             <Branding />
@@ -618,6 +628,7 @@ function TemplateCustom({ creator }: { creator: Creator }) {
         <div className="flex-1 space-y-3">
           {creator.services.map(s => <ServiceCard key={s.id} service={s} creator={creator} light={isDarkBg} accent={accent} />)}
           {creator.portfolio.length > 0 && <div className="grid grid-cols-3 gap-1.5 pt-2">{creator.portfolio.slice(0, 6).map(p => <div key={p.id} className={`aspect-square rounded-xl overflow-hidden ${isDarkBg ? "bg-white/5" : "bg-neutral-100"}`}>{p.image ? <img src={p.image} alt={p.title} className="w-full h-full object-cover" /> : <div className={`w-full h-full flex items-center justify-center text-xs ${isDarkBg ? "text-white/20" : "text-neutral-300"}`}>{p.title}</div>}</div>)}</div>}
+          {creator.calendarEnabled && <div className="my-4"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
           {isEmpty && <EmptyState light={isDarkBg} />}
           {!isEmpty && <CTAButton creator={creator} light={isDarkBg} accent={accent} />}
         </div>
