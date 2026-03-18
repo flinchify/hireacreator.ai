@@ -258,15 +258,15 @@ function TemplateMinimal({ creator }: { creator: Creator }) {
   const hasCustomBg = creator.linkBioBgType && creator.linkBioBgType !== "gradient";
 
   return (
-    <div className="min-h-screen flex items-start sm:items-center justify-center sm:py-8 sm:px-4" style={{ background: hasCustomBg ? "transparent" : "#e5e5e5" }}>
+    <div className="min-h-screen flex items-start sm:items-center justify-center sm:py-8 sm:px-4" style={{ background: hasCustomBg ? "transparent" : "linear-gradient(135deg, #fafafa 0%, #f0f0f0 50%, #e8e8e8 100%)" }}>
       {hasCustomBg && <BgLayer creator={creator} />}
-      <div className={`w-full sm:max-w-[460px] sm:rounded-3xl sm:shadow-2xl bg-white min-h-screen sm:min-h-0 relative z-10 ${hasCustomBg ? "sm:bg-white/95 sm:backdrop-blur-sm" : ""}`}>
+      <div className={`w-full sm:max-w-[460px] sm:rounded-[2rem] sm:shadow-2xl sm:shadow-black/10 bg-white min-h-screen sm:min-h-0 relative z-10 ${hasCustomBg ? "sm:bg-white/95 sm:backdrop-blur-sm" : ""}`}>
         {/* Cover */}
         <div className="relative">
           {creator.cover ? (
-            <div className="h-32 sm:h-36 sm:rounded-t-3xl overflow-hidden"><img src={creator.cover} alt="" className="w-full h-full object-cover" /><div className="absolute inset-0 bg-gradient-to-b from-black/10 to-black/30" /></div>
+            <div className="h-36 sm:h-40 sm:rounded-t-[2rem] overflow-hidden"><img src={creator.cover} alt="" className="w-full h-full object-cover" /><div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white/60" /></div>
           ) : (
-            <div className="h-24 sm:h-28 bg-gradient-to-br from-neutral-100 to-neutral-200 sm:rounded-t-3xl" />
+            <div className="h-28 sm:h-32 bg-gradient-to-br from-neutral-50 via-neutral-100 to-neutral-200/50 sm:rounded-t-[2rem]" />
           )}
           <div className="absolute top-3 right-3 z-10"><ShareBtn slug={creator.slug} /></div>
           <div className="absolute -bottom-12 left-1/2 -translate-x-1/2"><Avatar creator={creator} /></div>
@@ -409,9 +409,9 @@ function TemplateShowcase({ creator }: { creator: Creator }) {
   const hasCustomBg = !!creator.linkBioBgType;
 
   return (
-    <div className="min-h-screen flex items-start sm:items-center justify-center sm:py-8 sm:px-4" style={{ background: hasCustomBg ? "transparent" : "#f5f5f5" }}>
+    <div className="min-h-screen flex items-start sm:items-center justify-center sm:py-8 sm:px-4" style={{ background: hasCustomBg ? "transparent" : "linear-gradient(160deg, #f8f9fa 0%, #e9ecef 100%)" }}>
       {hasCustomBg && <BgLayer creator={creator} />}
-      <div className="w-full sm:max-w-[460px] sm:rounded-3xl sm:shadow-2xl bg-white min-h-screen sm:min-h-0 relative z-10">
+      <div className="w-full sm:max-w-[460px] sm:rounded-[2rem] sm:shadow-2xl sm:shadow-black/8 bg-white min-h-screen sm:min-h-0 relative z-10">
         <div className="absolute top-3 right-3 z-10"><ShareBtn slug={creator.slug} /></div>
         <div className="px-5 pb-8 pt-10 text-center">
           <Avatar creator={creator} shape="square" />
@@ -493,7 +493,7 @@ function TemplateCollage({ creator }: { creator: Creator }) {
       ) : creator.cover ? (
         <div className="fixed inset-0 z-0"><img src={creator.cover} alt="" className="w-full h-full object-cover brightness-[0.35]" /></div>
       ) : (
-        <BgLayer creator={creator} fallback={<div className="fixed inset-0 z-0 bg-gradient-to-br from-neutral-900 to-neutral-950" />} />
+        <BgLayer creator={creator} fallback={<div className="fixed inset-0 z-0 bg-gradient-to-br from-[#1a1a2e] via-[#16213e] to-[#0f3460]" />} />
       )}
 
       <div className="relative z-10 max-w-[460px] mx-auto px-5 pt-14 pb-10 min-h-screen flex flex-col">
@@ -572,7 +572,7 @@ function TemplateSplit({ creator }: { creator: Creator }) {
     <div className="min-h-screen bg-white">
       <div className="min-h-screen flex flex-col sm:flex-row">
         <div className="sm:w-[45%] sm:sticky sm:top-0 sm:h-screen relative">
-          {heroImage ? <img src={heroImage} alt="" className="w-full h-[35vh] sm:h-full object-cover" /> : <div className="w-full h-[35vh] sm:h-full bg-gradient-to-br from-neutral-200 to-neutral-300" />}
+          {heroImage ? <img src={heroImage} alt="" className="w-full h-[35vh] sm:h-full object-cover" /> : <div className="w-full h-[35vh] sm:h-full bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-700" />}
           <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-white to-transparent sm:hidden" />
           <div className="absolute bottom-4 left-5 right-5 sm:hidden">
             <div className="flex items-center gap-2">
@@ -718,11 +718,6 @@ export function LinkInBioContent({ creator }: { creator: Creator }) {
   return (
     <div style={{ fontFamily: font, color: textColor || undefined }}>
       <TemplateComponent creator={creator} />
-      {creator.calendarEnabled && (
-        <div className="max-w-[460px] mx-auto px-4 pb-8 relative z-20">
-          <CalendarBooking creatorId={creator.id} creatorName={creator.name} />
-        </div>
-      )}
     </div>
   );
 }
