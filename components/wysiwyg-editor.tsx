@@ -142,9 +142,8 @@ function InlineText({
 /* ══════════════════════════════════════════════════════
    TOOLBAR (floating top bar)
    ══════════════════════════════════════════════════════ */
-function EditorToolbar({ status, errorMsg, slug, onOpenPanel, activePanel, onSave }: {
+function EditorToolbar({ status, errorMsg, slug, onSave }: {
   status: SaveStatus; errorMsg: string; slug: string;
-  onOpenPanel: (p: string | null) => void; activePanel: string | null;
   onSave: () => void;
 }) {
   return (
@@ -161,18 +160,8 @@ function EditorToolbar({ status, errorMsg, slug, onOpenPanel, activePanel, onSav
           </div>
         </div>
 
-        {/* Center: panel toggles */}
-        <div className="hidden sm:flex items-center gap-1 bg-neutral-100 rounded-xl p-1">
-          {[
-            { id: "design", label: "Design", icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83" /></svg> },
-            { id: "links", label: "Links", icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" strokeLinecap="round" /></svg> },
-            { id: "sections", label: "Sections", icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M3 9h18M9 21V9" /></svg> },
-          ].map(p => (
-            <button key={p.id} onClick={() => onOpenPanel(activePanel === p.id ? null : p.id)} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${activePanel === p.id ? "bg-white text-neutral-900 shadow-sm" : "text-neutral-500 hover:text-neutral-700"}`}>
-              {p.icon} {p.label}
-            </button>
-          ))}
-        </div>
+        {/* Center: page URL */}
+        <div className="hidden sm:block" />
 
         {/* Right: save status + save button + view live */}
         <div className="flex items-center gap-2">
@@ -373,7 +362,7 @@ function SectionsPanel({ sections, onToggle, onReorder }: {
 export function WysiwygEditor({ initialData, slug }: { initialData: EditorData; slug: string }) {
   const { status, errorMsg, save, saveNow } = useAutosave();
   const [data, setData] = useState(initialData.user);
-  const [panel, setPanel] = useState<string | null>(null);
+  const [panel, setPanel] = useState<string>("design");
   const [sections, setSections] = useState([
     { id: "profile", label: "Profile", enabled: true },
     { id: "socials", label: "Social Links", enabled: true },
@@ -420,7 +409,7 @@ export function WysiwygEditor({ initialData, slug }: { initialData: EditorData; 
 
   return (
     <div className="min-h-screen bg-[#f8f8fa]">
-      <EditorToolbar status={status} errorMsg={errorMsg} slug={slug} onOpenPanel={setPanel} activePanel={panel} onSave={saveNow} />
+      <EditorToolbar status={status} errorMsg={errorMsg} slug={slug} onSave={saveNow} />
 
       <div className="flex pt-14 min-h-screen">
         {/* ═══ LEFT SIDEBAR — Controls ═══ */}
@@ -433,7 +422,7 @@ export function WysiwygEditor({ initialData, slug }: { initialData: EditorData; 
                 { id: "links", label: "Links" },
                 { id: "profile", label: "Profile" },
               ].map(p => (
-                <button key={p.id} onClick={() => setPanel(panel === p.id ? null : p.id)}
+                <button key={p.id} onClick={() => setPanel(p.id)}
                   className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-colors ${panel === p.id ? "bg-white text-neutral-900 shadow-sm" : "text-neutral-500 hover:text-neutral-700"}`}>
                   {p.label}
                 </button>
@@ -441,7 +430,7 @@ export function WysiwygEditor({ initialData, slug }: { initialData: EditorData; 
             </div>
 
             {/* Panel content */}
-            {(!panel || panel === "design") && <DesignPanel data={data} onUpdate={updateField} />}
+            {panel === "design" && <DesignPanel data={data} onUpdate={updateField} />}
             {panel === "links" && <LinkManager />}
             {panel === "profile" && (
               <div className="space-y-4">
