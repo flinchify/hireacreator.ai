@@ -211,6 +211,102 @@ export default function ApiPage() {
         </div>
       </AnimateOnScroll>
 
+      {/* Machine Payments Protocol */}
+      <AnimateOnScroll as="section" className="border-t border-neutral-900">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-start">
+            <div>
+              <div className="text-sm font-medium text-neutral-500 uppercase tracking-wider mb-4">
+                Machine Payments Protocol
+              </div>
+              <h2 className="font-display text-3xl sm:text-4xl font-bold leading-tight mb-6">
+                Agent-to-agent payments
+              </h2>
+              <p className="text-neutral-400 text-lg leading-relaxed mb-8">
+                Let your AI agent pay for creator services programmatically using Stripe&apos;s
+                Machine Payments Protocol. Supports both card and stablecoin (crypto) payments.
+              </p>
+              <div className="text-sm font-medium text-neutral-300 mb-3">How it works</div>
+              <div className="space-y-3">
+                <div className="flex items-center gap-3 text-sm">
+                  <span className="font-mono px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 text-xs font-medium">1</span>
+                  <span className="text-neutral-400">Search creators via REST API or MCP</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm">
+                  <span className="font-mono px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 text-xs font-medium">2</span>
+                  <span className="text-neutral-400">POST /api/agent/pay with creator &amp; service ID</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm">
+                  <span className="font-mono px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 text-xs font-medium">3</span>
+                  <span className="text-neutral-400">Confirm payment (card via client_secret, or deposit stablecoins)</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm">
+                  <span className="font-mono px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 text-xs font-medium">4</span>
+                  <span className="text-neutral-400">POST /api/agent/book to confirm the booking</span>
+                </div>
+              </div>
+              <div className="mt-6 space-y-3">
+                <div className="flex items-center gap-3 text-sm">
+                  <span className="font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-xs font-medium">GET</span>
+                  <code className="text-neutral-300">/api/agent/mpp-info</code>
+                  <span className="text-neutral-500">MPP discovery</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm">
+                  <span className="font-mono px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 text-xs font-medium">POST</span>
+                  <code className="text-neutral-300">/api/agent/pay</code>
+                  <span className="text-neutral-500">Create payment</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm">
+                  <span className="font-mono px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 text-xs font-medium">POST</span>
+                  <code className="text-neutral-300">/api/agent/book</code>
+                  <span className="text-neutral-500">Confirm booking</span>
+                </div>
+              </div>
+            </div>
+            <div className="space-y-4">
+              <CodeBlock>
+                <div className="text-neutral-500">{"// Step 1: Create payment (card)"}</div>
+                <div><span className="text-amber-400">POST</span> <span className="text-neutral-300">/api/agent/pay</span></div>
+                <div className="text-neutral-300 mt-2">{"{"}</div>
+                <div className="text-neutral-300 pl-4">{'"creatorId": "cr_abc123",'}</div>
+                <div className="text-neutral-300 pl-4">{'"serviceId": "svc_xyz789",'}</div>
+                <div className="text-neutral-300 pl-4">{'"paymentMethod": "card",'}</div>
+                <div className="text-neutral-300 pl-4">{'"brief": "30s product video"'}</div>
+                <div className="text-neutral-300">{"}"}</div>
+                <div className="mt-4 text-neutral-500">{"// Response"}</div>
+                <div className="text-neutral-300">{"{"}</div>
+                <div className="text-neutral-300 pl-4">{'"payment": {'}</div>
+                <div className="text-neutral-300 pl-8">{'"payment_intent_id": "pi_...",'}</div>
+                <div className="text-neutral-300 pl-8">{'"client_secret": "pi_..._secret_...",'}</div>
+                <div className="text-neutral-300 pl-8">{'"amount": 120000,'}</div>
+                <div className="text-neutral-300 pl-8">{'"currency": "aud"'}</div>
+                <div className="text-neutral-300 pl-4">{"}"}</div>
+                <div className="text-neutral-300">{"}"}</div>
+              </CodeBlock>
+              <CodeBlock>
+                <div className="text-neutral-500">{"// Step 1 (crypto alternative)"}</div>
+                <div><span className="text-amber-400">POST</span> <span className="text-neutral-300">/api/agent/pay</span></div>
+                <div className="text-neutral-300 mt-2">{"{"}</div>
+                <div className="text-neutral-300 pl-4">{'"creatorId": "cr_abc123",'}</div>
+                <div className="text-neutral-300 pl-4">{'"serviceId": "svc_xyz789",'}</div>
+                <div className="text-emerald-400 pl-4">{'"paymentMethod": "crypto"'}</div>
+                <div className="text-neutral-300">{"}"}</div>
+              </CodeBlock>
+              <CodeBlock>
+                <div className="text-neutral-500">{"// Step 2: Confirm booking after payment"}</div>
+                <div><span className="text-amber-400">POST</span> <span className="text-neutral-300">/api/agent/book</span></div>
+                <div className="text-neutral-300 mt-2">{"{"}</div>
+                <div className="text-neutral-300 pl-4">{'"creatorId": "cr_abc123",'}</div>
+                <div className="text-neutral-300 pl-4">{'"serviceId": "svc_xyz789",'}</div>
+                <div className="text-neutral-300 pl-4">{'"paymentIntentId": "pi_...",'}</div>
+                <div className="text-neutral-300 pl-4">{'"date": "2025-02-15"'}</div>
+                <div className="text-neutral-300">{"}"}</div>
+              </CodeBlock>
+            </div>
+          </div>
+        </div>
+      </AnimateOnScroll>
+
       {/* Authentication */}
       <AnimateOnScroll as="section" className="border-t border-neutral-900">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
