@@ -1491,7 +1491,7 @@ function IntroAnimation({
     switch (animType) {
       case "fade-up":
         return (
-          <div className={`fixed inset-0 z-[9999] flex items-center justify-center ${fadeClass}`} style={{ background: "#000" }}>
+          <div className={`fixed inset-0 z-[9999] flex items-center justify-center ${fadeClass}`} style={{ background: "rgba(0,0,0,0.6)" }}>
             <style>{`
               @keyframes introFadeUp { 0% { opacity:0; transform:translateY(60px); } 60% { opacity:1; transform:translateY(-8px); } 100% { opacity:1; transform:translateY(0); } }
               .intro-fade-up-content { animation: introFadeUp 1.4s cubic-bezier(0.34,1.56,0.64,1) forwards; }
@@ -1507,7 +1507,7 @@ function IntroAnimation({
 
       case "scale-in":
         return (
-          <div className={`fixed inset-0 z-[9999] flex items-center justify-center ${fadeClass}`} style={{ background: "#000" }}>
+          <div className={`fixed inset-0 z-[9999] flex items-center justify-center ${fadeClass}`} style={{ background: "rgba(0,0,0,0.6)" }}>
             <style>{`
               @keyframes introScaleIn { 0% { opacity:0; transform:scale(0.7); filter:blur(20px); } 50% { opacity:1; filter:blur(8px); } 100% { opacity:1; transform:scale(1); filter:blur(0); } }
               .intro-scale-in-content { animation: introScaleIn 1.5s cubic-bezier(0.16,1,0.3,1) forwards; }
@@ -1525,13 +1525,13 @@ function IntroAnimation({
           <div className={`fixed inset-0 z-[9999] ${fadeClass}`}>
             <style>{`
               @keyframes introSpotlight { 0% { clip-path: circle(0% at 50% 50%); } 100% { clip-path: circle(75% at 50% 50%); } }
-              .intro-spotlight-mask { animation: introSpotlight 1.6s cubic-bezier(0.4,0,0.2,1) forwards; background: #000; }
+              .intro-spotlight-mask { animation: introSpotlight 1.6s cubic-bezier(0.4,0,0.2,1) forwards; }
               .intro-anim-fade-out { animation: introOverlayOut 0.5s ease forwards; }
               @keyframes introOverlayOut { to { opacity:0; } }
               @keyframes spotlightPulse { 0%,100% { box-shadow: 0 0 80px ${ac}40; } 50% { box-shadow: 0 0 120px ${ac}80; } }
             `}</style>
-            <div className="fixed inset-0 bg-black" />
-            <div className="fixed inset-0 intro-spotlight-mask" style={{ background: `radial-gradient(circle at 50% 50%, transparent 0%, #000 100%)` }} />
+            <div className="fixed inset-0 bg-black/60" />
+            <div className="fixed inset-0 intro-spotlight-mask" style={{ background: `radial-gradient(circle at 50% 50%, transparent 0%, rgba(0,0,0,0.6) 100%)` }} />
             <div className="fixed inset-0 flex items-center justify-center">
               <div className="w-3 h-3 rounded-full" style={{ background: ac, boxShadow: `0 0 100px 40px ${ac}60`, animation: "spotlightPulse 1s ease infinite" }} />
             </div>
@@ -1540,7 +1540,7 @@ function IntroAnimation({
 
       case "glitch":
         return (
-          <div className={`fixed inset-0 z-[9999] overflow-hidden ${fadeClass}`} style={{ background: "#0a0a0a" }}>
+          <div className={`fixed inset-0 z-[9999] overflow-hidden ${fadeClass}`} style={{ background: "rgba(0,0,0,0.7)" }}>
             <style>{`
               @keyframes glitchSlice1 { 0%,100% { transform:translateX(0); } 10% { transform:translateX(-20px); } 20% { transform:translateX(15px); } 30% { transform:translateX(-10px); } 40% { transform:translateX(5px); } 50% { transform:translateX(0); } }
               @keyframes glitchSlice2 { 0%,100% { transform:translateX(0); } 15% { transform:translateX(25px); } 25% { transform:translateX(-18px); } 35% { transform:translateX(8px); } 45% { transform:translateX(0); } }
@@ -1564,7 +1564,7 @@ function IntroAnimation({
 
       case "particle-burst":
         return (
-          <div className={`fixed inset-0 z-[9999] flex items-center justify-center ${fadeClass}`} style={{ background: "#000" }}>
+          <div className={`fixed inset-0 z-[9999] flex items-center justify-center ${fadeClass}`} style={{ background: "rgba(0,0,0,0.6)" }}>
             <style>{`
               @keyframes particleBurst { 0% { transform: translate(0,0) scale(1); opacity:1; } 100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity:0; } }
               .intro-particle { position:absolute; border-radius:50%; animation: particleBurst 1.4s cubic-bezier(0.25,0.46,0.45,0.94) forwards; }
@@ -1590,7 +1590,7 @@ function IntroAnimation({
 
       case "typewriter":
         return (
-          <div className={`fixed inset-0 z-[9999] flex items-center justify-center ${fadeClass}`} style={{ background: "#0a0a0a" }}>
+          <div className={`fixed inset-0 z-[9999] flex items-center justify-center ${fadeClass}`} style={{ background: "rgba(0,0,0,0.6)" }}>
             <style>{`
               @keyframes typewriterCursor { 0%,100% { opacity:1; } 50% { opacity:0; } }
               .intro-typewriter-cursor { display:inline-block; width:3px; height:1em; vertical-align:text-bottom; margin-left:4px; animation: typewriterCursor 0.6s step-end infinite; }
@@ -1610,7 +1610,7 @@ function IntroAnimation({
               .intro-anim-fade-out { animation: introOverlayOut 0.4s ease forwards; }
               @keyframes introOverlayOut { to { opacity:0; } }
             `}</style>
-            <div className="fixed inset-0 bg-black" />
+            <div className="fixed inset-0 bg-black/60" />
             {[0, 0.05, 0.1, 0.15, 0.2].map((delay, i) => (
               <div key={i} className="intro-wave-bar fixed inset-0" style={{ background: i === 0 ? ac : i < 3 ? `${ac}${["cc","88","44"][i]}` : "transparent", animationDelay: `${delay}s`, zIndex: 10000 - i }} />
             ))}
@@ -1619,7 +1619,7 @@ function IntroAnimation({
 
       case "neon":
         return (
-          <div className={`fixed inset-0 z-[9999] flex items-center justify-center ${fadeClass}`} style={{ background: "#0a0a0a" }}>
+          <div className={`fixed inset-0 z-[9999] flex items-center justify-center ${fadeClass}`} style={{ background: "rgba(0,0,0,0.7)" }}>
             <style>{`
               @keyframes neonFlicker { 0%,19%,21%,23%,25%,54%,56%,100% { text-shadow: 0 0 10px ${ac}80, 0 0 20px ${ac}60, 0 0 40px ${ac}40, 0 0 80px ${ac}20; opacity:1; } 20%,24%,55% { text-shadow: none; opacity:0.6; } }
               @keyframes neonGlow { 0% { opacity:0; transform:scale(0.95); } 30% { opacity:1; transform:scale(1); } 100% { opacity:1; transform:scale(1); } }
@@ -1655,7 +1655,7 @@ function IntroAnimation({
 
       case "morph":
         return (
-          <div className={`fixed inset-0 z-[9999] flex items-center justify-center ${fadeClass}`} style={{ background: "#000" }}>
+          <div className={`fixed inset-0 z-[9999] flex items-center justify-center ${fadeClass}`} style={{ background: "rgba(0,0,0,0.6)" }}>
             <style>{`
               @keyframes morphBlob { 0% { border-radius:40% 60% 60% 40%/60% 40% 60% 40%; transform:scale(0.3); } 33% { border-radius:60% 40% 40% 60%/40% 60% 40% 60%; transform:scale(0.8); } 66% { border-radius:50% 50% 40% 60%/60% 40% 50% 50%; transform:scale(3); } 100% { border-radius:0; transform:scale(12); opacity:0; } }
               .intro-morph-blob { animation: morphBlob 1.7s cubic-bezier(0.4,0,0.2,1) forwards; }
@@ -1668,7 +1668,7 @@ function IntroAnimation({
 
       case "trading-candles":
         return (
-          <div className={`fixed inset-0 z-[9999] flex items-end justify-center gap-3 px-8 pb-[30vh] ${fadeClass}`} style={{ background: "#0a0a0a" }}>
+          <div className={`fixed inset-0 z-[9999] flex items-end justify-center gap-3 px-8 pb-[30vh] ${fadeClass}`} style={{ background: "rgba(0,0,0,0.6)" }}>
             <style>{`
               @keyframes candleGrow { 0% { transform:scaleY(0); opacity:0; } 100% { transform:scaleY(1); opacity:1; } }
               @keyframes candleFadeAll { 0%,70% { opacity:1; } 100% { opacity:0; } }
@@ -1763,7 +1763,7 @@ export function LinkInBioContent({ creator }: { creator: Creator }) {
           onComplete={handleAnimComplete}
         />
       )}
-      <div style={{ opacity: animDone ? 1 : 0, transition: "opacity 0.3s ease" }}>
+      <div>
         <TemplateComponent creator={creator} />
       </div>
     </div>
