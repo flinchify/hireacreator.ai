@@ -337,7 +337,7 @@ function ProductsManager() {
 }
 
 /* ═══ Sidebar nav items ═══ */
-type Section = "overview" | "links" | "services" | "products" | "calendar" | "earn" | "messages" | "animations" | "settings";
+type Section = "overview" | "links" | "services" | "products" | "calendar" | "bookings" | "earn" | "messages" | "animations" | "settings";
 
 const NAV_MAIN = [
   { id: "overview" as Section, label: "Overview", icon: icons.overview },
@@ -345,6 +345,7 @@ const NAV_MAIN = [
   { id: "services" as Section, label: "Services", icon: icons.services },
   { id: "products" as Section, label: "Products", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z" strokeLinecap="round" strokeLinejoin="round"/><line x1="7" y1="7" x2="7.01" y2="7" strokeLinecap="round"/></svg> },
   { id: "calendar" as Section, label: "Calendar", icon: icons.calendar },
+  { id: "bookings" as Section, label: "Bookings", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2" strokeLinecap="round"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M9 14l2 2 4-4" strokeLinecap="round" strokeLinejoin="round"/></svg> },
   { id: "earn" as Section, label: "Earn", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" strokeLinecap="round" strokeLinejoin="round"/></svg> },
   { id: "messages" as Section, label: "Messages", icon: icons.messages },
   { id: "animations" as Section, label: "Animations", icon: icons.sparkle },
@@ -353,6 +354,120 @@ const NAV_MAIN = [
 const NAV_BOTTOM = [
   { id: "settings" as Section, label: "Settings", icon: icons.settings },
 ];
+
+/* ═══ My Bookings (sessions I've booked with creators) ═══ */
+function MyBookings() {
+  const [bookings, setBookings] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/bookings/mine")
+      .then(r => r.json())
+      .then(d => { setBookings(d.bookings || []); setLoading(false); })
+      .catch(() => setLoading(false));
+  }, []);
+
+  function statusBadge(status: string) {
+    const styles: Record<string, string> = {
+      confirmed: "bg-emerald-100 text-emerald-700",
+      pending: "bg-amber-100 text-amber-700",
+      completed: "bg-blue-100 text-blue-700",
+      cancelled: "bg-red-100 text-red-700",
+    };
+    return (
+      <span className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded-full ${styles[status] || "bg-neutral-100 text-neutral-500"}`}>
+        {status}
+      </span>
+    );
+  }
+
+  function formatDate(dateStr: string) {
+    return new Date(dateStr + "T00:00:00").toLocaleDateString("en-AU", { weekday: "short", day: "numeric", month: "short", year: "numeric" });
+  }
+
+  function formatTime(timeStr: string) {
+    const [h, m] = timeStr.split(":");
+    const hour = parseInt(h);
+    const ampm = hour >= 12 ? "PM" : "AM";
+    return `${hour % 12 || 12}:${m} ${ampm}`;
+  }
+
+  return (
+    <div className="max-w-2xl">
+      <div className="mb-5">
+        <h2 className="text-lg font-bold text-neutral-900">My Bookings</h2>
+        <p className="text-xs text-neutral-400 mt-0.5">Sessions you've booked with creators</p>
+      </div>
+
+      {loading ? (
+        <div className="flex justify-center py-12"><div className="w-6 h-6 border-2 border-neutral-300 border-t-neutral-900 rounded-full animate-spin" /></div>
+      ) : bookings.length > 0 ? (
+        <div className="space-y-3">
+          {bookings.map((b: any) => (
+            <div key={b.id} className="bg-white rounded-2xl border border-neutral-200/60 p-5 hover:border-neutral-300 transition-colors">
+              <div className="flex items-start gap-4">
+                {/* Creator avatar */}
+                {b.creator_avatar ? (
+                  <img src={b.creator_avatar} alt={b.creator_name} className="w-11 h-11 rounded-xl object-cover shrink-0" />
+                ) : (
+                  <div className="w-11 h-11 rounded-xl bg-neutral-200 flex items-center justify-center shrink-0">
+                    <span className="text-sm font-bold text-neutral-400">{(b.creator_name || "?").charAt(0)}</span>
+                  </div>
+                )}
+
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between gap-2 mb-1">
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2">
+                        {b.creator_slug ? (
+                          <Link href={`/creators/${b.creator_slug}`} className="text-sm font-semibold text-neutral-900 hover:underline truncate">{b.creator_name}</Link>
+                        ) : (
+                          <span className="text-sm font-semibold text-neutral-900 truncate">{b.creator_name}</span>
+                        )}
+                        {statusBadge(b.status)}
+                      </div>
+                      <p className="text-xs text-neutral-500 mt-0.5">{b.session_title}</p>
+                    </div>
+                    {b.price_cents > 0 && (
+                      <div className="text-right shrink-0">
+                        <div className="font-display font-bold text-neutral-900">${(Number(b.price_cents) / 100).toFixed(2)}</div>
+                        <div className="text-[10px] text-neutral-400 uppercase">{b.currency || "AUD"}</div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-3 mt-2 text-xs text-neutral-400">
+                    <span className="flex items-center gap-1">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18" strokeLinecap="round"/></svg>
+                      {formatDate(b.date)}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2" strokeLinecap="round"/></svg>
+                      {formatTime(b.start_time)} – {formatTime(b.end_time)}
+                    </span>
+                    <span>{b.duration_minutes} min</span>
+                  </div>
+
+                  {b.notes && (
+                    <p className="mt-2 text-xs text-neutral-500 bg-neutral-50 rounded-lg px-3 py-2 border border-neutral-100">{b.notes}</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="bg-white rounded-2xl border border-neutral-200/60 p-10 text-center">
+          <div className="w-12 h-12 rounded-2xl bg-neutral-100 flex items-center justify-center mx-auto mb-3">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-neutral-300"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18" strokeLinecap="round"/></svg>
+          </div>
+          <p className="text-sm text-neutral-400 mb-1">No bookings yet</p>
+          <p className="text-xs text-neutral-300">When you book sessions with creators, they'll appear here.</p>
+        </div>
+      )}
+    </div>
+  );
+}
 
 /* ═══ Main Dashboard ═══ */
 export function DashboardContent() {
@@ -721,6 +836,9 @@ export function DashboardContent() {
                 </div>
               </div>
             )}
+
+            {/* BOOKINGS */}
+            {section === "bookings" && <MyBookings />}
 
             {/* EARN */}
             {section === "earn" && (

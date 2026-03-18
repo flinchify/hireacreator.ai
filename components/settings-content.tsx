@@ -595,6 +595,178 @@ function PlanTab({ settings }: { settings: Settings }) {
 
 /* ───── Admin Tab ───── */
 function AdminTab() {
+  const [adminSection, setAdminSection] = useState<"users" | "payments">("users");
+
+  return (
+    <div className="space-y-6">
+      {/* Sub-tab switcher */}
+      <div className="flex gap-1 bg-neutral-100 rounded-xl p-1">
+        <button
+          onClick={() => setAdminSection("users")}
+          className={`flex-1 py-2 text-sm font-medium rounded-lg transition-colors ${adminSection === "users" ? "bg-white text-neutral-900 shadow-sm" : "text-neutral-500 hover:text-neutral-700"}`}
+        >
+          Users & Settings
+        </button>
+        <button
+          onClick={() => setAdminSection("payments")}
+          className={`flex-1 py-2 text-sm font-medium rounded-lg transition-colors ${adminSection === "payments" ? "bg-white text-neutral-900 shadow-sm" : "text-neutral-500 hover:text-neutral-700"}`}
+        >
+          Payments
+        </button>
+      </div>
+
+      {adminSection === "users" && <AdminUsersSection />}
+      {adminSection === "payments" && <AdminPaymentsSection />}
+    </div>
+  );
+}
+
+/* ───── Admin Payments Section ───── */
+function AdminPaymentsSection() {
+  const [payments, setPayments] = useState<any[]>([]);
+  const [revenue, setRevenue] = useState({ today_cents: 0, week_cents: 0, month_cents: 0 });
+  const [loading, setLoading] = useState(true);
+
+  function loadPayments() {
+    fetch("/api/admin/payments")
+      .then(r => r.json())
+      .then(data => {
+        if (data.payments) setPayments(data.payments);
+        if (data.revenue) setRevenue(data.revenue);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }
+
+  useEffect(() => {
+    loadPayments();
+    const interval = setInterval(loadPayments, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  function timeAgo(dateStr: string) {
+    const diff = Date.now() - new Date(dateStr).getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 1) return "just now";
+    if (mins < 60) return `${mins}m ago`;
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return `${hrs}h ago`;
+    const days = Math.floor(hrs / 24);
+    return `${days}d ago`;
+  }
+
+  function statusBadge(status: string) {
+    const styles: Record<string, string> = {
+      confirmed: "bg-emerald-100 text-emerald-700",
+      succeeded: "bg-emerald-100 text-emerald-700",
+      pending: "bg-amber-100 text-amber-700",
+      completed: "bg-blue-100 text-blue-700",
+      cancelled: "bg-red-100 text-red-700",
+      refunded: "bg-purple-100 text-purple-700",
+      failed: "bg-red-100 text-red-700",
+    };
+    return (
+      <span className={`px-1.5 py-0.5 text-[9px] font-bold uppercase rounded-full ${styles[status] || "bg-neutral-100 text-neutral-500"}`}>
+        {status}
+      </span>
+    );
+  }
+
+  function typeBadge(type: string) {
+    const styles: Record<string, string> = {
+      booking: "bg-blue-50 text-blue-600",
+      service: "bg-indigo-50 text-indigo-600",
+      subscription: "bg-purple-50 text-purple-600",
+      boost: "bg-amber-50 text-amber-600",
+      animation: "bg-pink-50 text-pink-600",
+    };
+    return (
+      <span className={`px-1.5 py-0.5 text-[9px] font-bold uppercase rounded-full ${styles[type] || "bg-neutral-50 text-neutral-500"}`}>
+        {type}
+      </span>
+    );
+  }
+
+  function formatCents(cents: number, currency?: string) {
+    return `$${(cents / 100).toFixed(2)}${currency && currency !== "USD" && currency !== "AUD" ? ` ${currency}` : ""}`;
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Live header */}
+      <div className="flex items-center gap-2">
+        <span className="relative flex h-2.5 w-2.5">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+          <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+        </span>
+        <span className="text-sm font-semibold text-neutral-900">Live Payments Feed</span>
+        <span className="text-[10px] text-neutral-400 ml-auto">Auto-refreshes every 30s</span>
+      </div>
+
+      {/* Revenue cards */}
+      <div className="grid grid-cols-3 gap-3">
+        {[
+          { label: "Today", value: revenue.today_cents },
+          { label: "This Week", value: revenue.week_cents },
+          { label: "This Month", value: revenue.month_cents },
+        ].map(r => (
+          <Card key={r.label} className="p-4 text-center">
+            <div className="font-display text-xl font-bold text-neutral-900">{formatCents(r.value)}</div>
+            <div className="text-[10px] text-neutral-400 uppercase tracking-wider mt-1">{r.label}</div>
+          </Card>
+        ))}
+      </div>
+
+      {/* Payments list */}
+      <Card className="overflow-hidden">
+        {loading ? (
+          <div className="p-8 text-center">
+            <div className="w-5 h-5 border-2 border-neutral-300 border-t-neutral-900 rounded-full animate-spin mx-auto" />
+          </div>
+        ) : payments.length > 0 ? (
+          <div className="divide-y divide-neutral-100">
+            {payments.map((p: any, i: number) => (
+              <div key={p.id || i} className="px-4 py-3 flex items-center gap-3 hover:bg-neutral-50 transition-colors">
+                {/* Amount */}
+                <div className="w-20 shrink-0 text-right">
+                  <div className="text-sm font-bold text-neutral-900">{formatCents(Number(p.amount_cents) || 0)}</div>
+                  <div className="text-[9px] text-neutral-400 uppercase">{p.currency || "USD"}</div>
+                </div>
+
+                {/* Type + description */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-1.5 mb-0.5">
+                    {typeBadge(p.type)}
+                    {statusBadge(p.status)}
+                  </div>
+                  <div className="text-xs text-neutral-700 truncate">{p.description || "Payment"}</div>
+                </div>
+
+                {/* From → To */}
+                <div className="hidden sm:block min-w-0 text-right">
+                  <div className="text-[10px] text-neutral-500 truncate">{p.payer_name || "—"}</div>
+                  {p.recipient_name && (
+                    <div className="text-[10px] text-neutral-400 truncate">→ {p.recipient_name}</div>
+                  )}
+                </div>
+
+                {/* Time */}
+                <div className="text-[10px] text-neutral-400 shrink-0 w-14 text-right">
+                  {p.created_at ? timeAgo(p.created_at) : "—"}
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="p-8 text-center text-sm text-neutral-400">No payments found.</div>
+        )}
+      </Card>
+    </div>
+  );
+}
+
+/* ───── Admin Users Section ───── */
+function AdminUsersSection() {
   const [users, setUsers] = useState<any[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
