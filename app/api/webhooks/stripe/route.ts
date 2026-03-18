@@ -67,16 +67,22 @@ export async function POST(request: Request) {
             api_pro: { field: "subscription_tier", value: "api_pro" },
           };
 
-          const tier = tierMap[plan]?.value || plan;
-          await sql`UPDATE users SET subscription_tier = ${tier}, updated_at = NOW() WHERE id = ${userId}`;
-          console.log(`Subscription ${sub.status} for user ${userId}: ${tier}`);
+          // Boosted listing — don't change subscription tier, set boost flag
+          if (plan === "boosted") {
+            await sql`UPDATE users SET is_boosted = TRUE, boosted_until = NOW() + INTERVAL '7 days', updated_at = NOW() WHERE id = ${userId}`;
+            console.log(`Boost activated for user ${userId}`);
+          } else {
+            const tier = tierMap[plan]?.value || plan;
+            await sql`UPDATE users SET subscription_tier = ${tier}, updated_at = NOW() WHERE id = ${userId}`;
+            console.log(`Subscription ${sub.status} for user ${userId}: ${tier}`);
 
-          // Mark any referral as active (they're paying now)
-          if (sub.status === "active") {
-            await sql`
-              UPDATE referrals SET status = 'active', tier = ${tier}
-              WHERE referred_id = ${userId} AND status = 'signed_up'
-            `;
+            // Mark any referral as active (they're paying now)
+            if (sub.status === "active") {
+              await sql`
+                UPDATE referrals SET status = 'active', tier = ${tier}
+                WHERE referred_id = ${userId} AND status = 'signed_up'
+              `;
+            }
           }
         }
         break;
@@ -86,10 +92,16 @@ export async function POST(request: Request) {
       case "customer.subscription.deleted": {
         const sub = event.data.object as Stripe.Subscription;
         const userId = sub.metadata?.userId;
+        const plan = sub.metadata?.plan;
         if (userId) {
-          await sql`UPDATE users SET subscription_tier = 'free', updated_at = NOW() WHERE id = ${userId}`;
-          await sql`UPDATE referrals SET status = 'churned', tier = 'free' WHERE referred_id = ${userId} AND status = 'active'`;
-          console.log(`Subscription cancelled for user ${userId}`);
+          if (plan === "boosted") {
+            await sql`UPDATE users SET is_boosted = FALSE, boosted_until = NULL, updated_at = NOW() WHERE id = ${userId}`;
+            console.log(`Boost cancelled for user ${userId}`);
+          } else {
+            await sql`UPDATE users SET subscription_tier = 'free', updated_at = NOW() WHERE id = ${userId}`;
+            await sql`UPDATE referrals SET status = 'churned', tier = 'free' WHERE referred_id = ${userId} AND status = 'active'`;
+            console.log(`Subscription cancelled for user ${userId}`);
+          }
         }
         break;
       }
