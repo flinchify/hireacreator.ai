@@ -193,13 +193,14 @@ function ServicesSheet({ user, open, onClose }: { user: User; open: boolean; onC
 }
 
 /* ═══ Sidebar nav items ═══ */
-type Section = "overview" | "links" | "services" | "calendar" | "settings";
+type Section = "overview" | "links" | "services" | "calendar" | "earn" | "settings";
 
 const NAV_MAIN = [
   { id: "overview" as Section, label: "Overview", icon: icons.overview },
   { id: "links" as Section, label: "My Bio Link", icon: icons.link },
   { id: "services" as Section, label: "Services", icon: icons.services },
   { id: "calendar" as Section, label: "Calendar", icon: icons.calendar },
+  { id: "earn" as Section, label: "Earn", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" strokeLinecap="round" strokeLinejoin="round"/></svg> },
 ];
 
 const NAV_BOTTOM = [
@@ -563,6 +564,64 @@ export function DashboardContent() {
                 </div>
                 <div className="bg-white rounded-2xl border border-neutral-200/60 p-5">
                   <CalendarManager />
+                </div>
+              </div>
+            )}
+
+            {/* EARN */}
+            {section === "earn" && (
+              <div className="max-w-2xl">
+                <div className="mb-6">
+                  <h2 className="text-lg font-bold text-neutral-900">Earnings</h2>
+                  <p className="text-xs text-neutral-400 mt-0.5">Track your income across all channels</p>
+                </div>
+
+                {/* Total earnings card */}
+                <div className="bg-gradient-to-br from-neutral-900 to-neutral-800 rounded-2xl p-6 mb-6">
+                  <p className="text-xs text-white/40 font-medium uppercase tracking-wider">Total Earned</p>
+                  <p className="text-3xl font-display font-bold text-white mt-1">${((user as any).referralEarningsCents || 0) / 100 > 0 ? (((user as any).referralEarningsCents || 0) / 100).toFixed(2) : "0.00"}</p>
+                  <div className="flex items-center gap-1 mt-2">
+                    <span className="text-xs text-emerald-400 font-medium">Platform credits</span>
+                    <span className="text-xs text-white/30">${((user as any).creditBalanceCents || 0) / 100 > 0 ? (((user as any).creditBalanceCents || 0) / 100).toFixed(2) : "0.00"}</span>
+                  </div>
+                </div>
+
+                {/* Earnings breakdown */}
+                <div className="grid grid-cols-2 gap-3 mb-6">
+                  {[
+                    { label: "Bookings", value: "$0.00", desc: "From calendar sessions", icon: icons.calendar },
+                    { label: "Services", value: "$0.00", desc: "Brand deals & projects", icon: icons.services },
+                    { label: "Referrals", value: `$${(((user as any).referralEarningsCents || 0) / 100).toFixed(2)}`, desc: "20% commission credits", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M8.5 11a4 4 0 100-8 4 4 0 000 8zM20 8v6M23 11h-6" strokeLinecap="round" strokeLinejoin="round"/></svg> },
+                    { label: "Products", value: "$0.00", desc: "Digital products sold", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0" strokeLinecap="round" strokeLinejoin="round"/></svg> },
+                  ].map(item => (
+                    <div key={item.label} className="bg-white rounded-2xl border border-neutral-200/60 p-4">
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="w-8 h-8 rounded-lg bg-neutral-100 flex items-center justify-center text-neutral-400">{item.icon}</div>
+                        <span className="text-xs font-medium text-neutral-500">{item.label}</span>
+                      </div>
+                      <div className="font-display text-xl font-bold text-neutral-900">{item.value}</div>
+                      <div className="text-[10px] text-neutral-400 mt-0.5">{item.desc}</div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Referral section */}
+                <div className="bg-white rounded-2xl border border-neutral-200/60 p-5">
+                  <h3 className="text-sm font-bold text-neutral-900 mb-1">Refer & Earn</h3>
+                  <p className="text-xs text-neutral-400 mb-4">Earn 20% commission in platform credits when your referrals subscribe to a paid plan.</p>
+                  {user.slug && (
+                    <div className="flex items-center gap-2">
+                      <div className="flex-1 bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-2.5">
+                        <span className="text-xs text-neutral-500 truncate">hireacreator.ai/ref/{(user as any).referralCode || user.slug}</span>
+                      </div>
+                      <button onClick={() => { navigator.clipboard?.writeText(`https://hireacreator.ai/ref/${(user as any).referralCode || user.slug}`); }} className="px-4 py-2.5 text-xs font-semibold text-white bg-neutral-900 rounded-xl hover:bg-neutral-800 transition-colors">Copy</button>
+                    </div>
+                  )}
+                </div>
+
+                {/* Coming soon */}
+                <div className="mt-6 p-4 bg-neutral-50 border border-neutral-200/60 rounded-2xl text-center">
+                  <p className="text-xs text-neutral-400">Payout history, analytics graphs, and CSV export coming soon.</p>
                 </div>
               </div>
             )}
