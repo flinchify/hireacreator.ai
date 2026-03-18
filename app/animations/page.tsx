@@ -5,6 +5,8 @@ import { AnimationsContent } from "@/components/animations-content";
 export const metadata = {
   title: "Animations Marketplace - HireACreator.ai",
   description: "Custom intro animations for your link in bio. Make your page unforgettable when someone visits.",
+  alternates: { canonical: "https://hireacreator.ai/animations" },
+  openGraph: { images: [{ url: "/og-image.png", width: 1200, height: 630 }] },
 };
 
 export default function AnimationsPage() {

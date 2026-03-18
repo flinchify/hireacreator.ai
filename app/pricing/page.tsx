@@ -6,6 +6,8 @@ export const metadata = {
   title: "Pricing - HireACreator.ai",
   description:
     "Free for creators. Transparent pricing for brands and API users. The cheapest creator marketplace.",
+  alternates: { canonical: "https://hireacreator.ai/pricing" },
+  openGraph: { images: [{ url: "/og-image.png", width: 1200, height: 630 }] },
 };
 
 export default function PricingPage() {

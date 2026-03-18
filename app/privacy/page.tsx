@@ -5,6 +5,8 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Privacy Policy",
   description: "HireACreator privacy policy. Learn how we collect, use, store, and protect your personal information.",
+  alternates: { canonical: "https://hireacreator.ai/privacy" },
+  openGraph: { images: [{ url: "/og-image.png", width: 1200, height: 630 }] },
 };
 
 export default function PrivacyPage() {

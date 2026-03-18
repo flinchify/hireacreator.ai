@@ -6,6 +6,8 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "How It Works - HireACreator",
   description: "Learn how creators, businesses, and brands use HireACreator to connect, collaborate, and grow. Free link-in-bio, marketplace listings, and in-platform messaging.",
+  alternates: { canonical: "https://hireacreator.ai/how-it-works" },
+  openGraph: { images: [{ url: "/og-image.png", width: 1200, height: 630 }] },
 };
 
 function Step({ num, title, desc }: { num: string; title: string; desc: string }) {

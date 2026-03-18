@@ -5,10 +5,12 @@ import Link from "next/link";
 export const metadata = {
   title: "Blog - HireACreator.ai",
   description: "Tips, guides, and insights for creators and brands in the creator economy. Learn how to grow, get booked, and build your brand.",
+  alternates: { canonical: "https://hireacreator.ai/blog" },
   openGraph: {
     title: "Blog - HireACreator.ai",
     description: "Tips, guides, and insights for creators and brands.",
     type: "website",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
 };
 

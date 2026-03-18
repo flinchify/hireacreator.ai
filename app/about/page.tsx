@@ -6,10 +6,12 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "About HireACreator — The Creator Marketplace with 0% Fees",
   description: "HireACreator is the creator marketplace where brands book creators directly and creators keep 100% of their earnings. No middlemen. No commission. Built in Australia.",
+  alternates: { canonical: "https://hireacreator.ai/about" },
   openGraph: {
     title: "About HireACreator — The Creator Marketplace with 0% Fees",
     description: "HireACreator is the creator marketplace where brands book creators directly and creators keep 100% of their earnings.",
     url: "https://hireacreator.ai/about",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
 };
 
@@ -147,6 +149,7 @@ export default function AboutPage() {
         url: "https://hireacreator.ai",
         logo: "https://hireacreator.ai/logo-h-180.png",
         description: "The creator marketplace where brands book creators directly and creators keep 100% of their earnings.",
+  alternates: { canonical: "https://hireacreator.ai/about" },
         foundingDate: "2026",
         sameAs: ["https://x.com/hireacreatorAI"],
         contactPoint: {

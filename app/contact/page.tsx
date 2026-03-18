@@ -6,10 +6,12 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Contact HireACreator — Get in Touch",
   description: "Contact the HireACreator team. Reach out for support, partnerships, press inquiries, or enterprise solutions. We typically respond within 24 hours.",
+  alternates: { canonical: "https://hireacreator.ai/contact" },
   openGraph: {
     title: "Contact HireACreator — Get in Touch",
     description: "Contact the HireACreator team for support, partnerships, or enterprise inquiries.",
     url: "https://hireacreator.ai/contact",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
 };
 

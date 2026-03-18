@@ -17,6 +17,9 @@ export const metadata: Metadata = {
     "The creator marketplace where creators keep 100% of their earnings. Find and book verified creators for UGC, video, photography, design, and more.",
   keywords: ["creator marketplace", "hire creators", "UGC", "influencer marketing", "0% fees", "book creators", "creator economy"],
   authors: [{ name: "HireACreator.ai" }],
+  alternates: {
+    canonical: "https://hireacreator.ai",
+  },
   openGraph: {
     title: "HireACreator.ai - The Creator Marketplace with 0% Fees",
     description: "Find and book verified creators. 0% platform fees for creators. Always.",
@@ -24,11 +27,13 @@ export const metadata: Metadata = {
     siteName: "HireACreator.ai",
     type: "website",
     locale: "en_AU",
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "HireACreator.ai - The creator marketplace where you keep 100%" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "HireACreator.ai - 0% Fees Creator Marketplace",
     description: "Book verified creators for UGC, video, photography, and more. Creators keep 100%.",
+    images: ["/og-image.png"],
   },
   metadataBase: new URL("https://hireacreator.ai"),
   icons: {

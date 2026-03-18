@@ -220,11 +220,13 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   return {
     title: `${post.title} - HireACreator.ai Blog`,
     description: post.description,
+    alternates: { canonical: `https://hireacreator.ai/blog/${params.slug}` },
     openGraph: {
       title: post.title,
       description: post.description,
       type: "article",
       publishedTime: "2026-03-16",
+      images: [{ url: "/og-image.png", width: 1200, height: 630 }],
     },
   };
 }
@@ -237,9 +239,34 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
   const post = posts[params.slug];
   if (!post) notFound();
 
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: post.title,
+    description: post.description,
+    datePublished: "2026-03-16",
+    dateModified: "2026-03-18",
+    author: { "@type": "Organization", name: "HireACreator.ai", url: "https://hireacreator.ai" },
+    publisher: { "@type": "Organization", name: "HireACreator.ai", url: "https://hireacreator.ai", logo: { "@type": "ImageObject", url: "https://hireacreator.ai/logo-h-180.png" } },
+    mainEntityOfPage: { "@type": "WebPage", "@id": `https://hireacreator.ai/blog/${params.slug}` },
+    image: "https://hireacreator.ai/og-image.png",
+  };
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://hireacreator.ai" },
+      { "@type": "ListItem", position: 2, name: "Blog", item: "https://hireacreator.ai/blog" },
+      { "@type": "ListItem", position: 3, name: post.title, item: `https://hireacreator.ai/blog/${params.slug}` },
+    ],
+  };
+
   return (
     <div className="min-h-screen bg-white">
       <Header />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <article className="pt-40 sm:pt-48 pb-20">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <Link href="/blog" className="text-sm text-neutral-400 hover:text-neutral-600 transition-colors mb-8 inline-block">
@@ -249,14 +276,20 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
           <div className="flex items-center gap-3 text-sm text-neutral-400 mb-4">
             <span className="font-medium text-neutral-600">{post.category}</span>
             <span>&middot;</span>
-            <span>{post.date}</span>
+            <time dateTime="2026-03-16">{post.date}</time>
             <span>&middot;</span>
             <span>{post.readTime}</span>
           </div>
 
-          <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-neutral-900 tracking-tight leading-tight mb-8">
+          <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-neutral-900 tracking-tight leading-tight mb-4">
             {post.title}
           </h1>
+
+          {/* Author line */}
+          <div className="flex items-center gap-2 mb-8 text-sm text-neutral-500">
+            <div className="w-6 h-6 rounded-full bg-neutral-900 flex items-center justify-center"><span className="text-[9px] font-bold text-white">H</span></div>
+            <span>HireACreator.ai Team</span>
+          </div>
 
           <div className="prose prose-neutral prose-lg max-w-none">
             {post.content.split("\n\n").map((block, i) => {

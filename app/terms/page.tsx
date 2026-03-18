@@ -5,6 +5,8 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Terms of Service",
   description: "HireACreator terms of service. Read our terms covering platform use, payments, creator rights, brand obligations, and referral program.",
+  alternates: { canonical: "https://hireacreator.ai/terms" },
+  openGraph: { images: [{ url: "/og-image.png", width: 1200, height: 630 }] },
 };
 
 export default function TermsPage() {
