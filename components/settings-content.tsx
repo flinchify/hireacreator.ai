@@ -560,10 +560,27 @@ function PlanTab({ settings }: { settings: Settings }) {
       {settings.subscriptionTier !== "free" && (
         <Card className="p-4 sm:p-6">
           <h3 className="font-display font-bold text-neutral-900 mb-2">Manage Subscription</h3>
-          <p className="text-xs text-neutral-500 mb-4">Update payment method, cancel, or change plan.</p>
+          <div className="space-y-3 mb-5">
+            <div className="flex items-center justify-between py-2 border-b border-neutral-100">
+              <span className="text-xs text-neutral-500">Auto-renewal</span>
+              <span className="text-xs font-semibold text-emerald-600">Active</span>
+            </div>
+            <div className="flex items-center justify-between py-2 border-b border-neutral-100">
+              <span className="text-xs text-neutral-500">Billing cycle</span>
+              <span className="text-xs font-medium text-neutral-700">Monthly</span>
+            </div>
+            <p className="text-[10px] text-neutral-400">Your plan auto-renews each billing cycle. Cancel anytime from the billing portal — you'll keep access until the end of your current period.</p>
+          </div>
           <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={async () => {
+              const res = await fetch("/api/billing/portal", { method: "POST" });
+              const data = await res.json();
+              if (data.url) window.location.href = data.url;
+              else alert(data.message || "Could not open billing portal");
+            }}>Manage Billing</Button>
             <Link href="/pricing"><Button variant="outline" size="sm">Change Plan</Button></Link>
             <Button variant="outline" size="sm" className="text-red-600 border-red-200 hover:bg-red-50" onClick={async () => {
+              if (!confirm("Are you sure you want to cancel? You'll keep access until the end of your current billing period.")) return;
               const res = await fetch("/api/billing/portal", { method: "POST" });
               const data = await res.json();
               if (data.url) window.location.href = data.url;
