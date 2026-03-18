@@ -241,9 +241,9 @@ export function DashboardContent() {
   return (
     <div className="min-h-screen bg-neutral-50">
       {/* ─── Compact header ─── */}
-      <div className="bg-white border-b border-neutral-200 pt-20">
+      <div className="bg-white border-b border-neutral-200">
         {/* Cover */}
-        <div className="relative h-32 sm:h-40">
+        <div className="relative h-32 sm:h-40 mt-16">
           {user.cover ? <img src={user.cover} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full bg-gradient-to-br from-neutral-200 via-neutral-100 to-neutral-300" />}
           <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
           <div className="absolute bottom-3 right-3"><ImageUploadButton type="cover" onUploaded={() => refreshUser()} /></div>
@@ -273,11 +273,7 @@ export function DashboardContent() {
 
             {/* Actions */}
             <div className="hidden sm:flex items-center gap-2 pb-0.5 shrink-0">
-              <button onClick={() => setEditProfile(true)} className="px-3 py-1.5 text-xs font-medium text-neutral-600 bg-neutral-100 rounded-full hover:bg-neutral-200 transition-colors flex items-center gap-1.5"><PencilIcon /> Edit</button>
-              {user.slug && <>
-                <a href={`/u/${user.slug}/edit`} className="px-3 py-1.5 text-xs font-medium text-white bg-neutral-900 rounded-full hover:bg-neutral-800 transition-colors">Edit Page</a>
-                <a href={`/u/${user.slug}`} target="_blank" className="px-3 py-1.5 text-xs font-medium text-neutral-600 bg-neutral-100 rounded-full hover:bg-neutral-200 transition-colors">View Live</a>
-              </>}
+              <button onClick={() => setEditProfile(true)} className="px-3 py-1.5 text-xs font-medium text-neutral-600 bg-neutral-100 rounded-full hover:bg-neutral-200 transition-colors flex items-center gap-1.5"><PencilIcon /> Edit Profile</button>
             </div>
           </div>
 
@@ -311,22 +307,6 @@ export function DashboardContent() {
         {/* ── Overview ── */}
         {tab === "overview" && (
           <div className="space-y-6">
-            {/* Edit Link in Bio CTA */}
-            {user.slug && (
-              <a href={`/u/${user.slug}/edit`} className="group block bg-gradient-to-r from-neutral-900 via-neutral-800 to-neutral-900 rounded-2xl p-6 hover:shadow-2xl hover:shadow-neutral-900/20 transition-all">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center shrink-0 group-hover:bg-white/20 transition-colors">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4 9.5-9.5z" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-display font-bold text-white text-base">Edit Your Link in Bio</h3>
-                    <p className="text-xs text-white/50 mt-0.5">Click to edit your page inline — change text, links, design, and more</p>
-                  </div>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" className="shrink-0 opacity-40 group-hover:opacity-100 group-hover:translate-x-1 transition-all"><path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                </div>
-              </a>
-            )}
-
             {/* Eligibility banner */}
             {(() => {
               const hasAvatar = !!user.avatar;
@@ -507,7 +487,6 @@ export function DashboardContent() {
       {/* Mobile bottom action bar */}
       <div className="sm:hidden fixed bottom-0 inset-x-0 bg-white border-t border-neutral-200 px-4 py-2 flex items-center gap-2 z-40" style={{ paddingBottom: "max(8px, env(safe-area-inset-bottom))" }}>
         <button onClick={() => setEditProfile(true)} className="flex-1 py-2.5 text-xs font-medium text-neutral-600 bg-neutral-100 rounded-xl">Edit Profile</button>
-        {user.slug && <a href={`/u/${user.slug}`} className="flex-1 py-2.5 text-xs font-medium text-white bg-neutral-900 rounded-xl text-center">View Link in Bio</a>}
       </div>
 
       {/* Sheets */}
