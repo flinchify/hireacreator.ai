@@ -96,7 +96,7 @@ function EditProfileSheet({ user, open, onClose }: { user: User; open: boolean; 
 function SocialsSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [socials, setSocials] = useState<any[]>([]);
   const [adding, setAdding] = useState(false);
-  const [form, setForm] = useState({ platform: "", handle: "", url: "" });
+  const [form, setForm] = useState({ platform: "", handle: "", url: "", follower_count: "" });
   const inp = "w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900/10 text-neutral-900 bg-white";
 
   useEffect(() => { if (open) fetch("/api/profile").then(r => r.json()).then(d => setSocials(d.socials || [])).catch(() => {}); }, [open]);
@@ -106,7 +106,7 @@ function SocialsSheet({ open, onClose }: { open: boolean; onClose: () => void })
     setAdding(true);
     const res = await fetch("/api/profile/socials", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) });
     const data = await res.json();
-    if (data.id) { setSocials([...socials, { ...form, id: data.id }]); setForm({ platform: "", handle: "", url: "" }); }
+    if (data.id) { setSocials([...socials, { ...form, id: data.id, follower_count: Number(form.follower_count) || 0 }]); setForm({ platform: "", handle: "", url: "", follower_count: "" }); }
     setAdding(false);
   }
 
@@ -123,7 +123,7 @@ function SocialsSheet({ open, onClose }: { open: boolean; onClose: () => void })
         {socials.map((s: any) => (
           <div key={s.id} className="flex items-center gap-3 bg-neutral-50 rounded-xl px-4 py-3 border border-neutral-100">
             <PlatformIcon platform={s.platform} size={20} className="text-neutral-500 shrink-0" />
-            <div className="flex-1 min-w-0"><div className="text-sm font-medium text-neutral-900 capitalize">{s.platform}</div><div className="text-xs text-neutral-500 truncate">{s.handle}</div></div>
+            <div className="flex-1 min-w-0"><div className="text-sm font-medium text-neutral-900 capitalize">{s.platform}</div><div className="text-xs text-neutral-500 truncate">{s.handle}{s.follower_count > 0 ? ` · ${s.follower_count >= 1000000 ? (s.follower_count/1000000).toFixed(1)+'M' : s.follower_count >= 1000 ? Math.round(s.follower_count/1000)+'K' : s.follower_count} followers` : ''}</div></div>
             <button onClick={() => remove(s.id)} className="text-xs text-red-500 hover:text-red-700 shrink-0">Remove</button>
           </div>
         ))}
@@ -132,6 +132,7 @@ function SocialsSheet({ open, onClose }: { open: boolean; onClose: () => void })
           <select value={form.platform} onChange={e => setForm({ ...form, platform: e.target.value })} className={inp}><option value="">Choose platform...</option>{platforms.map(p => <option key={p} value={p}>{p.charAt(0).toUpperCase() + p.slice(1)}</option>)}</select>
           <input placeholder="@handle or username" value={form.handle} onChange={e => setForm({ ...form, handle: e.target.value })} className={inp} />
           <input placeholder="Profile URL (optional)" value={form.url} onChange={e => setForm({ ...form, url: e.target.value })} className={inp} />
+          <input type="number" placeholder="Followers (optional)" value={form.follower_count} onChange={e => setForm({ ...form, follower_count: e.target.value })} className={inp} />
           <button onClick={add} disabled={adding || !form.platform || !form.handle} className="w-full py-2.5 bg-neutral-900 text-white text-sm font-medium rounded-xl hover:bg-neutral-800 transition-colors disabled:opacity-40">{adding ? "Adding..." : "Add Link"}</button>
         </div>
       </div>

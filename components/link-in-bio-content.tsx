@@ -237,16 +237,24 @@ function Avatar({ creator, size = "md", shape = "circle", light, accentBorder }:
 /* ══════════════════════════════════════════════════════
    Socials row — shared
    ══════════════════════════════════════════════════════ */
-function Socials({ creator, light, shape = "circle" }: { creator: Creator; light?: boolean; shape?: "circle" | "square" }) {
+function Socials({ creator, light, shape = "circle", showFollowers = false }: { creator: Creator; light?: boolean; shape?: "circle" | "square"; showFollowers?: boolean }) {
   if (creator.socials.length === 0) return null;
   const r = shape === "square" ? "rounded-xl" : "rounded-full";
   return (
-    <div className="flex items-center justify-center gap-2.5 my-5 flex-wrap">
+    <div className="flex items-center justify-center gap-2 my-5 flex-wrap">
       {creator.socials.map(s => (
-        <a key={s.platform} href={s.url || "#"} target="_blank" rel="noopener noreferrer" aria-label={`Visit ${s.platform}`}
-          className={`w-10 h-10 ${r} flex items-center justify-center hover:scale-110 transition-all ${light ? "bg-white/10 hover:bg-white/20" : "bg-neutral-100 hover:bg-neutral-200"}`}>
-          <PlatformIcon platform={s.platform} size={18} className={light ? "text-white/80" : "text-neutral-600"} />
-        </a>
+        showFollowers && s.followers && s.followers !== "0" ? (
+          <a key={s.platform} href={s.url || "#"} target="_blank" rel="noopener noreferrer" aria-label={`Visit ${s.platform}`}
+            className={`flex items-center gap-2 px-3 py-2 ${r} hover:scale-105 transition-all ${light ? "bg-white/10 hover:bg-white/15" : "bg-neutral-100 hover:bg-neutral-200"}`}>
+            <PlatformIcon platform={s.platform} size={16} className={light ? "text-white/80" : "text-neutral-600"} />
+            <span className={`text-[11px] font-semibold ${light ? "text-white/70" : "text-neutral-600"}`}>{s.followers}</span>
+          </a>
+        ) : (
+          <a key={s.platform} href={s.url || "#"} target="_blank" rel="noopener noreferrer" aria-label={`Visit ${s.platform}`}
+            className={`w-10 h-10 ${r} flex items-center justify-center hover:scale-110 transition-all ${light ? "bg-white/10 hover:bg-white/20" : "bg-neutral-100 hover:bg-neutral-200"}`} title={s.followers && s.followers !== "0" ? `${s.followers} followers` : s.handle}>
+            <PlatformIcon platform={s.platform} size={18} className={light ? "text-white/80" : "text-neutral-600"} />
+          </a>
+        )
       ))}
     </div>
   );
