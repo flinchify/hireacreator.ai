@@ -41,6 +41,7 @@ export function LinkManager() {
   // Add form
   const [newTitle, setNewTitle] = useState("");
   const [newUrl, setNewUrl] = useState("");
+  const [newThumbnail, setNewThumbnail] = useState("");
   const [addError, setAddError] = useState("");
   const [adding, setAdding] = useState(false);
 
@@ -92,12 +93,12 @@ export function LinkManager() {
       const res = await fetch("/api/links", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title: newTitle.trim(), url }),
+        body: JSON.stringify({ title: newTitle.trim(), url, thumbnailUrl: newThumbnail || null }),
       });
       const data = await res.json();
       if (!res.ok) { setAddError(data.error || "Failed to add link. Check your connection."); setAdding(false); return; }
       setLinks([...links, data.link]);
-      setNewTitle(""); setNewUrl(""); setShowAdd(false);
+      setNewTitle(""); setNewUrl(""); setNewThumbnail(""); setShowAdd(false);
       showToast("Link added");
     } catch { setAddError("Network error. Check your connection and try again."); }
     setAdding(false);
@@ -291,6 +292,7 @@ export function LinkManager() {
                 </button>
 
                 {/* Link info — click to edit */}
+                {link.thumbnail_url && <img src={link.thumbnail_url} alt="" className="w-10 h-10 rounded-lg object-cover shrink-0" />}
                 <button className="flex-1 min-w-0 text-left focus:outline-none focus:ring-2 focus:ring-neutral-900/20 rounded-lg p-1 -m-1" onClick={() => startEdit(link)} aria-label={`Edit ${link.title}`}>
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-semibold text-neutral-900 truncate">{link.title}</span>
@@ -394,9 +396,31 @@ export function LinkManager() {
               onKeyDown={e => e.key === "Enter" && addLink()}
             />
           </div>
+          {/* Thumbnail upload */}
+          <div>
+            <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Thumbnail (optional)</label>
+            <div className="mt-1 flex items-center gap-3">
+              {newThumbnail ? (
+                <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-neutral-100 shrink-0">
+                  <img src={newThumbnail} alt="" className="w-full h-full object-cover" />
+                  <button onClick={() => setNewThumbnail("")} className="absolute top-0.5 right-0.5 w-4 h-4 bg-black/60 text-white rounded-full text-[8px] flex items-center justify-center hover:bg-black/80">x</button>
+                </div>
+              ) : null}
+              <label className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border-2 border-dashed border-neutral-200 cursor-pointer text-xs font-medium text-neutral-500 hover:border-neutral-400 transition-colors">
+                <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
+                  const file = e.target.files?.[0]; if (!file) return;
+                  const fd = new FormData(); fd.append("file", file); fd.append("type", "cover");
+                  const res = await fetch("/api/upload", { method: "POST", body: fd });
+                  if (res.ok) { const d = await res.json(); if (d.url) setNewThumbnail(d.url); }
+                }} />
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21" /></svg>
+                Upload Image
+              </label>
+            </div>
+          </div>
           {addError && <p id="add-error" className="text-xs text-red-600 flex items-center gap-1" role="alert"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10" /><path d="M12 8v4M12 16h.01" stroke="white" strokeWidth="2" strokeLinecap="round" /></svg>{addError}</p>}
           <div className="flex gap-2">
-            <button onClick={() => { setShowAdd(false); setAddError(""); setNewTitle(""); setNewUrl(""); }} className="flex-1 py-2.5 text-xs font-medium text-neutral-600 bg-neutral-100 rounded-xl hover:bg-neutral-200 transition-colors focus:outline-none focus:ring-2 focus:ring-neutral-900/20">Cancel</button>
+            <button onClick={() => { setShowAdd(false); setAddError(""); setNewTitle(""); setNewUrl(""); setNewThumbnail(""); }} className="flex-1 py-2.5 text-xs font-medium text-neutral-600 bg-neutral-100 rounded-xl hover:bg-neutral-200 transition-colors focus:outline-none focus:ring-2 focus:ring-neutral-900/20">Cancel</button>
             <button onClick={addLink} disabled={adding} className="flex-1 py-2.5 text-xs font-medium text-white bg-neutral-900 rounded-xl hover:bg-neutral-800 transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-neutral-900/20">{adding ? "Adding..." : "Add Link"}</button>
           </div>
         </div>
