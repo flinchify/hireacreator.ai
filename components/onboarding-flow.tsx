@@ -57,6 +57,9 @@ export function OnboardingFlow() {
   const [uploading, setUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
+  // Error state
+  const [saveError, setSaveError] = useState("");
+
   // Profile
   const [displayName, setDisplayName] = useState(user?.name || "");
   const [username, setUsername] = useState("");
@@ -110,13 +113,25 @@ export function OnboardingFlow() {
 
   async function saveProfile() {
     setSaving(true);
-    await fetch("/api/profile", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ full_name: displayName }),
-    });
-    setSaving(false);
-    setStep("socials");
+    setSaveError("");
+    try {
+      const res = await fetch("/api/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ full_name: displayName }),
+      });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        setSaveError(d.error === "unauthorized" ? "Session expired. Please refresh and log in again." : (d.message || "Failed to save profile. Try again."));
+        setSaving(false);
+        return;
+      }
+      setSaving(false);
+      setStep("socials");
+    } catch {
+      setSaveError("Network error. Check your connection and try again.");
+      setSaving(false);
+    }
   }
 
   function extractHandle(url: string, platform: string): string {
@@ -131,44 +146,86 @@ export function OnboardingFlow() {
 
   async function saveSocials() {
     setSaving(true);
-    for (const s of socials) {
-      if (!s.url) continue;
-      const handle = extractHandle(s.url, s.platform);
-      await fetch("/api/profile/socials", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ platform: s.platform, handle: handle, url: s.url }),
-      });
+    setSaveError("");
+    try {
+      for (const s of socials) {
+        if (!s.url) continue;
+        const handle = extractHandle(s.url, s.platform);
+        const res = await fetch("/api/profile/socials", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ platform: s.platform, handle: handle, url: s.url }),
+        });
+        if (!res.ok) {
+          const d = await res.json().catch(() => ({}));
+          if (d.error === "unauthorized") {
+            setSaveError("Session expired. Please refresh and log in again.");
+            setSaving(false);
+            return;
+          }
+          // Non-critical — skip this social but continue
+          console.warn(`Failed to save ${s.platform}:`, d);
+        }
+      }
+      setSaving(false);
+      setStep("about");
+    } catch {
+      setSaveError("Network error. Check your connection and try again.");
+      setSaving(false);
     }
-    setSaving(false);
-    setStep("about");
   }
 
   async function saveAbout() {
     setSaving(true);
-    await fetch("/api/profile", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ headline, bio, location }),
-    });
-    setSaving(false);
-    setStep("design");
+    setSaveError("");
+    try {
+      const res = await fetch("/api/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ headline, bio, location }),
+      });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        setSaveError(d.error === "unauthorized" ? "Session expired. Please refresh and log in again." : (d.message || "Failed to save. Try again."));
+        setSaving(false);
+        return;
+      }
+      setSaving(false);
+      setStep("design");
+    } catch {
+      setSaveError("Network error. Check your connection and try again.");
+      setSaving(false);
+    }
   }
 
   async function saveDesign() {
     setSaving(true);
-    await fetch("/api/profile", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ link_bio_template: template }),
-    });
-    setSaving(false);
-    setStep("animation");
+    setSaveError("");
+    try {
+      const res = await fetch("/api/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ link_bio_template: template }),
+      });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        setSaveError(d.error === "unauthorized" ? "Session expired. Please refresh and log in again." : (d.message || "Failed to save. Try again."));
+        setSaving(false);
+        return;
+      }
+      setSaving(false);
+      setStep("animation");
+    } catch {
+      setSaveError("Network error. Check your connection and try again.");
+      setSaving(false);
+    }
   }
 
   async function saveAnimation() {
     setSaving(true);
-    await fetch("/api/profile", {
+    setSaveError("");
+    try {
+    const res = await fetch("/api/profile", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -176,9 +233,19 @@ export function OnboardingFlow() {
         onboarding_complete: true,
       }),
     });
+    if (!res.ok) {
+      const d = await res.json().catch(() => ({}));
+      setSaveError(d.error === "unauthorized" ? "Session expired. Please refresh and log in again." : (d.message || "Failed to save. Try again."));
+      setSaving(false);
+      return;
+    }
     await refreshUser();
     setSaving(false);
     setStep("done");
+    } catch {
+      setSaveError("Network error. Check your connection and try again.");
+      setSaving(false);
+    }
   }
 
   function addSocial(platform: string) {
@@ -243,6 +310,17 @@ export function OnboardingFlow() {
             ))}
           </div>
         </div>
+
+        {/* Error banner */}
+        {saveError && (
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl flex items-start gap-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-red-500 shrink-0 mt-0.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01" strokeLinecap="round"/></svg>
+            <div className="flex-1">
+              <p className="text-xs font-medium text-red-700">{saveError}</p>
+            </div>
+            <button onClick={() => setSaveError("")} className="text-red-400 hover:text-red-600 shrink-0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" strokeLinecap="round"/></svg></button>
+          </div>
+        )}
 
         {/* ── Step 1: Profile ── */}
         {step === "profile" && (
