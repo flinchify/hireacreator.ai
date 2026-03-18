@@ -92,6 +92,10 @@ function UserMenu() {
           <Link href="/dashboard/settings" onClick={() => setOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
             Settings
           </Link>
+          <Link href="/referrals" onClick={() => setOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors flex items-center gap-2">
+            Referrals
+            <span className="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-[9px] font-bold rounded-full">20%</span>
+          </Link>
           <div className="border-t border-neutral-100 mt-1 pt-1">
             <button
               onClick={() => { setOpen(false); logout(); }}
