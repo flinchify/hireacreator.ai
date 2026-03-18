@@ -1,9 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
 import type { Creator } from "@/lib/types";
-import { useAuth } from "@/components/auth-context";
 import { PlatformIcon } from "./icons/platforms";
 import { CalendarBooking } from "./calendar-booking";
 
@@ -656,8 +654,6 @@ const TEMPLATES: Record<string, React.ComponentType<{ creator: Creator }>> = {
 };
 
 export function LinkInBioContent({ creator }: { creator: Creator }) {
-  const { user } = useAuth();
-  const isOwner = user && creator.id && user.id === creator.id;
   const template = creator.linkBioTemplate || "minimal";
   const font = FONT_MAP[creator.linkBioFont] || FONT_MAP.jakarta;
   const textColor = creator.linkBioTextColor || "";
@@ -666,20 +662,12 @@ export function LinkInBioContent({ creator }: { creator: Creator }) {
 
   return (
     <div style={{ fontFamily: font, color: textColor || undefined }}>
-      {isOwner && (
-        <div className="fixed top-0 left-0 right-0 z-50 bg-neutral-900 text-white px-4 py-2.5 flex items-center justify-between" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "white" }}>
-          <span className="text-xs text-white/60">Previewing your link in bio</span>
-          <Link href="/dashboard" className="px-3.5 py-1.5 text-xs font-medium bg-white text-neutral-900 rounded-full hover:bg-neutral-100 transition-colors">Back to Dashboard</Link>
+      <TemplateComponent creator={creator} />
+      {creator.calendarEnabled && (
+        <div className="max-w-[460px] mx-auto px-4 pb-8 relative z-20">
+          <CalendarBooking creatorId={creator.id} creatorName={creator.name} />
         </div>
       )}
-      <div className={isOwner ? "pt-[44px]" : ""}>
-        <TemplateComponent creator={creator} />
-        {creator.calendarEnabled && (
-          <div className="max-w-[460px] mx-auto px-4 pb-8 relative z-20">
-            <CalendarBooking creatorId={creator.id} creatorName={creator.name} />
-          </div>
-        )}
-      </div>
     </div>
   );
 }
