@@ -120,8 +120,9 @@ export async function GET(request: Request) {
     // Set session cookie
     cookies().set("session_token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: true,
       sameSite: "lax",
+      maxAge: 30 * 24 * 60 * 60,
       expires: expiresAt,
       path: "/",
     });

@@ -94,11 +94,13 @@ export async function POST(request: Request) {
     `;
 
     // Set cookie
+    const expiry = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
     cookies().set("session_token", sessionToken, {
       httpOnly: true,
       secure: true,
       sameSite: "lax",
       maxAge: 30 * 24 * 60 * 60,
+      expires: expiry,
       path: "/",
     });
 
