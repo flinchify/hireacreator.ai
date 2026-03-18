@@ -241,7 +241,7 @@ export function DashboardContent() {
   return (
     <div className="min-h-screen bg-neutral-50">
       {/* ─── Compact header ─── */}
-      <div className="bg-white border-b border-neutral-200">
+      <div className="bg-white border-b border-neutral-200 pt-20">
         {/* Cover */}
         <div className="relative h-32 sm:h-40">
           {user.cover ? <img src={user.cover} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full bg-gradient-to-br from-neutral-200 via-neutral-100 to-neutral-300" />}
