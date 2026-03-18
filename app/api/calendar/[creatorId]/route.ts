@@ -81,7 +81,11 @@ export async function POST(request: Request, { params }: { params: { creatorId: 
     // If paid session, create Stripe checkout
     const priceCents = sess.price_cents as number;
     if (priceCents > 0) {
-      const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+      if (!process.env.STRIPE_SECRET_KEY) {
+        return NextResponse.json({ error: "stripe_not_configured", message: "Stripe is not configured. Add STRIPE_SECRET_KEY to environment variables." }, { status: 500 });
+      }
+      const Stripe = require("stripe");
+      const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
       const checkout = await stripe.checkout.sessions.create({
         mode: "payment",
         line_items: [{
@@ -123,6 +127,7 @@ export async function POST(request: Request, { params }: { params: { creatorId: 
     return NextResponse.json({ success: true, bookingId: booking[0].id });
   } catch (e: any) {
     console.error("Calendar booking error:", e);
-    return NextResponse.json({ error: "server_error", message: e.message }, { status: 500 });
+    const msg = e.type === "StripeInvalidRequestError" ? e.message : (e.message || "Unknown error");
+    return NextResponse.json({ error: "server_error", message: msg }, { status: 500 });
   }
 }
