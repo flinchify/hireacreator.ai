@@ -12,7 +12,7 @@ import { PlatformIcon } from "@/components/icons/platforms";
 import { getCreatorBySlug } from "@/lib/queries";
 import { AnimateOnScroll, StaggerChildren } from "@/components/animate-on-scroll";
 import { CountUp } from "@/components/count-up";
-import { CreatorHeroActions, ServiceAction, ContactCreatorButton } from "@/components/creator-profile-client";
+import { CreatorHeroActions, ServiceAction, ContactCreatorButton, BoostProfileButton } from "@/components/creator-profile-client";
 import { ReviewSection } from "@/components/review-form";
 
 function StarIcon({ filled = true }: { filled?: boolean }) {
@@ -182,12 +182,15 @@ export default async function CreatorProfilePage({
                 </div>
               )}
             </div>
-            <CreatorHeroActions
-              hasServices={creator.services.length > 0}
-              allowMessages={creator.allowMessages}
-              creatorName={creator.name}
-              creatorId={creator.id}
-            />
+            <div className="flex flex-col gap-3 sm:items-end">
+              <CreatorHeroActions
+                hasServices={creator.services.length > 0}
+                allowMessages={creator.allowMessages}
+                creatorName={creator.name}
+                creatorId={creator.id}
+              />
+              <BoostProfileButton creatorId={creator.id} />
+            </div>
           </div>
         </div>
       </div>

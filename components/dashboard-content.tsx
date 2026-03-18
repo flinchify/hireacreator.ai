@@ -5,6 +5,8 @@ import { useAuth, User } from "./auth-context";
 import { CalendarManager } from "./calendar-manager";
 import { LinkManager } from "./link-manager";
 import { PlatformIcon } from "./icons/platforms";
+import { MessagesContent } from "./messages-content";
+import { AnimationsContent } from "./animations-content";
 import Link from "next/link";
 
 /* ═══ Icons ═══ */
@@ -193,7 +195,7 @@ function ServicesSheet({ user, open, onClose }: { user: User; open: boolean; onC
 }
 
 /* ═══ Sidebar nav items ═══ */
-type Section = "overview" | "links" | "services" | "calendar" | "earn" | "settings";
+type Section = "overview" | "links" | "services" | "calendar" | "earn" | "messages" | "animations" | "settings";
 
 const NAV_MAIN = [
   { id: "overview" as Section, label: "Overview", icon: icons.overview },
@@ -201,6 +203,8 @@ const NAV_MAIN = [
   { id: "services" as Section, label: "Services", icon: icons.services },
   { id: "calendar" as Section, label: "Calendar", icon: icons.calendar },
   { id: "earn" as Section, label: "Earn", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" strokeLinecap="round" strokeLinejoin="round"/></svg> },
+  { id: "messages" as Section, label: "Messages", icon: icons.messages },
+  { id: "animations" as Section, label: "Animations", icon: icons.sparkle },
 ];
 
 const NAV_BOTTOM = [
@@ -272,17 +276,6 @@ export function DashboardContent() {
               </button>
             ))}
 
-            <div className="my-4 border-t border-neutral-100" />
-
-            <p className="text-[10px] font-semibold text-neutral-400 uppercase tracking-wider px-3 mb-2">Products</p>
-            <a href="/animations" className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-neutral-600 hover:bg-neutral-100 transition-colors mb-0.5">
-              <span className="text-neutral-400">{icons.sparkle}</span>
-              Animations
-            </a>
-            <a href="/messages" className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-neutral-600 hover:bg-neutral-100 transition-colors mb-0.5">
-              <span className="text-neutral-400">{icons.messages}</span>
-              Messages
-            </a>
           </div>
 
           <div className="px-3 pb-6">
@@ -491,14 +484,28 @@ export function DashboardContent() {
                         <div className="flex-1 min-w-0"><div className="text-sm font-semibold text-neutral-900">Edit Page</div><div className="text-xs text-neutral-400 mt-0.5">Templates, links, design</div></div>
                       </a>
                     )}
-                    <a href="/animations" className="flex items-center gap-3 bg-white rounded-2xl border border-neutral-200/60 p-4 hover:border-neutral-300 hover:shadow-sm transition-all group">
+                    <button onClick={() => setSection("animations")} className="flex items-center gap-3 bg-white rounded-2xl border border-neutral-200/60 p-4 hover:border-neutral-300 hover:shadow-sm transition-all group w-full text-left">
                       <div className="w-10 h-10 rounded-xl bg-neutral-100 flex items-center justify-center shrink-0 text-neutral-500 group-hover:bg-neutral-200 transition-colors">{icons.sparkle}</div>
                       <div className="flex-1 min-w-0"><div className="text-sm font-semibold text-neutral-900">Animations</div><div className="text-xs text-neutral-400 mt-0.5">Premium intro effects</div></div>
-                    </a>
-                    <a href="/messages" className="flex items-center gap-3 bg-white rounded-2xl border border-neutral-200/60 p-4 hover:border-neutral-300 hover:shadow-sm transition-all group">
+                    </button>
+                    <button onClick={() => setSection("messages")} className="flex items-center gap-3 bg-white rounded-2xl border border-neutral-200/60 p-4 hover:border-neutral-300 hover:shadow-sm transition-all group w-full text-left">
                       <div className="w-10 h-10 rounded-xl bg-neutral-100 flex items-center justify-center shrink-0 text-neutral-500 group-hover:bg-neutral-200 transition-colors">{icons.messages}</div>
                       <div className="flex-1 min-w-0"><div className="text-sm font-semibold text-neutral-900">Messages</div><div className="text-xs text-neutral-400 mt-0.5">Chat with brands</div></div>
-                    </a>
+                    </button>
+                    {/* Boost Profile */}
+                    {user.slug && (
+                      <button onClick={async () => {
+                        const res = await fetch("/api/checkout/boost", { method: "POST" });
+                        const data = await res.json();
+                        if (data.url) window.location.href = data.url;
+                        else if (data.error) alert(data.message || "Could not start checkout.");
+                      }} className="flex items-center gap-3 bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl border border-amber-200/60 p-4 hover:border-amber-300 hover:shadow-sm transition-all group w-full text-left">
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shrink-0 text-white">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                        </div>
+                        <div className="flex-1 min-w-0"><div className="text-sm font-semibold text-neutral-900">Boost Profile</div><div className="text-xs text-amber-600 mt-0.5">$4.99/week — rank higher in search</div></div>
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -626,6 +633,42 @@ export function DashboardContent() {
               </div>
             )}
 
+            {/* MESSAGES */}
+            {section === "messages" && (
+              <div>
+                <MessagesContent />
+                <div className="mt-8 p-4 bg-neutral-50 border border-neutral-200/60 rounded-2xl">
+                  <h4 className="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-2">Messaging Terms & Conditions</h4>
+                  <ul className="text-[11px] text-neutral-400 space-y-1 list-disc list-inside leading-relaxed">
+                    <li>You must be 18 years or older to use the messaging feature.</li>
+                    <li>Harassment, threats, hate speech, or abusive language of any kind is strictly prohibited.</li>
+                    <li>Sharing or soliciting explicit, illegal, or banned content is not permitted.</li>
+                    <li>Do not solicit transactions outside of the HireACreator platform.</li>
+                    <li>All messages may be reviewed by platform administrators for safety and compliance.</li>
+                    <li>Reports are reviewed by admin — violations may result in account suspension or permanent ban.</li>
+                    <li>HireACreator is not liable for any content exchanged between users in messages.</li>
+                  </ul>
+                </div>
+              </div>
+            )}
+
+            {/* ANIMATIONS */}
+            {section === "animations" && (
+              <div>
+                <AnimationsContent />
+                <div className="mt-8 p-4 bg-neutral-50 border border-neutral-200/60 rounded-2xl">
+                  <h4 className="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-2">Animation Purchase Terms</h4>
+                  <ul className="text-[11px] text-neutral-400 space-y-1 list-disc list-inside leading-relaxed">
+                    <li>All animation purchases are non-refundable once applied to your profile.</li>
+                    <li>Animations are a one-time purchase — no recurring charges.</li>
+                    <li>Purchased animations are tied to your account and are non-transferable.</li>
+                    <li>HireACreator reserves the right to modify or discontinue animations at any time.</li>
+                    <li>Use of animations is subject to the HireACreator platform Terms of Service.</li>
+                  </ul>
+                </div>
+              </div>
+            )}
+
             {/* SETTINGS */}
             {section === "settings" && (
               <div className="max-w-2xl space-y-3">
@@ -634,13 +677,21 @@ export function DashboardContent() {
                   { href: "/dashboard/settings?tab=privacy", label: "Privacy", desc: "Profile visibility, messaging, content warnings", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg> },
                   { href: "/dashboard/settings?tab=plan", label: "Plan & Billing", desc: "Subscription, upgrade, payment history", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="1" y="4" width="22" height="16" rx="2" /><path d="M1 10h22" /></svg> },
                   { href: user.slug ? `/u/${user.slug}/edit` : "/dashboard", label: "Link in Bio Editor", desc: "Templates, backgrounds, buttons, colors", icon: icons.pencil },
-                  { href: "/animations", label: "Animations Store", desc: "Premium intro effects for your link in bio", icon: icons.sparkle },
+                  { href: "#", label: "Animations Store", desc: "Premium intro effects for your link in bio", icon: icons.sparkle, onClick: () => setSection("animations") },
                 ].map(item => (
-                  <Link key={item.href} href={item.href} className="flex items-center gap-4 bg-white rounded-2xl border border-neutral-200/60 p-4 hover:border-neutral-300 hover:shadow-sm transition-all group">
-                    <div className="w-10 h-10 rounded-xl bg-neutral-100 flex items-center justify-center shrink-0 text-neutral-500 group-hover:bg-neutral-200 transition-colors">{item.icon}</div>
-                    <div className="flex-1 min-w-0"><div className="text-sm font-semibold text-neutral-900">{item.label}</div><div className="text-xs text-neutral-400 mt-0.5">{item.desc}</div></div>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-neutral-300 shrink-0"><path d="M9 18l6-6-6-6" strokeLinecap="round" /></svg>
-                  </Link>
+                  item.onClick ? (
+                    <button key={item.label} onClick={item.onClick} className="flex items-center gap-4 bg-white rounded-2xl border border-neutral-200/60 p-4 hover:border-neutral-300 hover:shadow-sm transition-all group w-full text-left">
+                      <div className="w-10 h-10 rounded-xl bg-neutral-100 flex items-center justify-center shrink-0 text-neutral-500 group-hover:bg-neutral-200 transition-colors">{item.icon}</div>
+                      <div className="flex-1 min-w-0"><div className="text-sm font-semibold text-neutral-900">{item.label}</div><div className="text-xs text-neutral-400 mt-0.5">{item.desc}</div></div>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-neutral-300 shrink-0"><path d="M9 18l6-6-6-6" strokeLinecap="round" /></svg>
+                    </button>
+                  ) : (
+                    <Link key={item.href} href={item.href} className="flex items-center gap-4 bg-white rounded-2xl border border-neutral-200/60 p-4 hover:border-neutral-300 hover:shadow-sm transition-all group">
+                      <div className="w-10 h-10 rounded-xl bg-neutral-100 flex items-center justify-center shrink-0 text-neutral-500 group-hover:bg-neutral-200 transition-colors">{item.icon}</div>
+                      <div className="flex-1 min-w-0"><div className="text-sm font-semibold text-neutral-900">{item.label}</div><div className="text-xs text-neutral-400 mt-0.5">{item.desc}</div></div>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-neutral-300 shrink-0"><path d="M9 18l6-6-6-6" strokeLinecap="round" /></svg>
+                    </Link>
+                  )
                 ))}
               </div>
             )}
@@ -651,7 +702,13 @@ export function DashboardContent() {
       {/* ═══ MOBILE BOTTOM NAV ═══ */}
       <div className="lg:hidden fixed bottom-0 inset-x-0 bg-white border-t border-neutral-200 z-40" style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
         <div className="flex items-center justify-around px-2 py-1.5">
-          {[...NAV_MAIN, ...NAV_BOTTOM].map(n => (
+          {([
+            { id: "overview" as Section, label: "Overview", icon: icons.overview },
+            { id: "links" as Section, label: "Bio Link", icon: icons.link },
+            { id: "earn" as Section, label: "Earn", icon: NAV_MAIN.find(n => n.id === "earn")!.icon },
+            { id: "messages" as Section, label: "Messages", icon: icons.messages },
+            { id: "settings" as Section, label: "Settings", icon: icons.settings },
+          ]).map(n => (
             <button key={n.id} onClick={() => setSection(n.id)}
               className={`flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl transition-colors ${section === n.id ? "text-neutral-900" : "text-neutral-400"}`}>
               {n.icon}

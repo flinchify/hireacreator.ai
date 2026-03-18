@@ -128,6 +128,31 @@ export function ContactCreatorButton({ creatorName, creatorId, allowMessages }: 
   );
 }
 
+// Boost Profile button — only shows on own profile
+export function BoostProfileButton({ creatorId }: { creatorId: string }) {
+  const { user } = useAuth();
+
+  if (!user || user.id !== creatorId) return null;
+
+  async function handleBoost() {
+    const res = await fetch("/api/checkout/boost", { method: "POST" });
+    const data = await res.json();
+    if (data.url) window.location.href = data.url;
+    else if (data.error) alert(data.message || "Could not start checkout.");
+  }
+
+  return (
+    <button
+      onClick={handleBoost}
+      className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white rounded-full shadow-lg hover:scale-105 active:scale-95 transition-all"
+      style={{ background: "linear-gradient(135deg, #f59e0b, #ea580c)" }}
+    >
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" strokeLinecap="round" strokeLinejoin="round"/></svg>
+      Boost Profile — $4.99/week
+    </button>
+  );
+}
+
 // 18+ content warning overlay
 export function AgeWarningOverlay({ creatorName, onAccept }: { creatorName: string; onAccept: () => void }) {
   return (
