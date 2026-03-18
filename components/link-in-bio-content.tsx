@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import type { Creator } from "@/lib/types";
 import { PlatformIcon } from "./icons/platforms";
 import { CalendarBooking } from "./calendar-booking";
@@ -1164,16 +1164,314 @@ const TEMPLATES: Record<string, React.ComponentType<{ creator: Creator }>> = {
   "gradient-mesh": TemplateCustom,
 };
 
+/* ── Intro Animation Overlay ── */
+function IntroAnimation({
+  animType,
+  creatorName,
+  accent,
+  onComplete,
+}: {
+  animType: string;
+  creatorName: string;
+  accent: string;
+  onComplete: () => void;
+}) {
+  const [phase, setPhase] = useState<"playing" | "fading" | "done">("playing");
+  const overlayRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const playTimer = setTimeout(() => setPhase("fading"), 1700);
+    const doneTimer = setTimeout(() => {
+      setPhase("done");
+      onComplete();
+    }, 2200);
+    return () => { clearTimeout(playTimer); clearTimeout(doneTimer); };
+  }, [onComplete]);
+
+  if (phase === "done") return null;
+
+  const ac = accent || "#6366f1";
+  const fadeClass = phase === "fading" ? "intro-anim-fade-out" : "";
+
+  const renderOverlay = () => {
+    switch (animType) {
+      case "fade-up":
+        return (
+          <div className={`fixed inset-0 z-[9999] flex items-center justify-center ${fadeClass}`} style={{ background: "#000" }}>
+            <style>{`
+              @keyframes introFadeUp { 0% { opacity:0; transform:translateY(60px); } 60% { opacity:1; transform:translateY(-8px); } 100% { opacity:1; transform:translateY(0); } }
+              .intro-fade-up-content { animation: introFadeUp 1.4s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+              .intro-anim-fade-out { animation: introOverlayOut 0.5s ease forwards; }
+              @keyframes introOverlayOut { to { opacity:0; } }
+            `}</style>
+            <div className="intro-fade-up-content text-center">
+              <div className="w-16 h-16 rounded-full mx-auto mb-4" style={{ background: ac, boxShadow: `0 0 40px ${ac}80` }} />
+              <div className="text-white/60 text-sm tracking-widest uppercase">Welcome</div>
+            </div>
+          </div>
+        );
+
+      case "scale-in":
+        return (
+          <div className={`fixed inset-0 z-[9999] flex items-center justify-center ${fadeClass}`} style={{ background: "#000" }}>
+            <style>{`
+              @keyframes introScaleIn { 0% { opacity:0; transform:scale(0.7); filter:blur(20px); } 50% { opacity:1; filter:blur(8px); } 100% { opacity:1; transform:scale(1); filter:blur(0); } }
+              .intro-scale-in-content { animation: introScaleIn 1.5s cubic-bezier(0.16,1,0.3,1) forwards; }
+              .intro-anim-fade-out { animation: introOverlayOut 0.5s ease forwards; }
+              @keyframes introOverlayOut { to { opacity:0; } }
+            `}</style>
+            <div className="intro-scale-in-content">
+              <div className="w-24 h-24 rounded-2xl mx-auto" style={{ background: `linear-gradient(135deg, ${ac}, ${ac}88)`, boxShadow: `0 0 60px ${ac}60` }} />
+            </div>
+          </div>
+        );
+
+      case "spotlight":
+        return (
+          <div className={`fixed inset-0 z-[9999] ${fadeClass}`}>
+            <style>{`
+              @keyframes introSpotlight { 0% { clip-path: circle(0% at 50% 50%); } 100% { clip-path: circle(75% at 50% 50%); } }
+              .intro-spotlight-mask { animation: introSpotlight 1.6s cubic-bezier(0.4,0,0.2,1) forwards; background: #000; }
+              .intro-anim-fade-out { animation: introOverlayOut 0.5s ease forwards; }
+              @keyframes introOverlayOut { to { opacity:0; } }
+              @keyframes spotlightPulse { 0%,100% { box-shadow: 0 0 80px ${ac}40; } 50% { box-shadow: 0 0 120px ${ac}80; } }
+            `}</style>
+            <div className="fixed inset-0 bg-black" />
+            <div className="fixed inset-0 intro-spotlight-mask" style={{ background: `radial-gradient(circle at 50% 50%, transparent 0%, #000 100%)` }} />
+            <div className="fixed inset-0 flex items-center justify-center">
+              <div className="w-3 h-3 rounded-full" style={{ background: ac, boxShadow: `0 0 100px 40px ${ac}60`, animation: "spotlightPulse 1s ease infinite" }} />
+            </div>
+          </div>
+        );
+
+      case "glitch":
+        return (
+          <div className={`fixed inset-0 z-[9999] overflow-hidden ${fadeClass}`} style={{ background: "#0a0a0a" }}>
+            <style>{`
+              @keyframes glitchSlice1 { 0%,100% { transform:translateX(0); } 10% { transform:translateX(-20px); } 20% { transform:translateX(15px); } 30% { transform:translateX(-10px); } 40% { transform:translateX(5px); } 50% { transform:translateX(0); } }
+              @keyframes glitchSlice2 { 0%,100% { transform:translateX(0); } 15% { transform:translateX(25px); } 25% { transform:translateX(-18px); } 35% { transform:translateX(8px); } 45% { transform:translateX(0); } }
+              @keyframes glitchFlicker { 0%,4%,8%,12%,16%,100% { opacity:1; } 2%,6%,10%,14% { opacity:0.3; } }
+              @keyframes glitchRGB { 0% { text-shadow: -3px 0 #ff0040, 3px 0 #00ff90; } 25% { text-shadow: 3px 0 #ff0040, -3px 0 #00ff90; } 50% { text-shadow: -2px 2px #ff0040, 2px -2px #00ff90; } 75% { text-shadow: 1px -1px #ff0040, -1px 1px #00ff90; } 100% { text-shadow: 0 0 #ff0040, 0 0 #00ff90; } }
+              .intro-glitch-text { animation: glitchRGB 0.4s steps(4) 3, glitchFlicker 1.5s ease forwards; font-size:clamp(2rem,8vw,5rem); font-weight:900; color:#fff; letter-spacing:-0.02em; }
+              .intro-glitch-bar { position:absolute; left:0; right:0; height:3px; }
+              .intro-anim-fade-out { animation: introOverlayOut 0.3s ease forwards; }
+              @keyframes introOverlayOut { to { opacity:0; } }
+            `}</style>
+            <div className="flex items-center justify-center h-full relative">
+              <div className="intro-glitch-text text-center" style={{ animation: "glitchRGB 0.4s steps(4) 3, glitchFlicker 1.5s ease forwards" }}>
+                {creatorName || "LOADING"}
+              </div>
+              {[15, 30, 50, 65, 80].map((top, i) => (
+                <div key={i} className="intro-glitch-bar" style={{ top: `${top}%`, background: i % 2 === 0 ? "#ff004040" : "#00ff9040", animation: `glitchSlice${(i % 2) + 1} 0.3s steps(2) ${i * 0.1}s 3` }} />
+              ))}
+            </div>
+          </div>
+        );
+
+      case "particle-burst":
+        return (
+          <div className={`fixed inset-0 z-[9999] flex items-center justify-center ${fadeClass}`} style={{ background: "#000" }}>
+            <style>{`
+              @keyframes particleBurst { 0% { transform: translate(0,0) scale(1); opacity:1; } 100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity:0; } }
+              .intro-particle { position:absolute; border-radius:50%; animation: particleBurst 1.4s cubic-bezier(0.25,0.46,0.45,0.94) forwards; }
+              @keyframes burstCore { 0% { transform:scale(0); opacity:1; } 40% { transform:scale(1.2); opacity:1; } 100% { transform:scale(2); opacity:0; } }
+              .intro-burst-core { animation: burstCore 1.5s ease forwards; }
+              .intro-anim-fade-out { animation: introOverlayOut 0.5s ease forwards; }
+              @keyframes introOverlayOut { to { opacity:0; } }
+            `}</style>
+            <div className="intro-burst-core w-20 h-20 rounded-full" style={{ background: `radial-gradient(circle, ${ac}, transparent)`, boxShadow: `0 0 60px ${ac}80` }} />
+            {Array.from({ length: 24 }).map((_, i) => {
+              const angle = (i / 24) * 360;
+              const dist = 120 + Math.random() * 160;
+              const tx = Math.cos((angle * Math.PI) / 180) * dist;
+              const ty = Math.sin((angle * Math.PI) / 180) * dist;
+              const size = 4 + Math.random() * 8;
+              const delay = Math.random() * 0.3;
+              return (
+                <div key={i} className="intro-particle" style={{ width: size, height: size, background: i % 3 === 0 ? ac : i % 3 === 1 ? "#fff" : `${ac}88`, "--tx": `${tx}px`, "--ty": `${ty}px`, animationDelay: `${delay}s` } as React.CSSProperties} />
+              );
+            })}
+          </div>
+        );
+
+      case "typewriter":
+        return (
+          <div className={`fixed inset-0 z-[9999] flex items-center justify-center ${fadeClass}`} style={{ background: "#0a0a0a" }}>
+            <style>{`
+              @keyframes typewriterCursor { 0%,100% { opacity:1; } 50% { opacity:0; } }
+              .intro-typewriter-cursor { display:inline-block; width:3px; height:1em; vertical-align:text-bottom; margin-left:4px; animation: typewriterCursor 0.6s step-end infinite; }
+              .intro-anim-fade-out { animation: introOverlayOut 0.5s ease forwards; }
+              @keyframes introOverlayOut { to { opacity:0; } }
+            `}</style>
+            <TypewriterText name={creatorName || "Creator"} accent={ac} />
+          </div>
+        );
+
+      case "wave":
+        return (
+          <div className={`fixed inset-0 z-[9999] ${fadeClass}`}>
+            <style>{`
+              @keyframes introWaveSweep { 0% { transform:translateX(-100%); } 100% { transform:translateX(100%); } }
+              .intro-wave-bar { animation: introWaveSweep 1.5s cubic-bezier(0.65,0,0.35,1) forwards; }
+              .intro-anim-fade-out { animation: introOverlayOut 0.4s ease forwards; }
+              @keyframes introOverlayOut { to { opacity:0; } }
+            `}</style>
+            <div className="fixed inset-0 bg-black" />
+            {[0, 0.05, 0.1, 0.15, 0.2].map((delay, i) => (
+              <div key={i} className="intro-wave-bar fixed inset-0" style={{ background: i === 0 ? ac : i < 3 ? `${ac}${["cc","88","44"][i]}` : "transparent", animationDelay: `${delay}s`, zIndex: 10000 - i }} />
+            ))}
+          </div>
+        );
+
+      case "neon":
+        return (
+          <div className={`fixed inset-0 z-[9999] flex items-center justify-center ${fadeClass}`} style={{ background: "#0a0a0a" }}>
+            <style>{`
+              @keyframes neonFlicker { 0%,19%,21%,23%,25%,54%,56%,100% { text-shadow: 0 0 10px ${ac}80, 0 0 20px ${ac}60, 0 0 40px ${ac}40, 0 0 80px ${ac}20; opacity:1; } 20%,24%,55% { text-shadow: none; opacity:0.6; } }
+              @keyframes neonGlow { 0% { opacity:0; transform:scale(0.95); } 30% { opacity:1; transform:scale(1); } 100% { opacity:1; transform:scale(1); } }
+              .intro-neon-text { animation: neonGlow 0.8s ease forwards, neonFlicker 1.5s ease-in-out forwards; font-size:clamp(2rem,8vw,5rem); font-weight:800; letter-spacing:-0.02em; }
+              .intro-anim-fade-out { animation: introOverlayOut 0.5s ease forwards; }
+              @keyframes introOverlayOut { to { opacity:0; } }
+            `}</style>
+            <div className="intro-neon-text text-center px-8" style={{ color: ac }}>
+              {creatorName || "Creator"}
+            </div>
+            <div className="absolute inset-0" style={{ background: `radial-gradient(ellipse at 50% 50%, ${ac}15, transparent 70%)` }} />
+          </div>
+        );
+
+      case "cinema":
+        return (
+          <div className={`fixed inset-0 z-[9999] pointer-events-none ${fadeClass}`}>
+            <style>{`
+              @keyframes cinemaBarTop { 0% { transform:translateY(0); } 100% { transform:translateY(-100%); } }
+              @keyframes cinemaBarBottom { 0% { transform:translateY(0); } 100% { transform:translateY(100%); } }
+              @keyframes cinemaFade { 0% { opacity:1; } 100% { opacity:0; } }
+              .intro-cinema-top { animation: cinemaBarTop 0.8s cubic-bezier(0.65,0,0.35,1) 1s forwards; }
+              .intro-cinema-bottom { animation: cinemaBarBottom 0.8s cubic-bezier(0.65,0,0.35,1) 1s forwards; }
+              .intro-cinema-overlay { animation: cinemaFade 0.6s ease 0.8s forwards; }
+              .intro-anim-fade-out { animation: introOverlayOut 0.3s ease forwards; }
+              @keyframes introOverlayOut { to { opacity:0; } }
+            `}</style>
+            <div className="intro-cinema-overlay fixed inset-0 bg-black/50" />
+            <div className="intro-cinema-top fixed top-0 left-0 right-0 h-[15vh] bg-black" />
+            <div className="intro-cinema-bottom fixed bottom-0 left-0 right-0 h-[15vh] bg-black" />
+          </div>
+        );
+
+      case "morph":
+        return (
+          <div className={`fixed inset-0 z-[9999] flex items-center justify-center ${fadeClass}`} style={{ background: "#000" }}>
+            <style>{`
+              @keyframes morphBlob { 0% { border-radius:40% 60% 60% 40%/60% 40% 60% 40%; transform:scale(0.3); } 33% { border-radius:60% 40% 40% 60%/40% 60% 40% 60%; transform:scale(0.8); } 66% { border-radius:50% 50% 40% 60%/60% 40% 50% 50%; transform:scale(3); } 100% { border-radius:0; transform:scale(12); opacity:0; } }
+              .intro-morph-blob { animation: morphBlob 1.7s cubic-bezier(0.4,0,0.2,1) forwards; }
+              .intro-anim-fade-out { animation: introOverlayOut 0.3s ease forwards; }
+              @keyframes introOverlayOut { to { opacity:0; } }
+            `}</style>
+            <div className="intro-morph-blob w-24 h-24" style={{ background: `linear-gradient(135deg, ${ac}, ${ac}aa, ${ac}55)`, boxShadow: `0 0 60px ${ac}60` }} />
+          </div>
+        );
+
+      case "trading-candles":
+        return (
+          <div className={`fixed inset-0 z-[9999] flex items-end justify-center gap-3 px-8 pb-[30vh] ${fadeClass}`} style={{ background: "#0a0a0a" }}>
+            <style>{`
+              @keyframes candleGrow { 0% { transform:scaleY(0); } 100% { transform:scaleY(1); } }
+              @keyframes candleFadeAll { 0%,70% { opacity:1; } 100% { opacity:0; } }
+              .intro-candle { transform-origin:bottom; animation: candleGrow 0.6s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+              .intro-candles-wrap { animation: candleFadeAll 1.7s ease forwards; }
+              .intro-anim-fade-out { animation: introOverlayOut 0.3s ease forwards; }
+              @keyframes introOverlayOut { to { opacity:0; } }
+            `}</style>
+            <div className="intro-candles-wrap flex items-end gap-2 sm:gap-3">
+              {[40, 55, 35, 70, 60, 85, 50, 95, 75, 100, 80, 110].map((h, i) => {
+                const green = i > 0 && h > [40, 55, 35, 70, 60, 85, 50, 95, 75, 100, 80, 110][i - 1];
+                const color = green || i === 0 ? "#22c55e" : "#ef4444";
+                const wickH = 8 + Math.random() * 12;
+                return (
+                  <div key={i} className="intro-candle flex flex-col items-center" style={{ animationDelay: `${i * 0.08}s`, opacity: 0, animationFillMode: "forwards" }}>
+                    <div style={{ width: 2, height: wickH, background: color + "80" }} />
+                    <div className="rounded-sm" style={{ width: `clamp(12px, 3vw, 24px)`, height: h, background: color, boxShadow: `0 0 8px ${color}40` }} />
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
+
+  return <div ref={overlayRef}>{renderOverlay()}</div>;
+}
+
+/* ── Typewriter sub-component ── */
+function TypewriterText({ name, accent }: { name: string; accent: string }) {
+  const [displayed, setDisplayed] = useState("");
+  const indexRef = useRef(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      indexRef.current++;
+      if (indexRef.current <= name.length) {
+        setDisplayed(name.slice(0, indexRef.current));
+      } else {
+        clearInterval(interval);
+      }
+    }, 80);
+    return () => clearInterval(interval);
+  }, [name]);
+
+  return (
+    <div className="text-center px-8">
+      <span style={{ fontSize: "clamp(2rem,8vw,5rem)", fontWeight: 800, color: "#fff", letterSpacing: "-0.02em" }}>
+        {displayed}
+      </span>
+      <span className="intro-typewriter-cursor" style={{ background: accent }} />
+    </div>
+  );
+}
+
+/* ── Main export ── */
 export function LinkInBioContent({ creator }: { creator: Creator }) {
   const template = creator.linkBioTemplate || "minimal";
   const font = FONT_MAP[creator.linkBioFont] || FONT_MAP.jakarta;
   const textColor = creator.linkBioTextColor || "";
+  const animType = creator.linkBioIntroAnim || "none";
+
+  const [animDone, setAnimDone] = useState(() => {
+    if (!animType || animType === "none") return true;
+    if (typeof window !== "undefined") {
+      const key = `intro-anim-${creator.slug}`;
+      if (sessionStorage.getItem(key)) return true;
+    }
+    return false;
+  });
+
+  const handleAnimComplete = useCallback(() => {
+    setAnimDone(true);
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem(`intro-anim-${creator.slug}`, "1");
+    }
+  }, [creator.slug]);
 
   const TemplateComponent = TEMPLATES[template] || TemplateCustom;
 
   return (
     <div style={{ fontFamily: font, color: textColor || undefined }}>
-      <TemplateComponent creator={creator} />
+      {!animDone && (
+        <IntroAnimation
+          animType={animType}
+          creatorName={creator.name}
+          accent={creator.linkBioAccent}
+          onComplete={handleAnimComplete}
+        />
+      )}
+      <div style={{ opacity: animDone ? 1 : 0, transition: "opacity 0.3s ease" }}>
+        <TemplateComponent creator={creator} />
+      </div>
     </div>
   );
 }
