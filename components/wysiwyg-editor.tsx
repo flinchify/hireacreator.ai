@@ -185,7 +185,20 @@ function EditorToolbar({ status, errorMsg, slug, onSave }: {
 /* ══════════════════════════════════════════════════════
    DESIGN PANEL (slide-in sidebar)
    ══════════════════════════════════════════════════════ */
-function DesignPanel({ data, onUpdate }: { data: Record<string, any>; onUpdate: (fields: Record<string, any>) => void }) {
+const FREE_ANIMS = ["none", "fade-up", "scale-in"];
+const PREMIUM_ANIMS = [
+  { id: "spotlight", name: "Spotlight" },
+  { id: "glitch", name: "Glitch" },
+  { id: "particle-burst", name: "Particle Burst" },
+  { id: "typewriter", name: "Typewriter" },
+  { id: "wave", name: "Wave" },
+  { id: "neon", name: "Neon" },
+  { id: "cinema", name: "Cinema" },
+  { id: "morph", name: "Morph" },
+  { id: "trading-candles", name: "Trading Candles" },
+];
+
+function DesignPanel({ data, onUpdate, ownedAnimations }: { data: Record<string, any>; onUpdate: (fields: Record<string, any>) => void; ownedAnimations: string[] }) {
   const templates = [
     { id: "minimal", name: "Minimal" }, { id: "glass", name: "Glass" },
     { id: "bold", name: "Bold" }, { id: "neon", name: "Neon" },
@@ -325,6 +338,50 @@ function DesignPanel({ data, onUpdate }: { data: Record<string, any>; onUpdate: 
           <span className="text-xs text-neutral-500">{data.link_bio_accent || "#171717"}</span>
         </div>
       </div>
+
+      {/* Intro Animation */}
+      <div>
+        <h3 className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-2">Intro Animation</h3>
+        <p className="text-[10px] text-neutral-400 mb-3">Plays when someone visits your page</p>
+        
+        {/* Free animations */}
+        <div className="space-y-1.5 mb-3">
+          {[
+            { id: "none", name: "None" },
+            { id: "fade-up", name: "Fade Up" },
+            { id: "scale-in", name: "Scale In" },
+          ].map(a => (
+            <button key={a.id} onClick={() => onUpdate({ link_bio_intro_anim: a.id })}
+              className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${data.link_bio_intro_anim === a.id ? "bg-neutral-900 text-white" : "bg-neutral-50 text-neutral-600 hover:bg-neutral-100 border border-neutral-200/60"}`}>
+              <span>{a.name}</span>
+              <span className="text-[9px] text-emerald-500 font-semibold">FREE</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Premium animations */}
+        <div className="space-y-1.5">
+          {PREMIUM_ANIMS.map(a => {
+            const owned = ownedAnimations.includes(a.id);
+            return (
+              <div key={a.id} className="relative">
+                {owned ? (
+                  <button onClick={() => onUpdate({ link_bio_intro_anim: a.id })}
+                    className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${data.link_bio_intro_anim === a.id ? "bg-neutral-900 text-white" : "bg-neutral-50 text-neutral-600 hover:bg-neutral-100 border border-neutral-200/60"}`}>
+                    <span>{a.name}</span>
+                    <span className="text-[9px] text-emerald-500 font-semibold">OWNED</span>
+                  </button>
+                ) : (
+                  <a href="/animations" className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium bg-neutral-50 text-neutral-400 border border-neutral-200/60 hover:border-neutral-300 transition-all">
+                    <span>{a.name}</span>
+                    <span className="text-[9px] font-bold text-amber-500">$4.99</span>
+                  </a>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 }
@@ -363,6 +420,7 @@ export function WysiwygEditor({ initialData, slug }: { initialData: EditorData; 
   const { status, errorMsg, save, saveNow } = useAutosave();
   const [data, setData] = useState(initialData.user);
   const [panel, setPanel] = useState<string>("design");
+  const [ownedAnimations, setOwnedAnimations] = useState<string[]>([]);
   const [sections, setSections] = useState([
     { id: "profile", label: "Profile", enabled: true },
     { id: "socials", label: "Social Links", enabled: true },
@@ -371,6 +429,13 @@ export function WysiwygEditor({ initialData, slug }: { initialData: EditorData; 
     { id: "services", label: "Services", enabled: initialData.services.length > 0 },
     { id: "calendar", label: "Calendar", enabled: !!initialData.user.calendar_enabled },
   ]);
+
+  // Fetch owned animations
+  useEffect(() => {
+    fetch("/api/animations/owned").then(r => r.json()).then(d => {
+      if (d.animations) setOwnedAnimations(d.animations);
+    }).catch(() => {});
+  }, []);
 
   // Update field + autosave
   function updateField(fields: Record<string, any>) {
@@ -430,7 +495,7 @@ export function WysiwygEditor({ initialData, slug }: { initialData: EditorData; 
             </div>
 
             {/* Panel content */}
-            {panel === "design" && <DesignPanel data={data} onUpdate={updateField} />}
+            {panel === "design" && <DesignPanel data={data} onUpdate={updateField} ownedAnimations={ownedAnimations} />}
             {panel === "links" && <LinkManager />}
             {panel === "profile" && (
               <div className="space-y-4">
