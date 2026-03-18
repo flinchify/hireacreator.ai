@@ -9,13 +9,13 @@ type HeaderTheme = "light" | "dark";
 
 const themes = {
   light: {
-    nav: "border-neutral-200/60 bg-white/70 backdrop-blur-xl shadow-lg shadow-black/5",
-    link: "text-neutral-700 hover:text-neutral-900 hover:border-neutral-200 hover:bg-neutral-100/60",
+    nav: "border-neutral-200/40 bg-white/60 backdrop-blur-2xl shadow-sm",
+    link: "text-neutral-600 hover:text-neutral-900",
     logo: "text-neutral-900",
-    loginBtn: "text-neutral-700 hover:text-neutral-900 hover:border-neutral-200 hover:bg-neutral-100/60",
+    loginBtn: "text-neutral-600 hover:text-neutral-900 border border-neutral-200 hover:border-neutral-300",
     ctaBtn: "text-white bg-neutral-900 hover:bg-neutral-800",
     mobileToggle: "text-neutral-600",
-    mobileMenu: "border-neutral-200/60 bg-white/90 backdrop-blur-xl",
+    mobileMenu: "border-neutral-200/60 bg-white/95 backdrop-blur-2xl",
     mobileLink: "text-neutral-700 hover:bg-neutral-100",
     mobileDivider: "border-neutral-200",
     mobileCta: "text-white bg-neutral-900 hover:bg-neutral-800",
@@ -116,25 +116,25 @@ export function Header({ theme = "light" }: { theme?: HeaderTheme }) {
   const t = themes[theme];
 
   return (
-    <header className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-4xl">
-      <nav className={`flex items-center justify-between px-6 py-3 rounded-full border ${t.nav}`}>
-        <div className="hidden md:flex items-center gap-1">
+    <header className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-5xl">
+      <nav className={`flex items-center justify-between px-6 py-3 rounded-2xl border ${t.nav}`}>
+        <div className="hidden md:flex items-center gap-0.5">
           {user?.role === "brand" ? (
-            <Link href="/browse" className={`px-4 py-2 text-sm font-medium rounded-full border border-transparent transition-all ${t.link}`}>
-              Explore
+            <Link href="/browse" className={`flex items-center gap-1 px-4 py-2 text-[13px] font-medium transition-all ${t.link}`}>
+              Explore <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="opacity-40"><path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </Link>
           ) : (
-            <Link href="/browse" className={`px-4 py-2 text-sm font-medium rounded-full border border-transparent transition-all ${t.link}`}>
-              Creators
+            <Link href="/browse" className={`flex items-center gap-1 px-4 py-2 text-[13px] font-medium transition-all ${t.link}`}>
+              Creators <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="opacity-40"><path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </Link>
           )}
           {!user && (
-            <Link href="/for-brands" className={`px-4 py-2 text-sm font-medium rounded-full border border-transparent transition-all ${t.link}`}>
-              For Brands
+            <Link href="/for-brands" className={`flex items-center gap-1 px-4 py-2 text-[13px] font-medium transition-all ${t.link}`}>
+              For Brands <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="opacity-40"><path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </Link>
           )}
-          <Link href="/pricing" className={`px-4 py-2 text-sm font-medium rounded-full border border-transparent transition-all ${t.link}`}>
-            Pricing
+          <Link href="/pricing" className={`flex items-center gap-1 px-4 py-2 text-[13px] font-medium transition-all ${t.link}`}>
+            Pricing <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="opacity-40"><path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" /></svg>
           </Link>
         </div>
 
@@ -147,20 +147,20 @@ export function Header({ theme = "light" }: { theme?: HeaderTheme }) {
             <div className="w-20 h-8" />
           ) : user ? (
             <>
-              <Link href={user.slug ? `/u/${user.slug}` : "/dashboard"} className={`px-4 py-2 text-sm font-medium rounded-full border border-transparent transition-all ${t.link}`}>
+              <Link href={user.slug ? `/u/${user.slug}` : "/dashboard"} className={`flex items-center gap-1 px-4 py-2 text-[13px] font-medium transition-all ${t.link}`}>
                 Link in Bio
               </Link>
-              <Link href="/dashboard" className={`px-4 py-2 text-sm font-medium rounded-full border border-transparent transition-all ${t.link}`}>
+              <Link href="/dashboard" className={`flex items-center gap-1 px-4 py-2 text-[13px] font-medium transition-all ${t.link}`}>
                 Dashboard
               </Link>
               <UserMenu />
             </>
           ) : (
             <>
-              <button onClick={openLogin} className={`px-4 py-2 text-sm font-medium rounded-full border border-transparent transition-all ${t.loginBtn}`}>
+              <button onClick={openLogin} className={`px-4 py-2 text-[13px] font-medium rounded-xl transition-all ${t.loginBtn}`}>
                 Log in
               </button>
-              <button onClick={() => openSignup()} className={`px-5 py-2 text-sm font-medium rounded-full transition-colors ${t.ctaBtn}`}>
+              <button onClick={() => openSignup()} className={`px-5 py-2 text-[13px] font-medium rounded-xl transition-colors ${t.ctaBtn}`}>
                 Get Started
               </button>
             </>

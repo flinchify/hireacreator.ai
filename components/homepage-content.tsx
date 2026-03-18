@@ -42,6 +42,9 @@ export function HomepageContent({
 
   return (
     <>
+      {/* Top gradient wash — behind header */}
+      <div className="fixed top-0 left-0 right-0 h-24 bg-gradient-to-b from-black/[0.04] to-transparent z-40 pointer-events-none" />
+
       {/* Hero — creator-first */}
       <section className="relative pt-40 sm:pt-52 pb-20 sm:pb-28 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-neutral-50 to-white" />
