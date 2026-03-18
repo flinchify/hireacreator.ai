@@ -311,6 +311,22 @@ export function DashboardContent() {
         {/* ── Overview ── */}
         {tab === "overview" && (
           <div className="space-y-6">
+            {/* Edit Link in Bio CTA */}
+            {user.slug && (
+              <a href={`/u/${user.slug}/edit`} className="group block bg-gradient-to-r from-neutral-900 via-neutral-800 to-neutral-900 rounded-2xl p-6 hover:shadow-2xl hover:shadow-neutral-900/20 transition-all">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center shrink-0 group-hover:bg-white/20 transition-colors">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4 9.5-9.5z" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-display font-bold text-white text-base">Edit Your Link in Bio</h3>
+                    <p className="text-xs text-white/50 mt-0.5">Click to edit your page inline — change text, links, design, and more</p>
+                  </div>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" className="shrink-0 opacity-40 group-hover:opacity-100 group-hover:translate-x-1 transition-all"><path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                </div>
+              </a>
+            )}
+
             {/* Eligibility banner */}
             {(() => {
               const hasAvatar = !!user.avatar;
