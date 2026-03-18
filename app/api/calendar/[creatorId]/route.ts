@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
+import { getStripe } from "@/lib/stripe";
 
 // GET /api/calendar/[creatorId] — public: get creator's sessions + available dates
 export async function GET(request: Request, { params }: { params: { creatorId: string } }) {
@@ -81,11 +82,7 @@ export async function POST(request: Request, { params }: { params: { creatorId: 
     // If paid session, create Stripe checkout
     const priceCents = sess.price_cents as number;
     if (priceCents > 0) {
-      if (!process.env.STRIPE_SECRET_KEY) {
-        return NextResponse.json({ error: "stripe_not_configured", message: "Stripe is not configured. Add STRIPE_SECRET_KEY to environment variables." }, { status: 500 });
-      }
-      const Stripe = require("stripe");
-      const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+      const stripe = getStripe();
       const checkout = await stripe.checkout.sessions.create({
         mode: "payment",
         line_items: [{

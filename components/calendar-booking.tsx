@@ -173,7 +173,7 @@ export function CalendarBooking({ creatorId, creatorName }: { creatorId: string;
     if (data.success) {
       setStep("done");
     } else {
-      setError(data.error || "Something went wrong");
+      setError(data.message || data.error || "Something went wrong");
     }
     setSubmitting(false);
   }
