@@ -21,37 +21,80 @@ type SaveStatus = "idle" | "saving" | "saved" | "error";
    ══════════════════════════════════════════════════════ */
 function useAutosave(delay = 800) {
   const [status, setStatus] = useState<SaveStatus>("idle");
+  const [errorMsg, setErrorMsg] = useState("");
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastSavedRef = useRef<string>("");
+  const pendingRef = useRef<Record<string, any>>({});
 
   const save = useCallback(async (fields: Record<string, any>) => {
-    const key = JSON.stringify(fields);
-    if (key === lastSavedRef.current) return; // No change
+    // Accumulate all pending changes
+    pendingRef.current = { ...pendingRef.current, ...fields };
+    const toSave = { ...pendingRef.current };
+    const key = JSON.stringify(toSave);
+    if (key === lastSavedRef.current) return;
 
     if (timerRef.current) clearTimeout(timerRef.current);
 
     timerRef.current = setTimeout(async () => {
       setStatus("saving");
+      setErrorMsg("");
       try {
         const res = await fetch("/api/profile", {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(fields),
+          body: JSON.stringify(toSave),
         });
         if (res.ok) {
           lastSavedRef.current = key;
+          pendingRef.current = {};
           setStatus("saved");
           setTimeout(() => setStatus("idle"), 2000);
         } else {
+          const data = await res.json().catch(() => ({}));
+          setErrorMsg(data.error === "unauthorized" ? "Session expired — please sign in again" : data.message || `Save failed (${res.status})`);
           setStatus("error");
         }
-      } catch {
+      } catch (e: any) {
+        setErrorMsg("Network error — check your connection");
         setStatus("error");
       }
     }, delay);
   }, [delay]);
 
-  return { status, save };
+  // Force save all pending changes NOW (no debounce)
+  const saveNow = useCallback(async () => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    const toSave = { ...pendingRef.current };
+    if (Object.keys(toSave).length === 0) {
+      setStatus("saved");
+      setTimeout(() => setStatus("idle"), 2000);
+      return;
+    }
+    setStatus("saving");
+    setErrorMsg("");
+    try {
+      const res = await fetch("/api/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(toSave),
+      });
+      if (res.ok) {
+        lastSavedRef.current = JSON.stringify(toSave);
+        pendingRef.current = {};
+        setStatus("saved");
+        setTimeout(() => setStatus("idle"), 2000);
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setErrorMsg(data.error === "unauthorized" ? "Session expired — please sign in again" : data.message || `Save failed (${res.status})`);
+        setStatus("error");
+      }
+    } catch {
+      setErrorMsg("Network error — check your connection");
+      setStatus("error");
+    }
+  }, []);
+
+  return { status, errorMsg, save, saveNow };
 }
 
 /* ══════════════════════════════════════════════════════
@@ -100,9 +143,10 @@ function InlineText({
 /* ══════════════════════════════════════════════════════
    TOOLBAR (floating top bar)
    ══════════════════════════════════════════════════════ */
-function EditorToolbar({ status, slug, onOpenPanel, activePanel }: {
-  status: SaveStatus; slug: string;
+function EditorToolbar({ status, errorMsg, slug, onOpenPanel, activePanel, onSave }: {
+  status: SaveStatus; errorMsg: string; slug: string;
   onOpenPanel: (p: string | null) => void; activePanel: string | null;
+  onSave: () => void;
 }) {
   return (
     <div className="fixed top-0 inset-x-0 z-50 bg-white/90 backdrop-blur-xl border-b border-neutral-200 shadow-sm">
@@ -131,14 +175,17 @@ function EditorToolbar({ status, slug, onOpenPanel, activePanel }: {
           ))}
         </div>
 
-        {/* Right: save status + view live */}
-        <div className="flex items-center gap-3">
+        {/* Right: save status + save button + view live */}
+        <div className="flex items-center gap-2">
           <div className="flex items-center gap-1.5">
             {status === "saving" && <><div className="w-3 h-3 border-2 border-neutral-300 border-t-neutral-600 rounded-full animate-spin" /><span className="text-xs text-neutral-400">Saving...</span></>}
             {status === "saved" && <><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2.5"><path d="M5 13l4 4L19 7" strokeLinecap="round" /></svg><span className="text-xs text-emerald-600">Saved</span></>}
-            {status === "error" && <><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2"><circle cx="12" cy="12" r="10" /><path d="M12 8v4M12 16h.01" strokeLinecap="round" /></svg><span className="text-xs text-red-500">Save failed</span></>}
+            {status === "error" && <span className="text-xs text-red-500 max-w-[180px] truncate" title={errorMsg}>{errorMsg || "Save failed"}</span>}
           </div>
-          <a href={`/u/${slug}`} target="_blank" className="px-3 py-1.5 text-xs font-semibold text-white bg-neutral-900 rounded-full hover:bg-neutral-800 transition-colors">
+          <button onClick={onSave} disabled={status === "saving"} className="px-4 py-1.5 text-xs font-semibold bg-emerald-600 text-white rounded-full hover:bg-emerald-700 transition-colors disabled:opacity-50 shadow-sm">
+            Save
+          </button>
+          <a href={`/u/${slug}`} target="_blank" className="px-3 py-1.5 text-xs font-semibold text-neutral-700 bg-neutral-100 rounded-full hover:bg-neutral-200 transition-colors">
             View Live
           </a>
         </div>
@@ -325,7 +372,7 @@ function SectionsPanel({ sections, onToggle, onReorder }: {
    MAIN WYSIWYG EDITOR
    ══════════════════════════════════════════════════════ */
 export function WysiwygEditor({ initialData, slug }: { initialData: EditorData; slug: string }) {
-  const { status, save } = useAutosave();
+  const { status, errorMsg, save, saveNow } = useAutosave();
   const [data, setData] = useState(initialData.user);
   const [panel, setPanel] = useState<string | null>(null);
   const [sections, setSections] = useState([
@@ -384,7 +431,7 @@ export function WysiwygEditor({ initialData, slug }: { initialData: EditorData; 
 
   return (
     <div className="min-h-screen" style={bgStyle}>
-      <EditorToolbar status={status} slug={slug} onOpenPanel={setPanel} activePanel={panel} />
+      <EditorToolbar status={status} errorMsg={errorMsg} slug={slug} onOpenPanel={setPanel} activePanel={panel} onSave={saveNow} />
 
       {/* Side panel */}
       {panel && (
