@@ -14,6 +14,7 @@ import { AnimateOnScroll, StaggerChildren } from "@/components/animate-on-scroll
 import { CountUp } from "@/components/count-up";
 import { CreatorHeroActions, ServiceAction, ContactCreatorButton, BoostProfileButton } from "@/components/creator-profile-client";
 import { ReviewSection } from "@/components/review-form";
+import { ProfileStarButton } from "@/components/profile-star-button";
 
 function StarIcon({ filled = true }: { filled?: boolean }) {
   return (
@@ -139,6 +140,7 @@ export default async function CreatorProfilePage({
                 </h1>
                 {creator.isVerified && <VerifiedBadge />}
                 {creator.isPro && <ProBadge />}
+                <ProfileStarButton creatorId={creator.id} />
               </div>
               {creator.headline && (
                 <p className="text-neutral-600 mt-1 animate-slideUp">{creator.headline}</p>

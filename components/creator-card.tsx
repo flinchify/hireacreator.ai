@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { Badge } from "./ui/badge";
 import { PlatformIcon } from "./icons/platforms";
+import { StarButton } from "./star-button";
 import type { Creator } from "@/lib/types";
 
-function StarIcon() {
+function RatingStarIcon() {
   return (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" className="text-amber-400">
       <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
@@ -11,7 +12,15 @@ function StarIcon() {
   );
 }
 
-export function CreatorCard({ creator }: { creator: Creator }) {
+export function CreatorCard({
+  creator,
+  starred = false,
+  starCount = 0,
+}: {
+  creator: Creator;
+  starred?: boolean;
+  starCount?: number;
+}) {
   return (
     <Link href={`/creators/${creator.slug}`} className="group block">
       <div className="bg-white rounded-xl border border-neutral-200 overflow-hidden hover:border-neutral-300 hover:shadow-lg hover:scale-[1.02] transition-all duration-200">
@@ -25,6 +34,9 @@ export function CreatorCard({ creator }: { creator: Creator }) {
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-neutral-100 to-neutral-200" />
           )}
+          <div className="absolute top-2 right-2 z-10">
+            <StarButton creatorId={creator.id} initialStarred={starred} initialCount={starCount} size="sm" />
+          </div>
           <div className="absolute -bottom-6 left-4">
             {creator.avatar ? (
               <img
@@ -116,7 +128,7 @@ export function CreatorCard({ creator }: { creator: Creator }) {
 
           <div className="flex items-center justify-between mt-4 pt-3 border-t border-neutral-100">
             <div className="flex items-center gap-1">
-              <StarIcon />
+              <RatingStarIcon />
               <span className="text-sm font-medium text-neutral-900">
                 {creator.rating}
               </span>

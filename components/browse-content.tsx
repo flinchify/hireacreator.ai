@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect, useRef } from "react";
 import { CreatorCard } from "@/components/creator-card";
 import { Button } from "@/components/ui/button";
 import type { Creator } from "@/lib/types";
+import { useAuth } from "@/components/auth-context";
 
 const PLATFORMS = [
   "Instagram",
@@ -40,6 +41,19 @@ export function BrowseContent({
   const [verifiedOnly, setVerifiedOnly] = useState(false);
   const [sortBy, setSortBy] = useState<SortOption>("relevance");
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const { user } = useAuth();
+  const [starredIds, setStarredIds] = useState<Set<string>>(new Set());
+  const [starCounts, setStarCounts] = useState<Record<string, number>>({});
+
+  useEffect(() => {
+    fetch("/api/stars")
+      .then((r) => r.json())
+      .then((data) => {
+        setStarredIds(new Set(data.starredCreatorIds || []));
+        setStarCounts(data.starCounts || {});
+      })
+      .catch(() => {});
+  }, [user]);
 
   const hasActiveFilters = selectedCategory || selectedPlatforms.length > 0 || priceMin || priceMax || location || verifiedOnly;
 
@@ -326,7 +340,11 @@ export function BrowseContent({
                   className="animate-card-in"
                   style={{ animationDelay: `${Math.min(i * 50, 400)}ms` }}
                 >
-                  <CreatorCard creator={creator} />
+                  <CreatorCard
+                    creator={creator}
+                    starred={starredIds.has(creator.id)}
+                    starCount={starCounts[creator.id] || 0}
+                  />
                 </div>
               ))}
             </div>
