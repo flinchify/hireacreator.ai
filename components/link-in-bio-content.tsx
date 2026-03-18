@@ -249,29 +249,57 @@ function TemplateMinimal({ creator }: { creator: Creator }) {
 }
 
 /* ══════════════════════════════════════════════════════════════
-   TEMPLATE: GLASS — Full-bleed bg with frosted content
+   TEMPLATE: GLASS — Premium frosted glass on deep gradient
    ══════════════════════════════════════════════════════════════ */
 function TemplateGlass({ creator }: { creator: Creator }) {
   const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
   const hasCustomBg = !!creator.linkBioBgType;
+  const accent = creator.linkBioAccent || "#6366f1";
 
   return (
-    <div className="min-h-screen relative">
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Background */}
       {hasCustomBg ? (
-        <BgLayer creator={creator} fallback={<div className="fixed inset-0 bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-950" />} />
-      ) : creator.cover ? (
-        <div className="fixed inset-0"><img src={creator.cover} alt="" className="w-full h-full object-cover scale-110 blur-2xl brightness-50" /><div className="absolute inset-0 bg-black/30" /></div>
+        <BgLayer creator={creator} fallback={<div className="fixed inset-0 bg-gradient-to-br from-[#0f0720] via-[#1a1040] to-[#0a0a1a]" />} />
       ) : (
-        <div className="fixed inset-0 bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-950" />
+        <div className="fixed inset-0 bg-gradient-to-br from-[#0f0720] via-[#1a1040] to-[#0a0a1a]" />
       )}
-      <div className="absolute top-3 right-3 z-20"><ShareBtn slug={creator.slug} light /></div>
-      <div className="relative z-10 max-w-[480px] mx-auto px-5 pt-12 pb-10 min-h-screen flex flex-col">
-        <div className="text-center mb-6">
-          <Avatar creator={creator} light />
-          <div className="mt-4 flex items-center justify-center gap-1.5"><h1 className="font-display text-xl font-bold text-white">{creator.name || "Your Name"}</h1>{creator.isVerified && <VerifiedBadge light />}{creator.isPro && <ProBadge />}</div>
-          {creator.headline && <p className="mt-1.5 text-sm text-white/60 max-w-[320px] mx-auto">{creator.headline}</p>}
-          {creator.location && <p className="mt-1.5 text-xs text-white/40 flex items-center justify-center gap-1"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>{creator.location}</p>}
-          {creator.isOnline && <OnlineDot light />}
+      {/* Ambient glow orbs */}
+      <div className="fixed inset-0 z-[1] pointer-events-none overflow-hidden">
+        <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] rounded-full opacity-20" style={{ background: `radial-gradient(circle, ${accent}60 0%, transparent 70%)` }} />
+        <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full opacity-15" style={{ background: `radial-gradient(circle, #ec489960 0%, transparent 70%)` }} />
+      </div>
+
+      <div className="absolute top-4 right-4 z-20"><ShareBtn slug={creator.slug} light /></div>
+
+      <div className="relative z-10 max-w-[480px] mx-auto px-5 pt-14 pb-10 min-h-screen flex flex-col">
+        <div className="text-center mb-8">
+          {/* Avatar with glow ring */}
+          <div className="relative inline-block">
+            <div className="absolute inset-0 rounded-full opacity-40 blur-xl" style={{ background: accent }} />
+            {creator.avatar ? (
+              <img src={creator.avatar} alt="" className="relative w-24 h-24 rounded-full object-cover ring-2 ring-white/20 shadow-2xl" />
+            ) : (
+              <div className="relative w-24 h-24 rounded-full bg-white/10 backdrop-blur-xl flex items-center justify-center ring-2 ring-white/20 shadow-2xl"><span className="text-3xl font-bold text-white/60">{(creator.name || "?")[0]}</span></div>
+            )}
+            {creator.isOnline && <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4"><span className="animate-ping absolute h-full w-full rounded-full bg-emerald-400 opacity-75" /><span className="relative rounded-full h-4 w-4 bg-emerald-500 ring-2 ring-[#1a1040]" /></span>}
+          </div>
+
+          <div className="mt-5 flex items-center justify-center gap-1.5">
+            <h1 className="font-display text-2xl font-bold text-white tracking-tight">{creator.name || "Your Name"}</h1>
+            {creator.isVerified && <VerifiedBadge light />}{creator.isPro && <ProBadge />}
+          </div>
+          {creator.headline && <p className="mt-2 text-sm text-white/50 max-w-[320px] mx-auto leading-relaxed">{creator.headline}</p>}
+          {creator.location && <p className="mt-2 text-xs text-white/30 flex items-center justify-center gap-1"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>{creator.location}</p>}
+
+          {/* Stats bar */}
+          {(creator.totalProjects > 0 || creator.rating > 0 || creator.reviewCount > 0) && (
+            <div className="mt-5 flex items-center justify-center gap-6">
+              {creator.totalProjects > 0 && <div className="text-center"><div className="text-lg font-bold text-white">{creator.totalProjects}</div><div className="text-[10px] text-white/30 uppercase tracking-wider">Projects</div></div>}
+              {creator.rating > 0 && <div className="text-center"><div className="text-lg font-bold text-white">{creator.rating.toFixed(1)}</div><div className="text-[10px] text-white/30 uppercase tracking-wider">Rating</div></div>}
+              {creator.reviewCount > 0 && <div className="text-center"><div className="text-lg font-bold text-white">{creator.reviewCount}</div><div className="text-[10px] text-white/30 uppercase tracking-wider">Reviews</div></div>}
+            </div>
+          )}
         </div>
         <Socials creator={creator} light />
         {creator.bio && <p className="text-sm text-white/50 text-center mb-6">{creator.bio}</p>}
@@ -539,24 +567,55 @@ function TemplateSplit({ creator }: { creator: Creator }) {
    ══════════════════════════════════════════════════════════════ */
 function TemplateCustom({ creator }: { creator: Creator }) {
   const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
-  const accent = creator.linkBioAccent || "#171717";
+  const accent = creator.linkBioAccent || "#6366f1";
   const hasCustomBg = !!creator.linkBioBgType;
-  const isDarkBg = hasCustomBg && (creator.linkBioBgType === "video" || creator.linkBioBgType === "image" || creator.linkBioBgType === "collage");
+  const isDarkBg = hasCustomBg && (
+    creator.linkBioBgType === "video" || creator.linkBioBgType === "image" || creator.linkBioBgType === "collage" ||
+    (creator.linkBioBgType === "gradient" && (creator.linkBioBgValue?.includes("#0") || creator.linkBioBgValue?.includes("#1") || creator.linkBioBgValue?.includes("#2")))
+  );
 
   return (
-    <div className="min-h-screen relative">
+    <div className="min-h-screen relative overflow-hidden">
       <BgLayer creator={creator} fallback={<div className="fixed inset-0 bg-gradient-to-br from-neutral-100 to-neutral-200" />} />
-      <div className="relative z-10 max-w-[480px] mx-auto px-5 pt-12 pb-10 min-h-screen flex flex-col">
-        <div className="text-center mb-6">
-          <Avatar creator={creator} light={isDarkBg} />
-          <div className="mt-4 flex items-center justify-center gap-1.5"><h1 className={`font-display text-xl font-bold ${isDarkBg ? "text-white" : "text-neutral-900"}`}>{creator.name || "Your Name"}</h1>{creator.isVerified && <VerifiedBadge light={isDarkBg} />}{creator.isPro && <ProBadge />}</div>
-          <p className={`text-xs mt-0.5 ${isDarkBg ? "text-white/50" : "text-neutral-400"}`}>@{creator.slug?.split("-")[0]}</p>
-          {creator.headline && <p className={`mt-2 text-sm max-w-[320px] mx-auto ${isDarkBg ? "text-white/60" : "text-neutral-600"}`}>{creator.headline}</p>}
-          {creator.location && <p className={`mt-1.5 text-xs flex items-center justify-center gap-1 ${isDarkBg ? "text-white/40" : "text-neutral-400"}`}><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>{creator.location}</p>}
-          {creator.isOnline && <OnlineDot light={isDarkBg} />}
+      {/* Ambient glow orbs for dark backgrounds */}
+      {isDarkBg && (
+        <div className="fixed inset-0 z-[1] pointer-events-none overflow-hidden">
+          <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] rounded-full opacity-15" style={{ background: `radial-gradient(circle, ${accent}60 0%, transparent 70%)` }} />
+          <div className="absolute bottom-[-15%] right-[-10%] w-[50%] h-[50%] rounded-full opacity-10" style={{ background: "radial-gradient(circle, #ec489960 0%, transparent 70%)" }} />
+        </div>
+      )}
+      <div className="relative z-10 max-w-[480px] mx-auto px-5 pt-14 pb-10 min-h-screen flex flex-col">
+        <div className="text-center mb-8">
+          {/* Avatar with glow ring on dark bg */}
+          <div className="relative inline-block">
+            {isDarkBg && <div className="absolute inset-0 rounded-full opacity-30 blur-xl" style={{ background: accent }} />}
+            {creator.avatar ? (
+              <img src={creator.avatar} alt="" className={`relative w-24 h-24 rounded-full object-cover shadow-2xl ${isDarkBg ? "ring-2 ring-white/20" : "ring-2 ring-neutral-200"}`} />
+            ) : (
+              <div className={`relative w-24 h-24 rounded-full flex items-center justify-center shadow-2xl ${isDarkBg ? "bg-white/10 backdrop-blur-xl ring-2 ring-white/20" : "bg-neutral-100 ring-2 ring-neutral-200"}`}><span className={`text-3xl font-bold ${isDarkBg ? "text-white/60" : "text-neutral-400"}`}>{(creator.name || "?")[0]}</span></div>
+            )}
+            {creator.isOnline && <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4"><span className="animate-ping absolute h-full w-full rounded-full bg-emerald-400 opacity-75" /><span className={`relative rounded-full h-4 w-4 bg-emerald-500 ring-2 ${isDarkBg ? "ring-[#1a1040]" : "ring-white"}`} /></span>}
+          </div>
+
+          <div className="mt-5 flex items-center justify-center gap-1.5">
+            <h1 className={`font-display text-2xl font-bold tracking-tight ${isDarkBg ? "text-white" : "text-neutral-900"}`}>{creator.name || "Your Name"}</h1>
+            {creator.isVerified && <VerifiedBadge light={isDarkBg} />}{creator.isPro && <ProBadge />}
+          </div>
+          <p className={`text-xs mt-0.5 ${isDarkBg ? "text-white/40" : "text-neutral-400"}`}>@{creator.slug?.split("-")[0]}</p>
+          {creator.headline && <p className={`mt-2 text-sm max-w-[320px] mx-auto leading-relaxed ${isDarkBg ? "text-white/50" : "text-neutral-600"}`}>{creator.headline}</p>}
+          {creator.location && <p className={`mt-2 text-xs flex items-center justify-center gap-1 ${isDarkBg ? "text-white/30" : "text-neutral-400"}`}><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>{creator.location}</p>}
+
+          {/* Stats bar */}
+          {(creator.totalProjects > 0 || creator.rating > 0 || creator.reviewCount > 0) && (
+            <div className={`mt-5 flex items-center justify-center gap-6 py-3 rounded-2xl ${isDarkBg ? "bg-white/5" : "bg-neutral-50"}`}>
+              {creator.totalProjects > 0 && <div className="text-center"><div className={`text-lg font-bold ${isDarkBg ? "text-white" : "text-neutral-900"}`}>{creator.totalProjects}</div><div className={`text-[10px] uppercase tracking-wider ${isDarkBg ? "text-white/30" : "text-neutral-400"}`}>Projects</div></div>}
+              {creator.rating > 0 && <><div className={`w-px h-8 ${isDarkBg ? "bg-white/10" : "bg-neutral-200"}`} /><div className="text-center"><div className={`text-lg font-bold ${isDarkBg ? "text-white" : "text-neutral-900"}`}>{creator.rating.toFixed(1)}</div><div className={`text-[10px] uppercase tracking-wider ${isDarkBg ? "text-white/30" : "text-neutral-400"}`}>Rating</div></div></>}
+              {creator.reviewCount > 0 && <><div className={`w-px h-8 ${isDarkBg ? "bg-white/10" : "bg-neutral-200"}`} /><div className="text-center"><div className={`text-lg font-bold ${isDarkBg ? "text-white" : "text-neutral-900"}`}>{creator.reviewCount}</div><div className={`text-[10px] uppercase tracking-wider ${isDarkBg ? "text-white/30" : "text-neutral-400"}`}>Reviews</div></div></>}
+            </div>
+          )}
         </div>
         <Socials creator={creator} light={isDarkBg} />
-        {creator.bio && <p className={`text-sm text-center mb-6 ${isDarkBg ? "text-white/50" : "text-neutral-500"}`}>{creator.bio}</p>}
+        {creator.bio && <p className={`text-sm text-center mb-6 leading-relaxed ${isDarkBg ? "text-white/50" : "text-neutral-500"}`}>{creator.bio}</p>}
         <BioLinksSection creator={creator} light={isDarkBg} />
         <div className="flex-1 space-y-3">
           {creator.services.map(s => <ServiceCard key={s.id} service={s} creator={creator} light={isDarkBg} accent={accent} />)}
