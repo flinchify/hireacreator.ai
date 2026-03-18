@@ -1,6 +1,6 @@
 // v2 - force redeploy
 import { getDb } from "./db";
-import type { Creator, Social, Service, PortfolioItem, Review } from "./types";
+import type { Creator, Social, Service, PortfolioItem, Review, Product } from "./types";
 
 function formatFollowers(count: number): string {
   if (count >= 1_000_000) return `${(count / 1_000_000).toFixed(1)}M`;
@@ -14,7 +14,8 @@ function assembleCreator(
   services: Record<string, unknown>[] = [],
   portfolio: Record<string, unknown>[] = [],
   reviews: Record<string, unknown>[] = [],
-  bioLinks: Record<string, unknown>[] = []
+  bioLinks: Record<string, unknown>[] = [],
+  products: Record<string, unknown>[] = []
 ): Creator {
   return {
     id: user.id as string,
@@ -54,6 +55,8 @@ function assembleCreator(
     linkBioCardStyle: (user.link_bio_card_style as string) || "default",
     linkBioIntroAnim: (user.link_bio_intro_anim as string) || "none",
     calendarEnabled: (user.calendar_enabled as boolean) || false,
+    profileViews: (user.profile_views as number) || 0,
+    nicheRank: (user.niche_rank as number) || 0,
     bioLinks: bioLinks.map((l) => ({
       id: l.id as string,
       title: l.title as string,
@@ -93,6 +96,18 @@ function assembleCreator(
       date: r.created_at
         ? new Date(r.created_at as string).toISOString().split("T")[0]
         : "",
+    })),
+    products: products.map((p) => ({
+      id: p.id as string,
+      title: p.title as string,
+      description: (p.description as string) || null,
+      priceCents: (p.price_cents as number) || 0,
+      currency: (p.currency as string) || "AUD",
+      productUrl: (p.product_url as string) || null,
+      thumbnailUrl: (p.thumbnail_url as string) || null,
+      productType: (p.product_type as string) || "digital",
+      isActive: p.is_active !== false,
+      sortOrder: (p.sort_order as number) || 0,
     })),
   };
 }
@@ -161,7 +176,7 @@ export async function getCreatorBySlug(
   if (users.length === 0) return null;
   const user = users[0];
 
-  const [socials, services, portfolio, reviewRows, bioLinks] = await Promise.all([
+  const [socials, services, portfolio, reviewRows, bioLinks, products] = await Promise.all([
     sql`SELECT * FROM social_connections WHERE user_id = ${user.id}`,
     sql`SELECT * FROM services WHERE user_id = ${user.id} AND is_active = TRUE ORDER BY price ASC`,
     sql`SELECT * FROM portfolio_items WHERE user_id = ${user.id} ORDER BY sort_order ASC`,
@@ -173,9 +188,10 @@ export async function getCreatorBySlug(
       ORDER BY r.created_at DESC
     `,
     sql`SELECT * FROM bio_links WHERE user_id = ${user.id} AND is_visible = TRUE AND (is_archived = FALSE OR is_archived IS NULL) ORDER BY position ASC`,
+    sql`SELECT * FROM creator_products WHERE user_id = ${user.id} AND is_active = TRUE ORDER BY sort_order ASC`,
   ]);
 
-  return assembleCreator(user, socials, services, portfolio, reviewRows, bioLinks);
+  return assembleCreator(user, socials, services, portfolio, reviewRows, bioLinks, products);
 }
 
 export async function searchCreators(filters?: {
@@ -237,6 +253,38 @@ export async function searchCreators(filters?: {
       socials.filter((s) => s.user_id === user.id)
     )
   );
+}
+
+export async function getTopCreatorsByCategory(): Promise<Record<string, Creator[]>> {
+  const sql = getDb();
+  const users = await sql`
+    SELECT * FROM users
+    WHERE role IN ('creator', 'admin') AND visible_in_marketplace = TRUE
+      AND (is_banned IS NULL OR is_banned = FALSE)
+      AND email_verified = TRUE
+      AND category IS NOT NULL AND category != ''
+    ORDER BY profile_views DESC NULLS LAST, rating DESC
+  `;
+
+  if (users.length === 0) return {};
+
+  const userIds = users.map((u) => u.id);
+  const socials = await sql`
+    SELECT * FROM social_connections WHERE user_id = ANY(${userIds})
+  `;
+
+  const byCategory: Record<string, Creator[]> = {};
+  for (const user of users) {
+    const cat = user.category as string;
+    if (!cat) continue;
+    if (!byCategory[cat]) byCategory[cat] = [];
+    if (byCategory[cat].length < 3) {
+      byCategory[cat].push(
+        assembleCreator(user, socials.filter((s) => s.user_id === user.id))
+      );
+    }
+  }
+  return byCategory;
 }
 
 export async function getCreatorCount(): Promise<number> {

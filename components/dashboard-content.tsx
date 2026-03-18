@@ -194,13 +194,127 @@ function ServicesSheet({ user, open, onClose }: { user: User; open: boolean; onC
   );
 }
 
+/* ═══ Products Manager ═══ */
+function ProductsManager() {
+  const [products, setProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [adding, setAdding] = useState(false);
+  const [form, setForm] = useState({ title: "", description: "", price_cents: "", product_url: "", thumbnail_url: "", product_type: "digital" });
+  const [showForm, setShowForm] = useState(false);
+
+  const inp = "w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900/10 text-neutral-900 bg-white";
+
+  useEffect(() => { loadProducts(); }, []);
+
+  async function loadProducts() {
+    const res = await fetch("/api/products");
+    if (res.ok) { const d = await res.json(); setProducts(d.products || []); }
+    setLoading(false);
+  }
+
+  async function addProduct() {
+    if (!form.title.trim()) return;
+    setAdding(true);
+    const res = await fetch("/api/products", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...form, price_cents: form.price_cents ? Math.round(Number(form.price_cents) * 100) : 0 }),
+    });
+    if (res.ok) { setForm({ title: "", description: "", price_cents: "", product_url: "", thumbnail_url: "", product_type: "digital" }); setShowForm(false); await loadProducts(); }
+    setAdding(false);
+  }
+
+  async function deleteProduct(id: string) {
+    await fetch(`/api/products?id=${id}`, { method: "DELETE" });
+    setProducts(p => p.filter(x => x.id !== id));
+  }
+
+  async function uploadThumbnail(file: File) {
+    const fd = new FormData(); fd.append("file", file); fd.append("type", "cover");
+    const res = await fetch("/api/upload", { method: "POST", body: fd });
+    if (res.ok) { const d = await res.json(); if (d.url) setForm(f => ({ ...f, thumbnail_url: d.url })); }
+  }
+
+  return (
+    <div className="max-w-2xl">
+      <div className="flex items-center justify-between mb-5">
+        <div>
+          <h2 className="text-lg font-bold text-neutral-900">Products</h2>
+          <p className="text-xs text-neutral-400 mt-0.5">Digital products, courses, and external product links</p>
+        </div>
+        <button onClick={() => setShowForm(!showForm)} className="px-4 py-2 text-xs font-semibold text-white bg-neutral-900 rounded-xl hover:bg-neutral-800 transition-colors">
+          {showForm ? "Cancel" : "+ Add Product"}
+        </button>
+      </div>
+
+      {showForm && (
+        <div className="bg-white rounded-2xl border border-neutral-200/60 p-5 mb-5 space-y-3">
+          <div><label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Title</label><input className={inp} value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} placeholder="My Awesome Course" /></div>
+          <div><label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Description</label><textarea className={`${inp} resize-y`} rows={2} value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} placeholder="Brief description..." /></div>
+          <div className="grid grid-cols-2 gap-3">
+            <div><label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Price ($)</label><input type="number" step="0.01" className={inp} value={form.price_cents} onChange={e => setForm({ ...form, price_cents: e.target.value })} placeholder="0 for free" /></div>
+            <div><label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Type</label><select className={inp} value={form.product_type} onChange={e => setForm({ ...form, product_type: e.target.value })}><option value="digital">Digital</option><option value="course">Course</option><option value="physical">Physical</option><option value="link">External Link</option></select></div>
+          </div>
+          <div><label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Product URL</label><input className={inp} value={form.product_url} onChange={e => setForm({ ...form, product_url: e.target.value })} placeholder="https://gumroad.com/..." /></div>
+          <div>
+            <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Thumbnail</label>
+            {form.thumbnail_url ? (
+              <div className="relative rounded-xl overflow-hidden h-24 bg-neutral-100 mt-1">
+                <img src={form.thumbnail_url} alt="" className="w-full h-full object-cover" />
+                <button onClick={() => setForm(f => ({ ...f, thumbnail_url: "" }))} className="absolute top-1 right-1 px-2 py-0.5 bg-black/60 text-white rounded-full text-[10px]">Remove</button>
+              </div>
+            ) : (
+              <label className="flex items-center justify-center gap-2 py-3 mt-1 rounded-xl border-2 border-dashed border-neutral-200 cursor-pointer text-xs text-neutral-500 hover:border-neutral-400 transition-all">
+                <input type="file" accept="image/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) uploadThumbnail(f); }} />
+                Upload Image
+              </label>
+            )}
+          </div>
+          <button onClick={addProduct} disabled={adding || !form.title.trim()} className="w-full py-2.5 bg-neutral-900 text-white text-sm font-medium rounded-xl hover:bg-neutral-800 transition-colors disabled:opacity-40">{adding ? "Adding..." : "Add Product"}</button>
+        </div>
+      )}
+
+      {loading ? (
+        <div className="flex justify-center py-12"><div className="w-6 h-6 border-2 border-neutral-300 border-t-neutral-900 rounded-full animate-spin" /></div>
+      ) : products.length > 0 ? (
+        <div className="space-y-3">
+          {products.map((p: any) => (
+            <div key={p.id} className="bg-white rounded-2xl border border-neutral-200/60 p-4 flex items-center gap-4 hover:border-neutral-300 transition-colors">
+              {p.thumbnail_url ? (
+                <img src={p.thumbnail_url} alt="" className="w-16 h-16 rounded-xl object-cover shrink-0" />
+              ) : (
+                <div className="w-16 h-16 rounded-xl bg-neutral-100 flex items-center justify-center shrink-0">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-neutral-300"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z" strokeLinecap="round"/><line x1="7" y1="7" x2="7.01" y2="7" strokeLinecap="round"/></svg>
+                </div>
+              )}
+              <div className="flex-1 min-w-0">
+                <h3 className="font-semibold text-neutral-900 text-sm truncate">{p.title}</h3>
+                <div className="text-xs text-neutral-400 mt-0.5">{p.product_type} &middot; {Number(p.price_cents) === 0 ? "Free" : `$${(Number(p.price_cents) / 100).toFixed(2)}`}</div>
+              </div>
+              <button onClick={() => deleteProduct(p.id)} className="p-2 rounded-lg hover:bg-neutral-100 text-neutral-400 hover:text-red-500 transition-colors shrink-0" title="Delete">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" strokeLinecap="round"/></svg>
+              </button>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="bg-white rounded-2xl border border-neutral-200/60 p-10 text-center">
+          <p className="text-sm text-neutral-400 mb-3">No products yet. Add digital products, courses, or external links.</p>
+          <button onClick={() => setShowForm(true)} className="px-5 py-2.5 bg-neutral-900 text-white text-sm font-semibold rounded-full hover:bg-neutral-800 transition-colors">Add Product</button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ═══ Sidebar nav items ═══ */
-type Section = "overview" | "links" | "services" | "calendar" | "earn" | "messages" | "animations" | "settings";
+type Section = "overview" | "links" | "services" | "products" | "calendar" | "earn" | "messages" | "animations" | "settings";
 
 const NAV_MAIN = [
   { id: "overview" as Section, label: "Overview", icon: icons.overview },
   { id: "links" as Section, label: "My Bio Link", icon: icons.link },
   { id: "services" as Section, label: "Services", icon: icons.services },
+  { id: "products" as Section, label: "Products", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z" strokeLinecap="round" strokeLinejoin="round"/><line x1="7" y1="7" x2="7.01" y2="7" strokeLinecap="round"/></svg> },
   { id: "calendar" as Section, label: "Calendar", icon: icons.calendar },
   { id: "earn" as Section, label: "Earn", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" strokeLinecap="round" strokeLinejoin="round"/></svg> },
   { id: "messages" as Section, label: "Messages", icon: icons.messages },
@@ -561,6 +675,9 @@ export function DashboardContent() {
                 )}
               </div>
             )}
+
+            {/* PRODUCTS */}
+            {section === "products" && <ProductsManager />}
 
             {/* CALENDAR */}
             {section === "calendar" && (

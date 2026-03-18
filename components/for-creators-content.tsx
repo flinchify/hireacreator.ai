@@ -1,8 +1,17 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "@/components/auth-context";
 import { AnimateOnScroll, StaggerChildren } from "@/components/animate-on-scroll";
+import { CATEGORIES } from "@/lib/types";
+
+const CATEGORY_ICONS: Record<string, string> = {
+  "UGC Creator": "🎬", "Video Editor": "🎥", "Photographer": "📸", "Graphic Designer": "🎨",
+  "Social Media Manager": "📱", "Copywriter": "✍️", "Brand Strategist": "📊", "Motion Designer": "✨",
+  "Podcast Producer": "🎙️", "Influencer": "⭐", "Automotive": "🏎️", "Education / Tech": "💻",
+  "Consultant": "💼", "Music Producer": "🎵", "Developer": "🖥️",
+};
 
 function CheckIcon() {
   return (
@@ -12,8 +21,18 @@ function CheckIcon() {
   );
 }
 
+type TopCreator = { name: string; slug: string; avatar: string | null; nicheRank: number; category: string | null };
+
 export function ForCreatorsContent() {
   const { openSignup } = useAuth();
+  const [topByCategory, setTopByCategory] = useState<Record<string, TopCreator[]>>({});
+
+  useEffect(() => {
+    fetch("/api/creators/top-by-category")
+      .then(r => r.json())
+      .then(data => setTopByCategory(data || {}))
+      .catch(() => {});
+  }, []);
 
   return (
     <>
@@ -85,6 +104,50 @@ export function ForCreatorsContent() {
             </p>
           </div>
         </StaggerChildren>
+      </section>
+
+      {/* Niche Categories */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+        <AnimateOnScroll>
+          <div className="text-center mb-14">
+            <h2 className="font-display text-3xl font-bold text-neutral-900 mb-4">
+              Find your niche
+            </h2>
+            <p className="text-neutral-500 max-w-xl mx-auto">
+              See who&apos;s leading in each category. Join and climb the ranks.
+            </p>
+          </div>
+        </AnimateOnScroll>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+          {CATEGORIES.map(cat => {
+            const creators = topByCategory[cat] || [];
+            return (
+              <Link key={cat} href={`/browse?category=${encodeURIComponent(cat)}`}>
+                <div className="bg-white rounded-2xl border border-neutral-200/60 p-5 hover:border-neutral-300 hover:shadow-md transition-all group cursor-pointer h-full">
+                  <div className="text-2xl mb-3">{CATEGORY_ICONS[cat] || "🎯"}</div>
+                  <h3 className="font-display font-bold text-neutral-900 text-sm mb-2 group-hover:text-neutral-700">{cat}</h3>
+                  {creators.length > 0 ? (
+                    <div className="space-y-1.5">
+                      {creators.slice(0, 3).map((c: TopCreator, i: number) => (
+                        <div key={c.slug} className="flex items-center gap-2">
+                          <span className={`text-[10px] font-bold w-4 ${i === 0 ? "text-amber-500" : i === 1 ? "text-neutral-400" : "text-amber-700"}`}>#{i + 1}</span>
+                          {c.avatar ? (
+                            <img src={c.avatar} alt="" className="w-5 h-5 rounded-full object-cover" />
+                          ) : (
+                            <div className="w-5 h-5 rounded-full bg-neutral-100 flex items-center justify-center text-[8px] font-bold text-neutral-400">{c.name?.[0]}</div>
+                          )}
+                          <span className="text-xs text-neutral-600 truncate">{c.name}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-[11px] text-neutral-300">Be the first</p>
+                  )}
+                </div>
+              </Link>
+            );
+          })}
+        </div>
       </section>
 
       {/* What you get */}

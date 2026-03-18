@@ -75,6 +75,12 @@ export function CreatorCard({ creator }: { creator: Creator }) {
             </span>
           </div>
 
+          {creator.nicheRank > 0 && creator.nicheRank <= 3 && creator.category && (
+            <div className={`inline-flex items-center gap-1 mt-2 px-2 py-0.5 rounded-full text-[10px] font-bold text-white shadow-sm bg-gradient-to-r ${creator.nicheRank === 1 ? "from-amber-400 to-yellow-500" : creator.nicheRank === 2 ? "from-neutral-300 to-neutral-400" : "from-amber-600 to-orange-700"}`}>
+              #{creator.nicheRank} in {creator.category}
+            </div>
+          )}
+
           <div className="flex items-center gap-3 mt-3">
             {creator.category && <Badge>{creator.category}</Badge>}
             {creator.location && (

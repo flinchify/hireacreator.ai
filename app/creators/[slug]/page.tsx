@@ -88,6 +88,9 @@ export default async function CreatorProfilePage({
     notFound();
   }
 
+  // Fire-and-forget view tracking
+  fetch(`${process.env.NEXT_PUBLIC_BASE_URL || "https://hireacreator.ai"}/api/profile/view?slug=${params.slug}`).catch(() => {});
+
   return (
     <div className="min-h-screen bg-neutral-50">
       <Header />
@@ -139,6 +142,11 @@ export default async function CreatorProfilePage({
               </div>
               {creator.headline && (
                 <p className="text-neutral-600 mt-1 animate-slideUp">{creator.headline}</p>
+              )}
+              {creator.nicheRank > 0 && creator.nicheRank <= 3 && creator.category && (
+                <div className={`inline-flex items-center gap-1 mt-1 px-2.5 py-1 rounded-full text-xs font-bold text-white shadow-sm bg-gradient-to-r ${creator.nicheRank === 1 ? "from-amber-400 to-yellow-500" : creator.nicheRank === 2 ? "from-neutral-300 to-neutral-400" : "from-amber-600 to-orange-700"}`}>
+                  #{creator.nicheRank} in {creator.category}
+                </div>
               )}
               <div className="flex items-center gap-3 mt-2 flex-wrap">
                 {creator.category && <Badge>{creator.category}</Badge>}

@@ -50,6 +50,19 @@ export type Review = {
   date: string;
 };
 
+export type Product = {
+  id: string;
+  title: string;
+  description: string | null;
+  priceCents: number;
+  currency: string;
+  productUrl: string | null;
+  thumbnailUrl: string | null;
+  productType: string;
+  isActive: boolean;
+  sortOrder: number;
+};
+
 export type Creator = {
   id: string;
   name: string;
@@ -88,9 +101,12 @@ export type Creator = {
   linkBioCardStyle: string;
   linkBioIntroAnim: string;
   calendarEnabled: boolean;
+  profileViews: number;
+  nicheRank: number;
   bioLinks: { id: string; title: string; url: string; thumbnailUrl: string | null; isVisible: boolean; isPinned: boolean; clickCount: number }[];
   socials: Social[];
   services: Service[];
   portfolio: PortfolioItem[];
   reviews: Review[];
+  products: Product[];
 };

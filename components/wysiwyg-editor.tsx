@@ -204,6 +204,7 @@ function DesignPanel({ data, onUpdate, ownedAnimations }: { data: Record<string,
     { id: "bold", name: "Bold" }, { id: "neon", name: "Neon" },
     { id: "showcase", name: "Showcase" }, { id: "collage", name: "Collage" },
     { id: "bento", name: "Bento" }, { id: "split", name: "Split" },
+    { id: "founder", name: "Founder" },
   ];
 
   const gradients = [

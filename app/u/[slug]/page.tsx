@@ -37,6 +37,11 @@ export default async function LinkInBioPage({ params }: { params: { slug: string
   const sessionUserId = await getSessionUserId();
   const isOwner = sessionUserId === creator.id;
 
+  // Fire-and-forget view tracking (don't count self-views)
+  if (!isOwner) {
+    fetch(`${process.env.NEXT_PUBLIC_BASE_URL || "https://hireacreator.ai"}/api/profile/view?slug=${params.slug}`).catch(() => {});
+  }
+
   return (
     <>
       {isOwner && <OwnerEditBar slug={params.slug} />}
