@@ -216,6 +216,25 @@ export function DashboardContent() {
   const [socials, setSocials] = useState<any[]>([]);
   const [services, setServices] = useState<any[]>([]);
   const [copied, setCopied] = useState(false);
+  const [uploadError, setUploadError] = useState("");
+
+  async function handleUpload(file: File, type: "avatar" | "cover") {
+    setUploadError("");
+    const fd = new FormData();
+    fd.append("file", file);
+    fd.append("type", type);
+    try {
+      const res = await fetch("/api/upload", { method: "POST", body: fd });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setUploadError(data.message || data.error || `Upload failed (${res.status})`);
+        return;
+      }
+      refreshUser();
+    } catch {
+      setUploadError("Network error — couldn't upload");
+    }
+  }
 
   const loadData = useCallback(() => {
     fetch("/api/profile").then(r => r.json()).then(d => { if (d.socials) setSocials(d.socials); if (d.services) setServices(d.services); }).catch(() => {});
@@ -286,7 +305,7 @@ export function DashboardContent() {
               {user.cover ? <img src={user.cover} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full bg-gradient-to-br from-neutral-200 via-neutral-100 to-neutral-300" />}
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
               <label className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-black/40 backdrop-blur-sm border border-white/20 rounded-full hover:bg-black/60 transition-all cursor-pointer">
-                <input type="file" accept="image/*" className="hidden" onChange={async (e) => { const file = e.target.files?.[0]; if (!file) return; const fd = new FormData(); fd.append("file", file); fd.append("type", "cover"); await fetch("/api/upload", { method: "POST", body: fd }); refreshUser(); }} />
+                <input type="file" accept="image/*" className="hidden" onChange={async (e) => { const file = e.target.files?.[0]; if (file) handleUpload(file, "cover"); }} />
                 {icons.camera} Change
               </label>
             </div>
@@ -300,7 +319,7 @@ export function DashboardContent() {
                     : <div className="w-20 h-20 rounded-2xl border-[3px] border-white bg-gradient-to-br from-neutral-100 to-neutral-200 flex items-center justify-center shadow-lg"><span className="text-xl font-bold text-neutral-400">{user.name?.charAt(0) || "?"}</span></div>
                   }
                   <label className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/40 rounded-2xl cursor-pointer transition-all opacity-0 group-hover:opacity-100">
-                    <input type="file" accept="image/*" className="hidden" onChange={async (e) => { const file = e.target.files?.[0]; if (!file) return; const fd = new FormData(); fd.append("file", file); fd.append("type", "avatar"); await fetch("/api/upload", { method: "POST", body: fd }); refreshUser(); }} />
+                    <input type="file" accept="image/*" className="hidden" onChange={async (e) => { const file = e.target.files?.[0]; if (file) handleUpload(file, "avatar"); }} />
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" /><circle cx="12" cy="13" r="4" /></svg>
                   </label>
                   {user.isOnline && <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4"><span className="animate-ping absolute h-full w-full rounded-full bg-emerald-400 opacity-75" /><span className="relative rounded-full h-4 w-4 bg-emerald-500 border-2 border-white" /></span>}
@@ -321,6 +340,14 @@ export function DashboardContent() {
                   {icons.pencil} Edit Profile
                 </button>
               </div>
+
+              {/* Upload/save error banner */}
+              {uploadError && (
+                <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-xl flex items-center justify-between gap-3">
+                  <p className="text-xs text-red-700 font-medium">{uploadError}</p>
+                  <button onClick={() => setUploadError("")} className="text-red-400 hover:text-red-600 shrink-0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" /></svg></button>
+                </div>
+              )}
 
               {/* Share URL bar */}
               {user.slug && (
