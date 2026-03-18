@@ -102,28 +102,65 @@ function BioLinksSection({ creator, light }: { creator: Creator; light?: boolean
     }).catch(() => {});
   }
 
+  // Detect platform from URL for icon
+  function getPlatform(url: string): string | null {
+    if (!url) return null;
+    const u = url.toLowerCase();
+    if (u.includes("instagram.com")) return "instagram";
+    if (u.includes("tiktok.com")) return "tiktok";
+    if (u.includes("youtube.com") || u.includes("youtu.be")) return "youtube";
+    if (u.includes("twitter.com") || u.includes("x.com")) return "twitter";
+    if (u.includes("linkedin.com")) return "linkedin";
+    if (u.includes("github.com")) return "github";
+    if (u.includes("twitch.tv")) return "twitch";
+    if (u.includes("spotify.com")) return "spotify";
+    if (u.includes("discord.gg") || u.includes("discord.com")) return "discord";
+    if (u.includes("pinterest.com")) return "pinterest";
+    if (u.includes("snapchat.com")) return "snapchat";
+    if (u.includes("kick.com")) return "kick";
+    if (u.includes("cal.com") || u.includes("calendly.com")) return "calendar";
+    return null;
+  }
+
+  const shape = btnClass(creator.linkBioButtonShape);
+
   return (
-    <div className="space-y-2.5 my-4">
-      {creator.bioLinks.filter(l => l.isVisible).map(link => (
-        <a
-          key={link.id}
-          href={link.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={() => trackClick(link.id)}
-          className={`group flex items-center gap-3 w-full px-4 py-3.5 transition-all hover:scale-[1.01] ${btnClass(creator.linkBioButtonShape)} ${cardCls(creator.linkBioCardStyle, !!light)}`}
-        >
-          {link.thumbnailUrl && (
-            <img src={link.thumbnailUrl} alt="" className="w-10 h-10 rounded-xl object-cover shrink-0" />
-          )}
-          <div className="flex-1 min-w-0 text-center">
-            <div className={`font-medium text-sm ${light ? "text-white" : "text-neutral-900"}`}>{link.title}</div>
-          </div>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={`shrink-0 ${light ? "text-white/30" : "text-neutral-300"} group-hover:translate-x-0.5 transition-transform`}>
-            <path d="M7 17L17 7M17 7H7M17 7v10" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </a>
-      ))}
+    <div className="space-y-3 my-5">
+      {creator.bioLinks.filter(l => l.isVisible).map(link => {
+        const platform = getPlatform(link.url);
+        return (
+          <a
+            key={link.id}
+            href={link.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => trackClick(link.id)}
+            className={`group flex items-center gap-3 w-full px-5 py-4 transition-all duration-200 hover:scale-[1.02] hover:shadow-lg ${shape} ${light
+              ? "bg-white/[0.08] backdrop-blur-md border border-white/[0.12] hover:bg-white/[0.14]"
+              : "bg-white border border-neutral-200/80 hover:border-neutral-300 shadow-sm"
+            }`}
+          >
+            {link.thumbnailUrl ? (
+              <img src={link.thumbnailUrl} alt="" className="w-10 h-10 rounded-xl object-cover shrink-0" />
+            ) : platform ? (
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${light ? "bg-white/10" : "bg-neutral-100"}`}>
+                {platform === "calendar" ? (
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={light ? "white" : "#555"} strokeWidth="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18" strokeLinecap="round"/></svg>
+                ) : (
+                  <PlatformIcon platform={platform} size={18} className={light ? "text-white/70" : "text-neutral-500"} />
+                )}
+              </div>
+            ) : null}
+            <div className="flex-1 min-w-0">
+              <div className={`font-semibold text-sm ${light ? "text-white" : "text-neutral-900"}`}>{link.title}</div>
+              <div className={`text-[11px] mt-0.5 truncate ${light ? "text-white/30" : "text-neutral-400"}`}>{link.url.replace(/^https?:\/\/(www\.)?/, '').split('/')[0]}</div>
+            </div>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={`shrink-0 transition-all duration-200 ${light ? "text-white/20 group-hover:text-white/50" : "text-neutral-300 group-hover:text-neutral-500"} group-hover:translate-x-0.5`}>
+              <path d="M7 17L17 7M17 7H7M17 7v10" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </a>
+        );
+      })}
     </div>
   );
 }
@@ -182,12 +219,19 @@ function Socials({ creator, light, shape = "circle" }: { creator: Creator; light
    Service card — shared
    ══════════════════════════════════════════════════════ */
 function ServiceCard({ service, creator, light, accent }: { service: any; creator: Creator; light?: boolean; accent?: string }) {
-  const card = cardCls(creator.linkBioCardStyle, !!light);
   const btn = btnClass(creator.linkBioButtonShape);
   return (
-    <a href={`/creators/${creator.slug}`} className={`block w-full ${btn} px-5 py-4 text-center transition-all hover:scale-[1.01] ${card}`}>
-      <div className={`font-medium text-[15px] ${light ? "text-white" : "text-neutral-900"}`}>{service.title}</div>
-      <div className={`text-xs mt-0.5 ${light ? "text-white/40" : "text-neutral-400"}`}>{priceLabel(service.price, service.deliveryDays)}</div>
+    <a href={`/creators/${creator.slug}`} className={`group block w-full ${btn} px-5 py-4 transition-all duration-200 hover:scale-[1.02] hover:shadow-lg ${light
+      ? "bg-white/[0.06] backdrop-blur-md border border-white/[0.10] hover:bg-white/[0.12]"
+      : "bg-white border border-neutral-200/80 shadow-sm hover:border-neutral-300"
+    }`}>
+      <div className="flex items-center justify-between">
+        <div>
+          <div className={`font-semibold text-sm ${light ? "text-white" : "text-neutral-900"}`}>{service.title}</div>
+          {service.description && <div className={`text-[11px] mt-0.5 line-clamp-1 ${light ? "text-white/30" : "text-neutral-400"}`}>{service.description}</div>}
+        </div>
+        <div className={`text-sm font-bold shrink-0 ml-3 ${light ? "text-white" : "text-neutral-900"}`}>{priceLabel(service.price, service.deliveryDays)}</div>
+      </div>
     </a>
   );
 }
@@ -196,10 +240,11 @@ function ServiceCard({ service, creator, light, accent }: { service: any; creato
    CTA button — shared
    ══════════════════════════════════════════════════════ */
 function CTAButton({ creator, light, accent }: { creator: Creator; light?: boolean; accent?: string }) {
+  const ac = accent || creator.linkBioAccent || "#171717";
   return (
     <a href={`/creators/${creator.slug}`}
-      className={`block w-full mt-6 font-semibold text-sm text-center rounded-full py-3.5 transition-all shadow-lg ${light ? "bg-white text-neutral-900 hover:bg-neutral-100" : "bg-neutral-900 text-white hover:opacity-90"}`}
-      style={accent ? { background: accent, color: "#fff" } : {}}>
+      className="block w-full mt-8 font-semibold text-sm text-center rounded-2xl py-4 transition-all duration-200 hover:scale-[1.02] hover:shadow-xl shadow-lg text-white"
+      style={{ background: ac }}>
       View Full Profile
     </a>
   );
@@ -558,7 +603,6 @@ function TemplateSplit({ creator }: { creator: Creator }) {
             {creator.services.length > 0 && <div className="mb-6"><h2 className="text-xs font-bold text-neutral-900 uppercase tracking-wider mb-3">Services</h2><div className="space-y-2">{creator.services.map(s => <ServiceCard key={s.id} service={s} creator={creator} />)}</div></div>}
             {creator.calendarEnabled && <div className="mb-6"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
             {creator.portfolio.length > 0 && <div className="mb-6"><h2 className="text-xs font-bold text-neutral-900 uppercase tracking-wider mb-3">Work</h2><div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 snap-x">{creator.portfolio.slice(0, 8).map(p => <div key={p.id} className="w-28 h-28 sm:w-32 sm:h-32 rounded-2xl overflow-hidden bg-neutral-100 shrink-0 snap-start">{p.image ? <img src={p.image} alt={p.title} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-neutral-300 text-[10px]">{p.title}</div>}</div>)}</div></div>}
-            {creator.calendarEnabled && <div className="my-4"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
             {isEmpty && <EmptyState />}
             {!isEmpty && <CTAButton creator={creator} />}
             <Branding />
