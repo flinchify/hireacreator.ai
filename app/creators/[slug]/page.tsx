@@ -111,8 +111,9 @@ export default async function CreatorProfilePage({
           <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
         </div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="relative -mt-16 sm:-mt-20 flex flex-col sm:flex-row sm:items-end sm:gap-6 pb-8 sm:pb-10">
-            <div className="relative group">
+          {/* Avatar — overlaps the banner */}
+          <div className="relative -mt-16 sm:-mt-20">
+            <div className="relative group inline-block">
               {creator.avatar ? (
                 <img
                   src={creator.avatar}
@@ -133,7 +134,11 @@ export default async function CreatorProfilePage({
                 </span>
               )}
             </div>
-            <div className="mt-4 sm:mt-0 sm:pb-2 sm:mb-2 flex-1 min-w-0">
+          </div>
+
+          {/* Name + Info — clearly below banner with gap */}
+          <div className="flex flex-col sm:flex-row sm:items-start sm:gap-6 pt-5 sm:pt-6 pb-8 sm:pb-10">
+            <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
                 <h1 className="font-display text-2xl sm:text-3xl font-bold text-neutral-900">
                   {creator.name}
@@ -192,7 +197,7 @@ export default async function CreatorProfilePage({
                 </div>
               )}
             </div>
-            <div className="flex flex-col gap-3 sm:items-end">
+            <div className="flex flex-col gap-3 sm:items-end mt-4 sm:mt-0">
               <CreatorHeroActions
                 hasServices={creator.services.length > 0}
                 allowMessages={creator.allowMessages}
