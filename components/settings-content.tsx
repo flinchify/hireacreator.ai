@@ -563,7 +563,12 @@ function PlanTab({ settings }: { settings: Settings }) {
           <p className="text-xs text-neutral-500 mb-4">Update payment method, cancel, or change plan.</p>
           <div className="flex gap-2">
             <Link href="/pricing"><Button variant="outline" size="sm">Change Plan</Button></Link>
-            <Button variant="outline" size="sm" className="text-red-600 border-red-200 hover:bg-red-50">Cancel Plan</Button>
+            <Button variant="outline" size="sm" className="text-red-600 border-red-200 hover:bg-red-50" onClick={async () => {
+              const res = await fetch("/api/billing/portal", { method: "POST" });
+              const data = await res.json();
+              if (data.url) window.location.href = data.url;
+              else alert(data.message || "Could not open billing portal");
+            }}>Cancel Plan</Button>
           </div>
         </Card>
       )}
