@@ -237,8 +237,8 @@ export function DashboardContent() {
   const bioUrl = `hireacreator.ai/u/${user.slug}`;
 
   return (
-    <div className="min-h-screen bg-[#f8f8fa] pt-16">
-      <div className="flex">
+    <div className="min-h-screen bg-[#f8f8fa]">
+      <div className="flex pt-16">
 
         {/* ═══ LEFT SIDEBAR (desktop only) ═══ */}
         <aside className="hidden lg:flex flex-col w-[220px] shrink-0 border-r border-neutral-200 bg-white min-h-[calc(100vh-4rem)] sticky top-16">
@@ -282,7 +282,7 @@ export function DashboardContent() {
           {/* ─── Profile Header ─── */}
           <div className="bg-white border-b border-neutral-200">
             {/* Cover */}
-            <div className="relative h-36 sm:h-44">
+            <div className="relative h-40 sm:h-48">
               {user.cover ? <img src={user.cover} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full bg-gradient-to-br from-neutral-200 via-neutral-100 to-neutral-300" />}
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
               <label className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-black/40 backdrop-blur-sm border border-white/20 rounded-full hover:bg-black/60 transition-all cursor-pointer">
@@ -292,21 +292,24 @@ export function DashboardContent() {
             </div>
 
             <div className="max-w-4xl mx-auto px-6">
-              {/* Avatar + Name row */}
-              <div className="flex items-end gap-5 -mt-12">
+              {/* Avatar row — avatar overlaps cover by half */}
+              <div className="flex items-end gap-5 -mt-10 relative z-10">
                 <div className="relative group shrink-0">
                   {user.avatar
-                    ? <img src={user.avatar} alt={user.name} className="w-24 h-24 rounded-2xl border-4 border-white object-cover shadow-lg" />
-                    : <div className="w-24 h-24 rounded-2xl border-4 border-white bg-gradient-to-br from-neutral-100 to-neutral-200 flex items-center justify-center shadow-lg"><span className="text-2xl font-bold text-neutral-400">{user.name?.charAt(0) || "?"}</span></div>
+                    ? <img src={user.avatar} alt={user.name} className="w-20 h-20 rounded-2xl border-[3px] border-white object-cover shadow-lg" />
+                    : <div className="w-20 h-20 rounded-2xl border-[3px] border-white bg-gradient-to-br from-neutral-100 to-neutral-200 flex items-center justify-center shadow-lg"><span className="text-xl font-bold text-neutral-400">{user.name?.charAt(0) || "?"}</span></div>
                   }
                   <label className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/40 rounded-2xl cursor-pointer transition-all opacity-0 group-hover:opacity-100">
                     <input type="file" accept="image/*" className="hidden" onChange={async (e) => { const file = e.target.files?.[0]; if (!file) return; const fd = new FormData(); fd.append("file", file); fd.append("type", "avatar"); await fetch("/api/upload", { method: "POST", body: fd }); refreshUser(); }} />
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" /><circle cx="12" cy="13" r="4" /></svg>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" /><circle cx="12" cy="13" r="4" /></svg>
                   </label>
                   {user.isOnline && <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4"><span className="animate-ping absolute h-full w-full rounded-full bg-emerald-400 opacity-75" /><span className="relative rounded-full h-4 w-4 bg-emerald-500 border-2 border-white" /></span>}
                 </div>
+              </div>
 
-                <div className="flex-1 min-w-0 pb-1">
+              {/* Name + headline — clearly below cover */}
+              <div className="flex items-start justify-between gap-4 mt-3 mb-1">
+                <div className="min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <h1 className="font-display text-xl font-bold text-neutral-900 truncate">{user.name}</h1>
                     {user.isPro && <span className="px-2 py-0.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[9px] font-bold uppercase tracking-wider rounded-full shadow-sm">PRO</span>}
@@ -314,14 +317,14 @@ export function DashboardContent() {
                   {user.headline && <p className="text-sm text-neutral-500 truncate mt-0.5">{user.headline}</p>}
                 </div>
 
-                <button onClick={() => setEditProfile(true)} className="hidden sm:flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-neutral-700 bg-neutral-100 rounded-xl hover:bg-neutral-200 transition-colors shrink-0 mb-1">
+                <button onClick={() => setEditProfile(true)} className="hidden sm:flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-neutral-700 bg-neutral-100 rounded-xl hover:bg-neutral-200 transition-colors shrink-0">
                   {icons.pencil} Edit Profile
                 </button>
               </div>
 
               {/* Share URL bar */}
               {user.slug && (
-                <div className="flex items-center gap-2 mt-5 mb-5">
+                <div className="flex items-center gap-2 mt-4 mb-4">
                   <div className="flex-1 flex items-center gap-2 bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-2.5">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-neutral-300 shrink-0"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" strokeLinecap="round"/></svg>
                     <span className="text-sm text-neutral-500 truncate">{bioUrl}</span>
@@ -444,34 +447,30 @@ export function DashboardContent() {
                   )}
                 </div>
 
-                {/* Right — Preview (desktop only) */}
+                {/* Right — Quick Actions (desktop only) */}
                 <div className="hidden lg:block">
-                  <div className="sticky top-24">
-                    <div className="flex items-center justify-between mb-3">
-                      <h3 className="text-sm font-bold text-neutral-900">Preview</h3>
-                      {user.slug && <a href={`/u/${user.slug}`} target="_blank" className="text-[11px] text-neutral-400 hover:text-neutral-600 font-medium flex items-center gap-1">Open {icons.external}</a>}
-                    </div>
-                    {/* Phone frame */}
-                    <div className="bg-neutral-900 rounded-[2.5rem] p-2 shadow-2xl shadow-black/10">
-                      <div className="bg-neutral-900 rounded-[2rem] overflow-hidden">
-                        {/* Notch */}
-                        <div className="flex items-center justify-center pt-2 pb-1 bg-neutral-900">
-                          <div className="w-20 h-5 bg-black rounded-full" />
-                        </div>
-                        {/* Preview iframe */}
-                        <div className="bg-white h-[520px] overflow-hidden">
-                          {user.slug ? (
-                            <iframe src={`/u/${user.slug}`} className="w-[375px] h-[812px] border-0 origin-top-left" style={{ transform: "scale(0.76)", width: "395px" }} title="Preview" />
-                          ) : (
-                            <div className="h-full flex items-center justify-center text-neutral-300 text-sm">Set up your profile to see a preview</div>
-                          )}
-                        </div>
-                        {/* Home indicator */}
-                        <div className="flex items-center justify-center py-2 bg-neutral-900">
-                          <div className="w-28 h-1 bg-neutral-600 rounded-full" />
-                        </div>
-                      </div>
-                    </div>
+                  <div className="sticky top-24 space-y-3">
+                    <h3 className="text-sm font-bold text-neutral-900 mb-3">Quick Actions</h3>
+                    {user.slug && (
+                      <a href={`/u/${user.slug}`} target="_blank" className="flex items-center gap-3 bg-white rounded-2xl border border-neutral-200/60 p-4 hover:border-neutral-300 hover:shadow-sm transition-all group">
+                        <div className="w-10 h-10 rounded-xl bg-neutral-100 flex items-center justify-center shrink-0 text-neutral-500 group-hover:bg-neutral-200 transition-colors">{icons.external}</div>
+                        <div className="flex-1 min-w-0"><div className="text-sm font-semibold text-neutral-900">View Link in Bio</div><div className="text-xs text-neutral-400 mt-0.5">See your live page</div></div>
+                      </a>
+                    )}
+                    {user.slug && (
+                      <a href={`/u/${user.slug}/edit`} className="flex items-center gap-3 bg-white rounded-2xl border border-neutral-200/60 p-4 hover:border-neutral-300 hover:shadow-sm transition-all group">
+                        <div className="w-10 h-10 rounded-xl bg-neutral-100 flex items-center justify-center shrink-0 text-neutral-500 group-hover:bg-neutral-200 transition-colors">{icons.pencil}</div>
+                        <div className="flex-1 min-w-0"><div className="text-sm font-semibold text-neutral-900">Edit Page</div><div className="text-xs text-neutral-400 mt-0.5">Templates, links, design</div></div>
+                      </a>
+                    )}
+                    <a href="/animations" className="flex items-center gap-3 bg-white rounded-2xl border border-neutral-200/60 p-4 hover:border-neutral-300 hover:shadow-sm transition-all group">
+                      <div className="w-10 h-10 rounded-xl bg-neutral-100 flex items-center justify-center shrink-0 text-neutral-500 group-hover:bg-neutral-200 transition-colors">{icons.sparkle}</div>
+                      <div className="flex-1 min-w-0"><div className="text-sm font-semibold text-neutral-900">Animations</div><div className="text-xs text-neutral-400 mt-0.5">Premium intro effects</div></div>
+                    </a>
+                    <a href="/messages" className="flex items-center gap-3 bg-white rounded-2xl border border-neutral-200/60 p-4 hover:border-neutral-300 hover:shadow-sm transition-all group">
+                      <div className="w-10 h-10 rounded-xl bg-neutral-100 flex items-center justify-center shrink-0 text-neutral-500 group-hover:bg-neutral-200 transition-colors">{icons.messages}</div>
+                      <div className="flex-1 min-w-0"><div className="text-sm font-semibold text-neutral-900">Messages</div><div className="text-xs text-neutral-400 mt-0.5">Chat with brands</div></div>
+                    </a>
                   </div>
                 </div>
               </div>
@@ -479,36 +478,16 @@ export function DashboardContent() {
 
             {/* LINKS */}
             {section === "links" && (
-              <div className="grid lg:grid-cols-[1fr,320px] gap-8">
-                <div>
-                  <div className="flex items-center justify-between mb-5">
-                    <div>
-                      <h2 className="text-lg font-bold text-neutral-900">Your Links</h2>
-                      <p className="text-xs text-neutral-400 mt-0.5">Add links to your link-in-bio page. Drag to reorder.</p>
-                    </div>
-                    {user.slug && <a href={`/u/${user.slug}/edit`} className="px-4 py-2 text-xs font-semibold text-white bg-neutral-900 rounded-xl hover:bg-neutral-800 transition-colors">Open Editor</a>}
+              <div className="max-w-2xl">
+                <div className="flex items-center justify-between mb-5">
+                  <div>
+                    <h2 className="text-lg font-bold text-neutral-900">Your Links</h2>
+                    <p className="text-xs text-neutral-400 mt-0.5">Add links to your link-in-bio page. Drag to reorder.</p>
                   </div>
-                  <div className="bg-white rounded-2xl border border-neutral-200/60 p-5">
-                    <LinkManager />
-                  </div>
+                  {user.slug && <a href={`/u/${user.slug}/edit`} className="px-4 py-2 text-xs font-semibold text-white bg-neutral-900 rounded-xl hover:bg-neutral-800 transition-colors">Open Editor</a>}
                 </div>
-
-                {/* Preview */}
-                <div className="hidden lg:block">
-                  <div className="sticky top-24">
-                    <div className="flex items-center justify-between mb-3">
-                      <h3 className="text-sm font-bold text-neutral-900">Preview</h3>
-                    </div>
-                    <div className="bg-neutral-900 rounded-[2.5rem] p-2 shadow-2xl shadow-black/10">
-                      <div className="bg-neutral-900 rounded-[2rem] overflow-hidden">
-                        <div className="flex items-center justify-center pt-2 pb-1 bg-neutral-900"><div className="w-20 h-5 bg-black rounded-full" /></div>
-                        <div className="bg-white h-[520px] overflow-hidden">
-                          {user.slug ? <iframe src={`/u/${user.slug}`} className="w-[375px] h-[812px] border-0 origin-top-left" style={{ transform: "scale(0.76)", width: "395px" }} title="Preview" /> : <div className="h-full flex items-center justify-center text-neutral-300 text-sm">No preview</div>}
-                        </div>
-                        <div className="flex items-center justify-center py-2 bg-neutral-900"><div className="w-28 h-1 bg-neutral-600 rounded-full" /></div>
-                      </div>
-                    </div>
-                  </div>
+                <div className="bg-white rounded-2xl border border-neutral-200/60 p-5">
+                  <LinkManager />
                 </div>
               </div>
             )}
