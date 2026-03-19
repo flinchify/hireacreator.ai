@@ -1011,7 +1011,7 @@ function SlugEditor({ user, onChanged }: { user: User; onChanged: () => void }) 
 
 /* ═══ Main Dashboard ═══ */
 export function DashboardContent() {
-  const { user, loading, refreshUser } = useAuth();
+  const { user, loading, refreshUser, logout } = useAuth();
   const [section, setSection] = useState<Section>("overview");
   const [editProfile, setEditProfile] = useState(false);
   const [editSocials, setEditSocials] = useState(false);
@@ -1507,6 +1507,20 @@ export function DashboardContent() {
                     </Link>
                   )
                 ))}
+
+                {/* Sign Out */}
+                <button
+                  onClick={() => { logout(); }}
+                  className="flex items-center gap-4 bg-white rounded-2xl border border-red-100 p-4 hover:border-red-200 hover:bg-red-50 transition-all group w-full text-left mt-4"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center shrink-0 text-red-500 group-hover:bg-red-100 transition-colors">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" /></svg>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-semibold text-red-600">Sign Out</div>
+                    <div className="text-xs text-red-400 mt-0.5">Log out of your account</div>
+                  </div>
+                </button>
               </div>
             )}
           </div>
