@@ -15,6 +15,7 @@ async function getUser() {
 }
 
 export async function GET() {
+  try {
   const user = await getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -116,4 +117,8 @@ export async function GET() {
       date: r.date,
     })),
   });
+  } catch (e) {
+    console.error("[Earnings] Error:", e);
+    return NextResponse.json({ totalEarned: 0, thisMonth: 0, pending: 0, available: 0, monthlyData: [], recentBookings: [] });
+  }
 }

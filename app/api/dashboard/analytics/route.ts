@@ -15,6 +15,7 @@ async function getUser() {
 }
 
 export async function GET() {
+  try {
   const user = await getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -106,4 +107,8 @@ export async function GET() {
     },
     topReferrers: topReferrers.map((r: any) => ({ domain: r.domain, count: r.count })),
   });
+  } catch (e) {
+    console.error("[Analytics] Error:", e);
+    return NextResponse.json({ views: { total: 0, daily: [] }, clicks: { total: 0, byType: [] }, enquiries: { total: 0, daily: [] }, topReferrers: [] });
+  }
 }
