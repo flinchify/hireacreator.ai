@@ -221,7 +221,7 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
     return <button className="w-full py-2.5 text-[11px] font-bold" style={altStyle || { borderRadius: btnRadius, background: dark ? "#fff" : "#171717", color: dark ? "#171717" : "#fff" }}>{text || "View Full Profile"}</button>;
   }
 
-  // Shared bg layers
+  // Shared bg layers — renders media + overlay using user's chosen color
   function BgLayers() {
     return <>
       {settings.bgType === "video" && settings.bgVideo && <video src={settings.bgVideo} autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover" />}
@@ -230,7 +230,11 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
           {settings.bgImages.slice(0, 10).map((img, i) => <div key={i} className="overflow-hidden"><img src={img} alt="" className="w-full h-full object-cover" onError={e => (e.currentTarget.style.display = "none")} /></div>)}
         </div>
       )}
-      {hasBgMedia && <div className="absolute inset-0 bg-black/40" />}
+      {hasBgMedia && (
+        hasStoredColor
+          ? <div className="absolute inset-0" style={getOverlayStyle()} />
+          : <div className="absolute inset-0 bg-black/40" />
+      )}
     </>;
   }
 
@@ -259,7 +263,7 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
 
   /* ═══ GLASS — Full-bleed gradient, frosted cards ═══ */
   if (tpl === "glass") return (
-    <div className="relative w-full min-h-full overflow-hidden" style={{ fontFamily, background: (settings.bgType === "gradient" && settings.bgValue) ? settings.bgValue : (settings.bgType === "solid" && settings.bgValue) ? settings.bgValue : "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" }}>
+    <div className="relative w-full min-h-full overflow-hidden" style={{ fontFamily, background: hasStoredColor ? storedBgValue : "linear-gradient(135deg, #667eea 0%, #764ba2 100%)", ...getBgStyle() }}>
       <BgLayers />
       <div className="absolute top-10 right-4 w-24 h-24 rounded-full bg-pink-400/20 blur-2xl" />
       <div className="absolute bottom-10 left-2 w-32 h-32 rounded-full bg-blue-400/15 blur-3xl" />
@@ -280,7 +284,7 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
 
   /* ═══ BOLD — Dark, big square avatar, accent accent accent ═══ */
   if (tpl === "bold") return (
-    <div className="relative w-full min-h-full bg-neutral-950 overflow-hidden" style={{ fontFamily, ...((settings.bgType !== "gradient" && settings.bgType !== "solid") ? {} : getBgStyle()) }}>
+    <div className="relative w-full min-h-full bg-neutral-950 overflow-hidden" style={{ fontFamily, ...getBgStyle() }}>
       <BgLayers />
       <div className="absolute top-0 right-0 w-1/3 h-full -skew-x-12 translate-x-8" style={{ background: `${accent}10` }} />
       <div className="relative z-10 flex flex-col items-center pt-8 px-5 pb-8 max-w-[440px] mx-auto">
@@ -302,7 +306,7 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
 
   /* ═══ NEON — Black, glowing ring, scanlines ═══ */
   if (tpl === "neon") return (
-    <div className="relative w-full min-h-full bg-black overflow-hidden" style={{ fontFamily }}>
+    <div className="relative w-full min-h-full bg-black overflow-hidden" style={{ fontFamily, ...getBgStyle() }}>
       <BgLayers />
       <div className="absolute inset-0 opacity-[0.03]" style={{backgroundImage:"repeating-linear-gradient(0deg, " + accent + " 0px, transparent 1px, transparent 4px)"}}/>
       <div className="absolute top-2 left-2 w-4 h-[1px]" style={{background:`${accent}50`}}/><div className="absolute top-2 left-2 w-[1px] h-4" style={{background:`${accent}50`}}/>
@@ -335,7 +339,7 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
 
   /* ═══ COLLAGE — Photo mosaic bg, frosted card ═══ */
   if (tpl === "collage") return (
-    <div className="relative w-full min-h-full overflow-hidden" style={{ fontFamily }}>
+    <div className="relative w-full min-h-full overflow-hidden" style={{ fontFamily, ...getBgStyle() }}>
       {settings.bgType === "photos" && settings.bgImages.length > 0 ? (
         <div className="absolute inset-[-5%] grid grid-cols-3 auto-rows-fr rotate-[-4deg] scale-110">
           {settings.bgImages.slice(0, 12).map((img, i) => <div key={i} className="overflow-hidden"><img src={img} alt="" className="w-full h-full object-cover brightness-[0.4] saturate-75" /></div>)}
@@ -343,7 +347,10 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
       ) : (
         <div className="absolute inset-0 bg-gradient-to-br from-neutral-900 to-neutral-950" />
       )}
-      <div className="absolute inset-0 bg-black/30" />
+      {hasStoredColor
+        ? <div className="absolute inset-0" style={{ background: storedBgValue, opacity: 0.5 }} />
+        : <div className="absolute inset-0 bg-black/30" />
+      }
       <div className="relative z-10 flex flex-col items-center pt-10 px-5 pb-8 max-w-[440px] mx-auto">
         <div className="w-full bg-black/30 rounded-2xl p-5 border border-white/10 flex flex-col items-center" style={{backdropFilter:"blur(12px)"}}>
           <Avatar size="w-14 h-14" shape="square" borderCol="rgba(255,255,255,0.2)" />
@@ -363,7 +370,7 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
 
   /* ═══ BENTO — Dark grid layout ═══ */
   if (tpl === "bento") return (
-    <div className="relative w-full min-h-full bg-neutral-950 p-3" style={{ fontFamily }}>
+    <div className="relative w-full min-h-full bg-neutral-950 p-3" style={{ fontFamily, ...getBgStyle() }}>
       <BgLayers />
       <div className="relative z-10 max-w-[440px] mx-auto grid grid-cols-4 gap-2 auto-rows-[60px]">
         {/* Identity card */}
@@ -399,7 +406,7 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
 
   /* ═══ SHOWCASE — Light, 2-col grid ═══ */
   if (tpl === "showcase") return (
-    <div className="relative w-full min-h-full bg-neutral-100 flex items-start justify-center sm:py-2 sm:px-2" style={{ fontFamily }}>
+    <div className="relative w-full min-h-full bg-neutral-100 flex items-start justify-center sm:py-2 sm:px-2" style={{ fontFamily, ...getBgStyle() }}>
       <BgLayers />
       <div className="relative z-10 w-full sm:max-w-[400px] bg-white sm:rounded-2xl shadow-xl overflow-hidden">
         <div className="px-4 pb-6 pt-6 text-center">
@@ -421,7 +428,7 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
 
   /* ═══ SPLIT — Left hero, right content ═══ */
   if (tpl === "split") return (
-    <div className="relative w-full min-h-full bg-white" style={{ fontFamily }}>
+    <div className="relative w-full min-h-full bg-white" style={{ fontFamily, ...getBgStyle() }}>
       <div className="min-h-full flex">
         <div className="w-[42%] relative">
           {creator.cover_url ? <img src={creator.cover_url} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full bg-gradient-to-b from-neutral-300 to-neutral-400" />}
@@ -455,7 +462,7 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
 
   /* ═══ AURORA — Animated gradient bg, centered, ethereal ═══ */
   if (tpl === "aurora") return (
-    <div className="relative w-full min-h-full overflow-hidden" style={{ fontFamily, background: "linear-gradient(135deg, #0f0c29, #302b63, #24243e)" }}>
+    <div className="relative w-full min-h-full overflow-hidden" style={{ fontFamily, background: hasStoredColor ? storedBgValue : "linear-gradient(135deg, #0f0c29, #302b63, #24243e)", ...getBgStyle() }}>
       <div className="absolute top-0 left-1/4 w-40 h-40 rounded-full bg-purple-500/20 blur-3xl" />
       <div className="absolute bottom-10 right-0 w-48 h-48 rounded-full bg-teal-400/15 blur-3xl" />
       <div className="absolute top-1/2 left-0 w-32 h-32 rounded-full bg-pink-500/10 blur-3xl" />
@@ -477,7 +484,7 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
 
   /* ═══ BRUTALIST — White bg, thick black borders, raw typography ═══ */
   if (tpl === "brutalist") return (
-    <div className="relative w-full min-h-full bg-white" style={{ fontFamily }}>
+    <div className="relative w-full min-h-full bg-white" style={{ fontFamily, ...getBgStyle() }}>
       <BgLayers />
       <div className="relative z-10 flex flex-col items-center pt-8 px-5 pb-8 max-w-[440px] mx-auto">
         <div className="w-20 h-20 border-[3px] border-black overflow-hidden">{avatar ? <img src={avatar} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full bg-neutral-100 flex items-center justify-center text-2xl font-black">{name[0]}</div>}</div>
@@ -498,7 +505,7 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
 
   /* ═══ SUNSET — Warm gradient, rounded everything ═══ */
   if (tpl === "sunset") return (
-    <div className="relative w-full min-h-full overflow-hidden" style={{ fontFamily, background: "linear-gradient(180deg, #ff6b6b 0%, #ee5a24 40%, #f39c12 100%)" }}>
+    <div className="relative w-full min-h-full overflow-hidden" style={{ fontFamily, background: hasStoredColor ? storedBgValue : "linear-gradient(180deg, #ff6b6b 0%, #ee5a24 40%, #f39c12 100%)", ...getBgStyle() }}>
       <BgLayers />
       <div className="relative z-10 flex flex-col items-center pt-10 px-5 pb-8 max-w-[440px] mx-auto">
         <Avatar size="w-16 h-16" borderCol="rgba(255,255,255,0.4)" />
@@ -517,7 +524,7 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
 
   /* ═══ TERMINAL — Hacker green-on-black, monospace ═══ */
   if (tpl === "terminal") return (
-    <div className="relative w-full min-h-full bg-[#0a0a0a] overflow-hidden" style={{ fontFamily: "'Space Grotesk', monospace" }}>
+    <div className="relative w-full min-h-full bg-[#0a0a0a] overflow-hidden" style={{ fontFamily: "'Space Grotesk', monospace", ...getBgStyle() }}>
       <div className="absolute inset-0 opacity-[0.03]" style={{backgroundImage:"repeating-linear-gradient(0deg, #00ff00 0px, transparent 1px, transparent 3px)"}}/>
       <BgLayers />
       <div className="relative z-10 flex flex-col items-center pt-8 px-5 pb-8 max-w-[440px] mx-auto">
@@ -540,7 +547,7 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
 
   /* ═══ PASTEL — Soft pastel bg, rounded cards, playful ═══ */
   if (tpl === "pastel") return (
-    <div className="relative w-full min-h-full" style={{ fontFamily, background: "linear-gradient(180deg, #fce4ec 0%, #e8eaf6 50%, #e0f7fa 100%)" }}>
+    <div className="relative w-full min-h-full" style={{ fontFamily, background: hasStoredColor ? storedBgValue : "linear-gradient(180deg, #fce4ec 0%, #e8eaf6 50%, #e0f7fa 100%)", ...getBgStyle() }}>
       <BgLayers />
       <div className="relative z-10 flex flex-col items-center pt-10 px-5 pb-8 max-w-[440px] mx-auto">
         <Avatar size="w-16 h-16" borderCol="#fff" />
@@ -559,7 +566,7 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
 
   /* ═══ MAGAZINE — Editorial, left-aligned, serif feel ═══ */
   if (tpl === "magazine") return (
-    <div className="relative w-full min-h-full bg-[#fafaf8]" style={{ fontFamily }}>
+    <div className="relative w-full min-h-full bg-[#fafaf8]" style={{ fontFamily, ...getBgStyle() }}>
       <BgLayers />
       <div className="relative z-10 max-w-[440px] mx-auto px-6 pt-8 pb-8">
         <div className="flex items-start gap-4 mb-6">
@@ -585,7 +592,7 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
 
   /* ═══ RETRO — 80s/synthwave, neon pink + purple ═══ */
   if (tpl === "retro") return (
-    <div className="relative w-full min-h-full overflow-hidden" style={{ fontFamily, background: "linear-gradient(180deg, #1a0533 0%, #2d1b69 50%, #0f0c29 100%)" }}>
+    <div className="relative w-full min-h-full overflow-hidden" style={{ fontFamily, background: hasStoredColor ? storedBgValue : "linear-gradient(180deg, #1a0533 0%, #2d1b69 50%, #0f0c29 100%)", ...getBgStyle() }}>
       {/* Grid floor */}
       <div className="absolute bottom-0 left-0 right-0 h-1/2 opacity-20" style={{backgroundImage:"linear-gradient(rgba(236,72,153,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(236,72,153,0.3) 1px, transparent 1px)", backgroundSize:"30px 30px", transform:"perspective(200px) rotateX(40deg)", transformOrigin:"bottom"}}/>
       <BgLayers />
@@ -608,7 +615,7 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
 
   /* ═══ MIDNIGHT — Deep navy, gold accents ═══ */
   if (tpl === "midnight") return (
-    <div className="relative w-full min-h-full bg-[#0a1628]" style={{ fontFamily }}>
+    <div className="relative w-full min-h-full bg-[#0a1628]" style={{ fontFamily, ...getBgStyle() }}>
       <BgLayers />
       <div className="relative z-10 flex flex-col items-center pt-10 px-5 pb-8 max-w-[440px] mx-auto">
         <Avatar size="w-16 h-16" borderCol="#d4a574" />
@@ -629,7 +636,7 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
 
   /* ═══ CLAY — Soft 3D clay/neumorphic, light bg ═══ */
   if (tpl === "clay") return (
-    <div className="relative w-full min-h-full bg-[#e8e4df]" style={{ fontFamily }}>
+    <div className="relative w-full min-h-full bg-[#e8e4df]" style={{ fontFamily, ...getBgStyle() }}>
       <BgLayers />
       <div className="relative z-10 flex flex-col items-center pt-10 px-5 pb-8 max-w-[440px] mx-auto">
         <div className="w-16 h-16 rounded-2xl overflow-hidden" style={{ boxShadow: "6px 6px 12px #c5c1bc, -6px -6px 12px #fff" }}>
@@ -652,7 +659,7 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
 
   /* ═══ GRADIENT MESH — Colorful mesh gradient bg ═══ */
   if (tpl === "gradient-mesh") return (
-    <div className="relative w-full min-h-full overflow-hidden" style={{ fontFamily, background: "#000" }}>
+    <div className="relative w-full min-h-full overflow-hidden" style={{ fontFamily, background: "#000", ...getBgStyle() }}>
       <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[50%] rounded-full bg-purple-600/40 blur-[80px]" />
       <div className="absolute top-[30%] right-[-10%] w-[50%] h-[40%] rounded-full bg-blue-500/30 blur-[80px]" />
       <div className="absolute bottom-[-10%] left-[20%] w-[50%] h-[40%] rounded-full bg-emerald-500/25 blur-[80px]" />
@@ -1006,6 +1013,41 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
                         </button>
                       </>
                     )}
+                  </div>
+                )}
+
+                {/* Overlay tint — shown when bgType is photos or video (image stores URL in bgValue) */}
+                {(settings.bgType === "photos" || settings.bgType === "video") && (
+                  <div>
+                    <h3 className="text-sm font-bold text-neutral-900 mb-1">Overlay Color</h3>
+                    <p className="text-[10px] text-neutral-400 mb-3">Your color will overlay on top of your background</p>
+                    <div className="space-y-3">
+                      <div>
+                        <div className="text-[11px] font-medium text-neutral-500 mb-2">Gradients</div>
+                        <div className="grid grid-cols-6 gap-2">
+                          {GRADIENTS.slice(0, 12).map((g, i) => (
+                            <button key={i} onClick={() => save({ bgValue: g })} className={`aspect-square rounded-xl transition-all hover:scale-105 ${settings.bgValue === g ? "ring-2 ring-neutral-900 ring-offset-2" : ""}`} style={{ background: g }} />
+                          ))}
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-[11px] font-medium text-neutral-500 mb-2">Solid Colors</div>
+                        <div className="flex flex-wrap gap-2">
+                          {["#171717", "#0a0a0a", "#1e293b", "#dc2626", "#2563eb", "#16a34a", "#6c5ce7", "#ec4899", "#f39c12"].map(c => (
+                            <button key={c} onClick={() => save({ bgValue: c })} className={`w-8 h-8 rounded-xl border transition-all hover:scale-105 ${settings.bgValue === c ? "ring-2 ring-neutral-900 ring-offset-2" : "border-neutral-200"}`} style={{ background: c }} />
+                          ))}
+                        </div>
+                        <div className="mt-2 flex items-center gap-2">
+                          <input type="color" value={settings.bgValue && !settings.bgValue.startsWith("http") && !settings.bgValue.startsWith("linear") ? settings.bgValue : "#171717"} onChange={e => save({ bgValue: e.target.value })} className="w-8 h-8 rounded-lg cursor-pointer border-0" />
+                          <span className="text-[10px] text-neutral-400">Custom overlay color</span>
+                        </div>
+                      </div>
+                      {settings.bgValue && !settings.bgValue.startsWith("http") && (
+                        <button onClick={() => save({ bgValue: "" })} className="w-full py-2 text-xs font-medium text-neutral-500 hover:text-neutral-700 hover:bg-neutral-50 rounded-lg transition-colors">
+                          Remove overlay (use default)
+                        </button>
+                      )}
+                    </div>
                   </div>
                 )}
               </div>
