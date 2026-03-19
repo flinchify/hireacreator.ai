@@ -116,7 +116,7 @@ export function Header({ theme = "light" }: { theme?: HeaderTheme }) {
   const t = themes[theme];
 
   return (
-    <header className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-5xl">
+    <header className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-1rem)] sm:w-[calc(100%-2rem)] max-w-5xl">
       <nav className={`flex items-center justify-between px-6 py-3 rounded-2xl border ${t.nav}`}>
         <div className="hidden lg:flex items-center gap-0.5">
           {user?.role === "brand" ? (

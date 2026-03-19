@@ -78,7 +78,7 @@ export function ForCreatorsContent() {
             </h2>
           </div>
         </AnimateOnScroll>
-        <StaggerChildren className="grid md:grid-cols-3 gap-4" staggerMs={150}>
+        <StaggerChildren className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4" staggerMs={150}>
           <div className="aos-stagger-item bg-neutral-50 rounded-2xl p-8 border border-neutral-100">
             <div className="text-2xl mb-4">&#x1F4AC;</div>
             <h3 className="font-display font-bold text-neutral-900 mb-2">&ldquo;DM me for rates&rdquo;</h3>

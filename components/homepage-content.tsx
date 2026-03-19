@@ -312,7 +312,7 @@ export function HomepageContent({
             </h2>
           </AnimateOnScroll>
 
-          <StaggerChildren className="grid md:grid-cols-3 gap-6" staggerMs={150}>
+          <StaggerChildren className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6" staggerMs={150}>
             {/* Card 1 — Profile with real screenshots */}
             <div className="aos-stagger-item group bg-white rounded-2xl border border-neutral-200 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
               <div className="relative p-6 pb-4 bg-gradient-to-br from-neutral-50/80 to-neutral-100/60">

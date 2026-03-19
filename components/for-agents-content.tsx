@@ -79,7 +79,7 @@ export function ForAgentsContent() {
             </h2>
           </div>
         </AnimateOnScroll>
-        <StaggerChildren className="grid md:grid-cols-3 gap-4" staggerMs={150}>
+        <StaggerChildren className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4" staggerMs={150}>
           {[
             {
               num: "01",
@@ -321,7 +321,7 @@ export function ForAgentsContent() {
             </h2>
           </div>
 
-          <StaggerChildren className="grid md:grid-cols-3 gap-4" staggerMs={150}>
+          <StaggerChildren className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4" staggerMs={150}>
             {[
               {
                 name: "Free",

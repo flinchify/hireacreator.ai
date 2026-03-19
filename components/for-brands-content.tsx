@@ -173,7 +173,7 @@ export function ForBrandsContent() {
           </div>
         </AnimateOnScroll>
 
-        <StaggerChildren className="grid md:grid-cols-3 gap-6" staggerMs={150}>
+        <StaggerChildren className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6" staggerMs={150}>
           {/* Step 1 */}
           <div className="aos-stagger-item group bg-white border border-neutral-200 rounded-2xl p-8 hover:border-neutral-300 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
             <div className="flex items-center gap-4 mb-6">
@@ -239,7 +239,7 @@ export function ForBrandsContent() {
             </p>
           </div>
 
-          <StaggerChildren className="grid md:grid-cols-3 gap-6 mb-16" staggerMs={120}>
+          <StaggerChildren className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-16" staggerMs={120}>
             {[
               {
                 icon: <ApiIcon />,
