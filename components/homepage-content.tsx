@@ -165,20 +165,12 @@ export function HomepageContent({
 
   return (
     <>
-      {/* Top gradient wash — behind header */}
-      <div className="fixed top-0 left-0 right-0 h-24 bg-gradient-to-b from-black/[0.04] to-transparent z-40 pointer-events-none" />
+      {/* Top gradient wash removed — was causing visual artifacts on mobile */}
 
       {/* ═══════════════════ HERO ═══════════════════ */}
       <section className="relative pt-32 sm:pt-52 pb-16 sm:pb-28 overflow-hidden">
-        {/* Aurora mesh background — blue tones only */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-b from-neutral-50/80 via-neutral-50/40 to-white" />
-          <div className="absolute top-0 left-1/4 w-[600px] h-[600px] rounded-full bg-neutral-200/30 blur-[120px] animate-aurora" />
-          <div className="absolute top-20 right-1/4 w-[500px] h-[500px] rounded-full bg-neutral-200/25 blur-[100px] animate-aurora-2" />
-          <div className="absolute -bottom-20 left-1/2 w-[700px] h-[400px] rounded-full bg-neutral-100/20 blur-[120px] animate-aurora-3" />
-          {/* Dot grid overlay */}
-          <div className="absolute inset-0 dot-grid opacity-40" />
-        </div>
+        {/* Clean white background */}
+        <div className="absolute inset-0 bg-white" />
 
         {/* Floating platform logos — scattered behind text */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden hidden sm:block" aria-hidden="true">
