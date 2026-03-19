@@ -7,6 +7,8 @@ import { LinkManager } from "./link-manager";
 import { PlatformIcon } from "./icons/platforms";
 import { MessagesContent } from "./messages-content";
 import { AnimationsContent } from "./animations-content";
+import { AnalyticsContent } from "./analytics-content";
+import { EarningsContent } from "./earnings-content";
 import Link from "next/link";
 
 /* ═══ Icons ═══ */
@@ -337,17 +339,22 @@ function ProductsManager() {
 }
 
 /* ═══ Sidebar nav items ═══ */
-type Section = "overview" | "links" | "services" | "products" | "calendar" | "bookings" | "earn" | "messages" | "animations" | "settings";
+type Section = "overview" | "links" | "services" | "products" | "calendar" | "bookings" | "earn" | "analytics" | "earnings" | "messages" | "animations" | "templates" | "verification" | "testimonials" | "settings";
 
 const NAV_MAIN = [
   { id: "overview" as Section, label: "Overview", icon: icons.overview },
   { id: "links" as Section, label: "My Bio Link", icon: icons.link },
   { id: "services" as Section, label: "Services", icon: icons.services },
   { id: "products" as Section, label: "Products", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z" strokeLinecap="round" strokeLinejoin="round"/><line x1="7" y1="7" x2="7.01" y2="7" strokeLinecap="round"/></svg> },
+  { id: "testimonials" as Section, label: "Testimonials", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z" strokeLinecap="round" strokeLinejoin="round"/></svg> },
   { id: "calendar" as Section, label: "Calendar", icon: icons.calendar },
   { id: "bookings" as Section, label: "Bookings", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2" strokeLinecap="round"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M9 14l2 2 4-4" strokeLinecap="round" strokeLinejoin="round"/></svg> },
   { id: "earn" as Section, label: "Earn", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" strokeLinecap="round" strokeLinejoin="round"/></svg> },
+  { id: "analytics" as Section, label: "Analytics", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M18 20V10M12 20V4M6 20v-6" strokeLinecap="round" strokeLinejoin="round"/></svg> },
+  { id: "earnings" as Section, label: "Earnings", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M2 17l4-4 4 4 4-6 4 2 4-6" strokeLinecap="round" strokeLinejoin="round"/><rect x="2" y="3" width="20" height="18" rx="2" strokeLinecap="round"/></svg> },
   { id: "messages" as Section, label: "Messages", icon: icons.messages },
+  { id: "templates" as Section, label: "Templates", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" strokeLinecap="round" strokeLinejoin="round"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" strokeLinecap="round" strokeLinejoin="round"/></svg> },
+  { id: "verification" as Section, label: "Verification", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" strokeLinecap="round" strokeLinejoin="round"/></svg> },
   { id: "animations" as Section, label: "Animations", icon: icons.sparkle },
 ];
 
@@ -890,39 +897,10 @@ export function DashboardContent() {
             )}
 
             {/* SERVICES */}
-            {section === "services" && (
-              <div className="max-w-2xl">
-                <div className="flex items-center justify-between mb-5">
-                  <div>
-                    <h2 className="text-lg font-bold text-neutral-900">Services</h2>
-                    <p className="text-xs text-neutral-400 mt-0.5">{user.isPro ? "Unlimited services with Pro." : `Free: ${services.length}/3 services.`}</p>
-                  </div>
-                  <button onClick={() => setEditServices(true)} className="px-4 py-2 text-xs font-semibold text-white bg-neutral-900 rounded-xl hover:bg-neutral-800 transition-colors">+ Add Service</button>
-                </div>
-                {services.length > 0 ? (
-                  <div className="space-y-3">
-                    {services.map((s: any) => (
-                      <div key={s.id} className="bg-white rounded-2xl border border-neutral-200/60 p-5 flex items-start justify-between gap-4 hover:border-neutral-300 transition-colors">
-                        <div className="min-w-0">
-                          <h3 className="font-semibold text-neutral-900 text-sm">{s.title}</h3>
-                          {s.category && <span className="text-[10px] font-medium text-neutral-400 uppercase tracking-wider">{s.category}</span>}
-                          {s.description && <p className="text-xs text-neutral-500 mt-1 line-clamp-2">{s.description}</p>}
-                        </div>
-                        <div className="text-right shrink-0">
-                          <div className="font-display font-bold text-neutral-900">{Number(s.price) === 0 ? "Open" : `$${Number(s.price).toLocaleString()}`}</div>
-                          <div className="text-[10px] text-neutral-400">{s.delivery_days || 7}d delivery</div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="bg-white rounded-2xl border border-neutral-200/60 p-10 text-center">
-                    <p className="text-sm text-neutral-400 mb-3">No services yet. Add your first one to start getting bookings.</p>
-                    <button onClick={() => setEditServices(true)} className="px-5 py-2.5 bg-neutral-900 text-white text-sm font-semibold rounded-full hover:bg-neutral-800 transition-colors">Add Service</button>
-                  </div>
-                )}
-              </div>
-            )}
+            {section === "services" && <ServicesManager user={user} onOpenAdd={() => setEditServices(true)} services={services} onServicesChange={loadData} />}
+
+            {/* TESTIMONIALS */}
+            {section === "testimonials" && <TestimonialsManager />}
 
             {/* PRODUCTS */}
             {section === "products" && <ProductsManager />}
@@ -1000,6 +978,12 @@ export function DashboardContent() {
                 </div>
               </div>
             )}
+
+            {/* ANALYTICS */}
+            {section === "analytics" && <AnalyticsContent />}
+
+            {/* EARNINGS */}
+            {section === "earnings" && <EarningsContent />}
 
             {/* MESSAGES */}
             {section === "messages" && (

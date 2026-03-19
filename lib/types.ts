@@ -24,6 +24,16 @@ export type Social = {
   followersRefreshedAt?: string | null;
 };
 
+export type ServicePackage = {
+  id: string;
+  tier: "basic" | "standard" | "premium";
+  title: string;
+  price: number;
+  deliveryDays: number;
+  revisions: number;
+  features: string[];
+};
+
 export type Service = {
   id: string;
   title: string;
@@ -31,6 +41,20 @@ export type Service = {
   price: number;
   deliveryDays: number;
   category?: string;
+  packages?: ServicePackage[];
+};
+
+export type Testimonial = {
+  id: string;
+  clientName: string;
+  clientCompany: string | null;
+  clientAvatar: string | null;
+  content: string;
+  rating: number | null;
+  source: string | null;
+  screenshotUrl: string | null;
+  displayOrder: number;
+  isVisible: boolean;
 };
 
 export type PortfolioItem = {
@@ -110,4 +134,5 @@ export type Creator = {
   portfolio: PortfolioItem[];
   reviews: Review[];
   products: Product[];
+  testimonials: Testimonial[];
 };

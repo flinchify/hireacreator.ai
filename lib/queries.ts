@@ -1,6 +1,6 @@
 // v2 - force redeploy
 import { getDb } from "./db";
-import type { Creator, Social, Service, PortfolioItem, Review, Product } from "./types";
+import type { Creator, Social, Service, PortfolioItem, Review, Product, Testimonial, ServicePackage } from "./types";
 
 function formatFollowers(count: number): string {
   if (count >= 1_000_000) return `${(count / 1_000_000).toFixed(1)}M`;
@@ -15,7 +15,9 @@ function assembleCreator(
   portfolio: Record<string, unknown>[] = [],
   reviews: Record<string, unknown>[] = [],
   bioLinks: Record<string, unknown>[] = [],
-  products: Record<string, unknown>[] = []
+  products: Record<string, unknown>[] = [],
+  servicePackages: Record<string, unknown>[] = [],
+  testimonials: Record<string, unknown>[] = []
 ): Creator {
   return {
     id: user.id as string,
@@ -31,7 +33,7 @@ function assembleCreator(
     rating: Number(user.rating) || 0,
     reviewCount: (user.review_count as number) || 0,
     totalProjects: (user.total_projects as number) || 0,
-    isVerified: (user.is_verified as boolean) || false,
+    isVerified: (user.verification_status === "verified") || (user.is_verified as boolean) || false,
     isFeatured: (user.is_featured as boolean) || false,
     isOnline: (user.is_online as boolean) || false,
     isPro: ((user.subscription_tier as string) || "free") !== "free",
@@ -73,13 +75,28 @@ function assembleCreator(
       url: (s.url as string) || undefined,
       followersRefreshedAt: (s.followers_refreshed_at as string) || null,
     })),
-    services: services.map((s) => ({
-      id: s.id as string,
-      title: s.title as string,
-      description: (s.description as string) || "",
-      price: s.price as number,
-      deliveryDays: (s.delivery_days as number) || 7,
-    })),
+    services: services.map((s) => {
+      const pkgs = servicePackages.filter((p) => p.service_id === s.id);
+      const mapped: Service = {
+        id: s.id as string,
+        title: s.title as string,
+        description: (s.description as string) || "",
+        price: s.price as number,
+        deliveryDays: (s.delivery_days as number) || 7,
+      };
+      if (pkgs.length > 0) {
+        mapped.packages = pkgs.map((p) => ({
+          id: p.id as string,
+          tier: p.tier as "basic" | "standard" | "premium",
+          title: p.title as string,
+          price: p.price as number,
+          deliveryDays: (p.delivery_days as number) || 7,
+          revisions: (p.revisions as number) || 1,
+          features: (() => { try { const v = p.features; return Array.isArray(v) ? v : typeof v === "string" ? JSON.parse(v) : []; } catch { return []; } })(),
+        }));
+      }
+      return mapped;
+    }),
     portfolio: portfolio.map((p) => ({
       id: p.id as string,
       title: p.title as string,
@@ -109,6 +126,18 @@ function assembleCreator(
       productType: (p.product_type as string) || "digital",
       isActive: p.is_active !== false,
       sortOrder: (p.sort_order as number) || 0,
+    })),
+    testimonials: testimonials.map((t) => ({
+      id: t.id as string,
+      clientName: t.client_name as string,
+      clientCompany: (t.client_company as string) || null,
+      clientAvatar: (t.client_avatar as string) || null,
+      content: t.content as string,
+      rating: (t.rating as number) || null,
+      source: (t.source as string) || null,
+      screenshotUrl: (t.screenshot_url as string) || null,
+      displayOrder: (t.display_order as number) || 0,
+      isVisible: t.is_visible !== false,
     })),
   };
 }
@@ -177,7 +206,7 @@ export async function getCreatorBySlug(
   if (users.length === 0) return null;
   const user = users[0];
 
-  const [socials, services, portfolio, reviewRows, bioLinks, products] = await Promise.all([
+  const [socials, services, portfolio, reviewRows, bioLinks, products, servicePackages, testimonials] = await Promise.all([
     sql`SELECT * FROM social_connections WHERE user_id = ${user.id}`,
     sql`SELECT * FROM services WHERE user_id = ${user.id} AND is_active = TRUE ORDER BY price ASC`,
     sql`SELECT * FROM portfolio_items WHERE user_id = ${user.id} ORDER BY sort_order ASC`,
@@ -190,9 +219,11 @@ export async function getCreatorBySlug(
     `,
     sql`SELECT * FROM bio_links WHERE user_id = ${user.id} AND is_visible = TRUE AND (is_archived = FALSE OR is_archived IS NULL) ORDER BY position ASC`,
     sql`SELECT * FROM creator_products WHERE user_id = ${user.id} AND is_active = TRUE ORDER BY sort_order ASC`,
+    sql`SELECT sp.* FROM service_packages sp JOIN services s ON s.id = sp.service_id WHERE s.user_id = ${user.id} AND s.is_active = TRUE ORDER BY CASE sp.tier WHEN 'basic' THEN 0 WHEN 'standard' THEN 1 WHEN 'premium' THEN 2 END`,
+    sql`SELECT * FROM testimonials WHERE user_id = ${user.id} AND is_visible = TRUE ORDER BY display_order ASC, created_at DESC`,
   ]);
 
-  return assembleCreator(user, socials, services, portfolio, reviewRows, bioLinks, products);
+  return assembleCreator(user, socials, services, portfolio, reviewRows, bioLinks, products, servicePackages, testimonials);
 }
 
 export async function searchCreators(filters?: {
@@ -297,6 +328,27 @@ export async function getCreatorCalendarSessions(userId: string) {
     ORDER BY price ASC
   `;
   return sessions as { id: string; title: string; duration_min: number; price: number; description: string | null }[];
+}
+
+export async function getCreatorTestimonials(userId: string) {
+  const sql = getDb();
+  const rows = await sql`
+    SELECT * FROM testimonials
+    WHERE user_id = ${userId} AND is_visible = TRUE
+    ORDER BY display_order ASC, created_at DESC
+  `;
+  return rows.map((t) => ({
+    id: t.id as string,
+    clientName: t.client_name as string,
+    clientCompany: (t.client_company as string) || null,
+    clientAvatar: (t.client_avatar as string) || null,
+    content: t.content as string,
+    rating: (t.rating as number) || null,
+    source: (t.source as string) || null,
+    screenshotUrl: (t.screenshot_url as string) || null,
+    displayOrder: (t.display_order as number) || 0,
+    isVisible: true,
+  }));
 }
 
 export async function getCreatorCount(): Promise<number> {

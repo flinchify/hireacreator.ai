@@ -112,6 +112,12 @@ export async function POST(request: NextRequest) {
       `,
     });
 
+    // Log enquiry for analytics (fire-and-forget)
+    sql`
+      INSERT INTO enquiry_log (creator_id, enquirer_name, enquirer_email, budget, project_type)
+      VALUES (${creatorId}, ${name}, ${email}, ${budget || null}, ${projectType || null})
+    `.catch(() => {});
+
     return NextResponse.json({ success: true });
   } catch (err) {
     console.error("Enquiry error:", err);

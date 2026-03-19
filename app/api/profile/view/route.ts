@@ -23,8 +23,22 @@ export async function GET(req: Request) {
     }
   }
 
-  // Increment profile_views
+  // Increment profile_views counter (keep existing behavior)
   await sql`UPDATE users SET profile_views = COALESCE(profile_views, 0) + 1 WHERE slug = ${slug}`;
+
+  // Also log detailed view to profile_views table
+  const referrer = req.headers.get("referer") || null;
+  const userAgent = req.headers.get("user-agent") || null;
+  const forwarded = req.headers.get("x-forwarded-for");
+  const viewerIp = forwarded ? forwarded.split(",")[0].trim() : null;
+
+  const creators = await sql`SELECT id FROM users WHERE slug = ${slug} LIMIT 1`;
+  if (creators.length > 0) {
+    sql`
+      INSERT INTO profile_views (creator_id, viewer_ip, referrer, user_agent)
+      VALUES (${creators[0].id}, ${viewerIp}, ${referrer}, ${userAgent})
+    `.catch(() => {});
+  }
 
   return NextResponse.json({ ok: true });
 }

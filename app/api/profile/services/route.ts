@@ -13,6 +13,28 @@ async function getUser() {
   return rows.length > 0 ? rows[0] : null;
 }
 
+export async function GET() {
+  const user = await getUser();
+  if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+
+  const sql = getDb();
+  const services = await sql`SELECT * FROM services WHERE user_id = ${user.id} ORDER BY created_at`;
+  const packages = await sql`
+    SELECT sp.* FROM service_packages sp
+    JOIN services s ON s.id = sp.service_id
+    WHERE s.user_id = ${user.id}
+    ORDER BY sp.service_id, CASE sp.tier WHEN 'basic' THEN 0 WHEN 'standard' THEN 1 WHEN 'premium' THEN 2 END
+  `;
+
+  // Group packages by service_id
+  const servicesWithPackages = services.map((s: any) => ({
+    ...s,
+    packages: packages.filter((p: any) => p.service_id === s.id),
+  }));
+
+  return NextResponse.json({ services: servicesWithPackages });
+}
+
 export async function POST(request: Request) {
   const user = await getUser();
   if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });

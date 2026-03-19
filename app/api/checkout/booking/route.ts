@@ -20,7 +20,7 @@ export async function POST(request: Request) {
   if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 
   const body = await request.json().catch(() => ({}));
-  const { serviceId, brief } = body;
+  const { serviceId, brief, packageId } = body;
 
   if (!serviceId) {
     return NextResponse.json({ error: "missing_service_id" }, { status: 400 });
@@ -42,6 +42,17 @@ export async function POST(request: Request) {
   }
 
   const service = services[0];
+
+  // If packageId provided, use package price instead
+  if (packageId) {
+    const pkgs = await sql`
+      SELECT * FROM service_packages WHERE id = ${packageId} AND service_id = ${serviceId}
+    `;
+    if (pkgs.length > 0) {
+      service.price = pkgs[0].price;
+      service.title = `${service.title} — ${(pkgs[0].title as string)}`;
+    }
+  }
 
   if (!service.stripe_account_id) {
     return NextResponse.json(
