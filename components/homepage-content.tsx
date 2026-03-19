@@ -203,8 +203,7 @@ export function HomepageContent({
 
         <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1
-            className="text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight text-neutral-900 leading-[1.1]"
-            style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+            className="font-hero text-4xl sm:text-5xl lg:text-7xl font-extrabold tracking-tighter text-neutral-900 leading-[1.05]"
           >
             The creator marketplace<br className="hidden sm:block" /> where you keep 100%
           </h1>
@@ -285,8 +284,8 @@ export function HomepageContent({
           <StaggerChildren className="grid md:grid-cols-3 gap-6" staggerMs={150}>
             {/* Card 1 — Profile with real screenshots */}
             <div className="aos-stagger-item group bg-white rounded-2xl border border-neutral-200 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-              <div className="relative p-6 pb-4 bg-gradient-to-br from-rose-50/80 to-orange-50/60">
-                <div className="text-rose-500"><ProfileStarIcon /></div>
+              <div className="relative p-6 pb-4 bg-gradient-to-br from-sky-50/80 to-blue-50/60">
+                <div className="text-blue-500"><ProfileStarIcon /></div>
                 {/* Real link-in-bio screenshots — phone frames */}
                 <div className="mt-4 flex items-center justify-center gap-[-8px]">
                   <div className="relative z-10 w-[45%] rounded-xl overflow-hidden border-2 border-white shadow-lg" style={{ transform: "rotate(-3deg)" }}>
@@ -308,7 +307,7 @@ export function HomepageContent({
 
             {/* Card 2 — Marketplace */}
             <div className="aos-stagger-item group bg-white rounded-2xl border border-neutral-200 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-              <div className="relative p-6 pb-4 bg-gradient-to-br from-blue-50/80 to-indigo-50/60">
+              <div className="relative p-6 pb-4 bg-gradient-to-br from-blue-50/80 to-sky-50/60">
                 <div className="text-blue-600"><MarketplaceGridIcon /></div>
                 {/* Mini browser frame with screenshot */}
                 <div className="mt-4 rounded-lg overflow-hidden border border-neutral-200/60 shadow-sm bg-white">
