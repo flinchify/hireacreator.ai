@@ -475,7 +475,7 @@ function TestimonialsManager() {
     { value: "manual", label: "Written by me" },
     { value: "google", label: "Google Review" },
     { value: "trustpilot", label: "Trustpilot" },
-    { value: "screenshot", label: "Screenshot" },
+    { value: "screenshot", label: "Image Upload" },
     { value: "other", label: "Other" },
   ];
 
@@ -512,7 +512,7 @@ function TestimonialsManager() {
           <div><label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Testimonial *</label><textarea className={`${inp} resize-y`} rows={3} value={form.content} onChange={e => setForm({ ...form, content: e.target.value })} placeholder="What did your client say about working with you?" /></div>
           <div className="grid grid-cols-2 gap-3">
             <div><label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Source</label><select className={inp} value={form.source} onChange={e => setForm({ ...form, source: e.target.value })}>{sources.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}</select></div>
-            <div><label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Screenshot URL</label><input className={inp} value={form.screenshotUrl} onChange={e => setForm({ ...form, screenshotUrl: e.target.value })} placeholder="https://..." /></div>
+            <div><label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Image URL</label><input className={inp} value={form.screenshotUrl} onChange={e => setForm({ ...form, screenshotUrl: e.target.value })} placeholder="Paste image URL..." /></div>
           </div>
           <button onClick={add} disabled={adding || !form.clientName.trim() || !form.content.trim()} className="w-full py-2.5 bg-neutral-900 text-white text-sm font-medium rounded-xl hover:bg-neutral-800 transition-colors disabled:opacity-40">{adding ? "Adding..." : "Add Testimonial"}</button>
         </div>
