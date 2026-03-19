@@ -5,7 +5,6 @@ import { useAuth, User } from "./auth-context";
 import { CalendarManager } from "./calendar-manager";
 import { LinkManager } from "./link-manager";
 import { PlatformIcon } from "./icons/platforms";
-import { MessagesContent } from "./messages-content";
 import { AnimationsContent } from "./animations-content";
 import { AnalyticsContent } from "./analytics-content";
 import { EarningsContent } from "./earnings-content";
@@ -767,23 +766,15 @@ function AdminFeaturedCreators() {
 }
 
 /* ═══ Sidebar nav items ═══ */
-type Section = "overview" | "links" | "services" | "products" | "portfolio" | "calendar" | "bookings" | "earn" | "analytics" | "earnings" | "messages" | "animations" | "templates" | "verification" | "testimonials" | "settings";
+type Section = "overview" | "links" | "services" | "calendar" | "analytics" | "earn" | "settings";
 
 const NAV_MAIN = [
   { id: "overview" as Section, label: "Overview", icon: icons.overview },
   { id: "links" as Section, label: "My Bio Link", icon: icons.link },
   { id: "services" as Section, label: "Services", icon: icons.services },
-  { id: "products" as Section, label: "Products", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z" strokeLinecap="round" strokeLinejoin="round"/><line x1="7" y1="7" x2="7.01" y2="7" strokeLinecap="round"/></svg> },
-  { id: "testimonials" as Section, label: "Testimonials", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z" strokeLinecap="round" strokeLinejoin="round"/></svg> },
   { id: "calendar" as Section, label: "Calendar", icon: icons.calendar },
-  { id: "bookings" as Section, label: "Bookings", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2" strokeLinecap="round"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M9 14l2 2 4-4" strokeLinecap="round" strokeLinejoin="round"/></svg> },
-  { id: "earn" as Section, label: "Earn", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" strokeLinecap="round" strokeLinejoin="round"/></svg> },
   { id: "analytics" as Section, label: "Analytics", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M18 20V10M12 20V4M6 20v-6" strokeLinecap="round" strokeLinejoin="round"/></svg> },
-  { id: "earnings" as Section, label: "Earnings", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M2 17l4-4 4 4 4-6 4 2 4-6" strokeLinecap="round" strokeLinejoin="round"/><rect x="2" y="3" width="20" height="18" rx="2" strokeLinecap="round"/></svg> },
-  { id: "messages" as Section, label: "Messages", icon: icons.messages },
-  { id: "templates" as Section, label: "Templates", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" strokeLinecap="round" strokeLinejoin="round"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" strokeLinecap="round" strokeLinejoin="round"/></svg> },
-  { id: "verification" as Section, label: "Verification", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" strokeLinecap="round" strokeLinejoin="round"/></svg> },
-  { id: "animations" as Section, label: "Animations", icon: icons.sparkle },
+  { id: "earn" as Section, label: "Earn", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" strokeLinecap="round" strokeLinejoin="round"/></svg> },
 ];
 
 const NAV_BOTTOM = [
@@ -1031,6 +1022,9 @@ export function DashboardContent() {
   const [dataLoaded, setDataLoaded] = useState(false);
   const [copied, setCopied] = useState(false);
   const [uploadError, setUploadError] = useState("");
+  const [showTemplates, setShowTemplates] = useState(false);
+  const [showTestimonials, setShowTestimonials] = useState(false);
+  const [analyticsTab, setAnalyticsTab] = useState<"views" | "earnings">("views");
 
   async function handleUpload(file: File, type: "avatar" | "cover") {
     setUploadError("");
@@ -1273,6 +1267,45 @@ export function DashboardContent() {
                       <AdminFeaturedCreators />
                     </div>
                   )}
+
+                  {/* Verification */}
+                  <VerificationManager />
+
+                  {/* Reply Templates */}
+                  <div className="bg-white rounded-2xl border border-neutral-200/60 overflow-hidden">
+                    <button onClick={() => setShowTemplates(!showTemplates)} className="w-full flex items-center justify-between p-5 hover:bg-neutral-50 transition-colors">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-neutral-100 flex items-center justify-center text-neutral-500">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" strokeLinecap="round" strokeLinejoin="round"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                        </div>
+                        <h2 className="text-sm font-bold text-neutral-900">Reply Templates</h2>
+                      </div>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={`text-neutral-400 transition-transform ${showTemplates ? "rotate-180" : ""}`}><path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    </button>
+                    {showTemplates && (
+                      <div className="px-5 pb-5 border-t border-neutral-100">
+                        <ReplyTemplatesManager />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Testimonials */}
+                  <div className="bg-white rounded-2xl border border-neutral-200/60 overflow-hidden">
+                    <button onClick={() => setShowTestimonials(!showTestimonials)} className="w-full flex items-center justify-between p-5 hover:bg-neutral-50 transition-colors">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-neutral-100 flex items-center justify-center text-neutral-500">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                        </div>
+                        <h2 className="text-sm font-bold text-neutral-900">Manage Testimonials</h2>
+                      </div>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={`text-neutral-400 transition-transform ${showTestimonials ? "rotate-180" : ""}`}><path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    </button>
+                    {showTestimonials && (
+                      <div className="px-5 pb-5 border-t border-neutral-100">
+                        <TestimonialsManager />
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Right — Quick Actions (desktop only) */}
@@ -1291,13 +1324,13 @@ export function DashboardContent() {
                         <div className="flex-1 min-w-0"><div className="text-sm font-semibold text-neutral-900">Edit Page</div><div className="text-xs text-neutral-400 mt-0.5">Templates, links, design</div></div>
                       </a>
                     )}
-                    <button onClick={() => setSection("animations")} className="flex items-center gap-3 bg-white rounded-2xl border border-neutral-200/60 p-4 hover:border-neutral-300 hover:shadow-sm transition-all group w-full text-left">
+                    <button onClick={() => setSection("links")} className="flex items-center gap-3 bg-white rounded-2xl border border-neutral-200/60 p-4 hover:border-neutral-300 hover:shadow-sm transition-all group w-full text-left">
                       <div className="w-10 h-10 rounded-xl bg-neutral-100 flex items-center justify-center shrink-0 text-neutral-500 group-hover:bg-neutral-200 transition-colors">{icons.sparkle}</div>
                       <div className="flex-1 min-w-0"><div className="text-sm font-semibold text-neutral-900">Animations</div><div className="text-xs text-neutral-400 mt-0.5">Premium intro effects</div></div>
                     </button>
-                    <button onClick={() => setSection("messages")} className="flex items-center gap-3 bg-white rounded-2xl border border-neutral-200/60 p-4 hover:border-neutral-300 hover:shadow-sm transition-all group w-full text-left">
-                      <div className="w-10 h-10 rounded-xl bg-neutral-100 flex items-center justify-center shrink-0 text-neutral-500 group-hover:bg-neutral-200 transition-colors">{icons.messages}</div>
-                      <div className="flex-1 min-w-0"><div className="text-sm font-semibold text-neutral-900">Messages</div><div className="text-xs text-neutral-400 mt-0.5">Chat with brands</div></div>
+                    <button onClick={() => setSection("analytics")} className="flex items-center gap-3 bg-white rounded-2xl border border-neutral-200/60 p-4 hover:border-neutral-300 hover:shadow-sm transition-all group w-full text-left">
+                      <div className="w-10 h-10 rounded-xl bg-neutral-100 flex items-center justify-center shrink-0 text-neutral-500 group-hover:bg-neutral-200 transition-colors"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M18 20V10M12 20V4M6 20v-6" strokeLinecap="round" strokeLinejoin="round"/></svg></div>
+                      <div className="flex-1 min-w-0"><div className="text-sm font-semibold text-neutral-900">Analytics</div><div className="text-xs text-neutral-400 mt-0.5">Views & earnings</div></div>
                     </button>
                     {/* Boost Profile */}
                     {user.slug && (
@@ -1331,19 +1364,33 @@ export function DashboardContent() {
                 <div className="bg-white rounded-2xl border border-neutral-200/60 p-5">
                   <LinkManager />
                 </div>
+
+                {/* Animations */}
+                <div className="mt-6">
+                  <AnimationsContent />
+                  <div className="mt-4 p-4 bg-neutral-50 border border-neutral-200/60 rounded-2xl">
+                    <h4 className="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-2">Animation Purchase Terms</h4>
+                    <ul className="text-[11px] text-neutral-400 space-y-1 list-disc list-inside leading-relaxed">
+                      <li>All animation purchases are non-refundable once applied to your profile.</li>
+                      <li>Animations are a one-time purchase — no recurring charges.</li>
+                      <li>Purchased animations are tied to your account and are non-transferable.</li>
+                      <li>HireACreator reserves the right to modify or discontinue animations at any time.</li>
+                      <li>Use of animations is subject to the HireACreator platform Terms of Service.</li>
+                    </ul>
+                  </div>
+                </div>
               </div>
             )}
 
-            {/* SERVICES */}
-            {section === "services" && <ServicesManager user={user} onOpenAdd={() => setEditServices(true)} services={services} onServicesChange={loadData} />}
+            {/* SERVICES (includes Products) */}
+            {section === "services" && (
+              <div className="space-y-8">
+                <ServicesManager user={user} onOpenAdd={() => setEditServices(true)} services={services} onServicesChange={loadData} />
+                <ProductsManager />
+              </div>
+            )}
 
-            {/* TESTIMONIALS */}
-            {section === "testimonials" && <TestimonialsManager />}
-
-            {/* PRODUCTS */}
-            {section === "products" && <ProductsManager />}
-
-            {/* CALENDAR */}
+            {/* CALENDAR (includes Bookings) */}
             {section === "calendar" && (
               <div className="max-w-2xl">
                 <div className="mb-5">
@@ -1353,11 +1400,11 @@ export function DashboardContent() {
                 <div className="bg-white rounded-2xl border border-neutral-200/60 p-5">
                   <CalendarManager />
                 </div>
+                <div className="mt-8">
+                  <MyBookings />
+                </div>
               </div>
             )}
-
-            {/* BOOKINGS */}
-            {section === "bookings" && <MyBookings />}
 
             {/* EARN */}
             {section === "earn" && (
@@ -1423,53 +1470,18 @@ export function DashboardContent() {
               </div>
             )}
 
-            {/* ANALYTICS */}
-            {section === "analytics" && <AnalyticsContent />}
-
-            {/* EARNINGS */}
-            {section === "earnings" && <EarningsContent />}
-
-            {/* MESSAGES */}
-            {section === "messages" && (
+            {/* ANALYTICS (with Earnings tab) */}
+            {section === "analytics" && (
               <div>
-                <MessagesContent />
-                <div className="mt-8 p-4 bg-neutral-50 border border-neutral-200/60 rounded-2xl">
-                  <h4 className="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-2">Messaging Terms & Conditions</h4>
-                  <ul className="text-[11px] text-neutral-400 space-y-1 list-disc list-inside leading-relaxed">
-                    <li>You must be 18 years or older to use the messaging feature.</li>
-                    <li>Harassment, threats, hate speech, or abusive language of any kind is strictly prohibited.</li>
-                    <li>Sharing or soliciting explicit, illegal, or banned content is not permitted.</li>
-                    <li>Do not solicit transactions outside of the HireACreator platform.</li>
-                    <li>All messages may be reviewed by platform administrators for safety and compliance.</li>
-                    <li>Reports are reviewed by admin — violations may result in account suspension or permanent ban.</li>
-                    <li>HireACreator is not liable for any content exchanged between users in messages.</li>
-                  </ul>
+                <div className="flex gap-1 mb-6 bg-neutral-100 rounded-xl p-1 max-w-xs">
+                  <button onClick={() => setAnalyticsTab("views")} className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-colors ${analyticsTab === "views" ? "bg-white text-neutral-900 shadow-sm" : "text-neutral-500 hover:text-neutral-700"}`}>Views</button>
+                  <button onClick={() => setAnalyticsTab("earnings")} className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-colors ${analyticsTab === "earnings" ? "bg-white text-neutral-900 shadow-sm" : "text-neutral-500 hover:text-neutral-700"}`}>Earnings</button>
                 </div>
+                {analyticsTab === "views" && <AnalyticsContent />}
+                {analyticsTab === "earnings" && <EarningsContent />}
               </div>
             )}
 
-            {/* TEMPLATES */}
-            {section === "templates" && <ReplyTemplatesManager />}
-
-            {/* VERIFICATION */}
-            {section === "verification" && <VerificationManager />}
-
-            {/* ANIMATIONS */}
-            {section === "animations" && (
-              <div>
-                <AnimationsContent />
-                <div className="mt-8 p-4 bg-neutral-50 border border-neutral-200/60 rounded-2xl">
-                  <h4 className="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-2">Animation Purchase Terms</h4>
-                  <ul className="text-[11px] text-neutral-400 space-y-1 list-disc list-inside leading-relaxed">
-                    <li>All animation purchases are non-refundable once applied to your profile.</li>
-                    <li>Animations are a one-time purchase — no recurring charges.</li>
-                    <li>Purchased animations are tied to your account and are non-transferable.</li>
-                    <li>HireACreator reserves the right to modify or discontinue animations at any time.</li>
-                    <li>Use of animations is subject to the HireACreator platform Terms of Service.</li>
-                  </ul>
-                </div>
-              </div>
-            )}
 
             {/* SETTINGS */}
             {section === "settings" && (
@@ -1479,7 +1491,7 @@ export function DashboardContent() {
                   { href: "/dashboard/settings?tab=privacy", label: "Privacy", desc: "Profile visibility, messaging, content warnings", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg> },
                   { href: "/dashboard/settings?tab=plan", label: "Plan & Billing", desc: "Subscription, upgrade, payment history", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="1" y="4" width="22" height="16" rx="2" /><path d="M1 10h22" /></svg> },
                   { href: user.slug ? `/u/${user.slug}/edit` : "/dashboard", label: "Link in Bio Editor", desc: "Templates, backgrounds, buttons, colors", icon: icons.pencil },
-                  { href: "#", label: "Animations Store", desc: "Premium intro effects for your link in bio", icon: icons.sparkle, onClick: () => setSection("animations") },
+                  { href: "#", label: "Animations Store", desc: "Premium intro effects for your link in bio", icon: icons.sparkle, onClick: () => setSection("links") },
                 ].map(item => (
                   item.onClick ? (
                     <button key={item.label} onClick={item.onClick} className="flex items-center gap-4 bg-white rounded-2xl border border-neutral-200/60 p-4 hover:border-neutral-300 hover:shadow-sm transition-all group w-full text-left">
@@ -1507,8 +1519,8 @@ export function DashboardContent() {
           {([
             { id: "overview" as Section, label: "Overview", icon: icons.overview },
             { id: "links" as Section, label: "Bio Link", icon: icons.link },
+            { id: "services" as Section, label: "Services", icon: icons.services },
             { id: "earn" as Section, label: "Earn", icon: NAV_MAIN.find(n => n.id === "earn")!.icon },
-            { id: "messages" as Section, label: "Messages", icon: icons.messages },
             { id: "settings" as Section, label: "Settings", icon: icons.settings },
           ]).map(n => (
             <button key={n.id} onClick={() => setSection(n.id)}
