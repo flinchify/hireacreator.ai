@@ -146,7 +146,7 @@ export function ForBrandsContent() {
 
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link href="/browse">
-              <button className="px-8 py-3.5 text-base font-medium text-white bg-neutral-900 rounded-full hover:bg-neutral-800 transition-colors shadow-lg shadow-neutral-900/20 w-full sm:w-auto">
+              <button className="px-8 py-3.5 text-base font-medium text-white bg-neutral-900 rounded-full hover:bg-neutral-800 active:scale-[0.98] transition-all shadow-lg shadow-neutral-900/20 w-full sm:w-auto">
                 Browse Creators
               </button>
             </Link>
@@ -502,7 +502,7 @@ export function ForBrandsContent() {
               <button
                 type="submit"
                 disabled={formStatus === "sending"}
-                className="w-full px-8 py-3.5 text-base font-medium text-white bg-neutral-900 rounded-full hover:bg-neutral-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full px-8 py-3.5 text-base font-medium text-white bg-neutral-900 rounded-full hover:bg-neutral-800 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {formStatus === "sending" ? "Sending..." : "Send Message"}
               </button>

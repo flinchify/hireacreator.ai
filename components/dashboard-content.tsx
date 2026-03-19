@@ -100,7 +100,7 @@ function EditProfileSheet({ user, open, onClose, onOpenBioWriter }: { user: User
           <span className="text-sm text-neutral-700">Show as online</span>
         </div>
         <div className="sticky bottom-0 bg-white pt-3 pb-1 -mx-5 px-5 border-t border-neutral-100">
-          <button onClick={save} disabled={saving} className="w-full py-3 min-h-[48px] bg-neutral-900 text-white text-sm font-semibold rounded-xl hover:bg-neutral-800 transition-colors disabled:opacity-50">{saved ? "Saved!" : saving ? "Saving..." : "Save Changes"}</button>
+          <button onClick={save} disabled={saving} className="w-full py-3 min-h-[48px] bg-neutral-900 text-white text-sm font-semibold rounded-xl hover:bg-neutral-800 active:scale-[0.98] transition-all disabled:opacity-50">{saved ? "Saved!" : saving ? "Saving..." : "Save Changes"}</button>
         </div>
       </div>
     </Sheet>
@@ -177,7 +177,7 @@ function SocialsSheet({ open, onClose }: { open: boolean; onClose: () => void })
           <input placeholder="@handle or username" value={form.handle} onChange={e => setForm({ ...form, handle: e.target.value })} className={inp} />
           <input placeholder="Profile URL (optional)" value={form.url} onChange={e => setForm({ ...form, url: e.target.value })} className={inp} />
           <div className="sticky bottom-0 bg-white pt-3 pb-1 -mx-5 px-5 border-t border-neutral-100">
-            <button onClick={add} disabled={adding || !form.platform || !form.handle} className="w-full py-2.5 min-h-[48px] bg-neutral-900 text-white text-sm font-medium rounded-xl hover:bg-neutral-800 transition-colors disabled:opacity-40">{adding ? "Adding..." : "Add Link"}</button>
+            <button onClick={add} disabled={adding || !form.platform || !form.handle} className="w-full py-2.5 min-h-[48px] bg-neutral-900 text-white text-sm font-medium rounded-xl hover:bg-neutral-800 active:scale-[0.98] transition-all disabled:opacity-40">{adding ? "Adding..." : "Add Link"}</button>
           </div>
         </div>
       </div>
@@ -234,7 +234,7 @@ function ServicesSheet({ user, open, onClose }: { user: User; open: boolean; onC
             <input placeholder="Category" value={form.category} onChange={e => setForm({ ...form, category: e.target.value })} className={inp} />
           </div>
           <div className="sticky bottom-0 bg-white pt-3 pb-1 -mx-5 px-5 border-t border-neutral-100">
-            <button onClick={add} disabled={adding || !form.title || !form.price} className="w-full py-2.5 min-h-[48px] bg-neutral-900 text-white text-sm font-medium rounded-xl hover:bg-neutral-800 transition-colors disabled:opacity-40">{adding ? "Adding..." : "Add Service"}</button>
+            <button onClick={add} disabled={adding || !form.title || !form.price} className="w-full py-2.5 min-h-[48px] bg-neutral-900 text-white text-sm font-medium rounded-xl hover:bg-neutral-800 active:scale-[0.98] transition-all disabled:opacity-40">{adding ? "Adding..." : "Add Service"}</button>
           </div>
         </div>
       </div>
@@ -339,7 +339,7 @@ function ServicesManager({ user, onOpenAdd, services, onServicesChange }: { user
           <h2 className="text-lg font-bold text-neutral-900">Services</h2>
           <p className="text-xs text-neutral-400 mt-0.5">{user.isPro ? "Unlimited services with Pro." : `Free: ${services.length}/3 services.`}</p>
         </div>
-        <button onClick={onOpenAdd} className="px-4 py-2 text-xs font-semibold text-white bg-neutral-900 rounded-xl hover:bg-neutral-800 transition-colors">+ Add Service</button>
+        <button onClick={onOpenAdd} className="px-4 py-2 text-xs font-semibold text-white bg-neutral-900 rounded-xl hover:bg-neutral-800 active:scale-[0.98] transition-all">+ Add Service</button>
       </div>
       {services.length > 0 ? (
         <div className="space-y-3">
@@ -406,7 +406,7 @@ function ServicesManager({ user, onOpenAdd, services, onServicesChange }: { user
 
                   {pkgMsg && <p className={`text-xs ${pkgMsg.includes("Error") || pkgMsg.includes("requires") ? "text-red-600" : "text-emerald-600"}`}>{pkgMsg}</p>}
                   {pkgForm[s.id].enabled && (
-                    <button onClick={() => savePkgs(s.id)} disabled={savingPkgs} className="w-full py-2.5 bg-neutral-900 text-white text-sm font-medium rounded-xl hover:bg-neutral-800 transition-colors disabled:opacity-40">
+                    <button onClick={() => savePkgs(s.id)} disabled={savingPkgs} className="w-full py-2.5 bg-neutral-900 text-white text-sm font-medium rounded-xl hover:bg-neutral-800 active:scale-[0.98] transition-all disabled:opacity-40">
                       {savingPkgs ? "Saving..." : "Save Packages"}
                     </button>
                   )}
@@ -423,7 +423,7 @@ function ServicesManager({ user, onOpenAdd, services, onServicesChange }: { user
       ) : (
         <div className="bg-white rounded-2xl border border-neutral-200/60 p-10 text-center">
           <p className="text-sm text-neutral-400 mb-3">No services yet. Add your first one to start getting bookings.</p>
-          <button onClick={onOpenAdd} className="px-5 py-2.5 bg-neutral-900 text-white text-sm font-semibold rounded-full hover:bg-neutral-800 transition-colors">Add Service</button>
+          <button onClick={onOpenAdd} className="px-5 py-2.5 bg-neutral-900 text-white text-sm font-semibold rounded-full hover:bg-neutral-800 active:scale-[0.98] transition-all">Add Service</button>
         </div>
       )}
     </div>
@@ -494,7 +494,7 @@ function TestimonialsManager() {
           <h2 className="text-lg font-bold text-neutral-900">Testimonials</h2>
           <p className="text-xs text-neutral-400 mt-0.5">Add client testimonials to your profile</p>
         </div>
-        <button onClick={() => setShowForm(!showForm)} className="px-4 py-2 text-xs font-semibold text-white bg-neutral-900 rounded-xl hover:bg-neutral-800 transition-colors">
+        <button onClick={() => setShowForm(!showForm)} className="px-4 py-2 text-xs font-semibold text-white bg-neutral-900 rounded-xl hover:bg-neutral-800 active:scale-[0.98] transition-all">
           {showForm ? "Cancel" : "+ Add Testimonial"}
         </button>
       </div>
@@ -522,7 +522,7 @@ function TestimonialsManager() {
             <div><label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Source</label><select className={inp} value={form.source} onChange={e => setForm({ ...form, source: e.target.value })}>{sources.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}</select></div>
             <div><label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Image URL</label><input className={inp} value={form.screenshotUrl} onChange={e => setForm({ ...form, screenshotUrl: e.target.value })} placeholder="Paste image URL..." /></div>
           </div>
-          <button onClick={add} disabled={adding || !form.clientName.trim() || !form.content.trim()} className="w-full py-2.5 bg-neutral-900 text-white text-sm font-medium rounded-xl hover:bg-neutral-800 transition-colors disabled:opacity-40">{adding ? "Adding..." : "Add Testimonial"}</button>
+          <button onClick={add} disabled={adding || !form.clientName.trim() || !form.content.trim()} className="w-full py-2.5 bg-neutral-900 text-white text-sm font-medium rounded-xl hover:bg-neutral-800 active:scale-[0.98] transition-all disabled:opacity-40">{adding ? "Adding..." : "Add Testimonial"}</button>
         </div>
       )}
 
@@ -567,7 +567,7 @@ function TestimonialsManager() {
       ) : (
         <div className="bg-white rounded-2xl border border-neutral-200/60 p-10 text-center">
           <p className="text-sm text-neutral-400 mb-3">No testimonials yet. Add client feedback to build trust.</p>
-          <button onClick={() => setShowForm(true)} className="px-5 py-2.5 bg-neutral-900 text-white text-sm font-semibold rounded-full hover:bg-neutral-800 transition-colors">Add Testimonial</button>
+          <button onClick={() => setShowForm(true)} className="px-5 py-2.5 bg-neutral-900 text-white text-sm font-semibold rounded-full hover:bg-neutral-800 active:scale-[0.98] transition-all">Add Testimonial</button>
         </div>
       )}
     </div>
@@ -622,7 +622,7 @@ function ProductsManager() {
           <h2 className="text-lg font-bold text-neutral-900">Products</h2>
           <p className="text-xs text-neutral-400 mt-0.5">Digital products, courses, and external product links</p>
         </div>
-        <button onClick={() => setShowForm(!showForm)} className="px-4 py-2 text-xs font-semibold text-white bg-neutral-900 rounded-xl hover:bg-neutral-800 transition-colors">
+        <button onClick={() => setShowForm(!showForm)} className="px-4 py-2 text-xs font-semibold text-white bg-neutral-900 rounded-xl hover:bg-neutral-800 active:scale-[0.98] transition-all">
           {showForm ? "Cancel" : "+ Add Product"}
         </button>
       </div>
@@ -650,7 +650,7 @@ function ProductsManager() {
               </label>
             )}
           </div>
-          <button onClick={addProduct} disabled={adding || !form.title.trim()} className="w-full py-2.5 bg-neutral-900 text-white text-sm font-medium rounded-xl hover:bg-neutral-800 transition-colors disabled:opacity-40">{adding ? "Adding..." : "Add Product"}</button>
+          <button onClick={addProduct} disabled={adding || !form.title.trim()} className="w-full py-2.5 bg-neutral-900 text-white text-sm font-medium rounded-xl hover:bg-neutral-800 active:scale-[0.98] transition-all disabled:opacity-40">{adding ? "Adding..." : "Add Product"}</button>
         </div>
       )}
 
@@ -680,7 +680,7 @@ function ProductsManager() {
       ) : (
         <div className="bg-white rounded-2xl border border-neutral-200/60 p-10 text-center">
           <p className="text-sm text-neutral-400 mb-3">No products yet. Add digital products, courses, or external links.</p>
-          <button onClick={() => setShowForm(true)} className="px-5 py-2.5 bg-neutral-900 text-white text-sm font-semibold rounded-full hover:bg-neutral-800 transition-colors">Add Product</button>
+          <button onClick={() => setShowForm(true)} className="px-5 py-2.5 bg-neutral-900 text-white text-sm font-semibold rounded-full hover:bg-neutral-800 active:scale-[0.98] transition-all">Add Product</button>
         </div>
       )}
     </div>
@@ -978,7 +978,7 @@ function SlugEditor({ user, onChanged }: { user: User; onChanged: () => void }) 
         <button onClick={() => { setEditing(true); setSlug(currentSlug); }} className="px-4 py-2.5 text-sm font-semibold text-neutral-600 bg-white border border-neutral-200 rounded-xl hover:bg-neutral-50 transition-colors">
           Edit URL
         </button>
-        <button onClick={() => { navigator.clipboard?.writeText(`https://hireacreator.ai/u/${currentSlug}`); }} className="px-5 py-2.5 text-sm font-semibold rounded-xl bg-neutral-900 text-white hover:bg-neutral-800 transition-colors shadow-sm">
+        <button onClick={() => { navigator.clipboard?.writeText(`https://hireacreator.ai/u/${currentSlug}`); }} className="px-5 py-2.5 text-sm font-semibold rounded-xl bg-neutral-900 text-white hover:bg-neutral-800 active:scale-[0.98] transition-all shadow-sm">
           Copy
         </button>
         <a href={`/u/${currentSlug}`} target="_blank" className="p-2.5 text-neutral-400 bg-white border border-neutral-200 rounded-xl hover:bg-neutral-50 hover:text-neutral-600 transition-colors" title="Open page">
@@ -1009,7 +1009,7 @@ function SlugEditor({ user, onChanged }: { user: User; onChanged: () => void }) 
       {message && <p className={`text-xs ${statusColor}`}>{message}{suggestion && <> Try <button type="button" onClick={() => { setSlug(suggestion); handleChange(suggestion); }} className="underline font-medium">{suggestion}</button>?</>}</p>}
       <p className="text-[11px] text-amber-600 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2">Changing your URL will break any existing links to your profile.</p>
       <div className="flex gap-2">
-        <button onClick={save} disabled={status !== "available" || !slug || slug === currentSlug} className="px-5 py-2.5 text-sm font-semibold rounded-xl bg-neutral-900 text-white hover:bg-neutral-800 transition-colors disabled:opacity-40 shadow-sm">
+        <button onClick={save} disabled={status !== "available" || !slug || slug === currentSlug} className="px-5 py-2.5 text-sm font-semibold rounded-xl bg-neutral-900 text-white hover:bg-neutral-800 active:scale-[0.98] transition-all disabled:opacity-40 shadow-sm">
           {status === "saving" ? "Saving..." : status === "saved" ? "Saved!" : "Save New URL"}
         </button>
         <button onClick={cancel} className="px-5 py-2.5 text-sm font-medium rounded-xl text-neutral-600 bg-neutral-100 hover:bg-neutral-200 transition-colors">Cancel</button>
@@ -1229,7 +1229,7 @@ export function DashboardContent() {
                     {/* URL bar */}
                     <div className="mt-4 flex items-center gap-2 bg-neutral-50 rounded-xl p-3">
                       <span className="text-xs text-neutral-400 truncate flex-1">hireacreator.ai/u/{user.slug}</span>
-                      <button onClick={copyLink} className="px-3 py-1.5 text-xs font-semibold text-white bg-neutral-900 rounded-lg min-h-[36px]">
+                      <button onClick={copyLink} className="px-3 py-1.5 text-xs font-semibold text-white bg-neutral-900 rounded-lg min-h-[36px] active:scale-[0.98] transition-transform">
                         {copied ? "Copied!" : "Copy"}
                       </button>
                       <a href={`/u/${user.slug}`} target="_blank" className="px-3 py-1.5 text-xs font-semibold text-neutral-700 bg-white border border-neutral-200 rounded-lg min-h-[36px] flex items-center">
@@ -1428,7 +1428,7 @@ export function DashboardContent() {
                     <h2 className="text-lg font-bold text-neutral-900">Your Links</h2>
                     <p className="text-xs text-neutral-400 mt-0.5">Add links to your link-in-bio page. Drag to reorder.</p>
                   </div>
-                  {user.slug && <a href={`/u/${user.slug}/edit`} className="px-4 py-2 text-xs font-semibold text-white bg-neutral-900 rounded-xl hover:bg-neutral-800 transition-colors">Open Editor</a>}
+                  {user.slug && <a href={`/u/${user.slug}/edit`} className="px-4 py-2 text-xs font-semibold text-white bg-neutral-900 rounded-xl hover:bg-neutral-800 active:scale-[0.98] transition-all">Open Editor</a>}
                 </div>
                 <div className="bg-white rounded-2xl border border-neutral-200/60 p-5">
                   <LinkManager />
@@ -1522,7 +1522,7 @@ export function DashboardContent() {
                         <div className="flex-1 bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-2.5">
                           <span className="text-xs text-neutral-500 truncate">hireacreator.ai/ref/{(user as any).referralCode || user.slug}</span>
                         </div>
-                        <button onClick={() => { navigator.clipboard?.writeText(`https://hireacreator.ai/ref/${(user as any).referralCode || user.slug}`); }} className="px-6 py-3 text-sm font-bold text-white bg-neutral-900 rounded-xl hover:bg-neutral-800 transition-colors">Copy</button>
+                        <button onClick={() => { navigator.clipboard?.writeText(`https://hireacreator.ai/ref/${(user as any).referralCode || user.slug}`); }} className="px-6 py-3 text-sm font-bold text-white bg-neutral-900 rounded-xl hover:bg-neutral-800 active:scale-[0.98] transition-all">Copy</button>
                       </div>
                       <Link href="/referrals" className="inline-flex items-center gap-1 text-xs font-medium text-neutral-600 hover:text-neutral-900 transition-colors">
                         View all referrals & stats

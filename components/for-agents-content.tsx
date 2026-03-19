@@ -366,10 +366,10 @@ export function ForAgentsContent() {
             ].map((plan) => (
               <div
                 key={plan.name}
-                className={`aos-stagger-item rounded-2xl p-8 transition-all duration-300 hover:-translate-y-1 ${
+                className={`aos-stagger-item rounded-2xl p-8 transition-all duration-200 ${
                   plan.highlight
-                    ? "border-2 border-neutral-900 bg-gradient-to-br from-neutral-50 to-white shadow-lg"
-                    : "border border-neutral-200 bg-white hover:shadow-lg"
+                    ? "border-2 border-neutral-900 bg-gradient-to-br from-neutral-50 to-white hover:shadow-sm"
+                    : "border border-neutral-200 bg-white hover:shadow-sm"
                 }`}
               >
                 <div className="font-display font-bold text-neutral-900 text-lg mb-1">{plan.name}</div>

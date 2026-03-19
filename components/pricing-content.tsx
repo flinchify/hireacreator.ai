@@ -223,7 +223,7 @@ export function PricingContent() {
                   </ul>
                   <button
                     onClick={() => openSignup("creator")}
-                    className="w-full py-3 text-sm font-medium rounded-full border border-neutral-300 text-neutral-700 hover:bg-neutral-50 transition-colors"
+                    className="w-full py-3 text-sm font-medium rounded-full border border-neutral-300 text-neutral-700 hover:bg-neutral-50 active:scale-[0.98] transition-all"
                   >
                     Get Started Free
                   </button>
@@ -280,7 +280,7 @@ export function PricingContent() {
                   )}
                   <button
                     onClick={() => handleCheckout("creator_pro")}
-                    className="w-full py-3 text-sm font-medium rounded-full bg-neutral-900 text-white hover:bg-neutral-800 transition-colors"
+                    className="w-full py-3 text-sm font-medium rounded-full bg-neutral-900 text-white hover:bg-neutral-800 active:scale-[0.98] transition-all"
                   >
                     Upgrade to Pro
                   </button>
@@ -332,7 +332,7 @@ export function PricingContent() {
                   )}
                   <button
                     onClick={() => handleCheckout("creator_biz")}
-                    className="w-full py-3 text-sm font-medium rounded-full border border-neutral-300 text-neutral-700 hover:bg-neutral-50 transition-colors"
+                    className="w-full py-3 text-sm font-medium rounded-full border border-neutral-300 text-neutral-700 hover:bg-neutral-50 active:scale-[0.98] transition-all"
                   >
                     Upgrade to Business
                   </button>
@@ -432,7 +432,7 @@ export function PricingContent() {
                   )}
                   <button
                     onClick={() => handleCheckout("brand_analytics")}
-                    className="w-full py-3 text-sm font-medium rounded-full bg-neutral-900 text-white hover:bg-neutral-800 transition-colors"
+                    className="w-full py-3 text-sm font-medium rounded-full bg-neutral-900 text-white hover:bg-neutral-800 active:scale-[0.98] transition-all"
                   >
                     Get Started
                   </button>
@@ -477,7 +477,7 @@ export function PricingContent() {
                   </ul>
                   <a
                     href="mailto:hello@hireacreator.ai"
-                    className="block w-full py-3 text-sm font-medium rounded-full border border-neutral-300 text-neutral-700 hover:bg-neutral-50 transition-colors text-center"
+                    className="block w-full py-3 text-sm font-medium rounded-full border border-neutral-300 text-neutral-700 hover:bg-neutral-50 active:scale-[0.98] transition-colors text-center"
                   >
                     Contact Sales
                   </a>
@@ -566,7 +566,7 @@ export function PricingContent() {
                 )}
                 <button
                   onClick={() => handleCheckout("api_pro")}
-                  className="w-full py-3 text-sm font-medium rounded-full bg-neutral-900 text-white hover:bg-neutral-800 transition-colors"
+                  className="w-full py-3 text-sm font-medium rounded-full bg-neutral-900 text-white hover:bg-neutral-800 active:scale-[0.98] transition-all"
                 >
                   Get API Access
                 </button>
@@ -590,7 +590,7 @@ export function PricingContent() {
                   <div className="font-display text-2xl font-bold text-neutral-900 mb-4">$10<span className="text-base font-normal text-neutral-500">/week</span></div>
                   <button
                     onClick={() => handleCheckout("boosted")}
-                    className="px-6 py-2.5 text-sm font-medium rounded-full bg-neutral-900 text-white hover:bg-neutral-800 transition-colors"
+                    className="px-6 py-2.5 text-sm font-medium rounded-full bg-neutral-900 text-white hover:bg-neutral-800 active:scale-[0.98] transition-all"
                   >
                     Boost Your Profile
                   </button>
@@ -605,7 +605,7 @@ export function PricingContent() {
                   <div className="font-display text-2xl font-bold text-neutral-900 mb-4">$4.99<span className="text-base font-normal text-neutral-500"> each</span></div>
                   <a
                     href="/animations"
-                    className="inline-block px-6 py-2.5 text-sm font-medium rounded-full border border-neutral-300 text-neutral-700 hover:bg-neutral-100 transition-colors"
+                    className="inline-block px-6 py-2.5 text-sm font-medium rounded-full border border-neutral-300 text-neutral-700 hover:bg-neutral-100 active:scale-[0.98] transition-colors"
                   >
                     Browse Animations
                   </a>

@@ -123,7 +123,7 @@ export function ForCreatorsContent() {
             const creators = topByCategory[cat] || [];
             return (
               <Link key={cat} href={`/browse?category=${encodeURIComponent(cat)}`}>
-                <div className="bg-white rounded-2xl border border-neutral-200/60 p-5 hover:border-neutral-300 hover:shadow-md transition-all group cursor-pointer h-full">
+                <div className="bg-white rounded-2xl border border-neutral-200 p-5 hover:border-neutral-300 hover:shadow-sm transition-all duration-200 group cursor-pointer h-full">
                   <div className="text-2xl mb-3">{CATEGORY_ICONS[cat] || "🎯"}</div>
                   <h3 className="font-display font-bold text-neutral-900 text-sm mb-2 group-hover:text-neutral-700">{cat}</h3>
                   {creators.length > 0 ? (
