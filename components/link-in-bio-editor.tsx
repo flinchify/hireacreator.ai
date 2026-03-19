@@ -145,7 +145,7 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
   const dark = TEMPLATES.find(t => t.id === settings.template)?.dark ?? false;
   const accent = settings.accent || "#6366f1";
   const btnRadius = BUTTON_SHAPES.find(s => s.id === settings.buttonShape)?.radius || "16px";
-  const fontFamily = FONTS.find(f => f.id === settings.font)?.css || "'Plus Jakarta Sans', sans-serif";
+  const fontFamily = FONTS.find(f => f.id === settings.font)?.css || "'Inter', sans-serif";
   const textCol = settings.textColor || (dark ? "#ffffff" : "#171717");
   const textMuted = settings.textColor ? `${settings.textColor}99` : (dark ? "rgba(255,255,255,0.5)" : "rgba(23,23,23,0.5)");
 
