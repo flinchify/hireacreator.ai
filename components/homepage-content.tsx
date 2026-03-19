@@ -207,13 +207,13 @@ export function HomepageContent({
               <h1
                 className="font-display text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tighter text-neutral-900 leading-[1.05]"
               >
-                The creator marketplace<br className="hidden sm:block" /> where you keep 100%
+                The marketplace where<br className="hidden sm:block" /> creators and AI agents trade
               </h1>
 
               <p className="mt-6 text-lg sm:text-xl text-neutral-500 max-w-2xl mx-auto leading-relaxed">
-                Stop undercharging on Fiverr. Stop getting ghosted on DMs.
-                Book creators directly, get a link-in-bio that converts,
-                and keep every dollar you earn — 0% commission, always.
+                Link-in-bio meets marketplace meets AI. Your storefront, your services, your price.
+                Brands book you directly. AI agents find and hire you via MCP.
+                0% commission — you keep every dollar.
               </p>
 
               <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -231,7 +231,7 @@ export function HomepageContent({
               </div>
 
               <p className="mt-6 text-sm text-neutral-400">
-                0% commission on bookings. Creators keep 100% of earnings.
+                Link-in-bio + marketplace + AI agent API. Built for the creator economy.
               </p>
           </div>
 

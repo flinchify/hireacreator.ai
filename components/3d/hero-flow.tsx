@@ -118,24 +118,26 @@ function FlowNode({ label, position }: { label: string; position: [number, numbe
         </mesh>
         {/* Icon character */}
         <Text
-          position={[-0.45, 0, 0.08]}
-          fontSize={0.26}
+          position={[-0.45, 0.02, 0.08]}
+          fontSize={0.32}
           color={theme.accent}
           anchorX="center"
           anchorY="middle"
-          font="/fonts/Inter-Bold.woff"
+          fontWeight="bold"
         >
           {theme.icon}
         </Text>
         {/* Label */}
         <Text
-          position={[0.15, 0, 0.08]}
-          fontSize={0.2}
+          position={[0.18, 0.02, 0.08]}
+          fontSize={0.18}
           color="#171717"
           anchorX="center"
           anchorY="middle"
+          fontWeight="bold"
+          letterSpacing={0.05}
         >
-          {label}
+          {label.toUpperCase()}
         </Text>
         {/* Accent ring above the card */}
         <AccentRing color={theme.accent} position={[0.55, 0.45, 0]} />
