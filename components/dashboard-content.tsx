@@ -1112,10 +1112,10 @@ export function DashboardContent() {
         {/* ═══ MAIN CONTENT ═══ */}
         <main className="flex-1 min-w-0">
 
-          {/* ─── Profile Header ─── */}
-          <div className="bg-white border-b border-neutral-200">
+          {/* ─── Profile Header (desktop only) ─── */}
+          <div className="hidden lg:block bg-white border-b border-neutral-200">
             {/* Cover — extends behind floating header */}
-            <div className="relative h-32 sm:h-52 lg:h-56">
+            <div className="relative h-56">
               {user.cover ? <img src={user.cover} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full bg-gradient-to-br from-neutral-200 via-neutral-100 to-neutral-300" />}
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
               <label className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-black/40 backdrop-blur-sm border border-white/20 rounded-full hover:bg-black/60 transition-all cursor-pointer">
@@ -1175,6 +1175,14 @@ export function DashboardContent() {
           {/* ─── Content area ─── */}
           <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8 pb-24 lg:pb-8">
 
+            {/* Upload error (mobile) */}
+            {uploadError && (
+              <div className="lg:hidden mb-4 p-3 bg-red-50 border border-red-200 rounded-xl flex items-center justify-between gap-3">
+                <p className="text-xs text-red-700 font-medium">{uploadError}</p>
+                <button onClick={() => setUploadError("")} className="text-red-400 hover:text-red-600 shrink-0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" /></svg></button>
+              </div>
+            )}
+
             {/* OVERVIEW */}
             {section === "overview" && (
               <div className="grid lg:grid-cols-[1fr,320px] gap-8">
@@ -1197,22 +1205,42 @@ export function DashboardContent() {
                     );
                   })()}
 
-                  {/* Mobile hero card */}
-                  <div className="lg:hidden flex items-center gap-3 bg-white rounded-2xl border border-neutral-200/60 p-4">
-                    {user.avatar
-                      ? <img src={user.avatar} alt={user.name} className="w-12 h-12 rounded-xl object-cover shrink-0" />
-                      : <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-neutral-100 to-neutral-200 flex items-center justify-center shrink-0"><span className="text-lg font-bold text-neutral-400">{user.name?.charAt(0) || "?"}</span></div>
-                    }
-                    <div className="flex-1 min-w-0">
-                      <h2 className="text-sm font-bold text-neutral-900 truncate">{user.name}</h2>
-                      <div className="flex items-center gap-1.5 mt-0.5">
-                        <span className="text-xs text-neutral-400 truncate">hireacreator.ai/u/{user.slug}</span>
-                        <button onClick={copyLink} className="text-neutral-400 hover:text-neutral-600 shrink-0">{icons.copy}</button>
+                  {/* Mobile profile card */}
+                  <div className="lg:hidden bg-white rounded-2xl border border-neutral-200/60 p-5">
+                    <div className="flex items-center gap-4">
+                      <div className="relative group shrink-0">
+                        {user.avatar
+                          ? <img src={user.avatar} alt={user.name} className="w-16 h-16 rounded-2xl object-cover" />
+                          : <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-neutral-100 to-neutral-200 flex items-center justify-center"><span className="text-2xl font-bold text-neutral-400">{user.name?.charAt(0) || "?"}</span></div>
+                        }
+                        <label className="absolute inset-0 flex items-center justify-center bg-black/0 active:bg-black/40 rounded-2xl cursor-pointer transition-all">
+                          <input type="file" accept="image/*" className="hidden" onChange={async (e) => { const file = e.target.files?.[0]; if (file) handleUpload(file, "avatar"); }} />
+                        </label>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <h2 className="text-lg font-bold text-neutral-900 truncate">{user.name}</h2>
+                          {user.isPro && <span className="px-1.5 py-0.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[8px] font-bold uppercase rounded-full">PRO</span>}
+                        </div>
+                        {user.headline && <p className="text-sm text-neutral-500 truncate mt-0.5">{user.headline}</p>}
                       </div>
                     </div>
-                    <button onClick={() => setEditProfile(true)} className="px-3 py-2 text-xs font-semibold text-neutral-700 bg-neutral-100 rounded-xl hover:bg-neutral-200 transition-colors shrink-0 min-h-[44px]">
-                      {icons.pencil}
-                    </button>
+
+                    {/* URL bar */}
+                    <div className="mt-4 flex items-center gap-2 bg-neutral-50 rounded-xl p-3">
+                      <span className="text-xs text-neutral-400 truncate flex-1">hireacreator.ai/u/{user.slug}</span>
+                      <button onClick={copyLink} className="px-3 py-1.5 text-xs font-semibold text-white bg-neutral-900 rounded-lg min-h-[36px]">
+                        {copied ? "Copied!" : "Copy"}
+                      </button>
+                      <a href={`/u/${user.slug}`} target="_blank" className="px-3 py-1.5 text-xs font-semibold text-neutral-700 bg-white border border-neutral-200 rounded-lg min-h-[36px] flex items-center">
+                        View
+                      </a>
+                    </div>
+
+                    {/* Mobile slug editor */}
+                    <div className="mt-3">
+                      <SlugEditor user={user} onChanged={refreshUser} />
+                    </div>
                   </div>
 
                   {/* Mobile quick actions */}
