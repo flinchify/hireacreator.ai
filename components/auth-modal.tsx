@@ -157,32 +157,21 @@ export function AuthModal() {
               <p className="text-sm text-neutral-500 mb-6">Sign in to your account.</p>
 
               {inApp ? (
-                <div className="mb-1">
-                  <div className="flex items-center gap-2 px-3 py-2.5 bg-amber-50 border border-amber-200 rounded-xl mb-4">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-amber-500 shrink-0"><path d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                    <p className="text-[11px] text-amber-700 leading-relaxed">Google sign-in doesn't work in app browsers. Use email below, or open in Safari/Chrome.</p>
-                  </div>
-                  <button
-                    onClick={() => {
-                      const url = window.location.origin;
-                      window.open(url, "_blank");
-                    }}
-                    className="flex items-center justify-center gap-2.5 w-full py-3 px-4 bg-white border border-neutral-300 rounded-full text-sm font-medium text-neutral-400 cursor-not-allowed opacity-60"
-                    disabled
-                  >
-                    <GoogleIcon /> Continue with Google
-                  </button>
+                <div className="flex items-center gap-2 px-3 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl mb-5">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-neutral-400 shrink-0"><path d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                  <p className="text-[11px] text-neutral-500 leading-relaxed">Enter your email to sign in. For Google sign-in, open in Safari or Chrome.</p>
                 </div>
               ) : (
-                <a href="/api/auth/google" className="flex items-center justify-center gap-2.5 w-full py-3 px-4 bg-white border border-neutral-300 rounded-full text-sm font-medium text-neutral-700 hover:bg-neutral-50 hover:border-neutral-400 transition-all active:scale-[0.98]">
-                  <GoogleIcon /> Continue with Google
-                </a>
+                <>
+                  <a href="/api/auth/google" className="flex items-center justify-center gap-2.5 w-full py-3 px-4 bg-white border border-neutral-300 rounded-full text-sm font-medium text-neutral-700 hover:bg-neutral-50 hover:border-neutral-400 transition-all active:scale-[0.98]">
+                    <GoogleIcon /> Continue with Google
+                  </a>
+                  <div className="relative my-5">
+                    <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-neutral-200" /></div>
+                    <div className="relative flex justify-center text-xs"><span className="bg-white px-3 text-neutral-400">or</span></div>
+                  </div>
+                </>
               )}
-
-              <div className="relative my-5">
-                <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-neutral-200" /></div>
-                <div className="relative flex justify-center text-xs"><span className="bg-white px-3 text-neutral-400">{inApp ? "use email instead" : "or"}</span></div>
-              </div>
 
               <form onSubmit={sendCode}>
                 <input
@@ -264,25 +253,21 @@ export function AuthModal() {
               )}
 
               {inApp ? (
-                <div className="mb-1">
-                  <div className="flex items-center gap-2 px-3 py-2.5 bg-amber-50 border border-amber-200 rounded-xl mb-4">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-amber-500 shrink-0"><path d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                    <p className="text-[11px] text-amber-700 leading-relaxed">Google sign-in doesn't work in app browsers. Use email below, or open in Safari/Chrome.</p>
-                  </div>
-                  <button className="flex items-center justify-center gap-2.5 w-full py-3 px-4 bg-white border border-neutral-300 rounded-full text-sm font-medium text-neutral-400 cursor-not-allowed opacity-60" disabled>
-                    <GoogleIcon /> Continue with Google
-                  </button>
+                <div className="flex items-center gap-2 px-3 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl mb-5">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-neutral-400 shrink-0"><path d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                  <p className="text-[11px] text-neutral-500 leading-relaxed">Enter your email to sign up. For Google sign-in, open in Safari or Chrome.</p>
                 </div>
               ) : (
-                <a href={`/api/auth/google?role=${role}`} className="flex items-center justify-center gap-2.5 w-full py-3 px-4 bg-white border border-neutral-300 rounded-full text-sm font-medium text-neutral-700 hover:bg-neutral-50 hover:border-neutral-400 transition-all active:scale-[0.98]">
-                  <GoogleIcon /> Continue with Google
-                </a>
+                <>
+                  <a href={`/api/auth/google?role=${role}`} className="flex items-center justify-center gap-2.5 w-full py-3 px-4 bg-white border border-neutral-300 rounded-full text-sm font-medium text-neutral-700 hover:bg-neutral-50 hover:border-neutral-400 transition-all active:scale-[0.98]">
+                    <GoogleIcon /> Continue with Google
+                  </a>
+                  <div className="relative my-5">
+                    <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-neutral-200" /></div>
+                    <div className="relative flex justify-center text-xs"><span className="bg-white px-3 text-neutral-400">or</span></div>
+                  </div>
+                </>
               )}
-
-              <div className="relative my-5">
-                <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-neutral-200" /></div>
-                <div className="relative flex justify-center text-xs"><span className="bg-white px-3 text-neutral-400">{inApp ? "use email instead" : "or"}</span></div>
-              </div>
 
               <form onSubmit={sendCode}>
                 <input
