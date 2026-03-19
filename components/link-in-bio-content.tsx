@@ -1793,7 +1793,7 @@ export function LinkInBioContent({ creator }: { creator: Creator }) {
   const TemplateComponent = TEMPLATES[template] || TemplateCustom;
 
   return (
-    <div style={{ fontFamily: font, color: textColor || undefined, paddingTop: "env(safe-area-inset-top)" }}>
+    <div className="pt-0" style={{ fontFamily: font, color: textColor || undefined }}>
       {!animDone && (
         <IntroAnimation
           animType={animType}
