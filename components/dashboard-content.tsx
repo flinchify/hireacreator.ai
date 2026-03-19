@@ -37,6 +37,9 @@ function Sheet({ open, onClose, title, children }: { open: boolean; onClose: () 
     <div className="fixed inset-0 z-50" style={{ animation: "fadeIn .15s ease-out" }}>
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
       <div className="absolute inset-x-0 bottom-0 max-h-[90vh] bg-white rounded-t-2xl shadow-2xl overflow-y-auto sm:inset-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:max-w-lg sm:w-full sm:rounded-2xl sm:max-h-[85vh]" style={{ animation: "slideUp .2s cubic-bezier(.16,1,.3,1)" }}>
+        <div className="pt-3 pb-1 flex justify-center sm:hidden">
+          <div className="w-10 h-1 rounded-full bg-neutral-300" />
+        </div>
         <div className="sticky top-0 bg-white border-b border-neutral-100 px-5 py-4 flex items-center justify-between z-10 rounded-t-2xl">
           <h3 className="font-display font-bold text-neutral-900">{title}</h3>
           <button onClick={onClose} className="p-1 rounded-lg hover:bg-neutral-100 text-neutral-400">{icons.close}</button>
@@ -68,7 +71,7 @@ function EditProfileSheet({ user, open, onClose, onOpenBioWriter }: { user: User
   }
 
   const categories = ["UGC Creator","Video Editor","Photographer","Graphic Designer","Social Media Manager","Copywriter","Brand Strategist","Motion Designer","Consultant","Automotive","Education / Tech","Influencer","Developer","Music Producer"];
-  const inp = "w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900/10 focus:border-neutral-400 text-neutral-900 bg-white";
+  const inp = "w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 min-h-[48px] text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900/10 focus:border-neutral-400 text-neutral-900 bg-white";
 
   return (
     <Sheet open={open} onClose={onClose} title="Edit Profile">
@@ -96,7 +99,9 @@ function EditProfileSheet({ user, open, onClose, onOpenBioWriter }: { user: User
           </button>
           <span className="text-sm text-neutral-700">Show as online</span>
         </div>
-        <button onClick={save} disabled={saving} className="w-full py-3 bg-neutral-900 text-white text-sm font-semibold rounded-xl hover:bg-neutral-800 transition-colors disabled:opacity-50">{saved ? "Saved!" : saving ? "Saving..." : "Save Changes"}</button>
+        <div className="sticky bottom-0 bg-white pt-3 pb-1 -mx-5 px-5 border-t border-neutral-100">
+          <button onClick={save} disabled={saving} className="w-full py-3 min-h-[48px] bg-neutral-900 text-white text-sm font-semibold rounded-xl hover:bg-neutral-800 transition-colors disabled:opacity-50">{saved ? "Saved!" : saving ? "Saving..." : "Save Changes"}</button>
+        </div>
       </div>
     </Sheet>
   );
@@ -109,7 +114,7 @@ function SocialsSheet({ open, onClose }: { open: boolean; onClose: () => void })
   const [refreshing, setRefreshing] = useState(false);
   const [refreshMsg, setRefreshMsg] = useState("");
   const [form, setForm] = useState({ platform: "", handle: "", url: "" });
-  const inp = "w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900/10 text-neutral-900 bg-white";
+  const inp = "w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 min-h-[48px] text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900/10 text-neutral-900 bg-white";
 
   useEffect(() => { if (open) fetch("/api/profile").then(r => r.json()).then(d => setSocials(d.socials || [])).catch(() => {}); }, [open]);
 
@@ -171,7 +176,9 @@ function SocialsSheet({ open, onClose }: { open: boolean; onClose: () => void })
           <select value={form.platform} onChange={e => setForm({ ...form, platform: e.target.value })} className={inp}><option value="">Choose platform...</option>{platforms.map(p => <option key={p} value={p}>{p.charAt(0).toUpperCase() + p.slice(1)}</option>)}</select>
           <input placeholder="@handle or username" value={form.handle} onChange={e => setForm({ ...form, handle: e.target.value })} className={inp} />
           <input placeholder="Profile URL (optional)" value={form.url} onChange={e => setForm({ ...form, url: e.target.value })} className={inp} />
-          <button onClick={add} disabled={adding || !form.platform || !form.handle} className="w-full py-2.5 bg-neutral-900 text-white text-sm font-medium rounded-xl hover:bg-neutral-800 transition-colors disabled:opacity-40">{adding ? "Adding..." : "Add Link"}</button>
+          <div className="sticky bottom-0 bg-white pt-3 pb-1 -mx-5 px-5 border-t border-neutral-100">
+            <button onClick={add} disabled={adding || !form.platform || !form.handle} className="w-full py-2.5 min-h-[48px] bg-neutral-900 text-white text-sm font-medium rounded-xl hover:bg-neutral-800 transition-colors disabled:opacity-40">{adding ? "Adding..." : "Add Link"}</button>
+          </div>
         </div>
       </div>
     </Sheet>
@@ -184,7 +191,7 @@ function ServicesSheet({ user, open, onClose }: { user: User; open: boolean; onC
   const [adding, setAdding] = useState(false);
   const [form, setForm] = useState({ title: "", description: "", price: "", delivery_days: "7", category: "" });
   const [error, setError] = useState("");
-  const inp = "w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900/10 text-neutral-900 bg-white";
+  const inp = "w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 min-h-[48px] text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900/10 text-neutral-900 bg-white";
 
   useEffect(() => { if (open) fetch("/api/profile").then(r => r.json()).then(d => setServices(d.services || [])).catch(() => {}); }, [open]);
 
@@ -226,7 +233,9 @@ function ServicesSheet({ user, open, onClose }: { user: User; open: boolean; onC
             <input type="number" placeholder="Days" value={form.delivery_days} onChange={e => setForm({ ...form, delivery_days: e.target.value })} className={inp} />
             <input placeholder="Category" value={form.category} onChange={e => setForm({ ...form, category: e.target.value })} className={inp} />
           </div>
-          <button onClick={add} disabled={adding || !form.title || !form.price} className="w-full py-2.5 bg-neutral-900 text-white text-sm font-medium rounded-xl hover:bg-neutral-800 transition-colors disabled:opacity-40">{adding ? "Adding..." : "Add Service"}</button>
+          <div className="sticky bottom-0 bg-white pt-3 pb-1 -mx-5 px-5 border-t border-neutral-100">
+            <button onClick={add} disabled={adding || !form.title || !form.price} className="w-full py-2.5 min-h-[48px] bg-neutral-900 text-white text-sm font-medium rounded-xl hover:bg-neutral-800 transition-colors disabled:opacity-40">{adding ? "Adding..." : "Add Service"}</button>
+          </div>
         </div>
       </div>
     </Sheet>
@@ -961,7 +970,7 @@ function SlugEditor({ user, onChanged }: { user: User; onChanged: () => void }) 
 
   if (!editing) {
     return (
-      <div className="flex items-center gap-2 mt-4 mb-4">
+      <div className="flex flex-wrap items-center gap-2 mt-4 mb-4">
         <div className="flex-1 flex items-center gap-2 bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-2.5">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-neutral-300 shrink-0"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" strokeLinecap="round"/></svg>
           <span className="text-sm text-neutral-500 truncate">hireacreator.ai/u/{currentSlug}</span>
@@ -1106,7 +1115,7 @@ export function DashboardContent() {
           {/* ─── Profile Header ─── */}
           <div className="bg-white border-b border-neutral-200">
             {/* Cover — extends behind floating header */}
-            <div className="relative h-52 sm:h-56">
+            <div className="relative h-32 sm:h-52 lg:h-56">
               {user.cover ? <img src={user.cover} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full bg-gradient-to-br from-neutral-200 via-neutral-100 to-neutral-300" />}
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
               <label className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-black/40 backdrop-blur-sm border border-white/20 rounded-full hover:bg-black/60 transition-all cursor-pointer">
@@ -1159,15 +1168,7 @@ export function DashboardContent() {
                 <SlugEditor user={user} onChanged={refreshUser} />
               )}
 
-              {/* Tab bar (mobile + tablet, hidden on desktop since sidebar handles it) */}
-              <div className="flex lg:hidden gap-1 overflow-x-auto -mx-6 px-6 border-t border-neutral-100 scrollbar-hide">
-                {[...NAV_MAIN, ...NAV_BOTTOM].map(n => (
-                  <button key={n.id} onClick={() => setSection(n.id)}
-                    className={`flex items-center gap-1.5 px-4 py-3 text-xs font-medium whitespace-nowrap border-b-2 transition-colors ${section === n.id ? "text-neutral-900 border-neutral-900" : "text-neutral-400 border-transparent hover:text-neutral-600"}`}>
-                    {n.label}
-                  </button>
-                ))}
-              </div>
+              {/* Tab bar removed — bottom nav handles mobile/tablet section switching */}
             </div>
           </div>
 
@@ -1196,6 +1197,46 @@ export function DashboardContent() {
                     );
                   })()}
 
+                  {/* Mobile hero card */}
+                  <div className="lg:hidden flex items-center gap-3 bg-white rounded-2xl border border-neutral-200/60 p-4">
+                    {user.avatar
+                      ? <img src={user.avatar} alt={user.name} className="w-12 h-12 rounded-xl object-cover shrink-0" />
+                      : <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-neutral-100 to-neutral-200 flex items-center justify-center shrink-0"><span className="text-lg font-bold text-neutral-400">{user.name?.charAt(0) || "?"}</span></div>
+                    }
+                    <div className="flex-1 min-w-0">
+                      <h2 className="text-sm font-bold text-neutral-900 truncate">{user.name}</h2>
+                      <div className="flex items-center gap-1.5 mt-0.5">
+                        <span className="text-xs text-neutral-400 truncate">hireacreator.ai/u/{user.slug}</span>
+                        <button onClick={copyLink} className="text-neutral-400 hover:text-neutral-600 shrink-0">{icons.copy}</button>
+                      </div>
+                    </div>
+                    <button onClick={() => setEditProfile(true)} className="px-3 py-2 text-xs font-semibold text-neutral-700 bg-neutral-100 rounded-xl hover:bg-neutral-200 transition-colors shrink-0 min-h-[44px]">
+                      {icons.pencil}
+                    </button>
+                  </div>
+
+                  {/* Mobile quick actions */}
+                  <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4 lg:hidden scrollbar-hide">
+                    {[
+                      { label: "Edit Profile", action: () => setEditProfile(true), icon: icons.pencil },
+                      { label: "Edit Socials", action: () => setEditSocials(true), icon: icons.link },
+                      { label: "Add Service", action: () => setEditServices(true), icon: icons.services },
+                      { label: "View Page", href: `/u/${user.slug}`, icon: icons.external },
+                    ].map((item, i) => (
+                      item.href ? (
+                        <a key={i} href={item.href} target="_blank" className="flex items-center gap-2 px-4 py-2.5 bg-white border border-neutral-200 rounded-full whitespace-nowrap text-sm font-medium text-neutral-700 hover:bg-neutral-50 transition-colors shrink-0 min-h-[44px]">
+                          <span className="text-neutral-400">{item.icon}</span>
+                          {item.label}
+                        </a>
+                      ) : (
+                        <button key={i} onClick={item.action} className="flex items-center gap-2 px-4 py-2.5 bg-white border border-neutral-200 rounded-full whitespace-nowrap text-sm font-medium text-neutral-700 hover:bg-neutral-50 transition-colors shrink-0 min-h-[44px]">
+                          <span className="text-neutral-400">{item.icon}</span>
+                          {item.label}
+                        </button>
+                      )
+                    ))}
+                  </div>
+
                   {/* Stats */}
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     {[
@@ -1204,8 +1245,8 @@ export function DashboardContent() {
                       { label: "Reviews", value: user.reviewCount || 0 },
                       { label: "Per hour", value: user.hourlyRate ? `$${user.hourlyRate}` : "--" },
                     ].map(s => (
-                      <div key={s.label} className="bg-white rounded-2xl border border-neutral-200/60 p-4 text-center">
-                        <div className="font-display text-2xl font-bold text-neutral-900">{s.value}</div>
+                      <div key={s.label} className="bg-white rounded-2xl border border-neutral-200/60 p-5 sm:p-4 text-center">
+                        <div className="font-display text-3xl sm:text-2xl font-bold text-neutral-900">{s.value}</div>
                         <div className="text-[10px] text-neutral-400 mt-1 uppercase tracking-wider font-medium">{s.label}</div>
                       </div>
                     ))}
@@ -1437,7 +1478,7 @@ export function DashboardContent() {
                         <div className="w-8 h-8 rounded-lg bg-neutral-100 flex items-center justify-center text-neutral-400">{item.icon}</div>
                         <span className="text-xs font-medium text-neutral-500">{item.label}</span>
                       </div>
-                      <div className="font-display text-xl font-bold text-neutral-900">{item.value}</div>
+                      <div className="font-display text-2xl sm:text-xl font-bold text-neutral-900">{item.value}</div>
                       <div className="text-[10px] text-neutral-400 mt-0.5">{item.desc}</div>
                     </div>
                   ))}
@@ -1453,7 +1494,7 @@ export function DashboardContent() {
                         <div className="flex-1 bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-2.5">
                           <span className="text-xs text-neutral-500 truncate">hireacreator.ai/ref/{(user as any).referralCode || user.slug}</span>
                         </div>
-                        <button onClick={() => { navigator.clipboard?.writeText(`https://hireacreator.ai/ref/${(user as any).referralCode || user.slug}`); }} className="px-4 py-2.5 text-xs font-semibold text-white bg-neutral-900 rounded-xl hover:bg-neutral-800 transition-colors">Copy</button>
+                        <button onClick={() => { navigator.clipboard?.writeText(`https://hireacreator.ai/ref/${(user as any).referralCode || user.slug}`); }} className="px-6 py-3 text-sm font-bold text-white bg-neutral-900 rounded-xl hover:bg-neutral-800 transition-colors">Copy</button>
                       </div>
                       <Link href="/referrals" className="inline-flex items-center gap-1 text-xs font-medium text-neutral-600 hover:text-neutral-900 transition-colors">
                         View all referrals & stats
@@ -1539,9 +1580,13 @@ export function DashboardContent() {
             { id: "settings" as Section, label: "Settings", icon: icons.settings },
           ]).map(n => (
             <button key={n.id} onClick={() => setSection(n.id)}
-              className={`flex flex-col items-center gap-0.5 py-1.5 px-2 min-w-[44px] min-h-[44px] rounded-xl transition-colors ${section === n.id ? "text-neutral-900" : "text-neutral-400"}`}>
-              {n.icon}
-              <span className="text-[9px] font-medium">{n.label}</span>
+              className={`flex flex-col items-center gap-0.5 py-1.5 px-2 min-w-[48px] min-h-[48px] rounded-xl transition-all ${
+                section === n.id
+                  ? "text-neutral-900 font-bold bg-neutral-100 border-t-2 border-neutral-900"
+                  : "text-neutral-400"
+              }`}>
+              <span className="[&>svg]:w-5 [&>svg]:h-5">{n.icon}</span>
+              <span className={`text-[10px] ${section === n.id ? "font-bold" : "font-medium"}`}>{n.label}</span>
             </button>
           ))}
         </div>

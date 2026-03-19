@@ -724,6 +724,7 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
   const [section, setSection] = useState("links");
   const [uploading, setUploading] = useState(false);
   const [previewMode, setPreviewMode] = useState<"mobile" | "desktop">("mobile");
+  const [mobilePreview, setMobilePreview] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLInputElement>(null);
   const photosRef = useRef<HTMLInputElement>(null);
@@ -832,7 +833,7 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
           </div>
           <div className="flex items-center gap-2">
             {saving && <div className="w-4 h-4 border-2 border-neutral-300 border-t-neutral-900 rounded-full animate-spin" />}
-            {saved && <span className="text-xs text-emerald-600 font-medium flex items-center gap-1"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 13l4 4L19 7" strokeLinecap="round" /></svg>Saved</span>}
+            {saved && <span className="text-xs text-emerald-600 font-medium flex items-center gap-1 px-3 py-1.5 bg-emerald-50 rounded-full"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 13l4 4L19 7" strokeLinecap="round" /></svg>Saved</span>}
             {saveError && <span className="text-xs text-red-600 font-medium">{saveError}</span>}
             {user.slug && (
               <Link href={`/u/${user.slug}`} target="_blank" className="px-4 py-1.5 text-xs font-semibold bg-neutral-900 text-white rounded-full hover:bg-neutral-800 transition-colors">
@@ -848,9 +849,9 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
           {/* Left — Editor */}
           <div className="lg:w-[55%] space-y-4">
             {/* Section tabs — scrollable */}
-            <div className="flex gap-1 p-1 bg-white rounded-2xl border border-neutral-200/60 overflow-x-auto">
+            <div className="flex gap-1 p-1 bg-white rounded-2xl border border-neutral-200/60 overflow-x-auto sticky top-14 z-40 scrollbar-hide">
               {sections.map(s => (
-                <button key={s.id} onClick={() => setSection(s.id)} className={`flex-shrink-0 py-2.5 px-4 rounded-xl text-xs font-semibold text-center transition-all whitespace-nowrap ${section === s.id ? "bg-neutral-900 text-white" : "text-neutral-400 hover:text-neutral-700"}`}>
+                <button key={s.id} onClick={() => setSection(s.id)} className={`flex-shrink-0 py-3 px-5 min-h-[44px] rounded-xl text-xs font-semibold text-center transition-all whitespace-nowrap ${section === s.id ? "bg-neutral-900 text-white" : "text-neutral-400 hover:text-neutral-700"}`}>
                   {s.name}
                 </button>
               ))}
@@ -898,7 +899,7 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
                   <h2 className="text-sm font-bold text-neutral-900 mb-3">Background</h2>
                   <div className="flex flex-wrap gap-2">
                     {["gradient", "solid", "image", "photos", "video"].map(t => (
-                      <button key={t} onClick={() => save({ bgType: t })} className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${settings.bgType === t ? "bg-neutral-900 text-white" : "bg-neutral-100 text-neutral-500 hover:bg-neutral-200"}`}>
+                      <button key={t} onClick={() => save({ bgType: t })} className={`px-4 py-3 rounded-xl text-sm font-semibold transition-all min-h-[48px] ${settings.bgType === t ? "bg-neutral-900 text-white" : "bg-neutral-100 text-neutral-500 hover:bg-neutral-200"}`}>
                         {t === "photos" ? "Photo Collage" : t[0].toUpperCase() + t.slice(1)}
                       </button>
                     ))}
@@ -908,7 +909,7 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
                 {settings.bgType === "gradient" && (
                   <div className="grid grid-cols-6 gap-2">
                     {GRADIENTS.map((g, i) => (
-                      <button key={i} onClick={() => save({ bgValue: g })} className={`aspect-square rounded-xl transition-all hover:scale-105 ${settings.bgValue === g ? "ring-2 ring-neutral-900 ring-offset-2" : ""}`} style={{ background: g }} />
+                      <button key={i} onClick={() => save({ bgValue: g })} className={`aspect-square rounded-xl min-w-[44px] min-h-[44px] transition-all hover:scale-105 ${settings.bgValue === g ? "ring-2 ring-neutral-900 ring-offset-2" : ""}`} style={{ background: g }} />
                     ))}
                   </div>
                 )}
@@ -917,7 +918,7 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
                   <div>
                     <div className="flex flex-wrap gap-2.5">
                       {["#ffffff", "#f5f5f5", "#171717", "#0a0a0a", "#1e293b", "#fef3c7", "#ecfdf5", "#eff6ff", "#fdf2f8", "#f5f3ff", "#dc2626", "#2563eb", "#16a34a"].map(c => (
-                        <button key={c} onClick={() => save({ bgValue: c })} className={`w-9 h-9 rounded-xl border transition-all hover:scale-105 ${settings.bgValue === c ? "ring-2 ring-neutral-900 ring-offset-2" : "border-neutral-200"}`} style={{ background: c }} />
+                        <button key={c} onClick={() => save({ bgValue: c })} className={`w-11 h-11 rounded-xl border transition-all hover:scale-105 ${settings.bgValue === c ? "ring-2 ring-neutral-900 ring-offset-2" : "border-neutral-200"}`} style={{ background: c }} />
                       ))}
                     </div>
                     <div className="mt-3 flex items-center gap-2">
@@ -1060,7 +1061,7 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
                   <h2 className="text-sm font-bold text-neutral-900 mb-3">Font</h2>
                   <div className="grid grid-cols-2 gap-2">
                     {FONTS.map(f => (
-                      <button key={f.id} onClick={() => save({ font: f.id })} className={`p-3 rounded-xl text-left transition-all ${settings.font === f.id ? "bg-neutral-900 text-white" : "bg-neutral-50 text-neutral-600 hover:bg-neutral-100"}`}>
+                      <button key={f.id} onClick={() => save({ font: f.id })} className={`p-4 min-h-[56px] rounded-xl text-left transition-all ${settings.font === f.id ? "bg-neutral-900 text-white" : "bg-neutral-50 text-neutral-600 hover:bg-neutral-100"}`}>
                         <div className="text-base font-bold" style={{ fontFamily: f.css }}>{f.name}</div>
                         <div className="text-[10px] mt-0.5 opacity-50" style={{ fontFamily: f.css }}>The quick brown fox</div>
                       </button>
@@ -1104,7 +1105,7 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
                   <h2 className="text-sm font-bold text-neutral-900 mb-3">Button Shape</h2>
                   <div className="grid grid-cols-4 gap-2">
                     {BUTTON_SHAPES.map(s => (
-                      <button key={s.id} onClick={() => save({ buttonShape: s.id })} className={`py-3 text-xs font-semibold transition-all ${settings.buttonShape === s.id ? "bg-neutral-900 text-white" : "bg-neutral-100 text-neutral-500 hover:bg-neutral-200"}`} style={{ borderRadius: s.radius }}>
+                      <button key={s.id} onClick={() => save({ buttonShape: s.id })} className={`py-4 text-sm min-h-[48px] font-semibold transition-all ${settings.buttonShape === s.id ? "bg-neutral-900 text-white" : "bg-neutral-100 text-neutral-500 hover:bg-neutral-200"}`} style={{ borderRadius: s.radius }}>
                         {s.name}
                       </button>
                     ))}
@@ -1140,7 +1141,7 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
                       <button
                         key={a.id}
                         onClick={() => owned ? save({ introAnim: a.id }) : undefined}
-                        className={`flex items-center gap-3 p-3 rounded-xl text-left transition-all w-full ${
+                        className={`flex items-center gap-3 p-4 min-h-[56px] rounded-xl text-left transition-all w-full ${
                           isActive ? "bg-neutral-900 text-white" :
                           owned ? "bg-neutral-50 text-neutral-600 hover:bg-neutral-100" :
                           "bg-neutral-50/50 text-neutral-400 cursor-default"
@@ -1180,7 +1181,7 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
                 <p className="text-[11px] text-neutral-400 mb-4">Used by Bold, Neon, and Bento templates. Also used for Filled and Outlined card styles.</p>
                 <div className="flex flex-wrap gap-2.5">
                   {ACCENT_COLORS.map(c => (
-                    <button key={c} onClick={() => save({ accent: c })} className={`w-10 h-10 rounded-xl transition-all hover:scale-110 active:scale-95 ${settings.accent === c ? "ring-2 ring-offset-2 ring-neutral-900 scale-110" : ""} ${c === "#ffffff" ? "border border-neutral-200" : ""}`} style={{ background: c }} />
+                    <button key={c} onClick={() => save({ accent: c })} className={`w-12 h-12 rounded-xl transition-all hover:scale-110 active:scale-95 ${settings.accent === c ? "ring-2 ring-offset-2 ring-neutral-900 scale-110" : ""} ${c === "#ffffff" ? "border border-neutral-200" : ""}`} style={{ background: c }} />
                   ))}
                 </div>
                 <div className="mt-4 flex items-center gap-2">
@@ -1192,7 +1193,7 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
           </div>
 
           {/* Right — Live preview */}
-          <div className="lg:w-[45%] lg:sticky lg:top-20 lg:self-start">
+          <div className="hidden lg:block lg:w-[45%] lg:sticky lg:top-20 lg:self-start">
             <div className="bg-white rounded-2xl border border-neutral-200/60 p-4">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-1 p-0.5 bg-neutral-100 rounded-lg">
@@ -1230,12 +1231,44 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
         </div>
       </div>
 
+      {/* Mobile Preview FAB */}
+      <button
+        onClick={() => setMobilePreview(true)}
+        className="lg:hidden fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-neutral-900 text-white shadow-xl flex items-center justify-center hover:bg-neutral-800 active:scale-95 transition-all"
+        aria-label="Preview"
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>
+      </button>
+
+      {/* Mobile Preview Overlay */}
+      {mobilePreview && (
+        <div className="lg:hidden fixed inset-0 z-[60] bg-neutral-100 flex flex-col" style={{ animation: "fadeIn .15s ease-out" }}>
+          <div className="flex items-center justify-between px-4 py-3 bg-white border-b border-neutral-200">
+            <h3 className="font-display font-bold text-neutral-900">Preview</h3>
+            <button onClick={() => setMobilePreview(false)} className="p-2 rounded-lg hover:bg-neutral-100 text-neutral-400">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" /></svg>
+            </button>
+          </div>
+          <div className="flex-1 flex items-center justify-center p-4 overflow-y-auto">
+            <div className="w-[320px] h-[640px] bg-black rounded-[2.5rem] shadow-2xl border-[6px] border-neutral-800 overflow-hidden relative">
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[90px] h-[22px] bg-black rounded-b-2xl z-50" />
+              <div className="w-full h-full overflow-y-auto rounded-[2rem]">
+                <MiniPreview key={`m-${settings.template}-${settings.font}-${settings.textColor}-${settings.bgType}-${settings.cardStyle}`} settings={settings} creator={user} />
+              </div>
+              <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-[100px] h-[4px] bg-white/30 rounded-full z-50" />
+            </div>
+          </div>
+        </div>
+      )}
+
       <style>{`
         @keyframes edBounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
         @keyframes edPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.06); } }
         @keyframes edShake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
         @keyframes edScale { 0% { transform: scale(1); } 50% { transform: scale(1.12); } 100% { transform: scale(1); } }
         @keyframes edGlow { 0%,100% { box-shadow: 0 0 0 transparent; } 50% { box-shadow: 0 0 20px rgba(99,102,241,0.5); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .scrollbar-hide::-webkit-scrollbar { display: none } .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none }
       `}</style>
     </div>
   );
