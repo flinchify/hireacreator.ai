@@ -308,6 +308,95 @@ export function ServiceAction({ serviceId, price, creatorId }: { serviceId: stri
   );
 }
 
+// Service card with tiered packages — tabbed interface
+export function ServiceCardWithPackages({ service }: { service: { id: string; title: string; description: string; price: number; deliveryDays: number; category?: string; packages?: { id: string; tier: string; title: string; price: number; deliveryDays: number; revisions: number; features: string[] }[] } }) {
+  const { user, openLogin } = useAuth();
+  const pkgs = service.packages || [];
+  const tiers = ["basic", "standard", "premium"] as const;
+  const availableTiers = tiers.filter(t => pkgs.some(p => p.tier === t));
+  const [activeTier, setActiveTier] = useState(availableTiers[0] || "basic");
+
+  const activePkg = pkgs.find(p => p.tier === activeTier);
+
+  async function handleBook() {
+    if (!user) { openLogin(); return; }
+    const price = activePkg ? activePkg.price : service.price;
+    if (price === 0) { window.location.href = "/messages"; return; }
+
+    const res = await fetch("/api/checkout/booking", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ serviceId: service.id, packageId: activePkg?.id }),
+    });
+    const data = await res.json();
+    if (data.url) window.location.href = data.url;
+    else if (data.error === "unauthorized") openLogin();
+    else if (data.error) alert(data.message || "Something went wrong.");
+  }
+
+  if (pkgs.length === 0) return null; // fallback to default rendering
+
+  const displayPrice = activePkg?.price ?? service.price;
+
+  return (
+    <div className="bg-white rounded-xl border border-neutral-200 p-0 overflow-hidden hover:border-neutral-300 hover:shadow-sm transition-all">
+      <h3 className="font-semibold text-neutral-900 px-5 pt-5 pb-2">{service.title}</h3>
+      {service.category && <span className="inline-block mx-5 mb-2 text-[10px] font-medium text-neutral-400 uppercase tracking-wider">{service.category}</span>}
+
+      {/* Tier tabs */}
+      <div className="flex border-b border-neutral-100 mx-5">
+        {availableTiers.map(tier => (
+          <button
+            key={tier}
+            onClick={() => setActiveTier(tier)}
+            className={`flex-1 py-2.5 text-xs font-semibold uppercase tracking-wider transition-colors border-b-2 ${activeTier === tier ? "text-neutral-900 border-neutral-900" : "text-neutral-400 border-transparent hover:text-neutral-600"}`}
+          >
+            {tier}
+          </button>
+        ))}
+      </div>
+
+      {/* Active package details */}
+      {activePkg && (
+        <div className="px-5 py-4 space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="font-display text-xl font-bold text-neutral-900">
+              {activePkg.price === 0 ? "Open to offers" : `$${activePkg.price.toLocaleString()}`}
+            </span>
+          </div>
+          <p className="text-sm font-medium text-neutral-700">{activePkg.title}</p>
+          <div className="flex items-center gap-4 text-xs text-neutral-500">
+            <span className="flex items-center gap-1">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2" strokeLinecap="round"/></svg>
+              {activePkg.deliveryDays} day delivery
+            </span>
+            <span className="flex items-center gap-1">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 4v6h6M23 20v-6h-6" strokeLinecap="round" strokeLinejoin="round"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              {activePkg.revisions} revision{activePkg.revisions !== 1 ? "s" : ""}
+            </span>
+          </div>
+          {activePkg.features.length > 0 && (
+            <ul className="space-y-1.5">
+              {activePkg.features.map((f, i) => (
+                <li key={i} className="flex items-start gap-2 text-xs text-neutral-600">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-emerald-500 shrink-0 mt-0.5"><path d="M20 6L9 17l-5-5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  {f}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
+
+      <div className="px-5 pb-5">
+        <Button onClick={handleBook} className="w-full hover:scale-[1.02] transition-transform" size="sm">
+          {displayPrice === 0 ? "Contact Creator" : `Book — $${displayPrice.toLocaleString()}`}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
 // Contact button when no services listed — opens Enquire modal
 export function ContactCreatorButton({ creatorName, creatorId }: { creatorName: string; creatorId: string }) {
   const [enquireOpen, setEnquireOpen] = useState(false);

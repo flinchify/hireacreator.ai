@@ -9,6 +9,9 @@ import { MessagesContent } from "./messages-content";
 import { AnimationsContent } from "./animations-content";
 import { AnalyticsContent } from "./analytics-content";
 import { EarningsContent } from "./earnings-content";
+import { ReplyTemplatesManager } from "./reply-templates-manager";
+import { VerificationManager } from "./verification-manager";
+import { BioWriterModal } from "./bio-writer-modal";
 import Link from "next/link";
 
 /* ═══ Icons ═══ */
@@ -46,7 +49,7 @@ function Sheet({ open, onClose, title, children }: { open: boolean; onClose: () 
 }
 
 /* ═══ Edit Profile Sheet ═══ */
-function EditProfileSheet({ user, open, onClose }: { user: User; open: boolean; onClose: () => void }) {
+function EditProfileSheet({ user, open, onClose, onOpenBioWriter }: { user: User; open: boolean; onClose: () => void; onOpenBioWriter?: () => void }) {
   const { refreshUser } = useAuth();
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -74,7 +77,13 @@ function EditProfileSheet({ user, open, onClose }: { user: User; open: boolean; 
         <div><label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Display Name</label><input className={inp} value={form.full_name} onChange={e => setForm({ ...form, full_name: e.target.value })} /></div>
         <div><label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Username</label><input className={inp} value={form.slug} onChange={e => setForm({ ...form, slug: e.target.value })} placeholder="your-name" /></div>
         <div><label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Headline</label><input className={inp} value={form.headline} onChange={e => setForm({ ...form, headline: e.target.value })} placeholder="UGC Creator & Photographer" /></div>
-        <div><label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Bio</label><textarea value={form.bio} onChange={e => setForm({ ...form, bio: e.target.value })} className={`${inp} resize-y`} rows={4} placeholder="Tell brands about yourself..." /></div>
+        <div>
+          <div className="flex items-center justify-between">
+            <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Bio</label>
+            {onOpenBioWriter && <button type="button" onClick={onOpenBioWriter} className="flex items-center gap-1 text-[10px] font-semibold text-neutral-500 hover:text-neutral-900 transition-colors">{icons.sparkle} AI Writer</button>}
+          </div>
+          <textarea value={form.bio} onChange={e => setForm({ ...form, bio: e.target.value })} className={`${inp} resize-y`} rows={4} placeholder="Tell brands about yourself..." />
+        </div>
         <div className="grid grid-cols-2 gap-3">
           <div><label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Location</label><input className={inp} value={form.location} onChange={e => setForm({ ...form, location: e.target.value })} placeholder="Sydney, AU" /></div>
           <div><label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Category</label><select value={form.category} onChange={e => setForm({ ...form, category: e.target.value })} className={inp}><option value="">Select</option>{categories.map(c => <option key={c} value={c}>{c}</option>)}</select></div>
@@ -222,6 +231,338 @@ function ServicesSheet({ user, open, onClose }: { user: User; open: boolean; onC
         </div>
       </div>
     </Sheet>
+  );
+}
+
+/* ═══ Services Manager (with Package editing) ═══ */
+function ServicesManager({ user, onOpenAdd, services, onServicesChange }: { user: User; onOpenAdd: () => void; services: any[]; onServicesChange: () => void }) {
+  const [editingPkgs, setEditingPkgs] = useState<string | null>(null);
+  const [pkgForm, setPkgForm] = useState<Record<string, { enabled: boolean; tiers: { tier: string; title: string; price: string; deliveryDays: string; revisions: string; features: string }[] }>>({});
+  const [savingPkgs, setSavingPkgs] = useState(false);
+  const [pkgMsg, setPkgMsg] = useState("");
+  const inp = "w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900/10 text-neutral-900 bg-white";
+
+  function initPkgForm(serviceId: string, existingPkgs: any[]) {
+    const tiers = ["basic", "standard", "premium"];
+    const tierData = tiers.map(t => {
+      const existing = existingPkgs.find((p: any) => p.tier === t);
+      return {
+        tier: t,
+        title: existing?.title || (t.charAt(0).toUpperCase() + t.slice(1)),
+        price: existing?.price?.toString() || "",
+        deliveryDays: existing?.delivery_days?.toString() || "7",
+        revisions: existing?.revisions?.toString() || "1",
+        features: existing?.features ? (Array.isArray(existing.features) ? existing.features.join(", ") : "") : "",
+      };
+    });
+    setPkgForm(prev => ({
+      ...prev,
+      [serviceId]: { enabled: existingPkgs.length > 0, tiers: tierData },
+    }));
+    setEditingPkgs(serviceId);
+    setPkgMsg("");
+  }
+
+  async function savePkgs(serviceId: string) {
+    const form = pkgForm[serviceId];
+    if (!form) return;
+    setSavingPkgs(true);
+    setPkgMsg("");
+
+    if (!form.enabled) {
+      // Delete all packages
+      await fetch(`/api/profile/services/packages?serviceId=${serviceId}`, { method: "DELETE" });
+      setSavingPkgs(false);
+      setPkgMsg("Packages removed.");
+      onServicesChange();
+      setTimeout(() => setEditingPkgs(null), 1000);
+      return;
+    }
+
+    // At minimum basic tier required
+    const basic = form.tiers.find(t => t.tier === "basic");
+    if (!basic?.title || !basic?.price) {
+      setPkgMsg("Basic tier requires a title and price.");
+      setSavingPkgs(false);
+      return;
+    }
+
+    const packages = form.tiers
+      .filter(t => t.title && t.price)
+      .map(t => ({
+        tier: t.tier,
+        title: t.title,
+        price: Number(t.price),
+        deliveryDays: Number(t.deliveryDays) || 7,
+        revisions: Number(t.revisions) || 1,
+        features: t.features.split(",").map(f => f.trim()).filter(Boolean),
+      }));
+
+    const res = await fetch("/api/profile/services/packages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ serviceId, packages }),
+    });
+
+    if (res.ok) {
+      setPkgMsg("Packages saved!");
+      onServicesChange();
+      setTimeout(() => setEditingPkgs(null), 1000);
+    } else {
+      const data = await res.json().catch(() => ({}));
+      setPkgMsg(data.message || "Error saving packages.");
+    }
+    setSavingPkgs(false);
+  }
+
+  function updateTier(serviceId: string, tierIdx: number, field: string, value: string) {
+    setPkgForm(prev => {
+      const form = { ...prev[serviceId] };
+      const tiers = [...form.tiers];
+      tiers[tierIdx] = { ...tiers[tierIdx], [field]: value };
+      return { ...prev, [serviceId]: { ...form, tiers } };
+    });
+  }
+
+  return (
+    <div className="max-w-2xl">
+      <div className="flex items-center justify-between mb-5">
+        <div>
+          <h2 className="text-lg font-bold text-neutral-900">Services</h2>
+          <p className="text-xs text-neutral-400 mt-0.5">{user.isPro ? "Unlimited services with Pro." : `Free: ${services.length}/3 services.`}</p>
+        </div>
+        <button onClick={onOpenAdd} className="px-4 py-2 text-xs font-semibold text-white bg-neutral-900 rounded-xl hover:bg-neutral-800 transition-colors">+ Add Service</button>
+      </div>
+      {services.length > 0 ? (
+        <div className="space-y-3">
+          {services.map((s: any) => (
+            <div key={s.id} className="bg-white rounded-2xl border border-neutral-200/60 p-5 hover:border-neutral-300 transition-colors">
+              <div className="flex items-start justify-between gap-4">
+                <div className="min-w-0">
+                  <h3 className="font-semibold text-neutral-900 text-sm">{s.title}</h3>
+                  {s.category && <span className="text-[10px] font-medium text-neutral-400 uppercase tracking-wider">{s.category}</span>}
+                  {s.description && <p className="text-xs text-neutral-500 mt-1 line-clamp-2">{s.description}</p>}
+                </div>
+                <div className="text-right shrink-0">
+                  <div className="font-display font-bold text-neutral-900">{Number(s.price) === 0 ? "Open" : `$${Number(s.price).toLocaleString()}`}</div>
+                  <div className="text-[10px] text-neutral-400">{s.delivery_days || 7}d delivery</div>
+                </div>
+              </div>
+
+              {/* Package badges */}
+              {s.packages && s.packages.length > 0 && editingPkgs !== s.id && (
+                <div className="flex gap-2 mt-3 pt-3 border-t border-neutral-100">
+                  {s.packages.map((p: any) => (
+                    <span key={p.id} className="px-2 py-1 text-[10px] font-semibold text-neutral-600 bg-neutral-100 rounded-lg uppercase">
+                      {p.tier}: ${Number(p.price).toLocaleString()}
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              {/* Package edit toggle */}
+              <div className="mt-3 pt-3 border-t border-neutral-100 flex items-center gap-3">
+                <button
+                  onClick={() => editingPkgs === s.id ? setEditingPkgs(null) : initPkgForm(s.id, s.packages || [])}
+                  className="text-xs text-neutral-500 hover:text-neutral-900 font-medium transition-colors"
+                >
+                  {editingPkgs === s.id ? "Cancel" : (s.packages && s.packages.length > 0 ? "Edit Packages" : "Add Packages")}
+                </button>
+              </div>
+
+              {/* Package editing form */}
+              {editingPkgs === s.id && pkgForm[s.id] && (
+                <div className="mt-4 space-y-4">
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => setPkgForm(prev => ({ ...prev, [s.id]: { ...prev[s.id], enabled: !prev[s.id].enabled } }))}
+                      className={`relative w-11 h-6 rounded-full transition-colors ${pkgForm[s.id].enabled ? "bg-neutral-900" : "bg-neutral-300"}`}
+                    >
+                      <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${pkgForm[s.id].enabled ? "translate-x-5" : ""}`} />
+                    </button>
+                    <span className="text-sm text-neutral-700">Enable tiered packages</span>
+                  </div>
+
+                  {pkgForm[s.id].enabled && pkgForm[s.id].tiers.map((t, idx) => (
+                    <div key={t.tier} className="bg-neutral-50 rounded-xl p-4 space-y-2.5 border border-neutral-100">
+                      <h4 className="text-xs font-bold text-neutral-900 uppercase tracking-wider">{t.tier} {t.tier === "basic" && <span className="text-red-500">*</span>}</h4>
+                      <input placeholder="Package title" value={t.title} onChange={e => updateTier(s.id, idx, "title", e.target.value)} className={inp} />
+                      <div className="grid grid-cols-3 gap-2">
+                        <input type="number" placeholder="Price ($)" value={t.price} onChange={e => updateTier(s.id, idx, "price", e.target.value)} className={inp} />
+                        <input type="number" placeholder="Days" value={t.deliveryDays} onChange={e => updateTier(s.id, idx, "deliveryDays", e.target.value)} className={inp} />
+                        <input type="number" placeholder="Revisions" value={t.revisions} onChange={e => updateTier(s.id, idx, "revisions", e.target.value)} className={inp} />
+                      </div>
+                      <input placeholder="Features (comma-separated)" value={t.features} onChange={e => updateTier(s.id, idx, "features", e.target.value)} className={inp} />
+                    </div>
+                  ))}
+
+                  {pkgMsg && <p className={`text-xs ${pkgMsg.includes("Error") || pkgMsg.includes("requires") ? "text-red-600" : "text-emerald-600"}`}>{pkgMsg}</p>}
+                  {pkgForm[s.id].enabled && (
+                    <button onClick={() => savePkgs(s.id)} disabled={savingPkgs} className="w-full py-2.5 bg-neutral-900 text-white text-sm font-medium rounded-xl hover:bg-neutral-800 transition-colors disabled:opacity-40">
+                      {savingPkgs ? "Saving..." : "Save Packages"}
+                    </button>
+                  )}
+                  {!pkgForm[s.id].enabled && (s.packages && s.packages.length > 0) && (
+                    <button onClick={() => savePkgs(s.id)} disabled={savingPkgs} className="w-full py-2.5 bg-red-600 text-white text-sm font-medium rounded-xl hover:bg-red-700 transition-colors disabled:opacity-40">
+                      {savingPkgs ? "Removing..." : "Remove All Packages"}
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="bg-white rounded-2xl border border-neutral-200/60 p-10 text-center">
+          <p className="text-sm text-neutral-400 mb-3">No services yet. Add your first one to start getting bookings.</p>
+          <button onClick={onOpenAdd} className="px-5 py-2.5 bg-neutral-900 text-white text-sm font-semibold rounded-full hover:bg-neutral-800 transition-colors">Add Service</button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ═══ Testimonials Manager ═══ */
+function TestimonialsManager() {
+  const [testimonials, setTestimonials] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [adding, setAdding] = useState(false);
+  const [form, setForm] = useState({ clientName: "", clientCompany: "", content: "", rating: 5, source: "manual", screenshotUrl: "" });
+  const inp = "w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900/10 text-neutral-900 bg-white";
+
+  useEffect(() => { loadTestimonials(); }, []);
+
+  async function loadTestimonials() {
+    try {
+      const res = await fetch("/api/profile/testimonials");
+      if (res.ok) { const d = await res.json(); setTestimonials(d.testimonials || []); }
+    } catch {}
+    setLoading(false);
+  }
+
+  async function add() {
+    if (!form.clientName.trim() || !form.content.trim()) return;
+    setAdding(true);
+    const res = await fetch("/api/profile/testimonials", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(form),
+    });
+    if (res.ok) {
+      setForm({ clientName: "", clientCompany: "", content: "", rating: 5, source: "manual", screenshotUrl: "" });
+      setShowForm(false);
+      await loadTestimonials();
+    }
+    setAdding(false);
+  }
+
+  async function remove(id: string) {
+    await fetch(`/api/profile/testimonials?id=${id}`, { method: "DELETE" });
+    setTestimonials(prev => prev.filter(t => t.id !== id));
+  }
+
+  async function toggleVisibility(id: string, current: boolean) {
+    await fetch("/api/profile/testimonials", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, isVisible: !current }),
+    });
+    setTestimonials(prev => prev.map(t => t.id === id ? { ...t, is_visible: !current } : t));
+  }
+
+  const sources = [
+    { value: "manual", label: "Written by me" },
+    { value: "google", label: "Google Review" },
+    { value: "trustpilot", label: "Trustpilot" },
+    { value: "screenshot", label: "Screenshot" },
+    { value: "other", label: "Other" },
+  ];
+
+  return (
+    <div className="max-w-2xl">
+      <div className="flex items-center justify-between mb-5">
+        <div>
+          <h2 className="text-lg font-bold text-neutral-900">Testimonials</h2>
+          <p className="text-xs text-neutral-400 mt-0.5">Add client testimonials to your profile</p>
+        </div>
+        <button onClick={() => setShowForm(!showForm)} className="px-4 py-2 text-xs font-semibold text-white bg-neutral-900 rounded-xl hover:bg-neutral-800 transition-colors">
+          {showForm ? "Cancel" : "+ Add Testimonial"}
+        </button>
+      </div>
+
+      {showForm && (
+        <div className="bg-white rounded-2xl border border-neutral-200/60 p-5 mb-5 space-y-3">
+          <div className="grid grid-cols-2 gap-3">
+            <div><label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Client Name *</label><input className={inp} value={form.clientName} onChange={e => setForm({ ...form, clientName: e.target.value })} placeholder="Jane Smith" /></div>
+            <div><label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Company</label><input className={inp} value={form.clientCompany} onChange={e => setForm({ ...form, clientCompany: e.target.value })} placeholder="Acme Inc." /></div>
+          </div>
+          <div>
+            <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Rating</label>
+            <div className="flex gap-1 mt-1">
+              {[1, 2, 3, 4, 5].map(star => (
+                <button key={star} type="button" onClick={() => setForm({ ...form, rating: star })} className="p-0.5">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill={star <= form.rating ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" className={star <= form.rating ? "text-amber-400" : "text-neutral-300"}>
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                  </svg>
+                </button>
+              ))}
+            </div>
+          </div>
+          <div><label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Testimonial *</label><textarea className={`${inp} resize-y`} rows={3} value={form.content} onChange={e => setForm({ ...form, content: e.target.value })} placeholder="What did your client say about working with you?" /></div>
+          <div className="grid grid-cols-2 gap-3">
+            <div><label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Source</label><select className={inp} value={form.source} onChange={e => setForm({ ...form, source: e.target.value })}>{sources.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}</select></div>
+            <div><label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Screenshot URL</label><input className={inp} value={form.screenshotUrl} onChange={e => setForm({ ...form, screenshotUrl: e.target.value })} placeholder="https://..." /></div>
+          </div>
+          <button onClick={add} disabled={adding || !form.clientName.trim() || !form.content.trim()} className="w-full py-2.5 bg-neutral-900 text-white text-sm font-medium rounded-xl hover:bg-neutral-800 transition-colors disabled:opacity-40">{adding ? "Adding..." : "Add Testimonial"}</button>
+        </div>
+      )}
+
+      {loading ? (
+        <div className="flex justify-center py-12"><div className="w-6 h-6 border-2 border-neutral-300 border-t-neutral-900 rounded-full animate-spin" /></div>
+      ) : testimonials.length > 0 ? (
+        <div className="space-y-3">
+          {testimonials.map((t: any) => (
+            <div key={t.id} className={`bg-white rounded-2xl border border-neutral-200/60 p-5 hover:border-neutral-300 transition-colors ${t.is_visible === false ? "opacity-50" : ""}`}>
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-semibold text-neutral-900 text-sm">{t.client_name}</h3>
+                    {t.client_company && <span className="text-xs text-neutral-400">{t.client_company}</span>}
+                  </div>
+                  {t.rating && (
+                    <div className="flex gap-0.5 mt-1">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <svg key={i} width="12" height="12" viewBox="0 0 24 24" fill={i < t.rating ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" className={i < t.rating ? "text-amber-400" : "text-neutral-200"}>
+                          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                        </svg>
+                      ))}
+                    </div>
+                  )}
+                  <p className="text-xs text-neutral-600 mt-2 leading-relaxed">&ldquo;{t.content}&rdquo;</p>
+                  {t.source && t.source !== "manual" && (
+                    <span className="inline-block mt-2 text-[10px] text-neutral-400 uppercase tracking-wider">{t.source}</span>
+                  )}
+                </div>
+                <div className="flex items-center gap-1 shrink-0">
+                  <button onClick={() => toggleVisibility(t.id, t.is_visible !== false)} className="p-1.5 rounded-lg hover:bg-neutral-100 text-neutral-400 hover:text-neutral-600 transition-colors" title={t.is_visible !== false ? "Hide" : "Show"}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d={t.is_visible !== false ? "M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" : "M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"} strokeLinecap="round" />{t.is_visible === false && <line x1="1" y1="1" x2="23" y2="23" strokeLinecap="round" />}</svg>
+                  </button>
+                  <button onClick={() => remove(t.id)} className="p-1.5 rounded-lg hover:bg-neutral-100 text-neutral-400 hover:text-red-500 transition-colors" title="Delete">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" strokeLinecap="round" /></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="bg-white rounded-2xl border border-neutral-200/60 p-10 text-center">
+          <p className="text-sm text-neutral-400 mb-3">No testimonials yet. Add client feedback to build trust.</p>
+          <button onClick={() => setShowForm(true)} className="px-5 py-2.5 bg-neutral-900 text-white text-sm font-semibold rounded-full hover:bg-neutral-800 transition-colors">Add Testimonial</button>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -597,6 +938,7 @@ export function DashboardContent() {
   const [editProfile, setEditProfile] = useState(false);
   const [editSocials, setEditSocials] = useState(false);
   const [editServices, setEditServices] = useState(false);
+  const [bioWriterOpen, setBioWriterOpen] = useState(false);
   const [socials, setSocials] = useState<any[]>([]);
   const [services, setServices] = useState<any[]>([]);
   const [dataLoaded, setDataLoaded] = useState(false);
@@ -622,7 +964,15 @@ export function DashboardContent() {
   }
 
   const loadData = useCallback(() => {
-    fetch("/api/profile").then(r => r.json()).then(d => { if (d.socials) setSocials(d.socials); if (d.services) setServices(d.services); setDataLoaded(true); }).catch(() => { setDataLoaded(true); });
+    Promise.all([
+      fetch("/api/profile").then(r => r.json()),
+      fetch("/api/profile/services").then(r => r.json()),
+    ]).then(([profileData, servicesData]) => {
+      if (profileData.socials) setSocials(profileData.socials);
+      if (servicesData.services) setServices(servicesData.services);
+      else if (profileData.services) setServices(profileData.services);
+      setDataLoaded(true);
+    }).catch(() => { setDataLoaded(true); });
   }, []);
 
   useEffect(() => { if (user) loadData(); }, [user, loadData]);
@@ -1004,6 +1354,12 @@ export function DashboardContent() {
               </div>
             )}
 
+            {/* TEMPLATES */}
+            {section === "templates" && <ReplyTemplatesManager />}
+
+            {/* VERIFICATION */}
+            {section === "verification" && <VerificationManager />}
+
             {/* ANIMATIONS */}
             {section === "animations" && (
               <div>
@@ -1071,9 +1427,13 @@ export function DashboardContent() {
       </div>
 
       {/* Sheets */}
-      <EditProfileSheet user={user} open={editProfile} onClose={() => setEditProfile(false)} />
+      <EditProfileSheet user={user} open={editProfile} onClose={() => setEditProfile(false)} onOpenBioWriter={() => setBioWriterOpen(true)} />
       <SocialsSheet open={editSocials} onClose={() => setEditSocials(false)} />
       <ServicesSheet user={user} open={editServices} onClose={() => setEditServices(false)} />
+      <BioWriterModal open={bioWriterOpen} onClose={() => setBioWriterOpen(false)} onUseBio={async (bio) => {
+        await fetch("/api/profile", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ bio }) });
+        refreshUser();
+      }} />
 
       <style>{`
         @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }

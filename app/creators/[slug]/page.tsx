@@ -12,7 +12,7 @@ import { PlatformIcon } from "@/components/icons/platforms";
 import { getCreatorBySlug, getCreatorCalendarSessions } from "@/lib/queries";
 import { AnimateOnScroll, StaggerChildren } from "@/components/animate-on-scroll";
 import { CountUp } from "@/components/count-up";
-import { CreatorHeroActions, ServiceAction, ContactCreatorButton, BoostProfileButton } from "@/components/creator-profile-client";
+import { CreatorHeroActions, ServiceAction, ServiceCardWithPackages, ContactCreatorButton, BoostProfileButton } from "@/components/creator-profile-client";
 import { ReviewSection } from "@/components/review-form";
 import { ProfileStarButton } from "@/components/profile-star-button";
 
@@ -293,6 +293,56 @@ export default async function CreatorProfilePage({
               </AnimateOnScroll>
             )}
 
+            {/* Testimonials */}
+            {creator.testimonials && creator.testimonials.length > 0 && (
+              <AnimateOnScroll>
+                <h2 className="font-display text-lg font-semibold text-neutral-900 mb-4">
+                  Testimonials
+                </h2>
+                <div className="space-y-4">
+                  {creator.testimonials.map((t) => (
+                    <Card key={t.id} className="p-6 hover:shadow-md transition-shadow">
+                      <div className="flex items-start gap-3">
+                        {t.clientAvatar ? (
+                          <img src={t.clientAvatar} alt={t.clientName} className="w-10 h-10 rounded-full object-cover" />
+                        ) : (
+                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-neutral-100 to-neutral-200 flex items-center justify-center">
+                            <span className="text-sm font-medium text-neutral-500">{t.clientName.charAt(0)}</span>
+                          </div>
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <span className="font-medium text-neutral-900">{t.clientName}</span>
+                              {t.clientCompany && (
+                                <span className="text-xs text-neutral-400 ml-2">{t.clientCompany}</span>
+                              )}
+                            </div>
+                            {t.source && t.source !== "manual" && (
+                              <span className="text-[10px] text-neutral-400 uppercase tracking-wider">{t.source}</span>
+                            )}
+                          </div>
+                          {t.rating && (
+                            <div className="flex items-center gap-0.5 mt-1">
+                              {Array.from({ length: 5 }).map((_, i) => (
+                                <StarIcon key={i} filled={i < (t.rating || 0)} />
+                              ))}
+                            </div>
+                          )}
+                          <p className="text-neutral-600 text-sm mt-2 leading-relaxed italic">
+                            &ldquo;{t.content}&rdquo;
+                          </p>
+                          {t.screenshotUrl && (
+                            <img src={t.screenshotUrl} alt="Testimonial screenshot" className="mt-3 rounded-lg border border-neutral-200 max-h-48 object-contain" />
+                          )}
+                        </div>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              </AnimateOnScroll>
+            )}
+
             {/* Portfolio */}
             {creator.portfolio.length > 0 && (
               <AnimateOnScroll>
@@ -415,36 +465,40 @@ export default async function CreatorProfilePage({
                 </h2>
                 <div className="space-y-4">
                   {creator.services.map((service) => (
-                    <Card key={service.id} hover className="p-5 group">
-                      <h3 className="font-semibold text-neutral-900 group-hover:text-neutral-700 transition-colors">
-                        {service.title}
-                      </h3>
-                      {service.category && (
-                        <span className="inline-block mt-1 text-[10px] font-medium text-neutral-400 uppercase tracking-wider">
-                          {service.category}
-                        </span>
-                      )}
-                      <p className="text-sm text-neutral-500 mt-1.5 leading-relaxed">
-                        {service.description}
-                      </p>
-                      <div className="flex items-center justify-between mt-4 pt-3 border-t border-neutral-100">
-                        <div>
-                          {service.price === 0 ? (
-                            <span className="font-display text-lg font-bold text-emerald-600">
-                              Open to offers
-                            </span>
-                          ) : (
-                            <span className="font-display text-lg font-bold text-neutral-900">
-                              ${service.price.toLocaleString()}
-                            </span>
-                          )}
+                    service.packages && service.packages.length > 0 ? (
+                      <ServiceCardWithPackages key={service.id} service={service} />
+                    ) : (
+                      <Card key={service.id} hover className="p-5 group">
+                        <h3 className="font-semibold text-neutral-900 group-hover:text-neutral-700 transition-colors">
+                          {service.title}
+                        </h3>
+                        {service.category && (
+                          <span className="inline-block mt-1 text-[10px] font-medium text-neutral-400 uppercase tracking-wider">
+                            {service.category}
+                          </span>
+                        )}
+                        <p className="text-sm text-neutral-500 mt-1.5 leading-relaxed">
+                          {service.description}
+                        </p>
+                        <div className="flex items-center justify-between mt-4 pt-3 border-t border-neutral-100">
+                          <div>
+                            {service.price === 0 ? (
+                              <span className="font-display text-lg font-bold text-emerald-600">
+                                Open to offers
+                              </span>
+                            ) : (
+                              <span className="font-display text-lg font-bold text-neutral-900">
+                                ${service.price.toLocaleString()}
+                              </span>
+                            )}
+                          </div>
+                          <span className="text-xs text-neutral-400">
+                            {service.deliveryDays} day delivery
+                          </span>
                         </div>
-                        <span className="text-xs text-neutral-400">
-                          {service.deliveryDays} day delivery
-                        </span>
-                      </div>
-                      <ServiceAction serviceId={service.id} price={service.price} />
-                    </Card>
+                        <ServiceAction serviceId={service.id} price={service.price} />
+                      </Card>
+                    )
                   ))}
                 </div>
               </AnimateOnScroll>
