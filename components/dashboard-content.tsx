@@ -1081,7 +1081,7 @@ export function DashboardContent() {
   const bioUrl = `hireacreator.ai/u/${user.slug}`;
 
   return (
-    <div className="min-h-screen bg-[#f8f8fa]">
+    <div className="min-h-screen bg-[#f8f8fa] overflow-x-hidden">
       <div className="flex">
 
         {/* ═══ LEFT SIDEBAR (desktop only) ═══ */}
@@ -1237,10 +1237,10 @@ export function DashboardContent() {
                       </a>
                     </div>
 
-                    {/* Mobile slug editor */}
-                    <div className="mt-3">
-                      <SlugEditor user={user} onChanged={refreshUser} />
-                    </div>
+                    {/* Edit URL inline */}
+                    <button onClick={() => setEditProfile(true)} className="mt-3 w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold text-neutral-700 bg-neutral-100 rounded-xl active:bg-neutral-200 transition-colors min-h-[44px]">
+                      {icons.pencil} Edit Profile
+                    </button>
                   </div>
 
                   {/* Mobile quick actions */}
