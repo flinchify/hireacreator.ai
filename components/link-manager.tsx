@@ -44,15 +44,21 @@ export function LinkManager() {
   const [newThumbnail, setNewThumbnail] = useState("");
   const [addError, setAddError] = useState("");
   const [adding, setAdding] = useState(false);
+  const [fetchingPreview, setFetchingPreview] = useState(false);
+  const [titleManuallySet, setTitleManuallySet] = useState(false);
 
   // Edit form
   const [editTitle, setEditTitle] = useState("");
   const [editUrl, setEditUrl] = useState("");
+  const [editThumbnail, setEditThumbnail] = useState<string | null>(null);
   const [editError, setEditError] = useState("");
   const [editSaving, setEditSaving] = useState(false);
+  const [editFetchingPreview, setEditFetchingPreview] = useState(false);
 
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const addTitleRef = useRef<HTMLInputElement>(null);
+  const previewTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const editPreviewTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const load = useCallback(async () => {
     try {
@@ -82,6 +88,67 @@ export function LinkManager() {
     catch { return "Invalid URL format. It should start with https:// (e.g. https://youtube.com/@you)"; }
   }
 
+  // Auto-fetch OG preview for add form
+  function handleNewUrlChange(raw: string) {
+    setNewUrl(raw);
+    setAddError("");
+    if (previewTimer.current) clearTimeout(previewTimer.current);
+    const normalized = raw.trim().startsWith("http") ? raw.trim() : "https://" + raw.trim();
+    try { new URL(normalized); } catch { return; }
+    previewTimer.current = setTimeout(async () => {
+      setFetchingPreview(true);
+      try {
+        const res = await fetch(`/api/links/preview?url=${encodeURIComponent(normalized)}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.image) setNewThumbnail(data.image);
+          if (data.title && !titleManuallySet) setNewTitle(data.title);
+        }
+      } catch {}
+      setFetchingPreview(false);
+    }, 500);
+  }
+
+  // Auto-fetch OG preview for edit form
+  function handleEditUrlChange(raw: string) {
+    setEditUrl(raw);
+    setEditError("");
+    if (editPreviewTimer.current) clearTimeout(editPreviewTimer.current);
+    const normalized = raw.trim().startsWith("http") ? raw.trim() : "https://" + raw.trim();
+    try { new URL(normalized); } catch { return; }
+    editPreviewTimer.current = setTimeout(async () => {
+      setEditFetchingPreview(true);
+      try {
+        const res = await fetch(`/api/links/preview?url=${encodeURIComponent(normalized)}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.image) setEditThumbnail(data.image);
+        }
+      } catch {}
+      setEditFetchingPreview(false);
+    }, 500);
+  }
+
+  // Re-fetch preview from current URL
+  async function refetchPreview(url: string, target: "add" | "edit") {
+    const normalized = url.trim().startsWith("http") ? url.trim() : "https://" + url.trim();
+    try { new URL(normalized); } catch { return; }
+    if (target === "add") setFetchingPreview(true); else setEditFetchingPreview(true);
+    try {
+      const res = await fetch(`/api/links/preview?url=${encodeURIComponent(normalized)}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (target === "add") {
+          if (data.image) setNewThumbnail(data.image);
+          if (data.title && !titleManuallySet) setNewTitle(data.title);
+        } else {
+          if (data.image) setEditThumbnail(data.image);
+        }
+      }
+    } catch {}
+    if (target === "add") setFetchingPreview(false); else setEditFetchingPreview(false);
+  }
+
   async function addLink() {
     if (!newTitle.trim()) { setAddError("Title is required. Give your link a name people will recognize."); return; }
     const urlErr = validateUrl(newUrl);
@@ -98,7 +165,7 @@ export function LinkManager() {
       const data = await res.json();
       if (!res.ok) { setAddError(data.error || "Failed to add link. Check your connection."); setAdding(false); return; }
       setLinks([...links, data.link]);
-      setNewTitle(""); setNewUrl(""); setNewThumbnail(""); setShowAdd(false);
+      setNewTitle(""); setNewUrl(""); setNewThumbnail(""); setTitleManuallySet(false); setShowAdd(false);
       showToast("Link added");
     } catch { setAddError("Network error. Check your connection and try again."); }
     setAdding(false);
@@ -115,10 +182,10 @@ export function LinkManager() {
       const res = await fetch("/api/links", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: editingId, title: editTitle.trim(), url }),
+        body: JSON.stringify({ id: editingId, title: editTitle.trim(), url, thumbnailUrl: editThumbnail }),
       });
       if (!res.ok) { const d = await res.json().catch(() => ({})); setEditError(d.error || "Save failed."); setEditSaving(false); return; }
-      setLinks(links.map(l => l.id === editingId ? { ...l, title: editTitle.trim(), url } : l));
+      setLinks(links.map(l => l.id === editingId ? { ...l, title: editTitle.trim(), url, thumbnail_url: editThumbnail } : l));
       setEditingId(null);
       showToast("Link updated");
     } catch { setEditError("Network error. Try again."); }
@@ -207,6 +274,7 @@ export function LinkManager() {
     setEditingId(link.id);
     setEditTitle(link.title);
     setEditUrl(link.url);
+    setEditThumbnail(link.thumbnail_url);
     setEditError("");
   }
 
@@ -263,13 +331,47 @@ export function LinkManager() {
                   <label htmlFor={`edit-url-${link.id}`} className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">URL</label>
                   <input
                     id={`edit-url-${link.id}`}
-                    type="url" value={editUrl} onChange={e => setEditUrl(e.target.value)}
+                    type="url" value={editUrl} onChange={e => handleEditUrlChange(e.target.value)}
                     placeholder="https://your-link-here"
                     className="w-full mt-1 px-3 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900/20 focus:bg-white transition-all"
                     aria-required="true"
                     aria-describedby={editError ? `edit-err-${link.id}` : undefined}
                     onKeyDown={e => e.key === "Enter" && saveEdit()}
                   />
+                </div>
+                {/* Thumbnail section in edit mode */}
+                <div>
+                  <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Thumbnail {editFetchingPreview && <span className="text-neutral-400 normal-case font-normal ml-1">Fetching...</span>}</label>
+                  <div className="mt-1 flex items-center gap-3">
+                    {editThumbnail ? (
+                      <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-neutral-100 shrink-0">
+                        <img src={editThumbnail} alt="" className="w-full h-full object-cover" />
+                        <button onClick={() => setEditThumbnail(null)} className="absolute top-0.5 right-0.5 w-4 h-4 bg-black/60 text-white rounded-full text-[8px] flex items-center justify-center hover:bg-black/80" title="Remove thumbnail">x</button>
+                      </div>
+                    ) : editFetchingPreview ? (
+                      <div className="w-12 h-12 rounded-xl bg-neutral-100 shrink-0 flex items-center justify-center">
+                        <div className="w-4 h-4 rounded-full border-2 border-neutral-200 border-t-neutral-500 animate-spin" />
+                      </div>
+                    ) : null}
+                    <div className="flex-1 flex gap-2">
+                      {editUrl.trim() && (
+                        <button type="button" onClick={() => refetchPreview(editUrl, "edit")} disabled={editFetchingPreview} className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl border border-neutral-200 text-xs font-medium text-neutral-600 hover:bg-neutral-50 transition-colors disabled:opacity-50">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 4v6h6M23 20v-6h-6" strokeLinecap="round" strokeLinejoin="round"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                          Auto-fetch
+                        </button>
+                      )}
+                      <label className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border-2 border-dashed border-neutral-200 cursor-pointer text-xs font-medium text-neutral-500 hover:border-neutral-400 transition-colors">
+                        <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
+                          const file = e.target.files?.[0]; if (!file) return;
+                          const fd = new FormData(); fd.append("file", file); fd.append("type", "cover");
+                          const res = await fetch("/api/upload", { method: "POST", body: fd });
+                          if (res.ok) { const d = await res.json(); if (d.url) setEditThumbnail(d.url); }
+                        }} />
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21" /></svg>
+                        Upload
+                      </label>
+                    </div>
+                  </div>
                 </div>
                 {editError && <p id={`edit-err-${link.id}`} className="text-xs text-red-600 flex items-center gap-1" role="alert"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10" /><path d="M12 8v4M12 16h.01" stroke="white" strokeWidth="2" strokeLinecap="round" /></svg>{editError}</p>}
                 <div className="flex gap-2">
@@ -375,7 +477,7 @@ export function LinkManager() {
             <input
               ref={addTitleRef}
               id="add-title"
-              type="text" value={newTitle} onChange={e => { setNewTitle(e.target.value); setAddError(""); }}
+              type="text" value={newTitle} onChange={e => { setNewTitle(e.target.value); setTitleManuallySet(true); setAddError(""); }}
               placeholder="My Portfolio, YouTube Channel, etc."
               className="w-full mt-1 px-3 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-neutral-900/20 focus:bg-white transition-all"
               autoFocus
@@ -388,7 +490,7 @@ export function LinkManager() {
             <label htmlFor="add-url" className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">URL</label>
             <input
               id="add-url"
-              type="url" value={newUrl} onChange={e => { setNewUrl(e.target.value); setAddError(""); }}
+              type="url" value={newUrl} onChange={e => handleNewUrlChange(e.target.value)}
               placeholder="https://your-link-here"
               className="w-full mt-1 px-3 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900/20 focus:bg-white transition-all"
               aria-required="true"
@@ -396,31 +498,43 @@ export function LinkManager() {
               onKeyDown={e => e.key === "Enter" && addLink()}
             />
           </div>
-          {/* Thumbnail upload */}
+          {/* Thumbnail section */}
           <div>
-            <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Thumbnail (optional)</label>
+            <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Thumbnail {fetchingPreview && <span className="text-neutral-400 normal-case font-normal ml-1">Fetching preview...</span>}</label>
             <div className="mt-1 flex items-center gap-3">
               {newThumbnail ? (
                 <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-neutral-100 shrink-0">
                   <img src={newThumbnail} alt="" className="w-full h-full object-cover" />
-                  <button onClick={() => setNewThumbnail("")} className="absolute top-0.5 right-0.5 w-4 h-4 bg-black/60 text-white rounded-full text-[8px] flex items-center justify-center hover:bg-black/80">x</button>
+                  <button onClick={() => setNewThumbnail("")} className="absolute top-0.5 right-0.5 w-4 h-4 bg-black/60 text-white rounded-full text-[8px] flex items-center justify-center hover:bg-black/80" title="Remove thumbnail">x</button>
+                </div>
+              ) : fetchingPreview ? (
+                <div className="w-12 h-12 rounded-xl bg-neutral-100 shrink-0 flex items-center justify-center">
+                  <div className="w-4 h-4 rounded-full border-2 border-neutral-200 border-t-neutral-500 animate-spin" />
                 </div>
               ) : null}
-              <label className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border-2 border-dashed border-neutral-200 cursor-pointer text-xs font-medium text-neutral-500 hover:border-neutral-400 transition-colors">
-                <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
-                  const file = e.target.files?.[0]; if (!file) return;
-                  const fd = new FormData(); fd.append("file", file); fd.append("type", "cover");
-                  const res = await fetch("/api/upload", { method: "POST", body: fd });
-                  if (res.ok) { const d = await res.json(); if (d.url) setNewThumbnail(d.url); }
-                }} />
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21" /></svg>
-                Upload Image
-              </label>
+              <div className="flex-1 flex gap-2">
+                {newUrl.trim() && (
+                  <button type="button" onClick={() => refetchPreview(newUrl, "add")} disabled={fetchingPreview} className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl border border-neutral-200 text-xs font-medium text-neutral-600 hover:bg-neutral-50 transition-colors disabled:opacity-50">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 4v6h6M23 20v-6h-6" strokeLinecap="round" strokeLinejoin="round"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    Auto-fetch
+                  </button>
+                )}
+                <label className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border-2 border-dashed border-neutral-200 cursor-pointer text-xs font-medium text-neutral-500 hover:border-neutral-400 transition-colors">
+                  <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
+                    const file = e.target.files?.[0]; if (!file) return;
+                    const fd = new FormData(); fd.append("file", file); fd.append("type", "cover");
+                    const res = await fetch("/api/upload", { method: "POST", body: fd });
+                    if (res.ok) { const d = await res.json(); if (d.url) setNewThumbnail(d.url); }
+                  }} />
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21" /></svg>
+                  Upload
+                </label>
+              </div>
             </div>
           </div>
           {addError && <p id="add-error" className="text-xs text-red-600 flex items-center gap-1" role="alert"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10" /><path d="M12 8v4M12 16h.01" stroke="white" strokeWidth="2" strokeLinecap="round" /></svg>{addError}</p>}
           <div className="flex gap-2">
-            <button onClick={() => { setShowAdd(false); setAddError(""); setNewTitle(""); setNewUrl(""); setNewThumbnail(""); }} className="flex-1 py-2.5 text-xs font-medium text-neutral-600 bg-neutral-100 rounded-xl hover:bg-neutral-200 transition-colors focus:outline-none focus:ring-2 focus:ring-neutral-900/20">Cancel</button>
+            <button onClick={() => { setShowAdd(false); setAddError(""); setNewTitle(""); setNewUrl(""); setNewThumbnail(""); setTitleManuallySet(false); }} className="flex-1 py-2.5 text-xs font-medium text-neutral-600 bg-neutral-100 rounded-xl hover:bg-neutral-200 transition-colors focus:outline-none focus:ring-2 focus:ring-neutral-900/20">Cancel</button>
             <button onClick={addLink} disabled={adding} className="flex-1 py-2.5 text-xs font-medium text-white bg-neutral-900 rounded-xl hover:bg-neutral-800 transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-neutral-900/20">{adding ? "Adding..." : "Add Link"}</button>
           </div>
         </div>

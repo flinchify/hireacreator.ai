@@ -128,6 +128,47 @@ function BioLinksSection({ creator, light }: { creator: Creator; light?: boolean
     <div className="space-y-3 my-5">
       {creator.bioLinks.filter(l => l.isVisible).map(link => {
         const platform = getPlatform(link.url);
+
+        // Rich link card: full-width image when thumbnail is present
+        if (link.thumbnailUrl) {
+          return (
+            <a
+              key={link.id}
+              href={link.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => trackClick(link.id)}
+              className={`group block w-full overflow-hidden transition-all duration-200 hover:scale-[1.02] hover:shadow-lg ${shape} ${light
+                ? "bg-white/[0.08] backdrop-blur-md border border-white/[0.12] hover:bg-white/[0.14]"
+                : "bg-white border border-neutral-200/80 hover:border-neutral-300 shadow-sm"
+              }`}
+            >
+              <div className="relative w-full aspect-[2/1] overflow-hidden">
+                <img src={link.thumbnailUrl} alt="" className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+              </div>
+              <div className="flex items-center gap-3 px-5 py-3.5">
+                {platform && (
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${light ? "bg-white/10" : "bg-neutral-100"}`}>
+                    {platform === "calendar" ? (
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={light ? "white" : "#555"} strokeWidth="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18" strokeLinecap="round"/></svg>
+                    ) : (
+                      <PlatformIcon platform={platform} size={14} className={light ? "text-white/70" : "text-neutral-500"} />
+                    )}
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <div className={`font-semibold text-sm ${light ? "text-white" : "text-neutral-900"}`}>{link.title}</div>
+                  <div className={`text-[11px] mt-0.5 truncate ${light ? "text-white/30" : "text-neutral-400"}`}>{link.url.replace(/^https?:\/\/(www\.)?/, '').split('/')[0]}</div>
+                </div>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={`shrink-0 transition-all duration-200 ${light ? "text-white/20 group-hover:text-white/50" : "text-neutral-300 group-hover:text-neutral-500"} group-hover:translate-x-0.5`}>
+                  <path d="M7 17L17 7M17 7H7M17 7v10" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </div>
+            </a>
+          );
+        }
+
+        // Standard button link (no thumbnail)
         return (
           <a
             key={link.id}
@@ -140,9 +181,7 @@ function BioLinksSection({ creator, light }: { creator: Creator; light?: boolean
               : "bg-white border border-neutral-200/80 hover:border-neutral-300 shadow-sm"
             }`}
           >
-            {link.thumbnailUrl ? (
-              <img src={link.thumbnailUrl} alt="" className="w-10 h-10 rounded-xl object-cover shrink-0" />
-            ) : platform ? (
+            {platform ? (
               <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${light ? "bg-white/10" : "bg-neutral-100"}`}>
                 {platform === "calendar" ? (
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={light ? "white" : "#555"} strokeWidth="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18" strokeLinecap="round"/></svg>

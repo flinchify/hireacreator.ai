@@ -81,17 +81,20 @@ export async function PATCH(request: Request) {
       try { new URL(url); } catch { return NextResponse.json({ error: "Invalid URL format" }, { status: 400 }); }
     }
 
+    const hasThumb = thumbnailUrl !== undefined;
+    const hasIcon = icon !== undefined;
+
     await sql`
       UPDATE bio_links SET
         title = COALESCE(${title ?? null}, title),
         url = COALESCE(${url ?? null}, url),
-        thumbnail_url = ${thumbnailUrl !== undefined ? (thumbnailUrl || null) : null},
-        icon = ${icon !== undefined ? (icon || null) : null},
+        thumbnail_url = CASE WHEN ${hasThumb} THEN ${thumbnailUrl || null} ELSE thumbnail_url END,
+        icon = CASE WHEN ${hasIcon} THEN ${icon || null} ELSE icon END,
         is_visible = COALESCE(${isVisible ?? null}, is_visible),
         is_pinned = COALESCE(${isPinned ?? null}, is_pinned),
         is_archived = COALESCE(${isArchived ?? null}, is_archived),
-        schedule_start = ${scheduleStart !== undefined ? scheduleStart : null},
-        schedule_end = ${scheduleEnd !== undefined ? scheduleEnd : null},
+        schedule_start = CASE WHEN ${scheduleStart !== undefined} THEN ${scheduleStart ?? null}::timestamptz ELSE schedule_start END,
+        schedule_end = CASE WHEN ${scheduleEnd !== undefined} THEN ${scheduleEnd ?? null}::timestamptz ELSE schedule_end END,
         updated_at = NOW()
       WHERE id = ${id} AND user_id = ${user.id}
     `;
