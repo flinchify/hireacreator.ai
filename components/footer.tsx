@@ -4,7 +4,6 @@ import Image from "next/image";
 const footerLinks = {
   Platform: [
     { label: "Browse Marketplace", href: "/browse" },
-    { label: "How It Works", href: "/how-it-works" },
     { label: "For Creators", href: "/for-creators" },
     { label: "For Brands", href: "/for-brands" },
     { label: "Pricing", href: "/pricing" },

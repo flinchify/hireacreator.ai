@@ -278,7 +278,7 @@ export function ServiceAction({ serviceId, price, creatorId }: { serviceId: stri
     }
 
     if (price === 0 && creatorId) {
-      window.location.href = "/messages";
+      window.location.href = "/contact";
       return;
     }
 
@@ -321,7 +321,7 @@ export function ServiceCardWithPackages({ service }: { service: { id: string; ti
   async function handleBook() {
     if (!user) { openLogin(); return; }
     const price = activePkg ? activePkg.price : service.price;
-    if (price === 0) { window.location.href = "/messages"; return; }
+    if (price === 0) { window.location.href = "/contact"; return; }
 
     const res = await fetch("/api/checkout/booking", {
       method: "POST",

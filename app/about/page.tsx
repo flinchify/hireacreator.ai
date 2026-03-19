@@ -39,34 +39,6 @@ export default function AboutPage() {
             </p>
           </section>
 
-          {/* How it works */}
-          <section>
-            <h2 className="font-display text-2xl font-bold text-neutral-900">How HireACreator works</h2>
-            <div className="mt-6 grid gap-6">
-              <div className="flex gap-4">
-                <div className="w-10 h-10 rounded-xl bg-neutral-100 flex items-center justify-center shrink-0 font-display font-bold text-neutral-900">1</div>
-                <div>
-                  <h3 className="font-semibold text-neutral-900">Creators build their profile</h3>
-                  <p className="mt-1 text-sm text-neutral-500">Set up a portfolio, list services with your own pricing, connect social accounts, and get a shareable link-in-bio page.</p>
-                </div>
-              </div>
-              <div className="flex gap-4">
-                <div className="w-10 h-10 rounded-xl bg-neutral-100 flex items-center justify-center shrink-0 font-display font-bold text-neutral-900">2</div>
-                <div>
-                  <h3 className="font-semibold text-neutral-900">Brands discover and book</h3>
-                  <p className="mt-1 text-sm text-neutral-500">Search by category, niche, price range, or platform. Find the right creator and book their services directly — no DMs, no negotiations, no agencies.</p>
-                </div>
-              </div>
-              <div className="flex gap-4">
-                <div className="w-10 h-10 rounded-xl bg-neutral-100 flex items-center justify-center shrink-0 font-display font-bold text-neutral-900">3</div>
-                <div>
-                  <h3 className="font-semibold text-neutral-900">Secure payment via Stripe</h3>
-                  <p className="mt-1 text-sm text-neutral-500">Payments are held securely and released when the work is delivered. Creators get paid directly via Stripe Connect — no payout delays, no minimum thresholds.</p>
-                </div>
-              </div>
-            </div>
-          </section>
-
           {/* Who it's for */}
           <section>
             <h2 className="font-display text-2xl font-bold text-neutral-900">Who it's for</h2>
@@ -89,29 +61,6 @@ export default function AboutPage() {
                   <li>AI agents automating creator discovery</li>
                 </ul>
               </div>
-            </div>
-          </section>
-
-          {/* Differentiators */}
-          <section>
-            <h2 className="font-display text-2xl font-bold text-neutral-900">What makes us different</h2>
-            <div className="mt-6 space-y-4">
-              {[
-                { title: "0% creator commission", desc: "Creators keep every dollar. Brands pay the service fee." },
-                { title: "Direct booking", desc: "No middlemen, no agencies, no back-and-forth DMs. Book and pay in one flow." },
-                { title: "Link-in-bio built in", desc: "Every creator gets a customizable link-in-bio page with 8 templates, video backgrounds, and portfolio showcases." },
-                { title: "AI-agent API", desc: "Brands can integrate creator discovery into their AI workflows via MCP and REST API." },
-                { title: "Stripe-powered payments", desc: "Instant payouts, payment protection, and transparent pricing via Stripe Connect." },
-                { title: "Free tier that actually competes", desc: "Features that cost $15-35/month on Linktree and Fiverr are free on HireACreator." },
-              ].map((item, i) => (
-                <div key={i} className="flex gap-3">
-                  <div className="w-1.5 h-1.5 rounded-full bg-neutral-900 mt-2 shrink-0" />
-                  <div>
-                    <span className="font-semibold text-neutral-900">{item.title}</span>
-                    <span className="text-neutral-500"> — {item.desc}</span>
-                  </div>
-                </div>
-              ))}
             </div>
           </section>
 
@@ -149,7 +98,6 @@ export default function AboutPage() {
         url: "https://hireacreator.ai",
         logo: "https://hireacreator.ai/logo-h-180.png",
         description: "The creator marketplace where brands book creators directly and creators keep 100% of their earnings.",
-  alternates: { canonical: "https://hireacreator.ai/about" },
         foundingDate: "2026",
         sameAs: ["https://x.com/hireacreatorAI"],
         contactPoint: {
