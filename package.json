@@ -10,17 +10,21 @@
   },
   "dependencies": {
     "@neondatabase/serverless": "^0.10.4",
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.5.0",
     "@vercel/blob": "^2.3.1",
     "next": "^14.2.21",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "resend": "^6.9.3",
-    "stripe": "^17.5.0"
+    "stripe": "^17.5.0",
+    "three": "^0.183.2"
   },
   "devDependencies": {
     "@types/node": "^22.10.5",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
+    "@types/three": "^0.183.1",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.49",
     "sharp": "^0.34.5",
