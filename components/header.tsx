@@ -179,22 +179,22 @@ export function Header({ theme = "light" }: { theme?: HeaderTheme }) {
       {mobileOpen && (
         <div className={`md:hidden mt-2 rounded-2xl border p-4 shadow-lg ${t.mobileMenu}`}>
           <div className="flex flex-col gap-1">
-            <Link href="/browse" className={`px-4 py-2.5 text-sm font-medium rounded-xl ${t.mobileLink}`} onClick={() => setMobileOpen(false)}>
+            <Link href="/browse" className={`px-4 py-3 text-sm font-medium rounded-xl min-h-[44px] flex items-center ${t.mobileLink}`} onClick={() => setMobileOpen(false)}>
               {user?.role === "brand" ? "Explore" : "Creators"}
             </Link>
-            {!user && <Link href="/for-brands" className={`px-4 py-2.5 text-sm font-medium rounded-xl ${t.mobileLink}`} onClick={() => setMobileOpen(false)}>For Brands</Link>}
-            <Link href="/pricing" className={`px-4 py-2.5 text-sm font-medium rounded-xl ${t.mobileLink}`} onClick={() => setMobileOpen(false)}>Pricing</Link>
+            {!user && <Link href="/for-brands" className={`px-4 py-3 text-sm font-medium rounded-xl min-h-[44px] flex items-center ${t.mobileLink}`} onClick={() => setMobileOpen(false)}>For Brands</Link>}
+            <Link href="/pricing" className={`px-4 py-3 text-sm font-medium rounded-xl min-h-[44px] flex items-center ${t.mobileLink}`} onClick={() => setMobileOpen(false)}>Pricing</Link>
             <div className={`border-t my-2 ${t.mobileDivider}`} />
             {user ? (
               <>
-                <Link href="/dashboard" className={`px-4 py-2.5 text-sm font-medium rounded-xl ${t.mobileLink}`} onClick={() => setMobileOpen(false)}>Dashboard</Link>
-                <Link href="/messages" className={`px-4 py-2.5 text-sm font-medium rounded-xl ${t.mobileLink}`} onClick={() => setMobileOpen(false)}>Messages</Link>
-                {user.role !== "brand" && <Link href={user.slug ? `/u/${user.slug}` : "/dashboard"} className={`px-4 py-2.5 text-sm font-medium rounded-xl ${t.mobileLink}`} onClick={() => setMobileOpen(false)}>My Link in Bio</Link>}
+                <Link href="/dashboard" className={`px-4 py-3 text-sm font-medium rounded-xl min-h-[44px] flex items-center ${t.mobileLink}`} onClick={() => setMobileOpen(false)}>Dashboard</Link>
+                <Link href="/messages" className={`px-4 py-3 text-sm font-medium rounded-xl min-h-[44px] flex items-center ${t.mobileLink}`} onClick={() => setMobileOpen(false)}>Messages</Link>
+                {user.role !== "brand" && <Link href={user.slug ? `/u/${user.slug}` : "/dashboard"} className={`px-4 py-3 text-sm font-medium rounded-xl min-h-[44px] flex items-center ${t.mobileLink}`} onClick={() => setMobileOpen(false)}>My Link in Bio</Link>}
               </>
             ) : (
               <>
-                <button onClick={() => { setMobileOpen(false); openLogin(); }} className={`px-4 py-2.5 text-sm font-medium rounded-xl text-left ${t.mobileLink}`}>Log in</button>
-                <button onClick={() => { setMobileOpen(false); openSignup(); }} className={`px-4 py-2.5 text-sm font-medium text-center rounded-xl ${t.mobileCta}`}>Get Started</button>
+                <button onClick={() => { setMobileOpen(false); openLogin(); }} className={`px-4 py-3 text-sm font-medium rounded-xl text-left min-h-[44px] flex items-center ${t.mobileLink}`}>Log in</button>
+                <button onClick={() => { setMobileOpen(false); openSignup(); }} className={`px-4 py-3 text-sm font-medium text-center rounded-xl min-h-[44px] flex items-center justify-center ${t.mobileCta}`}>Get Started</button>
               </>
             )}
           </div>

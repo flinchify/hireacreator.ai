@@ -125,7 +125,7 @@ function CrownIcon() {
 const faqItems = [
   { q: "Is HireACreator really free for creators?", a: "Yes. Creators pay 0% commission on every booking. Brands pay a small service fee, not creators. There are optional paid upgrades (Creator Pro at $19/mo) for premium features, but the core platform is free.", cat: "pricing" },
   { q: "How is this different from Fiverr or Upwork?", a: "Fiverr takes 20% of your earnings. Upwork takes 10-20%. HireACreator takes 0% from creators. You also get a built-in link-in-bio page, portfolio showcase, and direct bookings without back-and-forth messaging.", cat: "general" },
-  { q: "How do payments work?", a: "Payments are processed via Stripe. Brands pay upfront, funds are held in escrow, and released to creators via Stripe Connect once work is delivered. No payout delays, no minimum thresholds.", cat: "payments" },
+  { q: "How do payments work?", a: "Payments are processed via Stripe. Brands pay upfront, funds are held securely until you approve, and released to creators via Stripe Connect once work is delivered. No payout delays, no minimum thresholds.", cat: "payments" },
   { q: "Can I use HireACreator as my link-in-bio?", a: "Absolutely. Every creator gets a customizable link-in-bio page with 8 templates, video backgrounds, button styling, and portfolio sections. Put it in your Instagram, TikTok, or Twitter bio.", cat: "features" },
   { q: "Do you have an API for AI agents?", a: "Yes. HireACreator offers both MCP (Model Context Protocol) and REST API access. AI agents can search creators, filter by category, and initiate bookings programmatically.", cat: "api" },
   { q: "What types of creators can join?", a: "UGC creators, videographers, photographers, social media managers, graphic designers, editors, TikTok creators, YouTube creators, Instagram creators — anyone selling creative services.", cat: "general" },
@@ -166,7 +166,7 @@ export function HomepageContent({
       <div className="fixed top-0 left-0 right-0 h-24 bg-gradient-to-b from-black/[0.04] to-transparent z-40 pointer-events-none" />
 
       {/* ═══════════════════ HERO ═══════════════════ */}
-      <section className="relative pt-40 sm:pt-52 pb-20 sm:pb-28 overflow-hidden">
+      <section className="relative pt-32 sm:pt-52 pb-16 sm:pb-28 overflow-hidden">
         {/* Aurora mesh background — blue tones only */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-b from-neutral-50/80 via-neutral-50/40 to-white" />
@@ -178,7 +178,7 @@ export function HomepageContent({
         </div>
 
         {/* Floating platform logos — scattered behind text */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
+        <div className="absolute inset-0 pointer-events-none overflow-hidden hidden sm:block" aria-hidden="true">
           <div className="absolute top-32 left-[8%] opacity-[0.07] animate-float">
             <InstagramIcon size={48} className="text-neutral-900" />
           </div>
@@ -205,7 +205,7 @@ export function HomepageContent({
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
               <h1
-                className="font-display text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tighter text-neutral-900 leading-[1.05]"
+                className="font-display text-3xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tighter text-neutral-900 leading-[1.05]"
               >
                 The marketplace where<br className="hidden sm:block" /> creators and <span className="bg-gradient-to-r from-blue-600 to-sky-500 bg-clip-text text-transparent">AI agents</span> trade
               </h1>
@@ -298,7 +298,7 @@ export function HomepageContent({
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
           <AnimateOnScroll className="text-center mb-14">
             <div className="text-sm font-medium text-neutral-400 uppercase tracking-wider mb-4">What you get</div>
-            <h2 className="font-display text-3xl sm:text-4xl font-bold text-neutral-900 leading-tight">
+            <h2 className="font-display text-2xl sm:text-4xl font-bold text-neutral-900 leading-tight">
               Everything a creator needs, in one place
             </h2>
           </AnimateOnScroll>
@@ -368,7 +368,7 @@ export function HomepageContent({
                 <h3 className="font-display text-lg font-bold text-neutral-900 mb-2">Get paid instantly</h3>
                 <p className="text-sm text-neutral-500 leading-relaxed">
                   0% commission — you keep 100% of what you charge.
-                  Payments held in Stripe escrow until work is approved. No chasing invoices.
+                  Secure payment protection via Stripe until work is approved. No chasing invoices.
                 </p>
               </div>
             </div>
@@ -409,7 +409,7 @@ export function HomepageContent({
               <div className="text-sm font-medium text-neutral-400 uppercase tracking-wider mb-4">
                 Your profile
               </div>
-              <h2 className="font-display text-3xl sm:text-4xl font-bold text-neutral-900 leading-tight mb-6">
+              <h2 className="font-display text-2xl sm:text-4xl font-bold text-neutral-900 leading-tight mb-6">
                 You have the audience.<br />
                 Now monetize it.
               </h2>
@@ -480,18 +480,18 @@ export function HomepageContent({
       {featured.length > 0 && (
         <AnimateOnScroll as="section" className="bg-gradient-to-b from-blue-50/30 to-white border-t border-neutral-100">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-            <div className="flex items-end justify-between mb-10">
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10">
               <div>
-                <h2 className="font-display text-3xl font-bold text-neutral-900">
+                <h2 className="font-display text-2xl sm:text-3xl font-bold text-neutral-900">
                   Discover creators ready to work
                 </h2>
-                <p className="mt-2 text-neutral-500">
-                  Browse {creatorCount}+ verified creators across every niche. Book directly, no middlemen.
+                <p className="mt-2 text-neutral-500 text-sm sm:text-base">
+                  Browse {creatorCount} verified (identity and social accounts confirmed) creators across every niche. Book directly, no middlemen.
                 </p>
               </div>
               <Link
                 href="/browse"
-                className="hidden sm:inline-flex items-center gap-1 text-sm font-medium text-neutral-900 hover:text-neutral-600 transition-colors duration-300"
+                className="hidden sm:inline-flex items-center gap-1 text-sm font-medium text-neutral-900 hover:text-neutral-600 transition-colors duration-300 shrink-0"
               >
                 View all <ArrowRightIcon />
               </Link>
@@ -530,8 +530,8 @@ export function HomepageContent({
             </h2>
             <p className="text-neutral-500 text-lg leading-relaxed max-w-2xl mx-auto">
               Search by niche, audience size, engagement rate, and budget.
-              Book in minutes, not weeks. Payments are held in Stripe escrow
-              and released when you approve the deliverables.
+              Book in minutes, not weeks. Funds held securely until you approve
+              the deliverables via Stripe.
             </p>
           </div>
 
@@ -561,7 +561,7 @@ export function HomepageContent({
                 <div className="text-lg font-display font-bold text-neutral-900 mb-2">Book</div>
                 <p className="text-sm text-neutral-500 leading-relaxed">
                   Pick a service, submit your brief, pay securely.
-                  Funds held in escrow until you approve.
+                  Funds held securely until you approve.
                 </p>
               </div>
             </div>
@@ -662,7 +662,7 @@ export function HomepageContent({
                   <div className="w-2.5 h-2.5 rounded-full bg-green-500/60" />
                   <span className="text-xs text-neutral-500 ml-2 font-mono">api.hireacreator.ai</span>
                 </div>
-                <div className="p-6 font-mono text-sm leading-relaxed overflow-x-auto">
+                <div className="p-4 sm:p-6 font-mono text-xs sm:text-sm leading-relaxed overflow-x-auto">
                   <div className="text-neutral-600">{"// Find UGC creators under $2k"}</div>
                   <div><span className="text-emerald-400">GET</span> <span className="text-neutral-300">/v1/creators</span></div>
                   <div className="text-neutral-500 mb-4">{"  ?category=ugc&max_rate=2000"}</div>
@@ -698,7 +698,7 @@ export function HomepageContent({
               Free for creators. Transparent for everyone.
             </h2>
             <p className="text-neutral-500 text-lg leading-relaxed max-w-2xl mx-auto">
-              Creators keep 100% of their earnings with 0% commission. Upgrade for advanced tools, or stay free forever.
+              Creators keep 100% of their earnings with 0% commission. Upgrade for advanced tools, or use the free plan with no time limit.
             </p>
           </div>
 
@@ -708,7 +708,7 @@ export function HomepageContent({
               <div className="text-sm font-medium text-neutral-400 uppercase tracking-wider mb-2">Free</div>
               <div className="flex items-baseline gap-1 mb-4">
                 <span className="font-display text-3xl font-bold text-neutral-900">$0</span>
-                <span className="text-sm text-neutral-400">forever</span>
+                <span className="text-sm text-neutral-400">/mo</span>
               </div>
               <p className="text-sm text-neutral-500 mb-5">Link-in-bio, services, bookings, and analytics. No strings attached.</p>
               <ul className="space-y-2.5 mb-6">
@@ -815,22 +815,23 @@ export function HomepageContent({
             </p>
           </div>
 
-          <div className="overflow-x-auto bg-white rounded-2xl border border-neutral-200 shadow-sm">
+          <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
+            <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm min-w-[480px] sm:min-w-0">
             <table className="w-full text-left">
               <thead>
                 <tr className="border-b border-neutral-200">
-                  <th className="p-4 pr-4 text-sm font-medium text-neutral-400 w-1/4" />
-                  <th className="p-4 px-4 text-center bg-neutral-50">
+                  <th className="p-3 sm:p-4 pr-4 text-xs sm:text-sm font-medium text-neutral-400 w-1/4 sticky left-0 bg-white z-10" />
+                  <th className="p-3 sm:p-4 px-3 sm:px-4 text-center bg-neutral-50">
                     <div className="inline-flex items-center gap-1.5">
                       <span className="text-amber-500"><CrownIcon /></span>
-                      <span className="font-display font-bold text-neutral-900">HireACreator</span>
+                      <span className="font-display font-bold text-neutral-900 text-xs sm:text-base">HireACreator</span>
                     </div>
                   </th>
-                  <th className="p-4 px-4 text-center">
-                    <div className="font-display font-bold" style={{ color: "#43E55E" }}>Linktree</div>
+                  <th className="p-3 sm:p-4 px-3 sm:px-4 text-center">
+                    <div className="font-display font-bold text-xs sm:text-base" style={{ color: "#525252" }}>Linktree</div>
                   </th>
-                  <th className="p-4 px-4 text-center">
-                    <div className="font-display font-bold" style={{ color: "#1DBF73" }}>Fiverr.</div>
+                  <th className="p-3 sm:p-4 px-3 sm:px-4 text-center">
+                    <div className="font-display font-bold text-xs sm:text-base" style={{ color: "#525252" }}>Fiverr.</div>
                   </th>
                 </tr>
               </thead>
@@ -848,8 +849,8 @@ export function HomepageContent({
                   { feature: "You set your own rates", us: true, linktree: false, fiverr: false },
                 ].map((row, i) => (
                   <tr key={i} className="border-b border-neutral-100 comparison-row transition-colors duration-300">
-                    <td className="py-3.5 px-4 text-neutral-700 font-medium">{row.feature}</td>
-                    <td className="py-3.5 px-4 text-center bg-neutral-50">
+                    <td className="py-3 sm:py-3.5 px-3 sm:px-4 text-neutral-700 font-medium text-xs sm:text-sm sticky left-0 bg-white z-10">{row.feature}</td>
+                    <td className="py-3 sm:py-3.5 px-3 sm:px-4 text-center bg-neutral-50">
                       {row.us ? (
                         <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-gradient-to-br from-blue-600 to-sky-500 text-white shadow-sm">
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
@@ -858,7 +859,7 @@ export function HomepageContent({
                         <span className="inline-block w-6 h-0.5 bg-neutral-200 rounded" />
                       )}
                     </td>
-                    <td className="py-3.5 px-4 text-center">
+                    <td className="py-3 sm:py-3.5 px-3 sm:px-4 text-center">
                       {row.linktree ? (
                         <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-neutral-200 text-neutral-500">
                           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
@@ -867,7 +868,7 @@ export function HomepageContent({
                         <span className="inline-block w-6 h-0.5 bg-neutral-200 rounded" />
                       )}
                     </td>
-                    <td className="py-3.5 px-4 text-center">
+                    <td className="py-3 sm:py-3.5 px-3 sm:px-4 text-center">
                       {row.fiverr ? (
                         <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-neutral-200 text-neutral-500">
                           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
@@ -880,9 +881,14 @@ export function HomepageContent({
                 ))}
               </tbody>
             </table>
+            </div>
           </div>
         </div>
       </AnimateOnScroll>
+
+      <p className="text-xs text-neutral-400 text-center max-w-2xl mx-auto mt-12 px-4">
+        Fiverr is a registered trademark of Fiverr International Ltd. Upwork is a registered trademark of Upwork Inc. Linktree is a registered trademark of Linktree Pty Ltd. HireACreator is not affiliated with, endorsed by, or sponsored by any of these companies. Comparisons are based on publicly available information as of March 2026.
+      </p>
 
       {/* ═══════════════════ FAQ ═══════════════════ */}
       <AnimateOnScroll as="section" className="bg-white border-t border-neutral-100">
@@ -954,7 +960,7 @@ export function HomepageContent({
         mainEntity: [
           { "@type": "Question", name: "Is HireACreator really free for creators?", acceptedAnswer: { "@type": "Answer", text: "Yes. Creators pay 0% commission on every booking. Brands pay a small service fee, not creators." } },
           { "@type": "Question", name: "How is HireACreator different from Fiverr or Upwork?", acceptedAnswer: { "@type": "Answer", text: "Fiverr takes 20% of your earnings. Upwork takes 10-20%. HireACreator takes 0% from creators. You also get a built-in link-in-bio page, portfolio showcase, and direct bookings." } },
-          { "@type": "Question", name: "How do payments work on HireACreator?", acceptedAnswer: { "@type": "Answer", text: "Payments are processed via Stripe. Brands pay upfront, funds are held in escrow, and released to creators via Stripe Connect once work is delivered." } },
+          { "@type": "Question", name: "How do payments work on HireACreator?", acceptedAnswer: { "@type": "Answer", text: "Payments are processed via Stripe. Brands pay upfront, funds are held securely until you approve, and released to creators via Stripe Connect once work is delivered." } },
           { "@type": "Question", name: "Can I use HireACreator as my link-in-bio?", acceptedAnswer: { "@type": "Answer", text: "Yes. Every creator gets a customizable link-in-bio page with 8 templates, video backgrounds, button styling, and portfolio sections." } },
           { "@type": "Question", name: "Does HireACreator have an API for AI agents?", acceptedAnswer: { "@type": "Answer", text: "Yes. HireACreator offers both MCP (Model Context Protocol) and REST API access for AI agents to search creators, filter by category, and initiate bookings." } },
           { "@type": "Question", name: "What types of creators can join HireACreator?", acceptedAnswer: { "@type": "Answer", text: "UGC creators, videographers, photographers, social media managers, graphic designers, editors, TikTok creators, YouTube creators, Instagram creators — anyone selling creative services." } },
@@ -975,7 +981,7 @@ export function HomepageContent({
           <div className="absolute top-1/2 right-1/4 w-[300px] h-[300px] rounded-full bg-sky-500/10 blur-[80px]" />
         </div>
 
-        <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-28 sm:py-36 text-center">
+        <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-36 text-center">
           <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-5 leading-tight">
             {creatorCount > 0
               ? "Join the creators already here"

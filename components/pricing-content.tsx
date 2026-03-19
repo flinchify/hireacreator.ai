@@ -72,7 +72,7 @@ const brandComparisonFeatures = [
   { label: "Service fee on bookings", analytics: "10%", enterprise: "5%" },
   { label: "Dedicated account manager", analytics: false, enterprise: true },
   { label: "Custom integrations", analytics: false, enterprise: true },
-  { label: "SLA guarantees", analytics: false, enterprise: true },
+  { label: "Priority support with response time commitments", analytics: false, enterprise: true },
   { label: "API access", analytics: false, enterprise: "5000 req/min" },
   { label: "White-label marketplace", analytics: false, enterprise: true },
 ];
@@ -84,7 +84,7 @@ const faqItems = [
   },
   {
     q: "What does the 10% service fee cover?",
-    a: "The 10% is added on top of the creator's price and paid by the brand. It covers payment processing, escrow protection, dispute resolution, and platform maintenance.",
+    a: "The 10% is added on top of the creator's price and paid by the brand. It covers payment processing, payment protection, dispute resolution, and platform maintenance.",
   },
   {
     q: "Can I cancel anytime?",
@@ -133,22 +133,22 @@ export function PricingContent() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="text-center mb-10">
-            <h1 className="font-display text-4xl sm:text-5xl font-bold text-neutral-900 tracking-tight mb-4">
+            <h1 className="font-display text-3xl sm:text-5xl font-bold text-neutral-900 tracking-tight mb-4">
               Simple, transparent pricing
             </h1>
-            <p className="text-lg text-neutral-500 max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg text-neutral-500 max-w-2xl mx-auto">
               Free for creators. Always. Brands and agents pay only for premium features.
             </p>
           </div>
 
           {/* Tab switcher */}
           <div className="flex justify-center mb-8">
-            <div className="inline-flex gap-1 p-1 bg-neutral-100 rounded-full">
+            <div className="inline-flex gap-1 p-1 bg-neutral-100 rounded-full overflow-x-auto max-w-full">
               {(["creators", "brands", "api"] as Tab[]).map((t) => (
                 <button
                   key={t}
                   onClick={() => setTab(t)}
-                  className={`px-6 py-2.5 text-sm font-medium rounded-full transition-all ${
+                  className={`px-4 sm:px-6 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-full transition-all whitespace-nowrap ${
                     tab === t
                       ? "bg-white text-neutral-900 shadow-sm"
                       : "text-neutral-500 hover:text-neutral-700"
@@ -198,7 +198,7 @@ export function PricingContent() {
                   <div className="flex items-baseline gap-1 mb-1">
                     <span className="font-display text-4xl font-bold text-neutral-900">$0</span>
                   </div>
-                  <div className="text-sm text-neutral-500 mb-6">Free forever</div>
+                  <div className="text-sm text-neutral-500 mb-6">No credit card required</div>
                   <p className="text-sm text-neutral-500 mb-6">
                     Everything you need to launch your creator page and start getting booked.
                   </p>
@@ -275,7 +275,7 @@ export function PricingContent() {
                   </ul>
                   {annual && (
                     <p className="text-xs text-neutral-400 text-center mb-3">
-                      Annual billing coming soon. You will be billed monthly for now.
+                      Annual billing coming soon — you will not be charged annually. You will be billed monthly for now.
                     </p>
                   )}
                   <button
@@ -327,7 +327,7 @@ export function PricingContent() {
                   </ul>
                   {annual && (
                     <p className="text-xs text-neutral-400 text-center mb-3">
-                      Annual billing coming soon. You will be billed monthly for now.
+                      Annual billing coming soon — you will not be charged annually. You will be billed monthly for now.
                     </p>
                   )}
                   <button
@@ -344,20 +344,20 @@ export function PricingContent() {
                 <h2 className="font-display text-2xl font-bold text-neutral-900 text-center mb-8">
                   Compare Creator plans
                 </h2>
-                <div className="overflow-x-auto">
-                  <table className="w-full max-w-4xl mx-auto text-sm">
+                <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
+                  <table className="w-full max-w-4xl mx-auto text-sm min-w-[500px] sm:min-w-0">
                     <thead>
                       <tr className="border-b border-neutral-200">
-                        <th className="text-left py-3 pr-4 font-medium text-neutral-500 w-1/3">Feature</th>
-                        <th className="text-center py-3 px-4 font-medium text-neutral-500">Free</th>
-                        <th className="text-center py-3 px-4 font-medium text-neutral-900">Pro</th>
-                        <th className="text-center py-3 px-4 font-medium text-neutral-500">Business</th>
+                        <th className="text-left py-3 pr-4 font-medium text-neutral-500 w-1/3 sticky left-0 bg-white z-10 text-xs sm:text-sm">Feature</th>
+                        <th className="text-center py-3 px-3 sm:px-4 font-medium text-neutral-500 text-xs sm:text-sm">Free</th>
+                        <th className="text-center py-3 px-3 sm:px-4 font-medium text-neutral-900 text-xs sm:text-sm">Pro</th>
+                        <th className="text-center py-3 px-3 sm:px-4 font-medium text-neutral-500 text-xs sm:text-sm">Business</th>
                       </tr>
                     </thead>
                     <tbody>
                       {creatorComparisonFeatures.map((row) => (
                         <tr key={row.label} className="border-b border-neutral-100">
-                          <td className="py-3 pr-4 text-neutral-700">{row.label}</td>
+                          <td className="py-3 pr-4 text-neutral-700 text-xs sm:text-sm sticky left-0 bg-white z-10">{row.label}</td>
                           <td className="py-3 px-4 text-center">
                             <span className="inline-flex justify-center">
                               <ComparisonCell value={row.free} />
@@ -427,7 +427,7 @@ export function PricingContent() {
                   </ul>
                   {annual && (
                     <p className="text-xs text-neutral-400 text-center mb-3">
-                      Annual billing coming soon. You will be billed monthly for now.
+                      Annual billing coming soon — you will not be charged annually. You will be billed monthly for now.
                     </p>
                   )}
                   <button
@@ -463,7 +463,7 @@ export function PricingContent() {
                       "Everything in Brand Analytics",
                       "Dedicated account manager",
                       "Custom integrations",
-                      "SLA guarantees",
+                      "Priority support with response time commitments",
                       "Reduced 5% service fee",
                       "Unlimited campaigns",
                       "API access (5000 req/min)",
@@ -489,19 +489,19 @@ export function PricingContent() {
                 <h2 className="font-display text-2xl font-bold text-neutral-900 text-center mb-8">
                   Compare Brand plans
                 </h2>
-                <div className="overflow-x-auto">
-                  <table className="w-full max-w-3xl mx-auto text-sm">
+                <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
+                  <table className="w-full max-w-3xl mx-auto text-sm min-w-[400px] sm:min-w-0">
                     <thead>
                       <tr className="border-b border-neutral-200">
-                        <th className="text-left py-3 pr-4 font-medium text-neutral-500 w-1/2">Feature</th>
-                        <th className="text-center py-3 px-4 font-medium text-neutral-900">Analytics</th>
-                        <th className="text-center py-3 px-4 font-medium text-neutral-500">Enterprise</th>
+                        <th className="text-left py-3 pr-4 font-medium text-neutral-500 w-1/2 sticky left-0 bg-white z-10 text-xs sm:text-sm">Feature</th>
+                        <th className="text-center py-3 px-3 sm:px-4 font-medium text-neutral-900 text-xs sm:text-sm">Analytics</th>
+                        <th className="text-center py-3 px-3 sm:px-4 font-medium text-neutral-500 text-xs sm:text-sm">Enterprise</th>
                       </tr>
                     </thead>
                     <tbody>
                       {brandComparisonFeatures.map((row) => (
                         <tr key={row.label} className="border-b border-neutral-100">
-                          <td className="py-3 pr-4 text-neutral-700">{row.label}</td>
+                          <td className="py-3 pr-4 text-neutral-700 text-xs sm:text-sm sticky left-0 bg-white z-10">{row.label}</td>
                           <td className="py-3 px-4 text-center bg-neutral-50/50">
                             <span className="inline-flex justify-center">
                               <ComparisonCell value={row.analytics} />

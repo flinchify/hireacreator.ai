@@ -83,7 +83,7 @@ export default function BrandsPage() {
               <div className="text-2xl font-display font-bold text-white mb-3">Book</div>
               <p className="text-neutral-400 leading-relaxed">
                 Pick a service from the creator's menu, submit your brief, and pay securely.
-                Funds are held in escrow until you approve the deliverables.
+                Funds are held securely until you approve the deliverables.
               </p>
             </div>
             <div className="aos-stagger-item bg-neutral-900 rounded-2xl p-8 border border-neutral-800">
@@ -115,7 +115,7 @@ export default function BrandsPage() {
                 desc: "Every creator goes through portfolio review and identity verification. You see real work from real people.",
               },
               {
-                title: "Escrow payments",
+                title: "Secure payment protection",
                 desc: "Your money is held securely until you approve the deliverables. No risk, no chasing refunds.",
               },
               {
@@ -236,7 +236,7 @@ export default function BrandsPage() {
           </h2>
           <p className="text-neutral-500 text-lg mb-14 max-w-2xl mx-auto">
             Creators keep 100% of their listed price. We add a small service fee on the brand side
-            to cover payments, escrow, and platform infrastructure. No hidden markup.
+            to cover payments, payment protection, and platform infrastructure. No hidden markup.
           </p>
           <div className="bg-neutral-50 rounded-3xl border border-neutral-200 p-8 sm:p-12 max-w-lg mx-auto">
             <div className="text-sm font-medium text-neutral-400 uppercase tracking-wider mb-2">For Brands</div>
@@ -245,7 +245,7 @@ export default function BrandsPage() {
             <ul className="space-y-3 text-left">
               {[
                 "Creators get 100% of their listed rate",
-                "Small service fee covers escrow + platform",
+                "Small service fee covers payment protection + platform",
                 "Still cheaper than any agency (they charge 15-30%)",
                 "Full usage rights on all deliverables",
                 "Unlimited browsing and messaging",

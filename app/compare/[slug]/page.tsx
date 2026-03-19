@@ -204,6 +204,10 @@ export default function ComparePage({ params }: { params: { slug: string } }) {
         </Link>
       </div>
 
+      <p className="text-xs text-neutral-400 text-center max-w-2xl mx-auto mt-12 px-4">
+        Fiverr is a registered trademark of Fiverr International Ltd. Upwork is a registered trademark of Upwork Inc. Linktree is a registered trademark of Linktree Pty Ltd. HireACreator is not affiliated with, endorsed by, or sponsored by any of these companies. Comparisons are based on publicly available information as of March 2026.
+      </p>
+
       {/* Schema */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
         "@context": "https://schema.org",

@@ -103,7 +103,7 @@ export default async function CreatorProfilePage({
 
       {/* Cover + Avatar Hero with fade-in */}
       <div className="relative animate-fadeIn">
-        <div className="h-48 sm:h-72 bg-neutral-200 overflow-hidden relative">
+        <div className="h-32 sm:h-72 bg-neutral-200 overflow-hidden relative">
           {creator.cover ? (
             <img
               src={creator.cover}
@@ -117,7 +117,7 @@ export default async function CreatorProfilePage({
         </div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Avatar — overlaps the banner */}
-          <div className="relative -mt-16 sm:-mt-20">
+          <div className="relative -mt-12 sm:-mt-20">
             <div className="relative group inline-block">
               {creator.avatar ? (
                 <img
@@ -299,6 +299,7 @@ export default async function CreatorProfilePage({
                 <h2 className="font-display text-lg font-semibold text-neutral-900 mb-4">
                   Testimonials
                 </h2>
+                <p className="text-xs text-neutral-400 mb-4">Testimonials are submitted by creators and may not reflect verified transactions.</p>
                 <div className="space-y-4">
                   {creator.testimonials.map((t) => (
                     <Card key={t.id} className="p-6 hover:shadow-md transition-shadow">
@@ -349,7 +350,7 @@ export default async function CreatorProfilePage({
                 <h2 className="font-display text-lg font-semibold text-neutral-900 mb-4">
                   Portfolio
                 </h2>
-                <StaggerChildren className="grid grid-cols-2 gap-4" staggerMs={100}>
+                <StaggerChildren className="grid grid-cols-1 sm:grid-cols-2 gap-4" staggerMs={100}>
                   {creator.portfolio.map((item) => (
                     <div
                       key={item.id}
@@ -583,7 +584,7 @@ export default async function CreatorProfilePage({
                     value={`hireacreator.ai/${creator.slug}`}
                     className="flex-1 text-xs bg-neutral-50 border border-neutral-200 rounded-lg px-3 py-2 text-neutral-600"
                   />
-                  <Button variant="secondary" size="sm">
+                  <Button variant="secondary" size="sm" className="min-h-[44px] min-w-[44px]">
                     Copy
                   </Button>
                 </div>

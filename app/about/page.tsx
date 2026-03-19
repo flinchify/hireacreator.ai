@@ -61,7 +61,7 @@ export default function AboutPage() {
                 <div className="w-10 h-10 rounded-xl bg-neutral-100 flex items-center justify-center shrink-0 font-display font-bold text-neutral-900">3</div>
                 <div>
                   <h3 className="font-semibold text-neutral-900">Secure payment via Stripe</h3>
-                  <p className="mt-1 text-sm text-neutral-500">Payments are held in escrow and released when the work is delivered. Creators get paid directly via Stripe Connect — no payout delays, no minimum thresholds.</p>
+                  <p className="mt-1 text-sm text-neutral-500">Payments are held securely and released when the work is delivered. Creators get paid directly via Stripe Connect — no payout delays, no minimum thresholds.</p>
                 </div>
               </div>
             </div>
@@ -101,7 +101,7 @@ export default function AboutPage() {
                 { title: "Direct booking", desc: "No middlemen, no agencies, no back-and-forth DMs. Book and pay in one flow." },
                 { title: "Link-in-bio built in", desc: "Every creator gets a customizable link-in-bio page with 8 templates, video backgrounds, and portfolio showcases." },
                 { title: "AI-agent API", desc: "Brands can integrate creator discovery into their AI workflows via MCP and REST API." },
-                { title: "Stripe-powered payments", desc: "Instant payouts, escrow protection, and transparent pricing via Stripe Connect." },
+                { title: "Stripe-powered payments", desc: "Instant payouts, payment protection, and transparent pricing via Stripe Connect." },
                 { title: "Free tier that actually competes", desc: "Features that cost $15-35/month on Linktree and Fiverr are free on HireACreator." },
               ].map((item, i) => (
                 <div key={i} className="flex gap-3">

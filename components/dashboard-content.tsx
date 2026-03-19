@@ -1172,7 +1172,7 @@ export function DashboardContent() {
           </div>
 
           {/* ─── Content area ─── */}
-          <div className="max-w-4xl mx-auto px-6 py-8">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8 pb-24 lg:pb-8">
 
             {/* OVERVIEW */}
             {section === "overview" && (
@@ -1515,16 +1515,17 @@ export function DashboardContent() {
 
       {/* ═══ MOBILE BOTTOM NAV ═══ */}
       <div className="lg:hidden fixed bottom-0 inset-x-0 bg-white border-t border-neutral-200 z-40" style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
-        <div className="flex items-center justify-around px-2 py-1.5">
+        <div className="flex items-center justify-around px-1 py-1">
           {([
             { id: "overview" as Section, label: "Overview", icon: icons.overview },
             { id: "links" as Section, label: "Bio Link", icon: icons.link },
             { id: "services" as Section, label: "Services", icon: icons.services },
+            { id: "calendar" as Section, label: "Calendar", icon: icons.calendar },
             { id: "earn" as Section, label: "Earn", icon: NAV_MAIN.find(n => n.id === "earn")!.icon },
             { id: "settings" as Section, label: "Settings", icon: icons.settings },
           ]).map(n => (
             <button key={n.id} onClick={() => setSection(n.id)}
-              className={`flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl transition-colors ${section === n.id ? "text-neutral-900" : "text-neutral-400"}`}>
+              className={`flex flex-col items-center gap-0.5 py-1.5 px-2 min-w-[44px] min-h-[44px] rounded-xl transition-colors ${section === n.id ? "text-neutral-900" : "text-neutral-400"}`}>
               {n.icon}
               <span className="text-[9px] font-medium">{n.label}</span>
             </button>

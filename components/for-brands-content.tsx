@@ -131,17 +131,17 @@ export function ForBrandsContent() {
             For Brands &amp; Agencies
           </div>
 
-          <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-neutral-900 leading-[1.1]">
+          <h1 className="font-display text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-neutral-900 leading-[1.1]">
             Stop scrolling Instagram<br className="hidden sm:block" /> for creators
           </h1>
 
           <p className="mt-6 text-lg sm:text-xl text-neutral-500 max-w-2xl mx-auto leading-relaxed">
             Search by niche, audience size, engagement rate, and budget. Book in minutes, not weeks.
-            Payments are held in Stripe escrow and released when you approve the deliverables.
+            Funds held securely via Stripe and released when you approve the deliverables.
           </p>
 
           <p className="mt-4 text-sm font-medium text-neutral-400 tracking-wide">
-            500+ creators ready to work &middot; 30+ niches &middot; 12 countries
+            Creators ready to work &middot; Dozens of niches &middot; Multiple countries
           </p>
 
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -199,7 +199,7 @@ export function ForBrandsContent() {
             <ul className="space-y-2.5 text-sm text-neutral-600 leading-relaxed">
               <li className="flex items-start gap-2"><CheckIcon /><span>Select a service and submit your creative brief</span></li>
               <li className="flex items-start gap-2"><CheckIcon /><span>Pay securely via Stripe — no invoices to chase</span></li>
-              <li className="flex items-start gap-2"><CheckIcon /><span>Funds held in escrow until you approve deliverables</span></li>
+              <li className="flex items-start gap-2"><CheckIcon /><span>Funds held securely until you approve deliverables</span></li>
               <li className="flex items-start gap-2"><CheckIcon /><span>Contract generated automatically with usage rights</span></li>
             </ul>
           </div>
@@ -271,8 +271,8 @@ export function ForBrandsContent() {
           <AnimateOnScroll>
             <div className="max-w-2xl">
               <p className="text-sm font-medium text-neutral-500 uppercase tracking-wider mb-4">Example MCP call</p>
-              <div className="bg-black/40 border border-white/10 rounded-xl p-6 overflow-x-auto">
-                <pre className="text-sm text-neutral-300 font-mono leading-relaxed">{`{
+              <div className="bg-black/40 border border-white/10 rounded-xl p-4 sm:p-6 overflow-x-auto">
+                <pre className="text-xs sm:text-sm text-neutral-300 font-mono leading-relaxed">{`{
   "tool": "search_creators",
   "input": {
     "niche": "UGC",
@@ -354,7 +354,7 @@ export function ForBrandsContent() {
                 <li className="flex items-center gap-2"><CheckIcon />Unlimited creator search</li>
                 <li className="flex items-center gap-2"><CheckIcon />Audience analytics &amp; vetting</li>
                 <li className="flex items-center gap-2"><CheckIcon />Campaign tracking dashboard</li>
-                <li className="flex items-center gap-2"><CheckIcon />Escrow payments via Stripe</li>
+                <li className="flex items-center gap-2"><CheckIcon />Secure payment protection via Stripe</li>
                 <li className="flex items-center gap-2"><CheckIcon />Priority support</li>
               </ul>
             </div>
@@ -399,11 +399,11 @@ export function ForBrandsContent() {
 
           <StaggerChildren className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4" staggerMs={80}>
             {[
-              { title: "Stripe escrow payments", desc: "Funds are held securely until you approve the deliverables. No risk of paying for work you don't receive." },
+              { title: "Secure payment protection via Stripe", desc: "Funds are held securely until you approve the deliverables. No risk of paying for work you don't receive." },
               { title: "Verified creator profiles", desc: "Every creator connects their social accounts. Follower counts, engagement rates, and audience demographics are verified." },
               { title: "Real brand reviews", desc: "Only brands that completed a booking can leave reviews. No fake testimonials — just honest feedback." },
               { title: "Contract management", desc: "Contracts are generated automatically with clear terms, usage rights, and deliverable specs." },
-              { title: "Dispute resolution", desc: "If something goes wrong, our team steps in. Funds stay in escrow until the issue is resolved." },
+              { title: "Dispute resolution", desc: "If something goes wrong, our team steps in. Funds stay held securely until the issue is resolved." },
               { title: "Data privacy", desc: "SOC 2 compliant infrastructure. Your data and creator communications are encrypted at rest and in transit." },
             ].map((item) => (
               <div key={item.title} className="aos-stagger-item flex items-start gap-3 bg-white border border-neutral-200 rounded-2xl p-6 hover:border-neutral-300 hover:shadow-md transition-all duration-300">

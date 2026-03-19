@@ -122,12 +122,12 @@ export function AuthModal() {
     <div
       ref={backdropRef}
       onClick={e => { if (e.target === backdropRef.current) close(); }}
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50"
+      className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center sm:p-4 bg-black/50"
       style={{ animation: "modalFadeIn 0.15s ease-out" }}
     >
       <div
-        className="relative w-full max-w-sm bg-white rounded-2xl shadow-2xl overflow-hidden"
-        style={{ animation: "modalScaleIn 0.2s cubic-bezier(0.16, 1, 0.3, 1)" }}
+        className="relative w-full sm:max-w-sm bg-white rounded-t-2xl sm:rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto"
+        style={{ animation: "modalSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1)" }}
       >
         <button
           onClick={close}
@@ -137,7 +137,8 @@ export function AuthModal() {
           <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M4 4l10 10M4 14L14 4" /></svg>
         </button>
 
-        <div className="p-7">
+        <div className="w-10 h-1 bg-neutral-300 rounded-full mx-auto mt-2 sm:hidden" />
+        <div className="p-6 sm:p-7">
           <div className="flex items-center gap-2 mb-5">
             <Image src="/logo-512.png" alt="H" width={28} height={28} className="w-7 h-7" />
             <span className="font-display font-bold text-neutral-900">HireACreator</span>
@@ -340,7 +341,10 @@ export function AuthModal() {
 
       <style>{`
         @keyframes modalFadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes modalScaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        @keyframes modalSlideUp { from { opacity: 0; transform: translateY(100px); } to { opacity: 1; transform: translateY(0); } }
+        @media (min-width: 640px) {
+          @keyframes modalSlideUp { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        }
       `}</style>
     </div>
   );

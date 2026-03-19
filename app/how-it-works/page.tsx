@@ -42,7 +42,7 @@ export default function HowItWorksPage() {
               <Step num="1" title="Create your free account" desc="Sign up in under 60 seconds. No credit card required. You get a free link-in-bio page, marketplace listing, and creator profile." />
               <Step num="2" title="Set up your link-in-bio" desc="Choose from 18+ templates. Add your socials, services, portfolio, and business links. Customize fonts, colors, backgrounds, and animations. Share your link anywhere." />
               <Step num="3" title="List your services" desc="Add what you offer with pricing. Brands can browse, book, and pay directly through the platform. You keep 100% — we charge 0% commission on creator earnings." />
-              <Step num="4" title="Get booked and get paid" desc="Brands find you through our marketplace or your link-in-bio. Payments are held in escrow via Stripe until you deliver. No chasing invoices." />
+              <Step num="4" title="Get booked and get paid" desc="Brands find you through our marketplace or your link-in-bio. Funds held securely via Stripe until you deliver. No chasing invoices." />
             </div>
           </section>
 
@@ -80,7 +80,7 @@ export default function HowItWorksPage() {
             <div className="space-y-6">
               <Step num="1" title="Browse the marketplace" desc="Explore creators by category, location, or price. View their portfolios, services, ratings, and availability." />
               <Step num="2" title="Message or book directly" desc="Use in-platform messaging to discuss your project, or book a service directly with secure Stripe payments." />
-              <Step num="3" title="Payments held in escrow" desc="Your payment is held securely until the creator delivers. If there is an issue, our team reviews and resolves disputes." />
+              <Step num="3" title="Payments held securely" desc="Your payment is held securely until the creator delivers. If there is an issue, our team reviews and resolves disputes." />
               <Step num="4" title="Leave a review" desc="After the project is complete, rate your experience. Reviews help other brands and keep the marketplace trustworthy." />
             </div>
           </section>

@@ -121,7 +121,7 @@ export default function ApiPage() {
             {[
               { name: "search_creators", desc: "Search and filter creators by niche, rate, location, platform, and engagement." },
               { name: "get_creator", desc: "Get full profile details including portfolio, services, reviews, and availability." },
-              { name: "book_service", desc: "Book a creator's service with brief, budget, and timeline. Creates escrow payment." },
+              { name: "book_service", desc: "Book a creator's service with brief, budget, and timeline. Creates secure payment." },
               { name: "check_booking", desc: "Check the status of an existing booking. Track deliverables and milestones." },
               { name: "list_bookings", desc: "List all bookings for your account with filtering by status and date." },
             ].map((tool) => (
@@ -409,7 +409,7 @@ export default function ApiPage() {
               <div className="font-display text-3xl font-bold mb-1">Custom</div>
               <div className="text-sm text-neutral-500 mb-6">contact us</div>
               <ul className="space-y-3">
-                {["Unlimited requests", "Dedicated infrastructure", "Custom integrations", "SLA guarantee", "Dedicated support"].map((item) => (
+                {["Unlimited requests", "Dedicated infrastructure", "Custom integrations", "Priority support with response time commitments", "Dedicated support"].map((item) => (
                   <li key={item} className="flex items-center gap-2 text-sm text-neutral-400">
                     <CheckIcon />
                     {item}
