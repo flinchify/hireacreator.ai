@@ -81,6 +81,9 @@ export async function PATCH(request: Request) {
       link_bio_bg_images = ${body.link_bio_bg_images !== undefined ? body.link_bio_bg_images : user.link_bio_bg_images},
       link_bio_intro_anim = COALESCE(${body.link_bio_intro_anim ?? null}, link_bio_intro_anim),
       link_bio_card_style = COALESCE(${body.link_bio_card_style ?? null}, link_bio_card_style),
+      link_bio_text_size = COALESCE(${body.link_bio_text_size ?? null}, link_bio_text_size),
+      link_bio_avatar_size = COALESCE(${body.link_bio_avatar_size ?? null}, link_bio_avatar_size),
+      link_bio_button_size = COALESCE(${body.link_bio_button_size ?? null}, link_bio_button_size),
       updated_at = NOW()
     WHERE id = ${user.id}
   `;

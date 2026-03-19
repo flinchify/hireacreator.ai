@@ -17,6 +17,25 @@ const FONT_MAP: Record<string, string> = {
   manrope: "'Manrope', sans-serif",
 };
 
+/* ── Size mapping constants ── */
+const TEXT_SIZES: Record<string, { name: string; bio: string; link: string; headline: string }> = {
+  small: { name: 'text-base', bio: 'text-xs', link: 'text-xs', headline: 'text-xs' },
+  medium: { name: 'text-xl', bio: 'text-sm', link: 'text-sm', headline: 'text-sm' },
+  large: { name: 'text-2xl sm:text-3xl', bio: 'text-base', link: 'text-base', headline: 'text-base' },
+};
+
+const AVATAR_SIZES: Record<string, string> = {
+  small: 'w-16 h-16',
+  medium: 'w-24 h-24',
+  large: 'w-32 h-32',
+};
+
+const BUTTON_SIZES: Record<string, string> = {
+  small: 'py-2.5 px-4 text-xs',
+  medium: 'py-3.5 px-5 text-sm',
+  large: 'py-5 px-6 text-base',
+};
+
 /* ── Button shape classes ── */
 function btnClass(shape: string): string {
   switch (shape) {
@@ -123,6 +142,8 @@ function BioLinksSection({ creator, light }: { creator: Creator; light?: boolean
   }
 
   const shape = btnClass(creator.linkBioButtonShape);
+  const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
+  const bs = BUTTON_SIZES[creator.linkBioButtonSize || "medium"] || BUTTON_SIZES.medium;
 
   return (
     <div className="space-y-3 my-5">
@@ -146,7 +167,7 @@ function BioLinksSection({ creator, light }: { creator: Creator; light?: boolean
               <div className="relative w-full aspect-[2/1] overflow-hidden">
                 <img src={link.thumbnailUrl} alt="" className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
               </div>
-              <div className="flex items-center gap-3 px-5 py-3.5">
+              <div className={`flex items-center gap-3 ${bs}`}>
                 {platform && (
                   <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${light ? "bg-white/10" : "bg-neutral-100"}`}>
                     {platform === "calendar" ? (
@@ -157,7 +178,7 @@ function BioLinksSection({ creator, light }: { creator: Creator; light?: boolean
                   </div>
                 )}
                 <div className="flex-1 min-w-0">
-                  <div className={`font-semibold text-sm ${light ? "text-white" : "text-neutral-900"}`}>{link.title}</div>
+                  <div className={`font-semibold ${ts.link} ${light ? "text-white" : "text-neutral-900"}`}>{link.title}</div>
                   <div className={`text-[11px] mt-0.5 truncate ${light ? "text-white/30" : "text-neutral-400"}`}>{link.url.replace(/^https?:\/\/(www\.)?/, '').split('/')[0]}</div>
                 </div>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={`shrink-0 transition-all duration-200 ${light ? "text-white/20 group-hover:text-white/50" : "text-neutral-300 group-hover:text-neutral-500"} group-hover:translate-x-0.5`}>
@@ -176,7 +197,7 @@ function BioLinksSection({ creator, light }: { creator: Creator; light?: boolean
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => trackClick(link.id)}
-            className={`group flex items-center gap-3 w-full px-5 py-4 transition-all duration-200 hover:scale-[1.02] hover:shadow-lg ${shape} ${light
+            className={`group flex items-center gap-3 w-full ${bs} transition-all duration-200 hover:scale-[1.02] hover:shadow-lg ${shape} ${light
               ? "bg-white/[0.08] backdrop-blur-md border border-white/[0.12] hover:bg-white/[0.14]"
               : "bg-white border border-neutral-200/80 hover:border-neutral-300 shadow-sm"
             }`}
@@ -191,7 +212,7 @@ function BioLinksSection({ creator, light }: { creator: Creator; light?: boolean
               </div>
             ) : null}
             <div className="flex-1 min-w-0">
-              <div className={`font-semibold text-sm ${light ? "text-white" : "text-neutral-900"}`}>{link.title}</div>
+              <div className={`font-semibold ${ts.link} ${light ? "text-white" : "text-neutral-900"}`}>{link.title}</div>
               <div className={`text-[11px] mt-0.5 truncate ${light ? "text-white/30" : "text-neutral-400"}`}>{link.url.replace(/^https?:\/\/(www\.)?/, '').split('/')[0]}</div>
             </div>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={`shrink-0 transition-all duration-200 ${light ? "text-white/20 group-hover:text-white/50" : "text-neutral-300 group-hover:text-neutral-500"} group-hover:translate-x-0.5`}>
@@ -208,6 +229,7 @@ function BioLinksSection({ creator, light }: { creator: Creator; light?: boolean
 function ProductsSection({ creator, light, accent }: { creator: Creator; light?: boolean; accent?: string }) {
   if (!creator.products || creator.products.length === 0) return null;
   const ac = accent || creator.linkBioAccent || "#6366f1";
+  const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
   return (
     <div className="my-5">
       <SectionLabel light={light}>Products</SectionLabel>
@@ -217,7 +239,7 @@ function ProductsSection({ creator, light, accent }: { creator: Creator; light?:
             className={`group rounded-2xl overflow-hidden hover:scale-[1.02] transition-all ${light ? "bg-white/[0.06] border border-white/[0.08]" : "bg-white border border-neutral-200/80 shadow-sm"}`}>
             {p.thumbnailUrl && <img src={p.thumbnailUrl} alt="" className="w-full aspect-[4/3] object-cover" />}
             <div className="p-3">
-              <div className={`text-sm font-semibold truncate ${light ? "text-white" : "text-neutral-900"}`}>{p.title}</div>
+              <div className={`${ts.link} font-semibold truncate ${light ? "text-white" : "text-neutral-900"}`}>{p.title}</div>
               <div className="text-xs mt-1 font-medium" style={{ color: ac }}>
                 {p.priceCents === 0 ? "Free" : `$${(p.priceCents / 100).toFixed(2)} ${p.currency}`}
               </div>
@@ -265,8 +287,9 @@ function EmptyState({ light }: { light?: boolean }) {
 function Avatar({ creator, size = "md", shape = "circle", light, accentBorder }: {
   creator: Creator; size?: "sm" | "md" | "lg"; shape?: "circle" | "square"; light?: boolean; accentBorder?: string;
 }) {
-  const sizes = { sm: "w-16 h-16", md: "w-24 h-24", lg: "w-28 h-28" };
-  const s = sizes[size];
+  const avatarSz = creator.linkBioAvatarSize || "medium";
+  const sizeMap = { sm: "small", md: "medium", lg: "large" } as const;
+  const s = AVATAR_SIZES[sizeMap[size] === "medium" ? avatarSz : sizeMap[size]] || AVATAR_SIZES.medium;
   const r = shape === "square" ? "rounded-2xl" : "rounded-full";
   const border = accentBorder ? { border: `3px solid ${accentBorder}` } : {};
   if (creator.avatar) return <img src={creator.avatar} alt="" className={`${s} ${r} object-cover shadow-lg`} style={border} />;
@@ -319,14 +342,16 @@ function Socials({ creator, light, shape = "circle", showFollowers = false }: { 
    ══════════════════════════════════════════════════════ */
 function ServiceCard({ service, creator, light, accent }: { service: any; creator: Creator; light?: boolean; accent?: string }) {
   const btn = btnClass(creator.linkBioButtonShape);
+  const bs = BUTTON_SIZES[creator.linkBioButtonSize || "medium"] || BUTTON_SIZES.medium;
+  const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
   return (
-    <a href={`/creators/${creator.slug}`} className={`group block w-full ${btn} px-5 py-4 transition-all duration-200 hover:scale-[1.02] hover:shadow-lg ${light
+    <a href={`/creators/${creator.slug}`} className={`group block w-full ${btn} ${bs} transition-all duration-200 hover:scale-[1.02] hover:shadow-lg ${light
       ? "bg-white/[0.06] backdrop-blur-md border border-white/[0.10] hover:bg-white/[0.12]"
       : "bg-white border border-neutral-200/80 shadow-sm hover:border-neutral-300"
     }`}>
       <div className="flex items-center justify-between">
         <div>
-          <div className={`font-semibold text-sm ${light ? "text-white" : "text-neutral-900"}`}>{service.title}</div>
+          <div className={`font-semibold ${ts.link} ${light ? "text-white" : "text-neutral-900"}`}>{service.title}</div>
           {service.description && <div className={`text-[11px] mt-0.5 line-clamp-1 ${light ? "text-white/30" : "text-neutral-400"}`}>{service.description}</div>}
         </div>
         <div className={`text-sm font-bold shrink-0 ml-3 ${light ? "text-white" : "text-neutral-900"}`}>{priceLabel(service.price, service.deliveryDays)}</div>
@@ -340,9 +365,10 @@ function ServiceCard({ service, creator, light, accent }: { service: any; creato
    ══════════════════════════════════════════════════════ */
 function CTAButton({ creator, light, accent }: { creator: Creator; light?: boolean; accent?: string }) {
   const ac = accent || creator.linkBioAccent || "#171717";
+  const bs = BUTTON_SIZES[creator.linkBioButtonSize || "medium"] || BUTTON_SIZES.medium;
   return (
     <a href={`/creators/${creator.slug}`}
-      className="block w-full mt-8 font-semibold text-sm text-center rounded-2xl py-4 transition-all duration-200 hover:scale-[1.02] hover:shadow-xl shadow-lg text-white"
+      className={`block w-full mt-8 font-semibold text-center rounded-2xl ${bs} transition-all duration-200 hover:scale-[1.02] hover:shadow-xl shadow-lg text-white`}
       style={{ background: ac }}>
       View Full Profile
     </a>
@@ -357,6 +383,7 @@ function TemplateMinimal({ creator }: { creator: Creator }) {
   const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
   const hasCustomBg = creator.linkBioBgType && creator.linkBioBgType !== "gradient";
   const accent = creator.linkBioAccent || "#171717";
+  const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
 
   return (
     <div className="min-h-screen flex items-start lg:items-center justify-center lg:py-10 lg:px-4" style={{ background: hasCustomBg ? "transparent" : "linear-gradient(160deg, #fdf8f4 0%, #f5ede6 40%, #ebe3da 100%)" }}>
@@ -385,12 +412,12 @@ function TemplateMinimal({ creator }: { creator: Creator }) {
 
         <div className="px-6 sm:px-8 pb-10 pt-[4.5rem] text-center">
           <div className="flex items-center justify-center gap-1.5">
-            <h1 className="font-display text-xl sm:text-2xl font-bold text-neutral-900 tracking-tight">{creator.name || "Your Name"}</h1>
+            <h1 className={`font-display ${ts.name} font-bold text-neutral-900 tracking-tight`}>{creator.name || "Your Name"}</h1>
             {creator.isVerified && <VerifiedBadge />}{creator.isPro && <ProBadge />}
           </div>
           <p className="text-xs text-neutral-400 mt-0.5 font-medium">@{creator.slug?.split("-")[0]}</p>
           <NicheRankBadge creator={creator} />
-          {creator.headline && <p className="mt-3 text-sm text-neutral-500 max-w-[300px] mx-auto leading-relaxed">{creator.headline}</p>}
+          {creator.headline && <p className={`mt-3 ${ts.headline} text-neutral-500 max-w-[300px] mx-auto leading-relaxed`}>{creator.headline}</p>}
           {creator.location && (
             <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 bg-neutral-50 border border-neutral-100 rounded-full">
               <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" className="text-neutral-400"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>
@@ -400,7 +427,7 @@ function TemplateMinimal({ creator }: { creator: Creator }) {
           {creator.isOnline && <OnlineDot />}
 
           <Socials creator={creator} />
-          {creator.bio && <p className="text-sm text-neutral-500 mb-4 leading-relaxed">{creator.bio}</p>}
+          {creator.bio && <p className={`${ts.bio} text-neutral-500 mb-4 leading-relaxed`}>{creator.bio}</p>}
           <BioLinksSection creator={creator} />
           <ProductsSection creator={creator} />
 
@@ -444,6 +471,8 @@ function TemplateGlass({ creator }: { creator: Creator }) {
   const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
   const hasCustomBg = !!creator.linkBioBgType;
   const accent = creator.linkBioAccent || "#818cf8";
+  const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
+  const avatarSz = AVATAR_SIZES[creator.linkBioAvatarSize || "medium"] || AVATAR_SIZES.medium;
 
   return (
     <div className="min-h-screen relative overflow-hidden">
@@ -467,9 +496,9 @@ function TemplateGlass({ creator }: { creator: Creator }) {
           <div className="relative inline-block mb-5">
             <div className="absolute -inset-4 rounded-full opacity-30 blur-2xl" style={{ background: accent }} />
             {creator.avatar ? (
-              <img src={creator.avatar} alt="" className="relative w-28 h-28 rounded-full object-cover ring-[3px] ring-white/15 shadow-2xl" />
+              <img src={creator.avatar} alt="" className={`relative ${avatarSz} rounded-full object-cover ring-[3px] ring-white/15 shadow-2xl`} />
             ) : (
-              <div className="relative w-28 h-28 rounded-full bg-white/[0.08] backdrop-blur-xl flex items-center justify-center ring-[3px] ring-white/15 shadow-2xl">
+              <div className={`relative ${avatarSz} rounded-full bg-white/[0.08] backdrop-blur-xl flex items-center justify-center ring-[3px] ring-white/15 shadow-2xl`}>
                 <span className="text-4xl font-bold text-white/50">{(creator.name || "?")[0]}</span>
               </div>
             )}
@@ -477,12 +506,12 @@ function TemplateGlass({ creator }: { creator: Creator }) {
           </div>
 
           <div className="flex items-center justify-center gap-1.5">
-            <h1 className="font-display text-xl sm:text-2xl font-bold text-white tracking-tight">{creator.name || "Your Name"}</h1>
+            <h1 className={`font-display ${ts.name} font-bold text-white tracking-tight`}>{creator.name || "Your Name"}</h1>
             {creator.isVerified && <VerifiedBadge light />}{creator.isPro && <ProBadge />}
           </div>
           <p className="text-xs text-white/30 mt-1 font-medium">@{creator.slug?.split("-")[0]}</p>
           <NicheRankBadge creator={creator} light />
-          {creator.headline && <p className="mt-3 text-sm text-white/45 max-w-[320px] mx-auto leading-relaxed">{creator.headline}</p>}
+          {creator.headline && <p className={`mt-3 ${ts.headline} text-white/45 max-w-[320px] mx-auto leading-relaxed`}>{creator.headline}</p>}
           {creator.location && <p className="mt-2 text-xs text-white/25 flex items-center justify-center gap-1"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>{creator.location}</p>}
 
           {/* Stats bar — frosted glass pills */}
@@ -500,7 +529,7 @@ function TemplateGlass({ creator }: { creator: Creator }) {
         {/* Bio in frosted panel */}
         {creator.bio && (
           <div className="bg-white/[0.06] backdrop-blur-xl rounded-2xl border border-white/[0.08] px-6 py-4 mb-5">
-            <p className="text-sm text-white/40 text-center leading-relaxed">{creator.bio}</p>
+            <p className={`${ts.bio} text-white/40 text-center leading-relaxed`}>{creator.bio}</p>
           </div>
         )}
         <BioLinksSection creator={creator} light />
@@ -545,6 +574,7 @@ function TemplateBold({ creator }: { creator: Creator }) {
   const accent = creator.linkBioAccent || "#6366f1";
   const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
   const hasCustomBg = !!creator.linkBioBgType;
+  const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
 
   return (
     <div className="min-h-screen flex items-start lg:items-center justify-center lg:py-10 lg:px-4" style={{ background: hasCustomBg ? "transparent" : "#0a0a0a" }}>
@@ -563,17 +593,17 @@ function TemplateBold({ creator }: { creator: Creator }) {
           </div>
 
           <div className="mt-6 flex items-center justify-center gap-2">
-            <h1 className="font-display text-2xl font-black text-white tracking-tight">{creator.name || "Your Name"}</h1>
+            <h1 className={`font-display ${ts.name} font-black text-white tracking-tight`}>{creator.name || "Your Name"}</h1>
             {creator.isVerified && <VerifiedBadge light />}{creator.isPro && <ProBadge />}
           </div>
           <p className="text-xs mt-1 font-semibold tracking-wide" style={{ color: accent }}>@{creator.slug?.split("-")[0]}</p>
           <NicheRankBadge creator={creator} light />
-          {creator.headline && <p className="mt-3 text-sm text-neutral-400 max-w-[320px] mx-auto font-medium leading-relaxed">{creator.headline}</p>}
+          {creator.headline && <p className={`mt-3 ${ts.headline} text-neutral-400 max-w-[320px] mx-auto font-medium leading-relaxed`}>{creator.headline}</p>}
           {creator.location && <p className="mt-2 text-xs text-neutral-600 flex items-center justify-center gap-1"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>{creator.location}</p>}
           {creator.isOnline && <OnlineDot light />}
 
           <Socials creator={creator} light shape="square" />
-          {creator.bio && <p className="text-sm text-neutral-500 mb-5 leading-relaxed">{creator.bio}</p>}
+          {creator.bio && <p className={`${ts.bio} text-neutral-500 mb-5 leading-relaxed`}>{creator.bio}</p>}
           <BioLinksSection creator={creator} light />
           <ProductsSection creator={creator} light accent={accent} />
 
@@ -636,6 +666,7 @@ function TemplateShowcase({ creator }: { creator: Creator }) {
   const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
   const hasCustomBg = !!creator.linkBioBgType;
   const accent = creator.linkBioAccent || "#171717";
+  const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
 
   return (
     <div className="min-h-screen flex items-start lg:items-center justify-center lg:py-10 lg:px-4" style={{ background: hasCustomBg ? "transparent" : "linear-gradient(160deg, #f8f9fa 0%, #e9ecef 100%)" }}>
@@ -662,7 +693,7 @@ function TemplateShowcase({ creator }: { creator: Creator }) {
             </div>
             <div className="pb-1 min-w-0">
               <div className="flex items-center gap-1.5 flex-wrap">
-                <h1 className="font-display text-xl sm:text-2xl font-bold text-neutral-900 tracking-tight">{creator.name || "Your Name"}</h1>
+                <h1 className={`font-display ${ts.name} font-bold text-neutral-900 tracking-tight`}>{creator.name || "Your Name"}</h1>
                 {creator.isVerified && <VerifiedBadge />}{creator.isPro && <ProBadge />}
               </div>
               <p className="text-xs text-neutral-400 font-medium">@{creator.slug?.split("-")[0]}</p>
@@ -672,10 +703,10 @@ function TemplateShowcase({ creator }: { creator: Creator }) {
           </div>
 
           {creator.isOnline && <OnlineDot />}
-          {creator.headline && <p className="text-sm text-neutral-500 leading-relaxed mb-4">{creator.headline}</p>}
+          {creator.headline && <p className={`${ts.headline} text-neutral-500 leading-relaxed mb-4`}>{creator.headline}</p>}
 
           <Socials creator={creator} shape="square" />
-          {creator.bio && <p className="text-sm text-neutral-500 mb-5 leading-relaxed">{creator.bio}</p>}
+          {creator.bio && <p className={`${ts.bio} text-neutral-500 mb-5 leading-relaxed`}>{creator.bio}</p>}
           <BioLinksSection creator={creator} />
           <ProductsSection creator={creator} />
 
@@ -731,6 +762,8 @@ function TemplateNeon({ creator }: { creator: Creator }) {
   const accent = creator.linkBioAccent || "#22d3ee";
   const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
   const hasCustomBg = !!creator.linkBioBgType;
+  const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
+  const avatarSz = AVATAR_SIZES[creator.linkBioAvatarSize || "medium"] || AVATAR_SIZES.medium;
 
   return (
     <div className="min-h-screen flex items-start lg:items-center justify-center lg:py-10 lg:px-4" style={{ background: hasCustomBg ? "transparent" : "#000000" }}>
@@ -754,9 +787,9 @@ function TemplateNeon({ creator }: { creator: Creator }) {
             <div className="relative p-[3px] rounded-full" style={{ background: `linear-gradient(135deg, ${accent}, ${accent}60, transparent 70%)` }}>
               <div className="p-[3px] rounded-full bg-[#0a0a0a]">
                 {creator.avatar ? (
-                  <img src={creator.avatar} alt="" className="w-24 h-24 rounded-full object-cover" style={{ boxShadow: `0 0 30px ${accent}25` }} />
+                  <img src={creator.avatar} alt="" className={`${avatarSz} rounded-full object-cover`} style={{ boxShadow: `0 0 30px ${accent}25` }} />
                 ) : (
-                  <div className="w-24 h-24 rounded-full bg-[#111] flex items-center justify-center">
+                  <div className={`${avatarSz} rounded-full bg-[#111] flex items-center justify-center`}>
                     <span className="text-3xl font-bold text-white/50">{(creator.name || "?")[0]}</span>
                   </div>
                 )}
@@ -766,12 +799,12 @@ function TemplateNeon({ creator }: { creator: Creator }) {
           </div>
 
           <div className="mt-5 flex items-center justify-center gap-1.5">
-            <h1 className="font-display text-xl sm:text-2xl font-bold text-white tracking-tight">{creator.name || "Your Name"}</h1>
+            <h1 className={`font-display ${ts.name} font-bold text-white tracking-tight`}>{creator.name || "Your Name"}</h1>
             {creator.isVerified && <VerifiedBadge light />}{creator.isPro && <ProBadge />}
           </div>
           <p className="text-xs mt-1 font-mono font-semibold tracking-widest" style={{ color: accent }}>@{creator.slug?.split("-")[0]}</p>
           <NicheRankBadge creator={creator} light />
-          {creator.headline && <p className="mt-3 text-sm text-neutral-400 max-w-[300px] mx-auto leading-relaxed">{creator.headline}</p>}
+          {creator.headline && <p className={`mt-3 ${ts.headline} text-neutral-400 max-w-[300px] mx-auto leading-relaxed`}>{creator.headline}</p>}
           {creator.location && <p className="mt-2 text-xs text-neutral-600 flex items-center justify-center gap-1"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>{creator.location}</p>}
 
           {/* Accent-tinted social circles */}
@@ -787,7 +820,7 @@ function TemplateNeon({ creator }: { creator: Creator }) {
             </div>
           )}
 
-          {creator.bio && <p className="text-sm text-neutral-500 mb-5 leading-relaxed">{creator.bio}</p>}
+          {creator.bio && <p className={`${ts.bio} text-neutral-500 mb-5 leading-relaxed`}>{creator.bio}</p>}
           <BioLinksSection creator={creator} light />
           <ProductsSection creator={creator} light accent={accent} />
 
@@ -833,6 +866,7 @@ function TemplateNeon({ creator }: { creator: Creator }) {
    ══════════════════════════════════════════════════════════════ */
 function TemplateCollage({ creator }: { creator: Creator }) {
   const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
+  const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
   const images = (creator.linkBioBgImages && creator.linkBioBgImages.length > 0)
     ? creator.linkBioBgImages
     : creator.portfolio.filter(p => p.image).map(p => p.image!);
@@ -879,12 +913,12 @@ function TemplateCollage({ creator }: { creator: Creator }) {
           </div>
 
           <div className="flex items-center justify-center gap-1.5">
-            <h1 className="font-display text-xl sm:text-2xl font-bold text-white tracking-tight">{creator.name || "Your Name"}</h1>
+            <h1 className={`font-display ${ts.name} font-bold text-white tracking-tight`}>{creator.name || "Your Name"}</h1>
             {creator.isVerified && <VerifiedBadge light />}{creator.isPro && <ProBadge />}
           </div>
           <p className="text-xs text-white/30 mt-1 font-medium">@{creator.slug?.split("-")[0]}</p>
           <NicheRankBadge creator={creator} light />
-          {creator.headline && <p className="mt-3 text-sm text-white/50 leading-relaxed max-w-[300px] mx-auto">{creator.headline}</p>}
+          {creator.headline && <p className={`mt-3 ${ts.headline} text-white/50 leading-relaxed max-w-[300px] mx-auto`}>{creator.headline}</p>}
           {creator.location && <p className="mt-2 text-xs text-white/30 flex items-center justify-center gap-1"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>{creator.location}</p>}
           <Socials creator={creator} light />
         </div>
@@ -892,7 +926,7 @@ function TemplateCollage({ creator }: { creator: Creator }) {
         {/* Bio in frosted panel */}
         {creator.bio && (
           <div className="bg-black/20 backdrop-blur-xl rounded-2xl border border-white/[0.08] px-5 py-4 mb-5">
-            <p className="text-sm text-white/40 text-center leading-relaxed">{creator.bio}</p>
+            <p className={`${ts.bio} text-white/40 text-center leading-relaxed`}>{creator.bio}</p>
           </div>
         )}
         <BioLinksSection creator={creator} light />
@@ -929,6 +963,7 @@ function TemplateCollage({ creator }: { creator: Creator }) {
 function TemplateBento({ creator }: { creator: Creator }) {
   const accent = creator.linkBioAccent || "#6366f1";
   const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
+  const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
   const hasPortfolio = creator.portfolio.length > 0;
   const hasCustomBg = !!creator.linkBioBgType;
 
@@ -951,12 +986,12 @@ function TemplateBento({ creator }: { creator: Creator }) {
               )}
               <div className="min-w-0">
                 <div className="flex items-center gap-1.5 flex-wrap">
-                  <h1 className="font-display text-lg sm:text-xl font-bold text-white tracking-tight">{creator.name || "Your Name"}</h1>
+                  <h1 className={`font-display ${ts.name} font-bold text-white tracking-tight`}>{creator.name || "Your Name"}</h1>
                   {creator.isVerified && <VerifiedBadge light />}{creator.isPro && <ProBadge />}
                 </div>
                 <p className="text-xs text-white/40 mt-0.5">@{creator.slug?.split("-")[0]}</p>
                 <NicheRankBadge creator={creator} light />
-                {creator.headline && <p className="text-xs text-white/50 mt-1 line-clamp-2 leading-relaxed">{creator.headline}</p>}
+                {creator.headline && <p className={`${ts.headline} text-white/50 mt-1 line-clamp-2 leading-relaxed`}>{creator.headline}</p>}
                 {creator.isOnline && <div className="flex items-center gap-1 mt-1.5"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" /><span className="text-[9px] text-emerald-400 font-medium">Online</span></div>}
               </div>
             </div>
@@ -1058,6 +1093,7 @@ function TemplateBento({ creator }: { creator: Creator }) {
 function TemplateSplit({ creator }: { creator: Creator }) {
   const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
   const accent = creator.linkBioAccent || "#171717";
+  const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
   const heroImage = creator.cover || (creator.portfolio.length > 0 && creator.portfolio[0].image) || null;
 
   return (
@@ -1115,21 +1151,21 @@ function TemplateSplit({ creator }: { creator: Creator }) {
                 )}
                 <div>
                   <div className="flex items-center gap-1.5">
-                    <h1 className="font-display text-xl sm:text-2xl font-bold text-neutral-900 tracking-tight">{creator.name || "Your Name"}</h1>
+                    <h1 className={`font-display ${ts.name} font-bold text-neutral-900 tracking-tight`}>{creator.name || "Your Name"}</h1>
                     {creator.isVerified && <VerifiedBadge />}{creator.isPro && <ProBadge />}
                   </div>
                   <p className="text-xs text-neutral-400 mt-0.5">@{creator.slug?.split("-")[0]}</p>
                   <NicheRankBadge creator={creator} />
                 </div>
               </div>
-              {creator.headline && <p className="text-sm text-neutral-600 leading-relaxed">{creator.headline}</p>}
+              {creator.headline && <p className={`${ts.headline} text-neutral-600 leading-relaxed`}>{creator.headline}</p>}
               {creator.location && <p className="text-xs text-neutral-400 mt-1.5 flex items-center gap-1"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>{creator.location}</p>}
               {creator.isOnline && <OnlineDot />}
             </div>
 
             {/* Mobile extras (headline/location not in overlay) */}
             <div className="sm:hidden mb-5">
-              {creator.headline && <p className="text-sm text-neutral-600 leading-relaxed">{creator.headline}</p>}
+              {creator.headline && <p className={`${ts.headline} text-neutral-600 leading-relaxed`}>{creator.headline}</p>}
               {creator.location && <p className="text-xs text-neutral-400 mt-1 flex items-center gap-1"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>{creator.location}</p>}
               {creator.isOnline && <OnlineDot />}
             </div>
@@ -1195,6 +1231,8 @@ function TemplateCustom({ creator }: { creator: Creator }) {
   const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
   const accent = creator.linkBioAccent || "#6366f1";
   const hasCustomBg = !!creator.linkBioBgType;
+  const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
+  const avatarSz = AVATAR_SIZES[creator.linkBioAvatarSize || "medium"] || AVATAR_SIZES.medium;
   const isDarkBg = hasCustomBg && (
     creator.linkBioBgType === "video" || creator.linkBioBgType === "image" || creator.linkBioBgType === "collage" ||
     (creator.linkBioBgType === "gradient" && (creator.linkBioBgValue?.includes("#0") || creator.linkBioBgValue?.includes("#1") || creator.linkBioBgValue?.includes("#2")))
@@ -1216,20 +1254,20 @@ function TemplateCustom({ creator }: { creator: Creator }) {
           <div className="relative inline-block">
             {isDarkBg && <div className="absolute inset-0 rounded-full opacity-30 blur-xl" style={{ background: accent }} />}
             {creator.avatar ? (
-              <img src={creator.avatar} alt="" className={`relative w-24 h-24 rounded-full object-cover shadow-2xl ${isDarkBg ? "ring-2 ring-white/20" : "ring-2 ring-neutral-200"}`} />
+              <img src={creator.avatar} alt="" className={`relative ${avatarSz} rounded-full object-cover shadow-2xl ${isDarkBg ? "ring-2 ring-white/20" : "ring-2 ring-neutral-200"}`} />
             ) : (
-              <div className={`relative w-24 h-24 rounded-full flex items-center justify-center shadow-2xl ${isDarkBg ? "bg-white/10 backdrop-blur-xl ring-2 ring-white/20" : "bg-neutral-100 ring-2 ring-neutral-200"}`}><span className={`text-3xl font-bold ${isDarkBg ? "text-white/60" : "text-neutral-400"}`}>{(creator.name || "?")[0]}</span></div>
+              <div className={`relative ${avatarSz} rounded-full flex items-center justify-center shadow-2xl ${isDarkBg ? "bg-white/10 backdrop-blur-xl ring-2 ring-white/20" : "bg-neutral-100 ring-2 ring-neutral-200"}`}><span className={`text-3xl font-bold ${isDarkBg ? "text-white/60" : "text-neutral-400"}`}>{(creator.name || "?")[0]}</span></div>
             )}
             {creator.isOnline && <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4"><span className="animate-ping absolute h-full w-full rounded-full bg-emerald-400 opacity-75" /><span className={`relative rounded-full h-4 w-4 bg-emerald-500 ring-2 ${isDarkBg ? "ring-[#1a1040]" : "ring-white"}`} /></span>}
           </div>
 
           <div className="mt-5 flex items-center justify-center gap-1.5">
-            <h1 className={`font-display text-2xl font-bold tracking-tight ${isDarkBg ? "text-white" : "text-neutral-900"}`}>{creator.name || "Your Name"}</h1>
+            <h1 className={`font-display ${ts.name} font-bold tracking-tight ${isDarkBg ? "text-white" : "text-neutral-900"}`}>{creator.name || "Your Name"}</h1>
             {creator.isVerified && <VerifiedBadge light={isDarkBg} />}{creator.isPro && <ProBadge />}
           </div>
           <p className={`text-xs mt-0.5 ${isDarkBg ? "text-white/40" : "text-neutral-400"}`}>@{creator.slug?.split("-")[0]}</p>
           <NicheRankBadge creator={creator} light={isDarkBg} />
-          {creator.headline && <p className={`mt-2 text-sm max-w-[320px] mx-auto leading-relaxed ${isDarkBg ? "text-white/50" : "text-neutral-600"}`}>{creator.headline}</p>}
+          {creator.headline && <p className={`mt-2 ${ts.headline} max-w-[320px] mx-auto leading-relaxed ${isDarkBg ? "text-white/50" : "text-neutral-600"}`}>{creator.headline}</p>}
           {creator.location && <p className={`mt-2 text-xs flex items-center justify-center gap-1 ${isDarkBg ? "text-white/30" : "text-neutral-400"}`}><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>{creator.location}</p>}
 
           {/* Stats bar */}
@@ -1266,6 +1304,7 @@ function TemplateFounder({ creator }: { creator: Creator }) {
   const accent = creator.linkBioAccent || "#3b82f6";
   const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0 && creator.bioLinks.length === 0;
   const hasCustomBg = !!creator.linkBioBgType;
+  const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
 
   // Detect GitHub links from bioLinks
   const githubLink = creator.bioLinks.find(l => l.isVisible && l.url.toLowerCase().includes("github.com"));
@@ -1300,7 +1339,7 @@ function TemplateFounder({ creator }: { creator: Creator }) {
           </div>
           <div className="min-w-0">
             <div className="flex items-center gap-1.5 flex-wrap">
-              <h1 className="font-display text-xl sm:text-2xl font-bold text-white tracking-tight">{creator.name || "Your Name"}</h1>
+              <h1 className={`font-display ${ts.name} font-bold text-white tracking-tight`}>{creator.name || "Your Name"}</h1>
               {creator.isVerified && <VerifiedBadge light />}{creator.isPro && <ProBadge />}
             </div>
             {creator.businessName && (

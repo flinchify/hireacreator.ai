@@ -19,6 +19,9 @@ type Settings = {
   textColor: string;
   introAnim: string;
   cardStyle: string;
+  textSize: string;
+  avatarSize: string;
+  buttonSize: string;
 };
 
 /* ── Constants ── */
@@ -718,6 +721,9 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
     textColor: user.link_bio_text_color || "",
     introAnim: user.link_bio_intro_anim || "none",
     cardStyle: user.link_bio_card_style || "default",
+    textSize: user.link_bio_text_size || "medium",
+    avatarSize: user.link_bio_avatar_size || "medium",
+    buttonSize: user.link_bio_button_size || "medium",
   });
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -758,6 +764,9 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
           link_bio_text_color: next.textColor,
           link_bio_intro_anim: next.introAnim,
           link_bio_card_style: next.cardStyle,
+          link_bio_text_size: next.textSize,
+          link_bio_avatar_size: next.avatarSize,
+          link_bio_button_size: next.buttonSize,
         }),
       });
       if (!res.ok) {
@@ -812,6 +821,7 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
     { id: "background", name: "Background" },
     { id: "typography", name: "Typography" },
     { id: "buttons", name: "Buttons" },
+    { id: "sizes", name: "Sizes" },
     { id: "animation", name: "Animation" },
     { id: "colors", name: "Colors" },
   ];
@@ -1124,6 +1134,67 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
                 <div className="p-4 bg-neutral-50 rounded-xl text-center">
                   <p className="text-[10px] text-neutral-400 mb-2">Tap to preview</p>
                   <AnimTestButton shape={settings.buttonShape} anim={settings.buttonAnim} />
+                </div>
+              </div>
+            )}
+
+            {/* ─── SIZES ─── */}
+            {section === "sizes" && (
+              <div className="bg-white rounded-2xl border border-neutral-200/60 p-5 space-y-6">
+                {/* Text Size */}
+                <div>
+                  <h2 className="text-sm font-bold text-neutral-900 mb-1">Text Size</h2>
+                  <p className="text-[11px] text-neutral-400 mb-3">Controls name, bio, and link title sizes</p>
+                  <div className="grid grid-cols-3 gap-2">
+                    {([
+                      { id: "small", label: "Small", nameClass: "text-base", bioClass: "text-xs" },
+                      { id: "medium", label: "Medium", nameClass: "text-xl", bioClass: "text-sm" },
+                      { id: "large", label: "Large", nameClass: "text-2xl", bioClass: "text-base" },
+                    ] as const).map(s => (
+                      <button key={s.id} onClick={() => save({ textSize: s.id })} className={`p-3 min-h-[72px] rounded-xl text-center transition-all flex flex-col items-center justify-center gap-1 ${settings.textSize === s.id ? "border-2 border-neutral-900 bg-neutral-50" : "border border-neutral-200 bg-white hover:bg-neutral-50"}`}>
+                        <span className={`font-bold text-neutral-900 ${s.nameClass}`}>Aa</span>
+                        <span className={`text-neutral-500 ${s.bioClass}`}>{s.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Avatar Size */}
+                <div>
+                  <h2 className="text-sm font-bold text-neutral-900 mb-1">Avatar Size</h2>
+                  <p className="text-[11px] text-neutral-400 mb-3">Controls your profile picture size</p>
+                  <div className="grid grid-cols-3 gap-2">
+                    {([
+                      { id: "small", label: "Small", size: "w-10 h-10" },
+                      { id: "medium", label: "Medium", size: "w-14 h-14" },
+                      { id: "large", label: "Large", size: "w-[72px] h-[72px]" },
+                    ] as const).map(s => (
+                      <button key={s.id} onClick={() => save({ avatarSize: s.id })} className={`p-3 min-h-[88px] rounded-xl text-center transition-all flex flex-col items-center justify-center gap-2 ${settings.avatarSize === s.id ? "border-2 border-neutral-900 bg-neutral-50" : "border border-neutral-200 bg-white hover:bg-neutral-50"}`}>
+                        <div className={`${s.size} rounded-full bg-neutral-200`} />
+                        <span className="text-[10px] font-semibold text-neutral-500">{s.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Button Size */}
+                <div>
+                  <h2 className="text-sm font-bold text-neutral-900 mb-1">Button Size</h2>
+                  <p className="text-[11px] text-neutral-400 mb-3">Controls link button padding and text</p>
+                  <div className="grid grid-cols-3 gap-2">
+                    {([
+                      { id: "small", label: "Compact", py: "py-2", textCls: "text-[10px]" },
+                      { id: "medium", label: "Normal", py: "py-3", textCls: "text-xs" },
+                      { id: "large", label: "Large", py: "py-4", textCls: "text-sm" },
+                    ] as const).map(s => (
+                      <button key={s.id} onClick={() => save({ buttonSize: s.id })} className={`p-3 min-h-[72px] rounded-xl text-center transition-all flex flex-col items-center justify-center gap-2 ${settings.buttonSize === s.id ? "border-2 border-neutral-900 bg-neutral-50" : "border border-neutral-200 bg-white hover:bg-neutral-50"}`}>
+                        <div className={`w-full bg-neutral-200 rounded-lg ${s.py}`}>
+                          <span className={`font-semibold text-neutral-600 ${s.textCls}`}>Button</span>
+                        </div>
+                        <span className="text-[10px] font-semibold text-neutral-500">{s.label}</span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
             )}

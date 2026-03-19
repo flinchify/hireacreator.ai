@@ -134,6 +134,9 @@ export type Creator = {
   linkBioButtonAnim: string;
   linkBioCardStyle: string;
   linkBioIntroAnim: string;
+  linkBioTextSize: string;
+  linkBioAvatarSize: string;
+  linkBioButtonSize: string;
   calendarEnabled: boolean;
   profileViews: number;
   nicheRank: number;
