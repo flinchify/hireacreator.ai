@@ -207,7 +207,7 @@ export function HomepageContent({
               <h1
                 className="font-display text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tighter text-neutral-900 leading-[1.05]"
               >
-                The marketplace where<br className="hidden sm:block" /> creators and AI agents trade
+                The marketplace where<br className="hidden sm:block" /> creators and <span className="bg-gradient-to-r from-blue-600 to-sky-500 bg-clip-text text-transparent">AI agents</span> trade
               </h1>
 
               <p className="mt-6 text-lg sm:text-xl text-neutral-500 max-w-2xl mx-auto leading-relaxed">
@@ -269,7 +269,7 @@ export function HomepageContent({
         </div>
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
-            <p className="text-sm font-semibold tracking-widest text-neutral-400 uppercase">How it works</p>
+            <p className="text-sm font-semibold tracking-widest text-blue-600 uppercase">How it works</p>
             <h2 className="mt-2 font-display text-2xl sm:text-3xl font-bold text-neutral-900">
               From signup to delivery — in one seamless flow
             </h2>
@@ -478,15 +478,15 @@ export function HomepageContent({
 
       {/* ═══════════════════ FEATURED CREATORS ═══════════════════ */}
       {featured.length > 0 && (
-        <AnimateOnScroll as="section" className="bg-gradient-to-b from-neutral-50/50 to-white border-t border-neutral-100">
+        <AnimateOnScroll as="section" className="bg-gradient-to-b from-blue-50/30 to-white border-t border-neutral-100">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
             <div className="flex items-end justify-between mb-10">
               <div>
                 <h2 className="font-display text-3xl font-bold text-neutral-900">
-                  Creators on the platform
+                  Discover creators ready to work
                 </h2>
                 <p className="mt-2 text-neutral-500">
-                  {creatorCount} creator{creatorCount !== 1 ? "s" : ""} and growing.
+                  Browse {creatorCount}+ verified creators across every niche. Book directly, no middlemen.
                 </p>
               </div>
               <Link
@@ -506,6 +506,14 @@ export function HomepageContent({
                 </div>
               ))}
             </StaggerChildren>
+            <div className="text-center mt-10">
+              <Link
+                href="/browse"
+                className="inline-flex items-center gap-2 px-8 py-3 text-sm font-medium text-white bg-neutral-900 rounded-full hover:bg-neutral-800 transition-colors duration-300"
+              >
+                Browse All Creators <ArrowRightIcon />
+              </Link>
+            </div>
           </div>
         </AnimateOnScroll>
       )}
@@ -532,7 +540,7 @@ export function HomepageContent({
             <div className="aos-stagger-item group relative bg-gradient-to-br from-neutral-50 to-white rounded-2xl p-7 border border-neutral-200 hover:border-neutral-300 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-neutral-100/30 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
               <div className="relative">
-                <div className="w-12 h-12 rounded-xl bg-neutral-100 flex items-center justify-center mb-5 text-neutral-700 group-hover:scale-110 transition-transform duration-300">
+                <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center mb-5 text-blue-600 group-hover:scale-110 transition-transform duration-300">
                   <SearchCreatorsIcon />
                 </div>
                 <div className="text-lg font-display font-bold text-neutral-900 mb-2">Search</div>
@@ -726,7 +734,7 @@ export function HomepageContent({
 
             {/* Popular */}
             <div className="aos-stagger-item bg-white rounded-2xl border-2 border-neutral-900 p-8 relative hover:shadow-xl transition-all duration-300">
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-neutral-900 text-white text-xs font-medium rounded-full">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-blue-600 to-sky-500 text-white text-xs font-medium rounded-full">
                 Popular
               </div>
               <div className="text-sm font-medium text-neutral-900 uppercase tracking-wider mb-2">Creator Pro</div>
@@ -749,7 +757,7 @@ export function HomepageContent({
                 ))}
               </ul>
               <Link href="/pricing">
-                <button className="w-full py-2.5 text-sm font-medium rounded-full bg-neutral-900 text-white hover:bg-neutral-800 transition-colors duration-300">
+                <button className="w-full py-2.5 text-sm font-medium rounded-full bg-gradient-to-r from-blue-600 to-sky-500 text-white hover:from-blue-700 hover:to-sky-600 transition-colors duration-300">
                   See Pro Features
                 </button>
               </Link>
@@ -843,7 +851,7 @@ export function HomepageContent({
                     <td className="py-3.5 px-4 text-neutral-700 font-medium">{row.feature}</td>
                     <td className="py-3.5 px-4 text-center bg-neutral-50">
                       {row.us ? (
-                        <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-neutral-900 text-white shadow-sm">
+                        <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-gradient-to-br from-blue-600 to-sky-500 text-white shadow-sm">
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
                         </span>
                       ) : (
