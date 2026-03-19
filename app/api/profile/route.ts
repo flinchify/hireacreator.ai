@@ -35,12 +35,18 @@ export async function PATCH(request: Request) {
   const body = await request.json().catch(() => ({}));
   const sql = getDb();
 
-  // Validate slug uniqueness if changing
-  if (body.slug) {
-    const slugStr = String(body.slug).toLowerCase().replace(/[^a-z0-9-]/g, "-").slice(0, 50);
+  // Validate slug if changing
+  if (body.slug !== undefined && body.slug !== null) {
+    const slugStr = String(body.slug).toLowerCase().trim();
+    if (slugStr.length < 3 || slugStr.length > 30) {
+      return NextResponse.json({ error: "slug_invalid", message: "URL handle must be 3–30 characters." }, { status: 400 });
+    }
+    if (!/^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/.test(slugStr)) {
+      return NextResponse.json({ error: "slug_invalid", message: "Only lowercase letters, numbers, and hyphens allowed. Cannot start or end with a hyphen." }, { status: 400 });
+    }
     const existing = await sql`SELECT id FROM users WHERE slug = ${slugStr} AND id != ${user.id}`;
     if (existing.length > 0) {
-      return NextResponse.json({ error: "slug_taken", message: "This username is already taken." }, { status: 400 });
+      return NextResponse.json({ error: "slug_taken", message: "That URL is already in use. Try another." }, { status: 400 });
     }
     body.slug = slugStr;
   }

@@ -10,8 +10,7 @@ const config: Config = {
     extend: {
       fontFamily: {
         sans: ["Inter", "system-ui", "sans-serif"],
-        display: ["Space Grotesk", "Inter", "system-ui", "sans-serif"],
-        hero: ["Inter Tight", "Inter", "system-ui", "sans-serif"],
+        display: ["Instrument Sans", "Inter", "system-ui", "sans-serif"],
       },
       colors: {
         brand: {

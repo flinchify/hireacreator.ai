@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Sans:wght@600;700&display=swap');
 
 @layer base {
   html {
@@ -158,25 +158,9 @@ details[open] .faq-content {
 
 /* Comparison table row hover */
 .comparison-row:hover {
-  background-color: rgba(239, 246, 255, 0.6);
+  background-color: rgba(245, 245, 245, 0.6);
 }
 
-/* Pricing gradient border for popular card */
-.pricing-popular {
-  position: relative;
-  background: white;
-}
-
-.pricing-popular::before {
-  content: '';
-  position: absolute;
-  inset: -2px;
-  border-radius: 1rem;
-  background: linear-gradient(135deg, #2563eb, #3b82f6, #0ea5e9, #2563eb);
-  background-size: 300% 300%;
-  animation: glow-border 4s linear infinite;
-  z-index: -1;
-}
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
@@ -192,8 +176,7 @@ details[open] .faq-content {
   .screenshot-perspective {
     transform: none;
   }
-  .gradient-border::before,
-  .pricing-popular::before {
+  .gradient-border::before {
     animation: none;
   }
 }

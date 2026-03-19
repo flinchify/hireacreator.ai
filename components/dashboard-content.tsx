@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useAuth, User } from "./auth-context";
 import { CalendarManager } from "./calendar-manager";
 import { LinkManager } from "./link-manager";
@@ -469,6 +469,120 @@ function MyBookings() {
   );
 }
 
+/* ═══ Slug Editor ═══ */
+function SlugEditor({ user, onChanged }: { user: User; onChanged: () => void }) {
+  const [editing, setEditing] = useState(false);
+  const [slug, setSlug] = useState(user.slug || "");
+  const [status, setStatus] = useState<"idle" | "checking" | "available" | "taken" | "invalid" | "saving" | "saved">("idle");
+  const [message, setMessage] = useState("");
+  const [suggestion, setSuggestion] = useState("");
+  const timerRef = useRef<ReturnType<typeof setTimeout>>();
+  const currentSlug = user.slug || "";
+
+  function validate(v: string) {
+    if (v.length < 3) return "Must be at least 3 characters";
+    if (v.length > 30) return "Must be 30 characters or less";
+    if (!/^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/.test(v)) return "Only lowercase letters, numbers, and hyphens. Cannot start or end with a hyphen.";
+    return null;
+  }
+
+  function handleChange(raw: string) {
+    const v = raw.toLowerCase().replace(/[^a-z0-9-]/g, "");
+    setSlug(v);
+    setSuggestion("");
+    if (timerRef.current) clearTimeout(timerRef.current);
+
+    if (!v || v === currentSlug) { setStatus("idle"); setMessage(""); return; }
+    const err = validate(v);
+    if (err) { setStatus("invalid"); setMessage(err); return; }
+
+    setStatus("checking"); setMessage("Checking availability...");
+    timerRef.current = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/profile/check-slug?slug=${encodeURIComponent(v)}`);
+        const data = await res.json();
+        if (data.available) { setStatus("available"); setMessage("Available!"); }
+        else { setStatus("taken"); setMessage(data.message || "Already taken."); if (data.suggestion) setSuggestion(data.suggestion); }
+      } catch { setStatus("invalid"); setMessage("Could not check availability."); }
+    }, 300);
+  }
+
+  async function save() {
+    if (status !== "available" || slug === currentSlug) return;
+    setStatus("saving"); setMessage("Saving...");
+    const res = await fetch("/api/profile", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ slug }) });
+    const data = await res.json();
+    if (res.ok) {
+      setStatus("saved"); setMessage("URL updated!");
+      onChanged();
+      setTimeout(() => { setEditing(false); setStatus("idle"); setMessage(""); }, 1500);
+    } else {
+      setStatus(data.error === "slug_taken" ? "taken" : "invalid");
+      setMessage(data.message || "Failed to save.");
+    }
+  }
+
+  function cancel() { setEditing(false); setSlug(currentSlug); setStatus("idle"); setMessage(""); setSuggestion(""); }
+
+  const statusColor = status === "available" || status === "saved" ? "text-emerald-600" : status === "taken" || status === "invalid" ? "text-red-500" : "text-neutral-400";
+  const statusIcon = status === "available" || status === "saved"
+    ? <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-emerald-500"><path d="M20 6L9 17l-5-5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+    : status === "taken" || status === "invalid"
+    ? <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-red-500"><path d="M18 6L6 18M6 6l12 12" strokeLinecap="round"/></svg>
+    : status === "checking"
+    ? <div className="w-3.5 h-3.5 border-2 border-neutral-300 border-t-neutral-600 rounded-full animate-spin" />
+    : null;
+
+  if (!editing) {
+    return (
+      <div className="flex items-center gap-2 mt-4 mb-4">
+        <div className="flex-1 flex items-center gap-2 bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-2.5">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-neutral-300 shrink-0"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" strokeLinecap="round"/></svg>
+          <span className="text-sm text-neutral-500 truncate">hireacreator.ai/u/{currentSlug}</span>
+        </div>
+        <button onClick={() => { setEditing(true); setSlug(currentSlug); }} className="px-4 py-2.5 text-sm font-semibold text-neutral-600 bg-white border border-neutral-200 rounded-xl hover:bg-neutral-50 transition-colors">
+          Edit URL
+        </button>
+        <button onClick={() => { navigator.clipboard?.writeText(`https://hireacreator.ai/u/${currentSlug}`); }} className="px-5 py-2.5 text-sm font-semibold rounded-xl bg-neutral-900 text-white hover:bg-neutral-800 transition-colors shadow-sm">
+          Copy
+        </button>
+        <a href={`/u/${currentSlug}`} target="_blank" className="p-2.5 text-neutral-400 bg-white border border-neutral-200 rounded-xl hover:bg-neutral-50 hover:text-neutral-600 transition-colors" title="Open page">
+          {icons.external}
+        </a>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-4 mb-4 bg-white border border-neutral-200 rounded-2xl p-4 space-y-3">
+      <div className="flex items-center justify-between">
+        <h4 className="text-sm font-semibold text-neutral-900">Edit Profile URL</h4>
+        <button onClick={cancel} className="text-xs text-neutral-400 hover:text-neutral-600">Cancel</button>
+      </div>
+      <div className="flex items-center gap-0 bg-neutral-50 border border-neutral-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-neutral-900/10 focus-within:border-neutral-400">
+        <span className="text-sm text-neutral-400 pl-3.5 shrink-0 select-none">hireacreator.ai/u/</span>
+        <input
+          autoFocus
+          value={slug}
+          onChange={e => handleChange(e.target.value)}
+          className="flex-1 py-2.5 pr-3 text-sm text-neutral-900 bg-transparent outline-none"
+          placeholder="your-handle"
+          maxLength={30}
+        />
+        <div className="pr-3 shrink-0">{statusIcon}</div>
+      </div>
+      {message && <p className={`text-xs ${statusColor}`}>{message}{suggestion && <> Try <button type="button" onClick={() => { setSlug(suggestion); handleChange(suggestion); }} className="underline font-medium">{suggestion}</button>?</>}</p>}
+      <p className="text-[11px] text-amber-600 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2">Changing your URL will break any existing links to your profile.</p>
+      <div className="flex gap-2">
+        <button onClick={save} disabled={status !== "available" || !slug || slug === currentSlug} className="px-5 py-2.5 text-sm font-semibold rounded-xl bg-neutral-900 text-white hover:bg-neutral-800 transition-colors disabled:opacity-40 shadow-sm">
+          {status === "saving" ? "Saving..." : status === "saved" ? "Saved!" : "Save New URL"}
+        </button>
+        <button onClick={cancel} className="px-5 py-2.5 text-sm font-medium rounded-xl text-neutral-600 bg-neutral-100 hover:bg-neutral-200 transition-colors">Cancel</button>
+      </div>
+    </div>
+  );
+}
+
 /* ═══ Main Dashboard ═══ */
 export function DashboardContent() {
   const { user, loading, refreshUser } = useAuth();
@@ -602,20 +716,9 @@ export function DashboardContent() {
                 </div>
               )}
 
-              {/* Share URL bar */}
+              {/* Share URL bar with inline slug editor */}
               {user.slug && (
-                <div className="flex items-center gap-2 mt-4 mb-4">
-                  <div className="flex-1 flex items-center gap-2 bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-2.5">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-neutral-300 shrink-0"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" strokeLinecap="round"/></svg>
-                    <span className="text-sm text-neutral-500 truncate">{bioUrl}</span>
-                  </div>
-                  <button onClick={copyLink} className={`px-5 py-2.5 text-sm font-semibold rounded-xl transition-all shadow-sm ${copied ? "bg-emerald-500 text-white" : "bg-neutral-900 text-white hover:bg-neutral-800"}`}>
-                    {copied ? "Copied!" : "Copy"}
-                  </button>
-                  <a href={`/u/${user.slug}`} target="_blank" className="p-2.5 text-neutral-400 bg-white border border-neutral-200 rounded-xl hover:bg-neutral-50 hover:text-neutral-600 transition-colors" title="Open page">
-                    {icons.external}
-                  </a>
-                </div>
+                <SlugEditor user={user} onChanged={refreshUser} />
               )}
 
               {/* Tab bar (mobile + tablet, hidden on desktop since sidebar handles it) */}

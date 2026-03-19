@@ -168,10 +168,10 @@ export function HomepageContent({
       <section className="relative pt-40 sm:pt-52 pb-20 sm:pb-28 overflow-hidden">
         {/* Aurora mesh background — blue tones only */}
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-b from-blue-50/80 via-sky-50/40 to-white" />
-          <div className="absolute top-0 left-1/4 w-[600px] h-[600px] rounded-full bg-blue-200/30 blur-[120px] animate-aurora" />
-          <div className="absolute top-20 right-1/4 w-[500px] h-[500px] rounded-full bg-sky-200/25 blur-[100px] animate-aurora-2" />
-          <div className="absolute -bottom-20 left-1/2 w-[700px] h-[400px] rounded-full bg-blue-100/20 blur-[120px] animate-aurora-3" />
+          <div className="absolute inset-0 bg-gradient-to-b from-neutral-50/80 via-neutral-50/40 to-white" />
+          <div className="absolute top-0 left-1/4 w-[600px] h-[600px] rounded-full bg-neutral-200/30 blur-[120px] animate-aurora" />
+          <div className="absolute top-20 right-1/4 w-[500px] h-[500px] rounded-full bg-neutral-200/25 blur-[100px] animate-aurora-2" />
+          <div className="absolute -bottom-20 left-1/2 w-[700px] h-[400px] rounded-full bg-neutral-100/20 blur-[120px] animate-aurora-3" />
           {/* Dot grid overlay */}
           <div className="absolute inset-0 dot-grid opacity-40" />
         </div>
@@ -203,7 +203,7 @@ export function HomepageContent({
 
         <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1
-            className="font-hero text-4xl sm:text-5xl lg:text-7xl font-extrabold tracking-tighter text-neutral-900 leading-[1.05]"
+            className="font-display text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tighter text-neutral-900 leading-[1.05]"
           >
             The creator marketplace<br className="hidden sm:block" /> where you keep 100%
           </h1>
@@ -259,7 +259,7 @@ export function HomepageContent({
       </section>
 
       {/* ═══════════════════ PLATFORM TRUST TICKER ═══════════════════ */}
-      <AnimateOnScroll as="section" className="bg-gradient-to-b from-blue-50/40 via-sky-50/30 to-white border-y border-neutral-100">
+      <AnimateOnScroll as="section" className="bg-gradient-to-b from-neutral-50/60 via-neutral-50/30 to-white border-y border-neutral-100">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-16">
           <div className="text-center mb-8">
             <h2 className="font-display text-2xl sm:text-3xl font-bold text-neutral-900 mb-3">
@@ -284,8 +284,8 @@ export function HomepageContent({
           <StaggerChildren className="grid md:grid-cols-3 gap-6" staggerMs={150}>
             {/* Card 1 — Profile with real screenshots */}
             <div className="aos-stagger-item group bg-white rounded-2xl border border-neutral-200 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-              <div className="relative p-6 pb-4 bg-gradient-to-br from-sky-50/80 to-blue-50/60">
-                <div className="text-blue-500"><ProfileStarIcon /></div>
+              <div className="relative p-6 pb-4 bg-gradient-to-br from-neutral-50/80 to-neutral-100/60">
+                <div className="text-neutral-500"><ProfileStarIcon /></div>
                 {/* Real link-in-bio screenshots — phone frames */}
                 <div className="mt-4 flex items-center justify-center gap-[-8px]">
                   <div className="relative z-10 w-[45%] rounded-xl overflow-hidden border-2 border-white shadow-lg" style={{ transform: "rotate(-3deg)" }}>
@@ -307,8 +307,8 @@ export function HomepageContent({
 
             {/* Card 2 — Marketplace */}
             <div className="aos-stagger-item group bg-white rounded-2xl border border-neutral-200 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-              <div className="relative p-6 pb-4 bg-gradient-to-br from-blue-50/80 to-sky-50/60">
-                <div className="text-blue-600"><MarketplaceGridIcon /></div>
+              <div className="relative p-6 pb-4 bg-gradient-to-br from-neutral-50/80 to-neutral-100/60">
+                <div className="text-neutral-600"><MarketplaceGridIcon /></div>
                 {/* Mini browser frame with screenshot */}
                 <div className="mt-4 rounded-lg overflow-hidden border border-neutral-200/60 shadow-sm bg-white">
                   <div className="flex items-center gap-1 px-2 py-1.5 bg-neutral-100/80 border-b border-neutral-200/40">
@@ -425,7 +425,7 @@ export function HomepageContent({
           {/* Dashboard screenshot — full-width browser frame below */}
           <div className="mt-16 relative">
             {/* Soft blue glow behind */}
-            <div className="absolute -inset-4 bg-blue-50/60 rounded-3xl blur-2xl" />
+            <div className="absolute -inset-4 bg-neutral-50/60 rounded-3xl blur-2xl" />
             <div className="relative rounded-xl overflow-hidden border border-neutral-200/80 bg-white shadow-xl shadow-neutral-300/20" style={{ transform: "perspective(1200px) rotateX(2deg)" }}>
               {/* macOS-style browser chrome */}
               <div className="flex items-center gap-2 px-4 py-3 bg-neutral-100/80 border-b border-neutral-200/60">
@@ -502,10 +502,10 @@ export function HomepageContent({
 
           <StaggerChildren className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6" staggerMs={120}>
             {/* Search */}
-            <div className="aos-stagger-item group relative bg-gradient-to-br from-blue-50 to-white rounded-2xl p-7 border border-blue-100/80 hover:border-blue-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-blue-100/30 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
+            <div className="aos-stagger-item group relative bg-gradient-to-br from-neutral-50 to-white rounded-2xl p-7 border border-neutral-200 hover:border-neutral-300 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-neutral-100/30 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
               <div className="relative">
-                <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center mb-5 text-blue-700 group-hover:scale-110 transition-transform duration-300">
+                <div className="w-12 h-12 rounded-xl bg-neutral-100 flex items-center justify-center mb-5 text-neutral-700 group-hover:scale-110 transition-transform duration-300">
                   <SearchCreatorsIcon />
                 </div>
                 <div className="text-lg font-display font-bold text-neutral-900 mb-2">Search</div>
@@ -697,12 +697,12 @@ export function HomepageContent({
               </button>
             </div>
 
-            {/* Popular — animated gradient border */}
-            <div className="aos-stagger-item pricing-popular rounded-2xl p-8 relative hover:shadow-xl transition-all duration-300 z-0">
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-blue-600 to-sky-500 text-white text-xs font-medium rounded-full shadow-lg shadow-blue-500/20">
+            {/* Popular */}
+            <div className="aos-stagger-item bg-white rounded-2xl border-2 border-neutral-900 p-8 relative hover:shadow-xl transition-all duration-300">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-neutral-900 text-white text-xs font-medium rounded-full">
                 Popular
               </div>
-              <div className="text-sm font-medium text-blue-600 uppercase tracking-wider mb-2">Creator Pro</div>
+              <div className="text-sm font-medium text-neutral-900 uppercase tracking-wider mb-2">Creator Pro</div>
               <div className="flex items-baseline gap-1 mb-4">
                 <span className="font-display text-3xl font-bold text-neutral-900">$19</span>
                 <span className="text-sm text-neutral-400">/mo</span>
@@ -716,13 +716,13 @@ export function HomepageContent({
                   { text: "All 11 premium animations", icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg> },
                 ].map((f) => (
                   <li key={f.text} className="flex items-start gap-2.5 text-sm text-neutral-600">
-                    <span className="mt-0.5 text-blue-500 shrink-0">{f.icon}</span>
+                    <span className="mt-0.5 text-neutral-900 shrink-0">{f.icon}</span>
                     {f.text}
                   </li>
                 ))}
               </ul>
               <Link href="/pricing">
-                <button className="w-full py-2.5 text-sm font-medium rounded-full bg-gradient-to-r from-blue-600 to-sky-500 text-white hover:from-blue-700 hover:to-sky-600 transition-all duration-300 shadow-lg shadow-blue-500/20">
+                <button className="w-full py-2.5 text-sm font-medium rounded-full bg-neutral-900 text-white hover:bg-neutral-800 transition-colors duration-300">
                   See Pro Features
                 </button>
               </Link>
@@ -785,17 +785,17 @@ export function HomepageContent({
               <thead>
                 <tr className="border-b border-neutral-200">
                   <th className="p-4 pr-4 text-sm font-medium text-neutral-400 w-1/4" />
-                  <th className="p-4 px-4 text-center bg-blue-50/60">
+                  <th className="p-4 px-4 text-center bg-neutral-50">
                     <div className="inline-flex items-center gap-1.5">
                       <span className="text-amber-500"><CrownIcon /></span>
-                      <span className="font-display font-bold bg-gradient-to-r from-blue-600 to-sky-500 bg-clip-text text-transparent">HireACreator</span>
+                      <span className="font-display font-bold text-neutral-900">HireACreator</span>
                     </div>
                   </th>
                   <th className="p-4 px-4 text-center">
-                    <div className="font-display font-bold text-neutral-400">Linktree</div>
+                    <div className="font-display font-bold" style={{ color: "#43E55E" }}>Linktree</div>
                   </th>
                   <th className="p-4 px-4 text-center">
-                    <div className="font-display font-bold text-neutral-400">Fiverr</div>
+                    <div className="font-display font-bold" style={{ color: "#1DBF73" }}>Fiverr.</div>
                   </th>
                 </tr>
               </thead>
@@ -814,9 +814,9 @@ export function HomepageContent({
                 ].map((row, i) => (
                   <tr key={i} className="border-b border-neutral-100 comparison-row transition-colors duration-300">
                     <td className="py-3.5 px-4 text-neutral-700 font-medium">{row.feature}</td>
-                    <td className="py-3.5 px-4 text-center bg-blue-50/40">
+                    <td className="py-3.5 px-4 text-center bg-neutral-50">
                       {row.us ? (
-                        <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-gradient-to-br from-blue-600 to-sky-500 text-white shadow-sm">
+                        <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-neutral-900 text-white shadow-sm">
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
                         </span>
                       ) : (
