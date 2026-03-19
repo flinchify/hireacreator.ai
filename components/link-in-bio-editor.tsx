@@ -159,14 +159,27 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
     { title: "Social Media Audit", price: 99 },
   ];
 
+  const hasBgMedia = settings.bgType === "image" || settings.bgType === "video" || settings.bgType === "photos";
+
+  // The user's stored bgValue — used as direct bg for gradient/solid, or as overlay color for media types
+  const storedBgValue = settings.bgValue;
+  const hasStoredColor = storedBgValue && !storedBgValue.startsWith("http");
+
   function getBgStyle(): React.CSSProperties {
-    if (settings.bgType === "gradient" && settings.bgValue) return { background: settings.bgValue };
-    if (settings.bgType === "solid" && settings.bgValue) return { background: settings.bgValue };
-    if (settings.bgType === "image" && settings.bgValue) return { backgroundImage: `url(${settings.bgValue})`, backgroundSize: "cover", backgroundPosition: "center" };
+    if (settings.bgType === "gradient" && storedBgValue) return { background: storedBgValue };
+    if (settings.bgType === "solid" && storedBgValue) return { background: storedBgValue };
+    if (settings.bgType === "image" && storedBgValue?.startsWith("http")) return { backgroundImage: `url(${storedBgValue})`, backgroundSize: "cover", backgroundPosition: "center" };
     if (settings.bgType === "photos" && settings.bgImages.length > 0) return {};
     return {};
   }
-  const hasBgMedia = settings.bgType === "image" || settings.bgType === "video" || settings.bgType === "photos";
+
+  /** Returns CSS for the overlay on media backgrounds, using the user's color/gradient at ~60% opacity */
+  function getOverlayStyle(): React.CSSProperties {
+    if (!hasStoredColor) return {};
+    if (storedBgValue.startsWith("linear-gradient")) return { background: storedBgValue, opacity: 0.6 };
+    // Solid color — apply at 60% opacity
+    return { background: storedBgValue, opacity: 0.6 };
+  }
 
   function Avatar({ size, shape, borderCol }: { size: string; shape?: string; borderCol?: string }) {
     const cls = shape === "square" ? "rounded-2xl" : "rounded-full";

@@ -359,11 +359,11 @@ export function HomepageContent({
       <AnimateOnScroll as="section" id="for-creators" className="bg-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-            {/* Two real link-in-bio screenshots in phone frames */}
+            {/* Left — Two real link-in-bio screenshots in phone frames, slightly overlapping */}
             <div className="order-2 lg:order-1">
-              <div className="relative flex items-center justify-center max-w-lg mx-auto">
+              <div className="relative flex items-center justify-center max-w-md mx-auto">
                 {/* Phone frame 1 — Finn */}
-                <div className="relative z-10 w-[55%] rounded-[20px] overflow-hidden border-2 border-white shadow-2xl shadow-neutral-300/40" style={{ transform: "rotate(-4deg)" }}>
+                <div className="relative z-10 w-[52%] rounded-[20px] overflow-hidden border-2 border-white shadow-2xl shadow-neutral-300/40" style={{ transform: "rotate(-4deg)" }}>
                   <img
                     src="/screenshots/linkinbio-finn.png"
                     alt="Finn Dougherty's link-in-bio page on HireACreator"
@@ -372,7 +372,7 @@ export function HomepageContent({
                   />
                 </div>
                 {/* Phone frame 2 — U Move */}
-                <div className="relative z-20 w-[55%] rounded-[20px] overflow-hidden border-2 border-white shadow-2xl shadow-neutral-300/40 -ml-10" style={{ transform: "rotate(3deg)" }}>
+                <div className="relative z-20 w-[52%] rounded-[20px] overflow-hidden border-2 border-white shadow-2xl shadow-neutral-300/40 -ml-8" style={{ transform: "rotate(3deg)" }}>
                   <img
                     src="/screenshots/linkinbio-umove.png"
                     alt="U Move Australia's link-in-bio page on HireACreator"
@@ -383,7 +383,7 @@ export function HomepageContent({
               </div>
             </div>
 
-            {/* Copy */}
+            {/* Right — Copy */}
             <div className="order-1 lg:order-2">
               <div className="text-sm font-medium text-neutral-400 uppercase tracking-wider mb-4">
                 Your profile
@@ -421,6 +421,34 @@ export function HomepageContent({
                 </button>
               </div>
             </div>
+          </div>
+
+          {/* Dashboard screenshot — full-width browser frame below */}
+          <div className="mt-16 relative">
+            {/* Soft blue glow behind */}
+            <div className="absolute -inset-4 bg-blue-50/60 rounded-3xl blur-2xl" />
+            <div className="relative rounded-xl overflow-hidden border border-neutral-200/80 bg-white shadow-xl shadow-neutral-300/20" style={{ transform: "perspective(1200px) rotateX(2deg)" }}>
+              {/* macOS-style browser chrome */}
+              <div className="flex items-center gap-2 px-4 py-3 bg-neutral-100/80 border-b border-neutral-200/60">
+                <div className="flex gap-1.5">
+                  <div className="w-3 h-3 rounded-full bg-red-400/80" />
+                  <div className="w-3 h-3 rounded-full bg-amber-400/80" />
+                  <div className="w-3 h-3 rounded-full bg-green-400/80" />
+                </div>
+                <div className="flex-1 mx-4">
+                  <div className="bg-white rounded-md px-3 py-1 text-xs text-neutral-400 text-center border border-neutral-200/60">
+                    hireacreator.ai/dashboard
+                  </div>
+                </div>
+              </div>
+              <img
+                src="/screenshots/dashboard.jpg"
+                alt="HireACreator creator dashboard — manage bookings, earnings, and analytics"
+                className="w-full h-auto"
+                loading="lazy"
+              />
+            </div>
+            <p className="text-center text-sm text-neutral-400 mt-4">Manage everything from one place</p>
           </div>
         </div>
       </AnimateOnScroll>
