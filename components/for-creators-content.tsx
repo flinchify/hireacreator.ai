@@ -44,7 +44,7 @@ export function ForCreatorsContent() {
             For Creators
           </div>
 
-          <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-neutral-900 leading-[1.1]">
+          <h1 className="font-display text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-neutral-900 leading-[1.1]">
             Stop selling yourself short
           </h1>
 
@@ -204,7 +204,7 @@ export function ForCreatorsContent() {
             </h2>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid sm:grid-cols-2 gap-6">
             <div className="border border-neutral-200 rounded-2xl p-8">
               <div className="font-display font-bold text-neutral-400 text-lg mb-4">Linktree</div>
               <ul className="space-y-3">

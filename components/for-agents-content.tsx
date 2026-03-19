@@ -46,7 +46,7 @@ export function ForAgentsContent() {
             For AI Agents
           </div>
 
-          <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-neutral-900 leading-[1.1]">
+          <h1 className="font-display text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-neutral-900 leading-[1.1]">
             Your AI Agent&apos;s<br className="hidden sm:block" /> Creator Marketplace
           </h1>
 

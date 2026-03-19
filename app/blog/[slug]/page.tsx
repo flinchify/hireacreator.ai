@@ -710,7 +710,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
             <span>HireACreator.ai Team</span>
           </div>
 
-          <div className="prose prose-neutral prose-lg max-w-none">
+          <div className="prose prose-neutral prose-lg max-w-none break-words [&_img]:max-w-full">
             {post.content.split("\n\n").map((block, i) => {
               if (block.startsWith("## ")) {
                 return <h2 key={i} className="font-display text-2xl font-bold text-neutral-900 mt-10 mb-4">{block.replace("## ", "")}</h2>;

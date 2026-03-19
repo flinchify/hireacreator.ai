@@ -344,7 +344,7 @@ export function ForBrandsContent() {
             </p>
           </div>
 
-          <StaggerChildren className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto" staggerMs={150}>
+          <StaggerChildren className="grid sm:grid-cols-2 gap-6 max-w-3xl mx-auto" staggerMs={150}>
             {/* Brand Analytics */}
             <div className="aos-stagger-item group border border-neutral-200 rounded-2xl p-8 hover:border-neutral-300 hover:shadow-lg transition-all duration-300">
               <h3 className="font-display text-lg font-bold text-neutral-900 mb-1">Brand Analytics</h3>

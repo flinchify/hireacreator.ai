@@ -651,17 +651,17 @@ export function HomepageContent({
 
             {/* Code preview with animated gradient border */}
             <div className="relative">
-              {/* Floating badges */}
-              <div className="absolute -top-3 -left-2 z-10 px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 text-xs font-medium border border-blue-500/30 backdrop-blur-sm animate-badge-float">
+              {/* Floating badges — hidden on mobile to prevent overflow */}
+              <div className="hidden sm:block absolute -top-3 -left-2 z-10 px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 text-xs font-medium border border-blue-500/30 backdrop-blur-sm animate-badge-float">
                 MCP Compatible
               </div>
-              <div className="absolute -top-2 right-8 z-10 px-3 py-1 rounded-full bg-sky-500/20 text-sky-300 text-xs font-medium border border-sky-500/30 backdrop-blur-sm animate-badge-float-alt">
+              <div className="hidden sm:block absolute -top-2 right-8 z-10 px-3 py-1 rounded-full bg-sky-500/20 text-sky-300 text-xs font-medium border border-sky-500/30 backdrop-blur-sm animate-badge-float-alt">
                 REST API
               </div>
-              <div className="absolute -bottom-3 left-4 z-10 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-medium border border-emerald-500/30 backdrop-blur-sm animate-badge-float">
+              <div className="hidden sm:block absolute -bottom-3 left-4 z-10 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-medium border border-emerald-500/30 backdrop-blur-sm animate-badge-float">
                 Auto-booking
               </div>
-              <div className="absolute -bottom-2 right-12 z-10 px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-medium border border-amber-500/30 backdrop-blur-sm animate-badge-float-alt">
+              <div className="hidden sm:block absolute -bottom-2 right-12 z-10 px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-medium border border-amber-500/30 backdrop-blur-sm animate-badge-float-alt">
                 GPT + Claude
               </div>
 
