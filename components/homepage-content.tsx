@@ -166,8 +166,8 @@ export function HomepageContent({
 
       {/* ═══════════════════ HERO ═══════════════════ */}
       <section className="relative pt-32 sm:pt-52 pb-16 sm:pb-28 overflow-hidden">
-        {/* Clean white background */}
-        <div className="absolute inset-0 bg-white" />
+        {/* Subtle gradient background */}
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #fafafa 0%, #ffffff 30%, #f8faff 60%, #ffffff 100%)" }} />
 
         {/* Floating platform logos — scattered behind text */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden hidden sm:block" aria-hidden="true">
@@ -470,7 +470,7 @@ export function HomepageContent({
 
       {/* ═══════════════════ FEATURED CREATORS ═══════════════════ */}
       {featured.length > 0 && (
-        <AnimateOnScroll as="section" className="bg-gradient-to-b from-blue-50/30 to-white border-t border-neutral-100">
+        <AnimateOnScroll as="section" className="bg-gradient-to-b from-white via-blue-50/20 to-white border-t border-neutral-100">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
             <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10">
               <div>

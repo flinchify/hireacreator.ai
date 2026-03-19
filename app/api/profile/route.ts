@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { getDb } from "@/lib/db";
+import { calculateAndSaveScore } from "@/lib/creator-score";
 
 async function getUser() {
   const token = cookies().get("session_token")?.value;
@@ -93,6 +94,11 @@ export async function PATCH(request: Request) {
         updated_at = NOW()
       WHERE id = ${user.id}
     `;
+
+    // Fire-and-forget score recalculation
+    calculateAndSaveScore(user.id).catch((err) =>
+      console.error("[API /profile PATCH] Score recalc failed:", err)
+    );
 
     return NextResponse.json({ success: true });
   } catch (e) {

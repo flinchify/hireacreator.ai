@@ -133,6 +133,60 @@ export function getScoreTier(score: number): { label: string; color: string } {
  * Returns a preview score for onboarding (before full data exists).
  * Shows the user what completing profile steps will earn them.
  */
+/**
+ * Query all user data and recalculate + persist their creator score.
+ * Designed to be called fire-and-forget after profile mutations.
+ */
+export async function calculateAndSaveScore(userId: string): Promise<void> {
+  const { getDb } = await import("@/lib/db");
+  const sql = getDb();
+
+  const rows = await sql`
+    SELECT
+      u.avatar_url, u.bio, u.headline, u.location, u.category, u.cover_url,
+      u.rating, u.review_count, u.total_projects, u.profile_views,
+      u.subscription_tier, u.verification_status, u.is_verified,
+      COALESCE((SELECT SUM(sc.follower_count) FROM social_connections sc WHERE sc.user_id = u.id), 0) AS total_followers,
+      COALESCE((SELECT COUNT(*) FROM social_connections sc WHERE sc.user_id = u.id), 0) AS platform_count,
+      COALESCE((SELECT COUNT(*) FROM services s WHERE s.user_id = u.id AND s.is_active = TRUE), 0) AS active_service_count,
+      COALESCE((SELECT COUNT(*) FROM portfolio_items p WHERE p.user_id = u.id), 0) AS portfolio_count,
+      COALESCE((SELECT SUM(bl.click_count) FROM bio_links bl WHERE bl.user_id = u.id), 0) AS total_link_clicks
+    FROM users u
+    WHERE u.id = ${userId}
+  `;
+
+  if (rows.length === 0) return;
+  const c = rows[0];
+
+  const score = calculateCreatorScore({
+    hasAvatar: !!c.avatar_url,
+    hasBio: !!(c.bio && (c.bio as string).trim()),
+    hasHeadline: !!(c.headline && (c.headline as string).trim()),
+    hasLocation: !!(c.location && (c.location as string).trim()),
+    hasCategory: !!(c.category && (c.category as string).trim()),
+    hasCover: !!c.cover_url,
+    totalFollowers: Number(c.total_followers) || 0,
+    platformCount: Number(c.platform_count) || 0,
+    profileViews: Number(c.profile_views) || 0,
+    totalLinkClicks: Number(c.total_link_clicks) || 0,
+    rating: Number(c.rating) || 0,
+    reviewCount: Number(c.review_count) || 0,
+    totalProjects: Number(c.total_projects) || 0,
+    activeServiceCount: Number(c.active_service_count) || 0,
+    portfolioCount: Number(c.portfolio_count) || 0,
+    isVerified: c.verification_status === "verified" || c.is_verified === true,
+    isPro: ((c.subscription_tier as string) || "free") !== "free",
+  });
+
+  await sql`
+    UPDATE users
+    SET creator_score = ${score.total},
+        score_breakdown = ${JSON.stringify(score)}::jsonb,
+        score_updated_at = NOW()
+    WHERE id = ${userId}
+  `;
+}
+
 export function calculateOnboardingPreview(steps: {
   hasAvatar: boolean;
   hasSocials: boolean;

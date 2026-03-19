@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { getDb } from "@/lib/db";
+import { calculateAndSaveScore } from "@/lib/creator-score";
 
 async function getUser() {
   const token = cookies().get("session_token")?.value;
@@ -36,6 +37,11 @@ export async function POST(request: Request) {
     VALUES (${user.id}, ${platform.toLowerCase()}, ${handle}, ${url || null}, 0)
     RETURNING id
   `;
+
+  // Fire-and-forget score recalculation
+  calculateAndSaveScore(user.id).catch((err) =>
+    console.error("[API /profile/socials POST] Score recalc failed:", err)
+  );
 
   return NextResponse.json({ id: result[0].id }, { status: 201 });
 }
