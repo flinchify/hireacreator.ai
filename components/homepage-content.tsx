@@ -203,22 +203,20 @@ export function HomepageContent({
         </div>
 
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="lg:grid lg:grid-cols-2 lg:gap-12 lg:items-center">
-            {/* Left — Text */}
-            <div className="text-center lg:text-left">
+          <div className="text-center">
               <h1
                 className="font-display text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tighter text-neutral-900 leading-[1.05]"
               >
                 The creator marketplace<br className="hidden sm:block" /> where you keep 100%
               </h1>
 
-              <p className="mt-6 text-lg sm:text-xl text-neutral-500 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+              <p className="mt-6 text-lg sm:text-xl text-neutral-500 max-w-2xl mx-auto leading-relaxed">
                 Stop undercharging on Fiverr. Stop getting ghosted on DMs.
                 Book creators directly, get a link-in-bio that converts,
                 and keep every dollar you earn — 0% commission, always.
               </p>
 
-              <div className="mt-10 flex flex-col sm:flex-row items-center lg:justify-start justify-center gap-4">
+              <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
                 <button
                   onClick={() => openSignup("creator")}
                   className="px-8 py-3.5 text-base font-medium text-white bg-neutral-900 rounded-full hover:bg-neutral-800 transition-colors duration-300 shadow-lg shadow-neutral-900/20 w-full sm:w-auto"
@@ -235,10 +233,6 @@ export function HomepageContent({
               <p className="mt-6 text-sm text-neutral-400">
                 0% commission on bookings. Creators keep 100% of earnings.
               </p>
-            </div>
-
-            {/* Right — 3D Flow Graph (desktop only) */}
-            <HeroFlow3D />
           </div>
 
           {/* Hero screenshot in browser chrome */}
@@ -263,6 +257,25 @@ export function HomepageContent({
                 loading="eager"
               />
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════ 3D FLOW GRAPH ═══════════════════ */}
+      <section className="relative hidden lg:block py-16 overflow-hidden">
+        {/* Radial glow behind the 3D scene */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none" aria-hidden="true">
+          <div className="w-[700px] h-[400px] rounded-full blur-[60px]" style={{ background: "radial-gradient(ellipse, rgba(196,181,253,0.3), rgba(191,219,254,0.2) 50%, transparent 80%)" }} />
+        </div>
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-8">
+            <p className="text-sm font-semibold tracking-widest text-neutral-400 uppercase">How it works</p>
+            <h2 className="mt-2 font-display text-2xl sm:text-3xl font-bold text-neutral-900">
+              From signup to delivery — in one seamless flow
+            </h2>
+          </div>
+          <div className="mx-auto max-w-5xl h-[500px] rounded-2xl overflow-hidden">
+            <HeroFlow3D />
           </div>
         </div>
       </section>

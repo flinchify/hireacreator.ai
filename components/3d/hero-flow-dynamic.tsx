@@ -9,7 +9,7 @@ const HeroFlow = dynamic(
 
 export function HeroFlow3D() {
   return (
-    <div className="hidden lg:block w-full h-[480px] xl:h-[540px]">
+    <div className="w-full h-full">
       <HeroFlow />
     </div>
   );
