@@ -119,42 +119,6 @@ function CrownIcon() {
   );
 }
 
-/* ──────────────────────── Count-up Hook ──────────────────────── */
-
-function useCountUp(end: number, duration: number = 1500) {
-  const [count, setCount] = useState(0);
-  const ref = useRef<HTMLSpanElement>(null);
-  const started = useRef(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !started.current) {
-          started.current = true;
-          const startTime = performance.now();
-          const animate = (now: number) => {
-            const elapsed = now - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            const eased = 1 - Math.pow(1 - progress, 3);
-            setCount(Math.round(eased * end));
-            if (progress < 1) requestAnimationFrame(animate);
-          };
-          requestAnimationFrame(animate);
-          observer.unobserve(el);
-        }
-      },
-      { threshold: 0.5 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [end, duration]);
-
-  return { count, ref };
-}
-
 /* ──────────────────────── FAQ Search + Accordion ──────────────────────── */
 
 const faqItems = [
@@ -185,9 +149,7 @@ export function HomepageContent({
 }) {
   const { openSignup } = useAuth();
   const [faqSearch, setFaqSearch] = useState("");
-
-  const creators = useCountUp(creatorCount, 1200);
-  const templates = useCountUp(18, 1400);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   const filteredFaqs = faqSearch
     ? faqItems.filter(
@@ -204,12 +166,12 @@ export function HomepageContent({
 
       {/* ═══════════════════ HERO ═══════════════════ */}
       <section className="relative pt-40 sm:pt-52 pb-20 sm:pb-28 overflow-hidden">
-        {/* Aurora mesh background */}
+        {/* Aurora mesh background — blue tones only */}
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-b from-blue-50/80 via-violet-50/40 to-white" />
+          <div className="absolute inset-0 bg-gradient-to-b from-blue-50/80 via-sky-50/40 to-white" />
           <div className="absolute top-0 left-1/4 w-[600px] h-[600px] rounded-full bg-blue-200/30 blur-[120px] animate-aurora" />
-          <div className="absolute top-20 right-1/4 w-[500px] h-[500px] rounded-full bg-violet-200/25 blur-[100px] animate-aurora-2" />
-          <div className="absolute -bottom-20 left-1/2 w-[700px] h-[400px] rounded-full bg-indigo-100/20 blur-[120px] animate-aurora-3" />
+          <div className="absolute top-20 right-1/4 w-[500px] h-[500px] rounded-full bg-sky-200/25 blur-[100px] animate-aurora-2" />
+          <div className="absolute -bottom-20 left-1/2 w-[700px] h-[400px] rounded-full bg-blue-100/20 blur-[120px] animate-aurora-3" />
           {/* Dot grid overlay */}
           <div className="absolute inset-0 dot-grid opacity-40" />
         </div>
@@ -240,7 +202,10 @@ export function HomepageContent({
         </div>
 
         <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="font-display text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight text-neutral-900 leading-[1.1]">
+          <h1
+            className="text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight text-neutral-900 leading-[1.1]"
+            style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+          >
             The creator marketplace<br className="hidden sm:block" /> where you keep 100%
           </h1>
 
@@ -250,38 +215,15 @@ export function HomepageContent({
             and keep every dollar you earn — 0% commission, always.
           </p>
 
-          {/* Animated stats */}
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-6 sm:gap-10">
-            <div className="text-center">
-              <span ref={creators.ref} className="font-display text-2xl sm:text-3xl font-bold text-neutral-900 count-up">{creators.count}</span>
-              <div className="text-xs sm:text-sm text-neutral-400 mt-0.5">Creators</div>
-            </div>
-            <div className="w-px h-8 bg-neutral-200 hidden sm:block" />
-            <div className="text-center">
-              <span className="font-display text-2xl sm:text-3xl font-bold text-emerald-600">0%</span>
-              <div className="text-xs sm:text-sm text-neutral-400 mt-0.5">Commission</div>
-            </div>
-            <div className="w-px h-8 bg-neutral-200 hidden sm:block" />
-            <div className="text-center">
-              <span ref={templates.ref} className="font-display text-2xl sm:text-3xl font-bold text-neutral-900 count-up">{templates.count}</span>
-              <div className="text-xs sm:text-sm text-neutral-400 mt-0.5">Templates</div>
-            </div>
-            <div className="w-px h-8 bg-neutral-200 hidden sm:block" />
-            <div className="text-center">
-              <span className="font-display text-2xl sm:text-3xl font-bold bg-gradient-to-r from-violet-600 to-blue-600 bg-clip-text text-transparent">API</span>
-              <div className="text-xs sm:text-sm text-neutral-400 mt-0.5">Ready</div>
-            </div>
-          </div>
-
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
             <button
               onClick={() => openSignup("creator")}
-              className="px-8 py-3.5 text-base font-medium text-white bg-neutral-900 rounded-full hover:bg-neutral-800 transition-colors shadow-lg shadow-neutral-900/20 w-full sm:w-auto"
+              className="px-8 py-3.5 text-base font-medium text-white bg-neutral-900 rounded-full hover:bg-neutral-800 transition-colors duration-300 shadow-lg shadow-neutral-900/20 w-full sm:w-auto"
             >
               Get Started — it's free
             </button>
             <Link href="/browse">
-              <button className="px-8 py-3.5 text-base font-medium text-neutral-700 bg-white/80 backdrop-blur rounded-full border border-neutral-200 hover:border-neutral-300 hover:bg-white transition-all w-full sm:w-auto">
+              <button className="px-8 py-3.5 text-base font-medium text-neutral-700 bg-white/80 backdrop-blur rounded-full border border-neutral-200 hover:border-neutral-300 hover:bg-white transition-all duration-300 w-full sm:w-auto">
                 Browse Creators
               </button>
             </Link>
@@ -317,6 +259,19 @@ export function HomepageContent({
         </div>
       </section>
 
+      {/* ═══════════════════ PLATFORM TRUST TICKER ═══════════════════ */}
+      <AnimateOnScroll as="section" className="bg-gradient-to-b from-blue-50/40 via-sky-50/30 to-white border-y border-neutral-100">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-16">
+          <div className="text-center mb-8">
+            <h2 className="font-display text-2xl sm:text-3xl font-bold text-neutral-900 mb-3">
+              Trusted by creators and brands worldwide
+            </h2>
+            <p className="text-neutral-500">The platforms your audience lives on, connected to your storefront.</p>
+          </div>
+          <PlatformTicker />
+        </div>
+      </AnimateOnScroll>
+
       {/* ═══════════════════ WHAT YOU GET ═══════════════════ */}
       <section className="bg-neutral-50/50 border-y border-neutral-100">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
@@ -328,26 +283,17 @@ export function HomepageContent({
           </AnimateOnScroll>
 
           <StaggerChildren className="grid md:grid-cols-3 gap-6" staggerMs={150}>
-            {/* Card 1 — Profile */}
+            {/* Card 1 — Profile with real screenshots */}
             <div className="aos-stagger-item group bg-white rounded-2xl border border-neutral-200 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
               <div className="relative p-6 pb-4 bg-gradient-to-br from-rose-50/80 to-orange-50/60">
                 <div className="text-rose-500"><ProfileStarIcon /></div>
-                {/* Mini mock profile card */}
-                <div className="mt-4 bg-white rounded-xl p-3 border border-neutral-100 shadow-sm">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-rose-400 to-orange-300 flex items-center justify-center text-white text-xs font-bold">SR</div>
-                    <div>
-                      <div className="text-xs font-semibold text-neutral-900">Sarah Rivera</div>
-                      <div className="flex items-center gap-1">
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
-                        <span className="text-[10px] text-neutral-400">4.9</span>
-                      </div>
-                    </div>
+                {/* Real link-in-bio screenshots — phone frames */}
+                <div className="mt-4 flex items-center justify-center gap-[-8px]">
+                  <div className="relative z-10 w-[45%] rounded-xl overflow-hidden border-2 border-white shadow-lg" style={{ transform: "rotate(-3deg)" }}>
+                    <img src="/screenshots/linkinbio-finn.png" alt="Finn Dougherty link-in-bio" className="w-full h-auto" loading="lazy" />
                   </div>
-                  <div className="mt-2 flex gap-1.5">
-                    <span className="text-[9px] px-1.5 py-0.5 bg-rose-50 text-rose-600 rounded-full font-medium">UGC</span>
-                    <span className="text-[9px] px-1.5 py-0.5 bg-orange-50 text-orange-600 rounded-full font-medium">Photo</span>
-                    <span className="text-[9px] px-1.5 py-0.5 bg-neutral-100 text-neutral-500 rounded-full font-medium">Video</span>
+                  <div className="relative z-0 w-[45%] rounded-xl overflow-hidden border-2 border-white shadow-lg -ml-3" style={{ transform: "rotate(2deg)" }}>
+                    <img src="/screenshots/linkinbio-umove.png" alt="U Move Australia link-in-bio" className="w-full h-auto" loading="lazy" />
                   </div>
                 </div>
               </div>
@@ -409,31 +355,31 @@ export function HomepageContent({
         </div>
       </section>
 
-      {/* ═══════════════════ PLATFORM PREVIEW ═══════════════════ */}
+      {/* ═══════════════════ PLATFORM PREVIEW — Real Screenshots ═══════════════════ */}
       <AnimateOnScroll as="section" id="for-creators" className="bg-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-            {/* Browser chrome with real screenshot */}
+            {/* Two real link-in-bio screenshots in phone frames */}
             <div className="order-2 lg:order-1">
-              <div className="browser-chrome rounded-2xl overflow-hidden border border-neutral-200/80 bg-white shadow-2xl shadow-neutral-200/50 max-w-md mx-auto" style={{ transform: "rotate(-1deg)" }}>
-                <div className="flex items-center gap-2 px-4 py-2.5 bg-neutral-100/80 border-b border-neutral-200/60">
-                  <div className="flex gap-1.5">
-                    <div className="w-2.5 h-2.5 rounded-full bg-red-400/70" />
-                    <div className="w-2.5 h-2.5 rounded-full bg-amber-400/70" />
-                    <div className="w-2.5 h-2.5 rounded-full bg-green-400/70" />
-                  </div>
-                  <div className="flex-1 mx-3">
-                    <div className="bg-white rounded-md px-3 py-1 text-[10px] text-neutral-400 text-center border border-neutral-200/60">
-                      hireacreator.ai/sarahrivera
-                    </div>
-                  </div>
+              <div className="relative flex items-center justify-center max-w-lg mx-auto">
+                {/* Phone frame 1 — Finn */}
+                <div className="relative z-10 w-[55%] rounded-[20px] overflow-hidden border-2 border-white shadow-2xl shadow-neutral-300/40" style={{ transform: "rotate(-4deg)" }}>
+                  <img
+                    src="/screenshots/linkinbio-finn.png"
+                    alt="Finn Dougherty's link-in-bio page on HireACreator"
+                    className="w-full h-auto"
+                    loading="lazy"
+                  />
                 </div>
-                <img
-                  src="/screenshots/profile.png"
-                  alt="Creator profile page — portfolio, services, and booking"
-                  className="w-full h-auto"
-                  loading="lazy"
-                />
+                {/* Phone frame 2 — U Move */}
+                <div className="relative z-20 w-[55%] rounded-[20px] overflow-hidden border-2 border-white shadow-2xl shadow-neutral-300/40 -ml-10" style={{ transform: "rotate(3deg)" }}>
+                  <img
+                    src="/screenshots/linkinbio-umove.png"
+                    alt="U Move Australia's link-in-bio page on HireACreator"
+                    className="w-full h-auto"
+                    loading="lazy"
+                  />
+                </div>
               </div>
             </div>
 
@@ -469,7 +415,7 @@ export function HomepageContent({
               <div className="mt-8">
                 <button
                   onClick={() => openSignup("creator")}
-                  className="px-8 py-3.5 text-base font-medium text-white bg-neutral-900 rounded-full hover:bg-neutral-800 transition-colors"
+                  className="px-8 py-3.5 text-base font-medium text-white bg-neutral-900 rounded-full hover:bg-neutral-800 transition-colors duration-300"
                 >
                   Create Your Profile
                 </button>
@@ -494,7 +440,7 @@ export function HomepageContent({
               </div>
               <Link
                 href="/browse"
-                className="hidden sm:inline-flex items-center gap-1 text-sm font-medium text-neutral-900 hover:text-neutral-600 transition-colors"
+                className="hidden sm:inline-flex items-center gap-1 text-sm font-medium text-neutral-900 hover:text-neutral-600 transition-colors duration-300"
               >
                 View all <ArrowRightIcon />
               </Link>
@@ -532,7 +478,7 @@ export function HomepageContent({
             <div className="aos-stagger-item group relative bg-gradient-to-br from-blue-50 to-white rounded-2xl p-7 border border-blue-100/80 hover:border-blue-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-blue-100/30 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
               <div className="relative">
-                <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center mb-5 text-blue-700 group-hover:scale-110 transition-transform">
+                <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center mb-5 text-blue-700 group-hover:scale-110 transition-transform duration-300">
                   <SearchCreatorsIcon />
                 </div>
                 <div className="text-lg font-display font-bold text-neutral-900 mb-2">Search</div>
@@ -547,7 +493,7 @@ export function HomepageContent({
             <div className="aos-stagger-item group relative bg-gradient-to-br from-amber-50 to-white rounded-2xl p-7 border border-amber-100/80 hover:border-amber-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-amber-100/30 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
               <div className="relative">
-                <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center mb-5 text-amber-700 group-hover:scale-110 transition-transform">
+                <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center mb-5 text-amber-700 group-hover:scale-110 transition-transform duration-300">
                   <CalendarBookIcon />
                 </div>
                 <div className="text-lg font-display font-bold text-neutral-900 mb-2">Book</div>
@@ -562,7 +508,7 @@ export function HomepageContent({
             <div className="aos-stagger-item group relative bg-gradient-to-br from-emerald-50 to-white rounded-2xl p-7 border border-emerald-100/80 hover:border-emerald-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-100/30 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
               <div className="relative">
-                <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center mb-5 text-emerald-700 group-hover:scale-110 transition-transform">
+                <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center mb-5 text-emerald-700 group-hover:scale-110 transition-transform duration-300">
                   <DeliverableSparkleIcon />
                 </div>
                 <div className="text-lg font-display font-bold text-neutral-900 mb-2">Ship</div>
@@ -576,53 +522,11 @@ export function HomepageContent({
 
           <div className="mt-10 text-center">
             <Link href="/browse">
-              <button className="px-8 py-3.5 text-base font-medium text-white bg-neutral-900 rounded-full hover:bg-neutral-800 transition-colors shadow-lg shadow-neutral-900/10">
+              <button className="px-8 py-3.5 text-base font-medium text-white bg-neutral-900 rounded-full hover:bg-neutral-800 transition-colors duration-300 shadow-lg shadow-neutral-900/10">
                 Find a Creator
               </button>
             </Link>
           </div>
-        </div>
-      </AnimateOnScroll>
-
-      {/* ═══════════════════ SOCIAL PROOF / TRUST BAR ═══════════════════ */}
-      <AnimateOnScroll as="section" className="bg-gradient-to-b from-blue-50/40 via-violet-50/30 to-white border-y border-neutral-100">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24">
-          <div className="text-center mb-12">
-            <h2 className="font-display text-2xl sm:text-3xl font-bold text-neutral-900 mb-3">
-              Trusted by creators and brands worldwide
-            </h2>
-            <p className="text-neutral-500">The platforms your audience lives on, connected to your storefront.</p>
-          </div>
-
-          {/* Platform logo ticker */}
-          <div className="mb-16">
-            <PlatformTicker />
-          </div>
-
-          {/* Trust metrics */}
-          <StaggerChildren className="grid sm:grid-cols-3 gap-8 max-w-3xl mx-auto" staggerMs={120}>
-            <div className="aos-stagger-item text-center">
-              <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 mb-4">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" /></svg>
-              </div>
-              <div className="font-display text-3xl sm:text-4xl font-bold text-neutral-900 mb-1">0%</div>
-              <div className="text-sm text-neutral-500">Creators keep everything</div>
-            </div>
-            <div className="aos-stagger-item text-center">
-              <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-violet-100 text-violet-600 mb-4">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
-              </div>
-              <div className="font-display text-3xl sm:text-4xl font-bold text-neutral-900 mb-1">Stripe</div>
-              <div className="text-sm text-neutral-500">Bank-grade security</div>
-            </div>
-            <div className="aos-stagger-item text-center">
-              <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 mb-4">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="3" width="18" height="18" rx="4" /><path d="M3 9h18M9 21V9" /></svg>
-              </div>
-              <div className="font-display text-3xl sm:text-4xl font-bold text-neutral-900 mb-1">18</div>
-              <div className="text-sm text-neutral-500">Customizable link-in-bio</div>
-            </div>
-          </StaggerChildren>
         </div>
       </AnimateOnScroll>
 
@@ -673,10 +577,10 @@ export function HomepageContent({
             {/* Code preview with animated gradient border */}
             <div className="relative">
               {/* Floating badges */}
-              <div className="absolute -top-3 -left-2 z-10 px-3 py-1 rounded-full bg-violet-500/20 text-violet-300 text-xs font-medium border border-violet-500/30 backdrop-blur-sm animate-badge-float">
+              <div className="absolute -top-3 -left-2 z-10 px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 text-xs font-medium border border-blue-500/30 backdrop-blur-sm animate-badge-float">
                 MCP Compatible
               </div>
-              <div className="absolute -top-2 right-8 z-10 px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 text-xs font-medium border border-blue-500/30 backdrop-blur-sm animate-badge-float-alt">
+              <div className="absolute -top-2 right-8 z-10 px-3 py-1 rounded-full bg-sky-500/20 text-sky-300 text-xs font-medium border border-sky-500/30 backdrop-blur-sm animate-badge-float-alt">
                 REST API
               </div>
               <div className="absolute -bottom-3 left-4 z-10 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-medium border border-emerald-500/30 backdrop-blur-sm animate-badge-float">
@@ -687,7 +591,7 @@ export function HomepageContent({
               </div>
 
               {/* Animated gradient glow behind code block */}
-              <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-violet-600/40 via-blue-600/40 to-emerald-600/40 blur-sm opacity-60 animate-pulse-soft" />
+              <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-blue-600/40 via-sky-600/40 to-emerald-600/40 blur-sm opacity-60 animate-pulse-soft" />
 
               <div className="relative bg-neutral-950 rounded-3xl border border-neutral-700/50 overflow-hidden">
                 <div className="flex items-center gap-2 px-5 py-3.5 border-b border-neutral-800/50">
@@ -760,7 +664,7 @@ export function HomepageContent({
               </ul>
               <button
                 onClick={() => openSignup("creator")}
-                className="w-full py-2.5 text-sm font-medium rounded-full border border-neutral-300 text-neutral-700 hover:bg-neutral-50 transition-colors"
+                className="w-full py-2.5 text-sm font-medium rounded-full border border-neutral-300 text-neutral-700 hover:bg-neutral-50 transition-colors duration-300"
               >
                 Get Started Free
               </button>
@@ -768,10 +672,10 @@ export function HomepageContent({
 
             {/* Popular — animated gradient border */}
             <div className="aos-stagger-item pricing-popular rounded-2xl p-8 relative hover:shadow-xl transition-all duration-300 z-0">
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-violet-600 to-blue-600 text-white text-xs font-medium rounded-full shadow-lg shadow-violet-500/20">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-blue-600 to-sky-500 text-white text-xs font-medium rounded-full shadow-lg shadow-blue-500/20">
                 Popular
               </div>
-              <div className="text-sm font-medium text-violet-600 uppercase tracking-wider mb-2">Creator Pro</div>
+              <div className="text-sm font-medium text-blue-600 uppercase tracking-wider mb-2">Creator Pro</div>
               <div className="flex items-baseline gap-1 mb-4">
                 <span className="font-display text-3xl font-bold text-neutral-900">$19</span>
                 <span className="text-sm text-neutral-400">/mo</span>
@@ -785,13 +689,13 @@ export function HomepageContent({
                   { text: "All 11 premium animations", icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg> },
                 ].map((f) => (
                   <li key={f.text} className="flex items-start gap-2.5 text-sm text-neutral-600">
-                    <span className="mt-0.5 text-violet-500 shrink-0">{f.icon}</span>
+                    <span className="mt-0.5 text-blue-500 shrink-0">{f.icon}</span>
                     {f.text}
                   </li>
                 ))}
               </ul>
               <Link href="/pricing">
-                <button className="w-full py-2.5 text-sm font-medium rounded-full bg-gradient-to-r from-violet-600 to-blue-600 text-white hover:from-violet-700 hover:to-blue-700 transition-all shadow-lg shadow-violet-500/20">
+                <button className="w-full py-2.5 text-sm font-medium rounded-full bg-gradient-to-r from-blue-600 to-sky-500 text-white hover:from-blue-700 hover:to-sky-600 transition-all duration-300 shadow-lg shadow-blue-500/20">
                   See Pro Features
                 </button>
               </Link>
@@ -819,7 +723,7 @@ export function HomepageContent({
                 ))}
               </ul>
               <Link href="/pricing">
-                <button className="w-full py-2.5 text-sm font-medium rounded-full border border-neutral-300 text-neutral-700 hover:bg-neutral-50 transition-colors">
+                <button className="w-full py-2.5 text-sm font-medium rounded-full border border-neutral-300 text-neutral-700 hover:bg-neutral-50 transition-colors duration-300">
                   See Business Features
                 </button>
               </Link>
@@ -830,7 +734,7 @@ export function HomepageContent({
             <p className="text-sm text-neutral-400 mb-4">
               Also available: Brand plans from $199/mo and API access at $49/mo
             </p>
-            <Link href="/pricing" className="inline-flex items-center gap-1 text-sm font-medium text-neutral-900 hover:text-neutral-600 transition-colors">
+            <Link href="/pricing" className="inline-flex items-center gap-1 text-sm font-medium text-neutral-900 hover:text-neutral-600 transition-colors duration-300">
               View all plans and compare features <ArrowRightIcon />
             </Link>
           </div>
@@ -854,10 +758,10 @@ export function HomepageContent({
               <thead>
                 <tr className="border-b border-neutral-200">
                   <th className="p-4 pr-4 text-sm font-medium text-neutral-400 w-1/4" />
-                  <th className="p-4 px-4 text-center">
+                  <th className="p-4 px-4 text-center bg-blue-50/60">
                     <div className="inline-flex items-center gap-1.5">
                       <span className="text-amber-500"><CrownIcon /></span>
-                      <span className="font-display font-bold bg-gradient-to-r from-violet-600 to-blue-600 bg-clip-text text-transparent">HireACreator</span>
+                      <span className="font-display font-bold bg-gradient-to-r from-blue-600 to-sky-500 bg-clip-text text-transparent">HireACreator</span>
                     </div>
                   </th>
                   <th className="p-4 px-4 text-center">
@@ -881,11 +785,11 @@ export function HomepageContent({
                   { feature: "Custom domain", us: true, linktree: true, fiverr: false },
                   { feature: "You set your own rates", us: true, linktree: false, fiverr: false },
                 ].map((row, i) => (
-                  <tr key={i} className="border-b border-neutral-100 comparison-row transition-colors">
+                  <tr key={i} className="border-b border-neutral-100 comparison-row transition-colors duration-300">
                     <td className="py-3.5 px-4 text-neutral-700 font-medium">{row.feature}</td>
-                    <td className="py-3.5 px-4 text-center">
+                    <td className="py-3.5 px-4 text-center bg-blue-50/40">
                       {row.us ? (
-                        <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-gradient-to-br from-violet-600 to-blue-600 text-white shadow-sm">
+                        <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-gradient-to-br from-blue-600 to-sky-500 text-white shadow-sm">
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
                         </span>
                       ) : (
@@ -938,22 +842,44 @@ export function HomepageContent({
               placeholder="Search questions..."
               value={faqSearch}
               onChange={(e) => setFaqSearch(e.target.value)}
-              className="w-full pl-11 pr-4 py-3 text-sm rounded-xl border border-neutral-200 bg-neutral-50 focus:bg-white focus:border-neutral-300 focus:ring-2 focus:ring-neutral-900/5 outline-none transition-all placeholder:text-neutral-400"
+              className="w-full pl-11 pr-4 py-3 text-sm rounded-xl border border-neutral-200 bg-neutral-50 focus:bg-white focus:border-neutral-300 focus:ring-2 focus:ring-neutral-900/5 outline-none transition-all duration-300 placeholder:text-neutral-400"
             />
           </div>
 
           <div className="space-y-3">
             {filteredFaqs.map((item, i) => (
-              <details key={i} className="group p-5 rounded-xl bg-neutral-50 border border-neutral-200 hover:border-neutral-300 transition-colors">
-                <summary className="text-sm font-semibold text-neutral-900 cursor-pointer list-none flex items-center gap-3">
+              <div
+                key={i}
+                className="rounded-xl bg-neutral-50 border border-neutral-200 hover:border-neutral-300 transition-colors duration-300 overflow-hidden"
+              >
+                <button
+                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                  className="w-full p-5 text-left flex items-center gap-3"
+                >
                   <span className="text-neutral-400 shrink-0">{faqCatIcons[item.cat]}</span>
-                  <span className="flex-1">{item.q}</span>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="shrink-0 ml-2 text-neutral-400 group-open:rotate-180 transition-transform"><polyline points="6 9 12 15 18 9" /></svg>
-                </summary>
-                <div className="faq-content">
-                  <p className="mt-3 ml-7 text-sm text-neutral-500 leading-relaxed">{item.a}</p>
+                  <span className="flex-1 text-sm font-semibold text-neutral-900">{item.q}</span>
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    className={`shrink-0 ml-2 text-neutral-400 transition-transform duration-300 ${openFaq === i ? "rotate-180" : ""}`}
+                  >
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </button>
+                <div
+                  className="transition-all duration-300 ease-in-out overflow-hidden"
+                  style={{
+                    maxHeight: openFaq === i ? "200px" : "0px",
+                    opacity: openFaq === i ? 1 : 0,
+                  }}
+                >
+                  <p className="px-5 pb-5 ml-7 text-sm text-neutral-500 leading-relaxed">{item.a}</p>
                 </div>
-              </details>
+              </div>
             ))}
           </div>
         </div>
@@ -974,7 +900,7 @@ export function HomepageContent({
       })}} />
 
       {/* ═══════════════════ FINAL CTA ═══════════════════ */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-neutral-950 via-blue-950 to-violet-950">
+      <section className="relative overflow-hidden bg-gradient-to-br from-neutral-950 via-blue-950 to-blue-900">
         {/* Floating particles */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
           <div className="absolute w-1 h-1 rounded-full bg-white/20 left-[10%] animate-particle-1" />
@@ -982,9 +908,9 @@ export function HomepageContent({
           <div className="absolute w-1 h-1 rounded-full bg-white/20 left-[55%] animate-particle-3" />
           <div className="absolute w-0.5 h-0.5 rounded-full bg-white/25 left-[75%] animate-particle-1" style={{ animationDelay: "6s" }} />
           <div className="absolute w-1 h-1 rounded-full bg-white/15 left-[90%] animate-particle-2" style={{ animationDelay: "2s" }} />
-          {/* Gradient orbs */}
+          {/* Gradient orbs — blue only */}
           <div className="absolute top-1/2 left-1/4 w-[400px] h-[400px] rounded-full bg-blue-500/10 blur-[100px]" />
-          <div className="absolute top-1/2 right-1/4 w-[300px] h-[300px] rounded-full bg-violet-500/10 blur-[80px]" />
+          <div className="absolute top-1/2 right-1/4 w-[300px] h-[300px] rounded-full bg-sky-500/10 blur-[80px]" />
         </div>
 
         <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-28 sm:py-36 text-center">
@@ -1001,12 +927,12 @@ export function HomepageContent({
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <button
               onClick={() => openSignup("creator")}
-              className="px-10 py-4 text-base font-medium text-neutral-900 bg-white rounded-full hover:bg-neutral-100 transition-colors shadow-xl shadow-white/10 w-full sm:w-auto"
+              className="px-10 py-4 text-base font-medium text-neutral-900 bg-white rounded-full hover:bg-neutral-100 transition-colors duration-300 shadow-xl shadow-white/10 w-full sm:w-auto"
             >
               Get Started — it's free
             </button>
             <Link href="/browse">
-              <button className="px-10 py-4 text-base font-medium text-white bg-white/10 backdrop-blur rounded-full border border-white/20 hover:bg-white/20 transition-all w-full sm:w-auto">
+              <button className="px-10 py-4 text-base font-medium text-white bg-white/10 backdrop-blur rounded-full border border-white/20 hover:bg-white/20 transition-all duration-300 w-full sm:w-auto">
                 Browse Creators
               </button>
             </Link>
