@@ -137,6 +137,8 @@ export type Creator = {
   calendarEnabled: boolean;
   profileViews: number;
   nicheRank: number;
+  creatorScore: number;
+  scoreBreakdown: { profile?: number; reach?: number; engagement?: number; reputation?: number; experience?: number; trust?: number; total?: number };
   bioLinks: { id: string; title: string; url: string; thumbnailUrl: string | null; isVisible: boolean; isPinned: boolean; clickCount: number }[];
   socials: Social[];
   services: Service[];

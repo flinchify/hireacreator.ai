@@ -3,6 +3,10 @@
     {
       "path": "/api/cron/refresh-followers",
       "schedule": "0 0 * * *"
+    },
+    {
+      "path": "/api/cron/recalculate-scores",
+      "schedule": "0 1 * * *"
     }
   ]
 }

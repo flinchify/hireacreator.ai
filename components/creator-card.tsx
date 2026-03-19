@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Badge } from "./ui/badge";
 import { PlatformIcon } from "./icons/platforms";
 import { StarButton } from "./star-button";
+import { CreatorScoreBadge } from "./creator-score-badge";
 import type { Creator } from "@/lib/types";
 
 function RatingStarIcon() {
@@ -78,6 +79,9 @@ export function CreatorCard({
                 </p>
               )}
             </div>
+            {creator.creatorScore > 0 && (
+              <CreatorScoreBadge score={creator.creatorScore} size="sm" />
+            )}
           </div>
 
           {/* Profile link */}

@@ -59,6 +59,8 @@ function assembleCreator(
     calendarEnabled: (user.calendar_enabled as boolean) || false,
     profileViews: (user.profile_views as number) || 0,
     nicheRank: (user.niche_rank as number) || 0,
+    creatorScore: (user.creator_score as number) || 0,
+    scoreBreakdown: (() => { try { const v = user.score_breakdown; return typeof v === "string" ? JSON.parse(v) : (v || {}); } catch { return {}; } })(),
     bioLinks: bioLinks.map((l) => ({
       id: l.id as string,
       title: l.title as string,

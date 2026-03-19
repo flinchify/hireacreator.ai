@@ -1,11 +1,13 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { useAuth } from "./auth-context";
 import { PlatformIcon } from "./icons/platforms";
 import { useRouter } from "next/navigation";
+import { CATEGORIES } from "@/lib/types";
+import { calculateOnboardingPreview, getScoreTier } from "@/lib/creator-score";
 
-type Step = "profile" | "socials" | "about" | "design" | "animation" | "done";
+type Step = "profile" | "socials" | "about" | "category" | "design" | "animation" | "done";
 
 const PLATFORMS = [
   "instagram", "tiktok", "youtube", "twitter", "linkedin",
@@ -75,6 +77,9 @@ export function OnboardingFlow() {
   const [bio, setBio] = useState("");
   const [location, setLocation] = useState("");
 
+  // Category
+  const [category, setCategory] = useState("");
+
   // Design
   const [template, setTemplate] = useState("minimal");
 
@@ -91,9 +96,22 @@ export function OnboardingFlow() {
     { id: "profile", label: "Profile", num: 1 },
     { id: "socials", label: "Socials", num: 2 },
     { id: "about", label: "About", num: 3 },
-    { id: "design", label: "Design", num: 4 },
-    { id: "animation", label: "Animation", num: 5 },
+    { id: "category", label: "Category", num: 4 },
+    { id: "design", label: "Design", num: 5 },
+    { id: "animation", label: "Animation", num: 6 },
   ];
+
+  // Creator Score preview — recalculates live as user fills out steps
+  const scorePreview = useMemo(() => calculateOnboardingPreview({
+    hasAvatar: !!avatarUrl,
+    hasSocials: socials.length > 0 && socials.some(s => !!s.url),
+    hasHeadline: !!headline.trim(),
+    hasBio: !!bio.trim(),
+    hasLocation: !!location.trim(),
+    hasCategory: !!category,
+  }), [avatarUrl, socials, headline, bio, location, category]);
+
+  const scoreTier = useMemo(() => getScoreTier(scorePreview.current), [scorePreview.current]);
 
   const currentIdx = steps.findIndex(s => s.id === step);
 
@@ -183,6 +201,29 @@ export function OnboardingFlow() {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ headline, bio, location }),
+      });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        setSaveError(d.error === "unauthorized" ? "Session expired. Please refresh and log in again." : (d.message || "Failed to save. Try again."));
+        setSaving(false);
+        return;
+      }
+      setSaving(false);
+      setStep("category");
+    } catch {
+      setSaveError("Network error. Check your connection and try again.");
+      setSaving(false);
+    }
+  }
+
+  async function saveCategory() {
+    setSaving(true);
+    setSaveError("");
+    try {
+      const res = await fetch("/api/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ category }),
       });
       if (!res.ok) {
         const d = await res.json().catch(() => ({}));
@@ -489,7 +530,78 @@ export function OnboardingFlow() {
           </div>
         )}
 
-        {/* ── Step 4: Design ── */}
+        {/* ── Step 4: Category + Score Preview ── */}
+        {step === "category" && (
+          <div className="flex-1 flex flex-col">
+            <h1 className="font-display text-2xl font-bold text-neutral-900 mb-1">What do you do?</h1>
+            <p className="text-sm text-neutral-500 mb-6">Choose a category to be ranked on the leaderboard.</p>
+
+            <div className="grid grid-cols-2 gap-2 mb-6">
+              {CATEGORIES.map(cat => (
+                <button
+                  key={cat}
+                  onClick={() => setCategory(cat)}
+                  className={`p-3 rounded-xl border text-left transition-all text-sm ${
+                    category === cat
+                      ? "border-neutral-900 bg-neutral-50 ring-1 ring-neutral-900 font-semibold text-neutral-900"
+                      : "border-neutral-200 hover:border-neutral-300 text-neutral-600"
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+
+            {/* Creator Score Preview */}
+            <div className="p-4 rounded-2xl bg-neutral-50 border border-neutral-200">
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <h3 className="text-xs font-bold text-neutral-900 uppercase tracking-wider">Creator Score</h3>
+                  <p className="text-[10px] text-neutral-400 mt-0.5">Complete your profile to rank higher</p>
+                </div>
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-neutral-900">{scorePreview.current}</div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: scoreTier.color }}>{scoreTier.label}</span>
+                </div>
+              </div>
+
+              {/* Score bar */}
+              <div className="h-2 bg-neutral-200 rounded-full overflow-hidden mb-3">
+                <div
+                  className="h-full rounded-full transition-all duration-500 ease-out"
+                  style={{ width: `${scorePreview.current}%`, backgroundColor: scoreTier.color }}
+                />
+              </div>
+
+              {/* Tips */}
+              {scorePreview.tips.length > 0 && (
+                <div className="space-y-1">
+                  {scorePreview.tips.slice(0, 3).map((tip, i) => (
+                    <div key={i} className="flex items-center gap-2 text-[11px] text-neutral-500">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-neutral-300 shrink-0"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01" strokeLinecap="round"/></svg>
+                      {tip}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="mt-auto pt-8 flex gap-3">
+              <button onClick={() => setStep("about")} className="px-6 py-3.5 bg-neutral-100 text-neutral-700 font-semibold text-sm rounded-full hover:bg-neutral-200 transition-colors">
+                Back
+              </button>
+              <button
+                onClick={saveCategory}
+                disabled={saving}
+                className="flex-1 py-3.5 bg-neutral-900 text-white font-semibold text-sm rounded-full hover:bg-neutral-800 transition-colors disabled:opacity-40"
+              >
+                {saving ? "Saving..." : category ? "Continue" : "Skip for now"}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ── Step 5: Design ── */}
         {step === "design" && (
           <div className="flex-1 flex flex-col">
             <h1 className="font-display text-2xl font-bold text-neutral-900 mb-1">Choose your style</h1>
@@ -516,7 +628,7 @@ export function OnboardingFlow() {
             </div>
 
             <div className="mt-auto pt-6 flex gap-3">
-              <button onClick={() => setStep("about")} className="px-6 py-3.5 bg-neutral-100 text-neutral-700 font-semibold text-sm rounded-full hover:bg-neutral-200 transition-colors">
+              <button onClick={() => setStep("category")} className="px-6 py-3.5 bg-neutral-100 text-neutral-700 font-semibold text-sm rounded-full hover:bg-neutral-200 transition-colors">
                 Back
               </button>
               <button
@@ -530,7 +642,7 @@ export function OnboardingFlow() {
           </div>
         )}
 
-        {/* ── Step 5: Animation ── */}
+        {/* ── Step 6: Animation ── */}
         {step === "animation" && (
           <div className="flex-1 flex flex-col">
             <h1 className="font-display text-2xl font-bold text-neutral-900 mb-1">Add an intro animation</h1>

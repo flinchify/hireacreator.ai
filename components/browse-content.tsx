@@ -23,7 +23,7 @@ const PLATFORMS = [
   "GitHub",
 ];
 
-type SortOption = "relevance" | "rating" | "price-low" | "price-high" | "newest";
+type SortOption = "relevance" | "score" | "rating" | "price-low" | "price-high" | "newest";
 
 export function BrowseContent({
   creators,
@@ -104,6 +104,8 @@ export function BrowseContent({
       })
       .sort((a, b) => {
         switch (sortBy) {
+          case "score":
+            return (b.creatorScore || 0) - (a.creatorScore || 0);
           case "rating":
             return b.rating - a.rating;
           case "price-low":
@@ -113,7 +115,7 @@ export function BrowseContent({
           case "newest":
             return 0;
           default:
-            return (b.isFeatured ? 1 : 0) - (a.isFeatured ? 1 : 0) || b.rating - a.rating;
+            return (b.isFeatured ? 1 : 0) - (a.isFeatured ? 1 : 0) || (b.creatorScore || 0) - (a.creatorScore || 0) || b.rating - a.rating;
         }
       });
   }, [creators, search, selectedCategory, selectedPlatforms, priceMin, priceMax, location, verifiedOnly, sortBy]);
@@ -271,6 +273,7 @@ export function BrowseContent({
             className="px-4 py-2.5 rounded-full border border-neutral-300 text-sm text-neutral-900 bg-white focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent"
           >
             <option value="relevance">Relevance</option>
+            <option value="score">Creator Score</option>
             <option value="rating">Rating</option>
             <option value="price-low">Price: Low to High</option>
             <option value="price-high">Price: High to Low</option>
