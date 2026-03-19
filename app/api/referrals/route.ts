@@ -7,7 +7,7 @@ async function getUser() {
   if (!token) return null;
   const sql = getDb();
   const rows = await sql`
-    SELECT u.id, u.referral_code, u.referral_earnings_cents FROM users u
+    SELECT u.id, u.slug, u.referral_code, u.referral_earnings_cents FROM users u
     JOIN auth_sessions s ON s.user_id = u.id
     WHERE s.token = ${token} AND s.expires_at > NOW()
   `;
@@ -20,6 +20,22 @@ export async function GET() {
   if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 
   const sql = getDb();
+
+  // Auto-generate referral code if missing
+  if (!user.referral_code) {
+    const slug = (user.slug as string) || "";
+    const prefix = slug.slice(0, 3).toLowerCase();
+    const rand = Math.random().toString(36).slice(2, 6);
+    const code = `${prefix}-${rand}`;
+    try {
+      await sql`UPDATE users SET referral_code = ${code} WHERE id = ${user.id}`;
+      user.referral_code = code;
+    } catch {
+      const fallback = Math.random().toString(36).slice(2, 10);
+      await sql`UPDATE users SET referral_code = ${fallback} WHERE id = ${user.id}`;
+      user.referral_code = fallback;
+    }
+  }
 
   // Get user's credit balance
   const balanceRow = await sql`SELECT credit_balance_cents FROM users WHERE id = ${user.id}`;
@@ -37,6 +53,8 @@ export async function GET() {
     SELECT
       COUNT(*)::int AS total_referrals,
       COUNT(*) FILTER (WHERE r.status = 'active')::int AS active_paying,
+      COUNT(*) FILTER (WHERE r.status = 'signed_up')::int AS pending,
+      COUNT(*) FILTER (WHERE r.reward_granted = TRUE)::int AS rewards_earned,
       COALESCE(SUM(r.total_earned_cents), 0)::int AS total_earned_cents
     FROM referrals r
     WHERE r.referrer_id = ${user.id}
@@ -68,6 +86,8 @@ export async function GET() {
     stats: {
       totalReferrals: stats[0]?.total_referrals || 0,
       activePaying: stats[0]?.active_paying || 0,
+      pending: stats[0]?.pending || 0,
+      rewardsEarned: stats[0]?.rewards_earned || 0,
       totalEarnedCents: stats[0]?.total_earned_cents || 0,
       creditBalanceCents,
       monthlyEstimateCents,

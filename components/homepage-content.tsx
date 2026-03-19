@@ -16,6 +16,7 @@ import {
 } from "@/components/icons/platforms";
 import { PlatformTicker } from "@/components/platform-ticker";
 import type { Creator } from "@/lib/types";
+import { HeroFlow3D } from "@/components/3d/hero-flow-dynamic";
 
 /* ──────────────────────── Utility Icons ──────────────────────── */
 
@@ -201,36 +202,44 @@ export function HomepageContent({
           </div>
         </div>
 
-        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1
-            className="font-display text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tighter text-neutral-900 leading-[1.05]"
-          >
-            The creator marketplace<br className="hidden sm:block" /> where you keep 100%
-          </h1>
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="lg:grid lg:grid-cols-2 lg:gap-12 lg:items-center">
+            {/* Left — Text */}
+            <div className="text-center lg:text-left">
+              <h1
+                className="font-display text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tighter text-neutral-900 leading-[1.05]"
+              >
+                The creator marketplace<br className="hidden sm:block" /> where you keep 100%
+              </h1>
 
-          <p className="mt-6 text-lg sm:text-xl text-neutral-500 max-w-2xl mx-auto leading-relaxed">
-            Stop undercharging on Fiverr. Stop getting ghosted on DMs.
-            Book creators directly, get a link-in-bio that converts,
-            and keep every dollar you earn — 0% commission, always.
-          </p>
+              <p className="mt-6 text-lg sm:text-xl text-neutral-500 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+                Stop undercharging on Fiverr. Stop getting ghosted on DMs.
+                Book creators directly, get a link-in-bio that converts,
+                and keep every dollar you earn — 0% commission, always.
+              </p>
 
-          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button
-              onClick={() => openSignup("creator")}
-              className="px-8 py-3.5 text-base font-medium text-white bg-neutral-900 rounded-full hover:bg-neutral-800 transition-colors duration-300 shadow-lg shadow-neutral-900/20 w-full sm:w-auto"
-            >
-              Get Started — it's free
-            </button>
-            <Link href="/browse">
-              <button className="px-8 py-3.5 text-base font-medium text-neutral-700 bg-white/80 backdrop-blur rounded-full border border-neutral-200 hover:border-neutral-300 hover:bg-white transition-all duration-300 w-full sm:w-auto">
-                Browse Creators
-              </button>
-            </Link>
+              <div className="mt-10 flex flex-col sm:flex-row items-center lg:justify-start justify-center gap-4">
+                <button
+                  onClick={() => openSignup("creator")}
+                  className="px-8 py-3.5 text-base font-medium text-white bg-neutral-900 rounded-full hover:bg-neutral-800 transition-colors duration-300 shadow-lg shadow-neutral-900/20 w-full sm:w-auto"
+                >
+                  Get Started — it's free
+                </button>
+                <Link href="/browse">
+                  <button className="px-8 py-3.5 text-base font-medium text-neutral-700 bg-white/80 backdrop-blur rounded-full border border-neutral-200 hover:border-neutral-300 hover:bg-white transition-all duration-300 w-full sm:w-auto">
+                    Browse Creators
+                  </button>
+                </Link>
+              </div>
+
+              <p className="mt-6 text-sm text-neutral-400">
+                0% commission on bookings. Creators keep 100% of earnings.
+              </p>
+            </div>
+
+            {/* Right — 3D Flow Graph (desktop only) */}
+            <HeroFlow3D />
           </div>
-
-          <p className="mt-6 text-sm text-neutral-400">
-            0% commission on bookings. Creators keep 100% of earnings.
-          </p>
 
           {/* Hero screenshot in browser chrome */}
           <div className="mt-16 mx-auto max-w-4xl screenshot-perspective">

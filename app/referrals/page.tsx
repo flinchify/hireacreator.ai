@@ -21,6 +21,12 @@ export default function ReferralsPage() {
     setTimeout(() => setCopied(false), 2000);
   }
 
+  function shareTwitter() {
+    if (!data?.referralLink) return;
+    const text = encodeURIComponent(`Join me on HireACreator — the platform connecting creators with brands. Sign up with my link: ${data.referralLink}`);
+    window.open(`https://x.com/intent/tweet?text=${text}`, "_blank");
+  }
+
   if (loading) return <div className="min-h-screen bg-neutral-50 flex items-center justify-center"><div className="w-6 h-6 border-2 border-neutral-300 border-t-neutral-900 rounded-full animate-spin" /></div>;
   if (!user) return <div className="min-h-screen bg-neutral-50 flex items-center justify-center"><p className="text-neutral-500">Sign in to access referrals.</p></div>;
 
@@ -41,13 +47,28 @@ export default function ReferralsPage() {
                   <input readOnly value={data.referralLink} className="flex-1 text-sm bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-3 text-neutral-600 truncate" />
                   <button onClick={copy} className={`px-5 py-3 text-sm font-semibold rounded-xl transition-all ${copied ? "bg-emerald-500 text-white" : "bg-neutral-900 text-white hover:bg-neutral-800"}`}>{copied ? "Copied!" : "Copy"}</button>
                 </div>
+                {/* Share buttons */}
+                <div className="flex items-center gap-2 mt-3">
+                  <button onClick={copy} className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-neutral-700 bg-neutral-100 rounded-lg hover:bg-neutral-200 transition-colors">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" strokeLinecap="round"/></svg>
+                    Copy Link
+                  </button>
+                  <button onClick={shareTwitter} className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-neutral-700 bg-neutral-100 rounded-lg hover:bg-neutral-200 transition-colors">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                    Share on X
+                  </button>
+                </div>
               </div>
 
               {/* Stats */}
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-4 gap-3">
                 <div className="bg-white rounded-2xl border border-neutral-200 p-4 text-center">
                   <div className="font-display text-2xl font-bold text-neutral-900">{data.stats.totalReferrals}</div>
                   <div className="text-[10px] text-neutral-400 uppercase tracking-wider mt-0.5">Referred</div>
+                </div>
+                <div className="bg-white rounded-2xl border border-neutral-200 p-4 text-center">
+                  <div className="font-display text-2xl font-bold text-amber-600">{data.stats.pending || 0}</div>
+                  <div className="text-[10px] text-neutral-400 uppercase tracking-wider mt-0.5">Pending</div>
                 </div>
                 <div className="bg-white rounded-2xl border border-neutral-200 p-4 text-center">
                   <div className="font-display text-2xl font-bold text-emerald-600">{data.stats.activePaying}</div>
@@ -62,6 +83,12 @@ export default function ReferralsPage() {
               {data.stats.monthlyEstimateCents > 0 && (
                 <div className="text-center py-3 bg-emerald-50 border border-emerald-200 rounded-2xl">
                   <div className="text-sm text-emerald-700 font-medium">Estimated monthly: <span className="font-bold">${(data.stats.monthlyEstimateCents / 100).toFixed(2)}/mo</span></div>
+                </div>
+              )}
+
+              {data.stats.rewardsEarned > 0 && (
+                <div className="text-center py-3 bg-amber-50 border border-amber-200 rounded-2xl">
+                  <div className="text-sm text-amber-700 font-medium">{data.stats.rewardsEarned} reward{data.stats.rewardsEarned !== 1 ? "s" : ""} earned</div>
                 </div>
               )}
 
@@ -91,8 +118,11 @@ export default function ReferralsPage() {
                     {data.referrals.map((r: any) => (
                       <div key={r.id} className="flex items-center gap-3 py-2 border-b border-neutral-100 last:border-0">
                         {r.avatar ? <img src={r.avatar} alt="" className="w-8 h-8 rounded-full object-cover" /> : <div className="w-8 h-8 rounded-full bg-neutral-200 flex items-center justify-center"><span className="text-[10px] font-bold text-neutral-400">{(r.name || "?")[0]}</span></div>}
-                        <div className="flex-1 min-w-0"><div className="text-sm font-medium text-neutral-900 truncate">{r.name}</div><div className="text-[10px] text-neutral-400">{r.tier === "free" ? "Free" : r.tier} — ${(r.totalEarnedCents / 100).toFixed(2)} credited</div></div>
-                        <span className={`text-[9px] font-bold uppercase px-2 py-0.5 rounded-full ${r.status === "active" ? "bg-emerald-100 text-emerald-700" : r.status === "churned" ? "bg-red-100 text-red-700" : "bg-neutral-100 text-neutral-500"}`}>{r.status === "signed_up" ? "Free" : r.status}</span>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-sm font-medium text-neutral-900 truncate">{r.name}</div>
+                          <div className="text-[10px] text-neutral-400">{r.tier === "free" ? "Free" : r.tier} — ${((r.totalEarnedCents || 0) / 100).toFixed(2)} credited — {r.joinedAt ? new Date(r.joinedAt).toLocaleDateString() : ""}</div>
+                        </div>
+                        <span className={`text-[9px] font-bold uppercase px-2 py-0.5 rounded-full ${r.status === "active" ? "bg-emerald-100 text-emerald-700" : r.status === "churned" ? "bg-red-100 text-red-700" : "bg-neutral-100 text-neutral-500"}`}>{r.status === "signed_up" ? "Pending" : r.status}</span>
                       </div>
                     ))}
                   </div>

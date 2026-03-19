@@ -57,6 +57,13 @@ export type Testimonial = {
   isVisible: boolean;
 };
 
+export type PortfolioTemplateType = "standard" | "before_after" | "campaign_results" | "process_breakdown" | "client_story";
+
+export type BeforeAfterData = { beforeImage: string; afterImage: string; description: string };
+export type CampaignResultsData = { metrics: { label: string; value: string; change?: string }[]; summary: string };
+export type ProcessBreakdownData = { steps: { title: string; description: string; image?: string }[] };
+export type ClientStoryData = { clientName: string; clientCompany: string; quote: string; results: string };
+
 export type PortfolioItem = {
   id: string;
   title: string;
@@ -64,6 +71,8 @@ export type PortfolioItem = {
   video?: string;
   category: string;
   mediaType: "image" | "video";
+  templateType: PortfolioTemplateType;
+  templateData: BeforeAfterData | CampaignResultsData | ProcessBreakdownData | ClientStoryData | Record<string, never>;
 };
 
 export type Review = {

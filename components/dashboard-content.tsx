@@ -1401,11 +1401,17 @@ export function DashboardContent() {
                   <h3 className="text-sm font-bold text-neutral-900 mb-1">Refer & Earn</h3>
                   <p className="text-xs text-neutral-400 mb-4">Earn 20% commission in platform credits when your referrals subscribe to a paid plan.</p>
                   {user.slug && (
-                    <div className="flex items-center gap-2">
-                      <div className="flex-1 bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-2.5">
-                        <span className="text-xs text-neutral-500 truncate">hireacreator.ai/ref/{(user as any).referralCode || user.slug}</span>
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2">
+                        <div className="flex-1 bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-2.5">
+                          <span className="text-xs text-neutral-500 truncate">hireacreator.ai/ref/{(user as any).referralCode || user.slug}</span>
+                        </div>
+                        <button onClick={() => { navigator.clipboard?.writeText(`https://hireacreator.ai/ref/${(user as any).referralCode || user.slug}`); }} className="px-4 py-2.5 text-xs font-semibold text-white bg-neutral-900 rounded-xl hover:bg-neutral-800 transition-colors">Copy</button>
                       </div>
-                      <button onClick={() => { navigator.clipboard?.writeText(`https://hireacreator.ai/ref/${(user as any).referralCode || user.slug}`); }} className="px-4 py-2.5 text-xs font-semibold text-white bg-neutral-900 rounded-xl hover:bg-neutral-800 transition-colors">Copy</button>
+                      <Link href="/referrals" className="inline-flex items-center gap-1 text-xs font-medium text-neutral-600 hover:text-neutral-900 transition-colors">
+                        View all referrals & stats
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                      </Link>
                     </div>
                   )}
                 </div>

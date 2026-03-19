@@ -34,11 +34,13 @@ export async function GET(request: Request) {
   if (search) {
     const q = `%${search}%`;
     users = await sql`
-      SELECT id, email, full_name, slug, role, subscription_tier, is_verified, is_banned,
-             ban_reason, is_online, created_at, updated_at, avatar_url
-      FROM users
-      WHERE email ILIKE ${q} OR full_name ILIKE ${q} OR slug ILIKE ${q}
-      ORDER BY created_at DESC
+      SELECT u.id, u.email, u.full_name, u.slug, u.role, u.subscription_tier, u.is_verified, u.is_banned,
+             u.ban_reason, u.is_online, u.created_at, u.updated_at, u.avatar_url,
+             u.verification_status,
+             (SELECT COUNT(*)::int FROM social_connections sc WHERE sc.user_id = u.id) AS social_count
+      FROM users u
+      WHERE u.email ILIKE ${q} OR u.full_name ILIKE ${q} OR u.slug ILIKE ${q}
+      ORDER BY u.created_at DESC
       LIMIT ${limit} OFFSET ${offset}
     `;
     total = await sql`
@@ -47,10 +49,12 @@ export async function GET(request: Request) {
     `;
   } else {
     users = await sql`
-      SELECT id, email, full_name, slug, role, subscription_tier, is_verified, is_banned,
-             ban_reason, is_online, created_at, updated_at, avatar_url
-      FROM users
-      ORDER BY created_at DESC
+      SELECT u.id, u.email, u.full_name, u.slug, u.role, u.subscription_tier, u.is_verified, u.is_banned,
+             u.ban_reason, u.is_online, u.created_at, u.updated_at, u.avatar_url,
+             u.verification_status,
+             (SELECT COUNT(*)::int FROM social_connections sc WHERE sc.user_id = u.id) AS social_count
+      FROM users u
+      ORDER BY u.created_at DESC
       LIMIT ${limit} OFFSET ${offset}
     `;
     total = await sql`SELECT COUNT(*)::int AS cnt FROM users`;

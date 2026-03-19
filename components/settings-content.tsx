@@ -865,10 +865,10 @@ function AdminUsersSection() {
 
       {/* Stats */}
       <Card className="p-4 sm:p-6">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-4">
           <div className="text-center">
             <div className="font-display text-2xl font-bold text-neutral-900">{total}</div>
-            <div className="text-xs text-neutral-500">Total Users</div>
+            <div className="text-xs text-neutral-500">Total</div>
           </div>
           <div className="text-center">
             <div className="font-display text-2xl font-bold text-neutral-900">{users.filter(u => u.role === "creator").length}</div>
@@ -879,7 +879,15 @@ function AdminUsersSection() {
             <div className="text-xs text-neutral-500">Brands</div>
           </div>
           <div className="text-center">
-            <div className="font-display text-2xl font-bold text-neutral-900">{users.filter(u => u.is_banned).length}</div>
+            <div className="font-display text-2xl font-bold text-emerald-600">{users.filter(u => u.verification_status === "verified").length}</div>
+            <div className="text-xs text-neutral-500">Verified</div>
+          </div>
+          <div className="text-center">
+            <div className="font-display text-2xl font-bold text-violet-600">{users.filter(u => u.social_count > 0).length}</div>
+            <div className="text-xs text-neutral-500">Socials</div>
+          </div>
+          <div className="text-center">
+            <div className="font-display text-2xl font-bold text-red-500">{users.filter(u => u.is_banned).length}</div>
             <div className="text-xs text-neutral-500">Banned</div>
           </div>
         </div>
@@ -930,8 +938,18 @@ function AdminUsersSection() {
                     {u.subscription_tier && u.subscription_tier !== "free" && (
                       <span className="px-1.5 py-0.5 bg-amber-100 text-amber-700 text-[9px] font-bold rounded-full uppercase">{u.subscription_tier}</span>
                     )}
+                    {u.verification_status === "verified" && (
+                      <span className="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-[9px] font-bold rounded-full uppercase flex items-center gap-0.5">
+                        <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M20 6L9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                        Verified
+                      </span>
+                    )}
                   </div>
-                  <div className="text-xs text-neutral-400 truncate">{u.email}</div>
+                  <div className="text-xs text-neutral-400 truncate flex items-center gap-2">
+                    <span>{u.email}</span>
+                    {u.email && <span className="px-1 py-0.5 bg-blue-50 text-blue-600 text-[8px] font-bold rounded">Email</span>}
+                    {u.social_count > 0 && <span className="px-1 py-0.5 bg-violet-50 text-violet-600 text-[8px] font-bold rounded">{u.social_count} social{u.social_count > 1 ? "s" : ""}</span>}
+                  </div>
                 </div>
                 <div className="text-[10px] text-neutral-400 shrink-0">
                   {u.created_at ? new Date(u.created_at).toLocaleDateString() : ""}
@@ -986,6 +1004,34 @@ function AdminUsersSection() {
                 <span className="text-[10px] px-2 py-0.5 bg-neutral-100 rounded-full capitalize">{selected.role}</span>
                 <span className="text-[10px] px-2 py-0.5 bg-neutral-100 rounded-full">{selected.subscription_tier || "free"}</span>
                 {selected.slug && <span className="text-[10px] text-neutral-400">@{selected.slug}</span>}
+              </div>
+              <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                {selected.email && (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-50 text-blue-700 text-[10px] font-medium rounded-full">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg>
+                    Email verified
+                  </span>
+                )}
+                {selected.social_count > 0 ? (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-violet-50 text-violet-700 text-[10px] font-medium rounded-full">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-4 0v7h-4v-7a6 6 0 016-6z" /><rect x="2" y="9" width="4" height="12" /><circle cx="4" cy="4" r="2" /></svg>
+                    {selected.social_count} social{selected.social_count > 1 ? "s" : ""} connected
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-neutral-100 text-neutral-500 text-[10px] font-medium rounded-full">
+                    No socials connected
+                  </span>
+                )}
+                {selected.verification_status === "verified" ? (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 text-emerald-700 text-[10px] font-medium rounded-full">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M20 6L9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                    Identity verified
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-neutral-100 text-neutral-500 text-[10px] font-medium rounded-full">
+                    Not verified
+                  </span>
+                )}
               </div>
               <div className="text-[10px] text-neutral-400 mt-1">
                 Joined: {selected.created_at ? new Date(selected.created_at).toLocaleString() : "—"}
