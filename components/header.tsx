@@ -118,7 +118,7 @@ export function Header({ theme = "light" }: { theme?: HeaderTheme }) {
   return (
     <header className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-5xl">
       <nav className={`flex items-center justify-between px-6 py-3 rounded-2xl border ${t.nav}`}>
-        <div className="hidden md:flex items-center gap-0.5">
+        <div className="hidden lg:flex items-center gap-0.5">
           {user?.role === "brand" ? (
             <Link href="/browse" className={`flex items-center gap-1 px-4 py-2 text-[13px] font-medium transition-all ${t.link}`}>
               Explore <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="opacity-40"><path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" /></svg>
@@ -141,11 +141,11 @@ export function Header({ theme = "light" }: { theme?: HeaderTheme }) {
           </Link>
         </div>
 
-        <Link href="/" className={`md:absolute md:left-1/2 md:-translate-x-1/2 flex items-center ${t.logo}`}>
+        <Link href="/" className={`lg:absolute lg:left-1/2 lg:-translate-x-1/2 flex items-center ${t.logo}`}>
           <Image src="/logo-512.png" alt="HireACreator" width={32} height={32} className="w-8 h-8" priority />
         </Link>
 
-        <div className="hidden md:flex items-center gap-2">
+        <div className="hidden lg:flex items-center gap-2">
           {loading ? (
             <div className="w-20 h-8" />
           ) : user ? (
@@ -171,7 +171,7 @@ export function Header({ theme = "light" }: { theme?: HeaderTheme }) {
         </div>
 
         {/* Mobile toggle */}
-        <button className={`md:hidden p-2 ${t.mobileToggle}`} onClick={() => setMobileOpen(!mobileOpen)} aria-label="Toggle menu">
+        <button className={`lg:hidden p-2 ${t.mobileToggle}`} onClick={() => setMobileOpen(!mobileOpen)} aria-label="Toggle menu">
           <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
             {mobileOpen ? <path d="M4 4l12 12M4 16L16 4" /> : <path d="M3 6h14M3 10h14M3 14h14" />}
           </svg>
@@ -180,7 +180,7 @@ export function Header({ theme = "light" }: { theme?: HeaderTheme }) {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className={`md:hidden mt-2 rounded-2xl border p-4 shadow-lg ${t.mobileMenu}`}>
+        <div className={`lg:hidden mt-2 rounded-2xl border p-4 shadow-lg ${t.mobileMenu}`}>
           <div className="flex flex-col gap-1">
             <Link href="/browse" className={`px-4 py-3 text-sm font-medium rounded-xl min-h-[44px] flex items-center ${t.mobileLink}`} onClick={() => setMobileOpen(false)}>
               {user?.role === "brand" ? "Explore" : "Creators"}
