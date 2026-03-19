@@ -186,6 +186,7 @@ export function ForBrandsContent() {
               <li className="flex items-start gap-2"><CheckIcon /><span>Set engagement rate and budget requirements</span></li>
               <li className="flex items-start gap-2"><CheckIcon /><span>Browse portfolios, past work, and verified analytics</span></li>
               <li className="flex items-start gap-2"><CheckIcon /><span>Read reviews from other brands before reaching out</span></li>
+              <li className="flex items-start gap-2"><CheckIcon /><span>Or let your AI agent query our API and find matches in seconds</span></li>
             </ul>
           </div>
 
@@ -201,6 +202,7 @@ export function ForBrandsContent() {
               <li className="flex items-start gap-2"><CheckIcon /><span>Pay securely via Stripe — no invoices to chase</span></li>
               <li className="flex items-start gap-2"><CheckIcon /><span>Funds held securely until you approve deliverables</span></li>
               <li className="flex items-start gap-2"><CheckIcon /><span>Contract generated automatically with usage rights</span></li>
+              <li className="flex items-start gap-2"><CheckIcon /><span>Same workflow works via API for autonomous agent campaigns</span></li>
             </ul>
           </div>
 

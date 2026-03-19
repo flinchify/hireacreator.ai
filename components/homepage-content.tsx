@@ -129,6 +129,9 @@ const faqItems = [
   { q: "Can I use HireACreator as my link-in-bio?", a: "Absolutely. Every creator gets a customizable link-in-bio page with 8 templates, video backgrounds, button styling, and portfolio sections. Put it in your Instagram, TikTok, or Twitter bio.", cat: "features" },
   { q: "Do you have an API for AI agents?", a: "Yes. HireACreator offers both MCP (Model Context Protocol) and REST API access. AI agents can search creators, filter by category, and initiate bookings programmatically.", cat: "api" },
   { q: "What types of creators can join?", a: "UGC creators, videographers, photographers, social media managers, graphic designers, editors, TikTok creators, YouTube creators, Instagram creators — anyone selling creative services.", cat: "general" },
+  { q: "What is MCP?", a: "Model Context Protocol is a standard that lets AI agents interact with external services. HireACreator's MCP server means any AI assistant — Claude, GPT, or custom agents — can search creators, check availability, and book services programmatically.", cat: "api" },
+  { q: "Can AI agents actually hire creators?", a: "Yes. Through our API and MCP server, AI marketing agents can search our creator database, match against a brief, and process payments via Stripe. The workflow can be fully autonomous or human-supervised.", cat: "api" },
+  { q: "How is this different from Linktree or Stan Store?", a: "Linktree is a link page. Stan is a creator storefront. HireACreator is both a marketplace AND an API — the only platform where AI agents can programmatically discover, hire, and pay creators. Humans and agents use the same infrastructure.", cat: "general" },
 ];
 
 const faqCatIcons: Record<string, React.ReactNode> = {
@@ -207,13 +210,12 @@ export function HomepageContent({
               <h1
                 className="font-display text-3xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tighter text-neutral-900 leading-[1.05]"
               >
-                The marketplace where<br className="hidden sm:block" /> creators and <span className="bg-gradient-to-r from-blue-600 to-sky-500 bg-clip-text text-transparent">AI agents</span> trade
+                Hire creators.<br className="hidden sm:block" /> Or let your <span className="bg-gradient-to-r from-blue-600 to-sky-500 bg-clip-text text-transparent">AI agent</span> do it.
               </h1>
 
               <p className="mt-6 text-lg sm:text-xl text-neutral-500 max-w-2xl mx-auto leading-relaxed">
-                Link-in-bio meets marketplace meets AI. Your storefront, your services, your price.
-                Brands book you directly. AI agents find and hire you via MCP.
-                0% commission — you keep every dollar.
+                The first creator marketplace with a full API, MCP server, and Stripe payment integration.
+                Source creators, book services, and process payments — manually or programmatically.
               </p>
 
               <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -221,13 +223,28 @@ export function HomepageContent({
                   onClick={() => openSignup("creator")}
                   className="px-8 py-3.5 text-base font-medium text-white bg-neutral-900 rounded-full hover:bg-neutral-800 transition-colors duration-300 shadow-lg shadow-neutral-900/20 w-full sm:w-auto"
                 >
-                  Get Started — it's free
+                  Get Started Free
                 </button>
-                <Link href="/browse">
+                <Link href="/api">
                   <button className="px-8 py-3.5 text-base font-medium text-neutral-700 bg-white/80 backdrop-blur rounded-full border border-neutral-200 hover:border-neutral-300 hover:bg-white transition-all duration-300 w-full sm:w-auto">
-                    Browse Creators
+                    View API Docs
                   </button>
                 </Link>
+              </div>
+
+              <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+                <span className="text-sm text-neutral-400 flex items-center gap-1.5">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 6L9 17l-5-5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  0% creator commission
+                </span>
+                <span className="text-sm text-neutral-400 flex items-center gap-1.5">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  Stripe-secured payments
+                </span>
+                <span className="text-sm text-neutral-400 flex items-center gap-1.5">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 20V10M12 20V4M6 20v-6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  MCP + API ready
+                </span>
               </div>
 
               <p className="mt-6 text-sm text-neutral-400">
@@ -419,6 +436,10 @@ export function HomepageContent({
                 detailing walkthroughs, mod consultations, or sponsored review slots.
                 HireACreator gives every creator a storefront that converts — portfolio,
                 services, payments, and booking in one link.
+              </p>
+              <p className="text-neutral-500 leading-relaxed mb-8">
+                Your profile isn&apos;t just a page — it&apos;s an endpoint. Brands find you on the marketplace.
+                AI agents discover you via API. Either way, you get booked and paid.
               </p>
               <ul className="space-y-4">
                 {[
@@ -844,6 +865,8 @@ export function HomepageContent({
                   { feature: "Verified creator profiles", us: true, linktree: false, fiverr: false },
                   { feature: "Brand marketplace discovery", us: true, linktree: false, fiverr: true },
                   { feature: "AI agent API (MCP + REST)", us: true, linktree: false, fiverr: false },
+                  { feature: "Programmatic payments (Stripe MPP)", us: true, linktree: false, fiverr: false },
+                  { feature: "Agent-to-creator autonomous workflow", us: true, linktree: false, fiverr: false },
                   { feature: "Calendar & availability", us: true, linktree: false, fiverr: false },
                   { feature: "Custom domain", us: true, linktree: true, fiverr: false },
                   { feature: "You set your own rates", us: true, linktree: false, fiverr: false },
