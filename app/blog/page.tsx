@@ -55,6 +55,38 @@ const posts = [
     category: "AI & Tech",
     readTime: "5 min read",
   },
+  {
+    slug: "hire-tiktok-ugc-creators-for-ads",
+    title: "How to Hire TikTok UGC Creators for Ads in 2026",
+    excerpt: "UGC ads convert 29% better than studio content. Here's how to find creators, write briefs, and use AI agents to automate the entire process.",
+    date: "March 19, 2026",
+    category: "For Brands",
+    readTime: "7 min read",
+  },
+  {
+    slug: "creator-marketplace-api-ai-agents",
+    title: "Creator Marketplace API: How AI Agents Hire Content Creators",
+    excerpt: "Agentic commerce is here. Learn how AI agents use MCP and REST APIs to search, evaluate, and book creators autonomously.",
+    date: "March 19, 2026",
+    category: "AI & Tech",
+    readTime: "8 min read",
+  },
+  {
+    slug: "hireacreator-vs-linktree-vs-stan-store",
+    title: "HireACreator vs Linktree vs Stan Store: Which Is Right for You?",
+    excerpt: "An honest comparison of three creator platforms. Features, pricing, and why AI-native matters for future-proofing your business.",
+    date: "March 19, 2026",
+    category: "Creator Economy",
+    readTime: "7 min read",
+  },
+  {
+    slug: "monetize-content-creator-2026",
+    title: "10 Ways to Monetize Your Content as a Creator in 2026",
+    excerpt: "From UGC campaigns to consulting to digital products — here's what each method pays, how hard it is, and which platforms to use.",
+    date: "March 19, 2026",
+    category: "Creator Tips",
+    readTime: "8 min read",
+  },
 ];
 
 export default function BlogPage() {
