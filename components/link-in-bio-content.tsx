@@ -359,18 +359,18 @@ function TemplateMinimal({ creator }: { creator: Creator }) {
   const accent = creator.linkBioAccent || "#171717";
 
   return (
-    <div className="min-h-screen flex items-start sm:items-center justify-center sm:py-10 sm:px-4" style={{ background: hasCustomBg ? "transparent" : "linear-gradient(160deg, #fdf8f4 0%, #f5ede6 40%, #ebe3da 100%)" }}>
+    <div className="min-h-screen flex items-start lg:items-center justify-center lg:py-10 lg:px-4" style={{ background: hasCustomBg ? "transparent" : "linear-gradient(160deg, #fdf8f4 0%, #f5ede6 40%, #ebe3da 100%)" }}>
       {hasCustomBg && <BgLayer creator={creator} />}
-      <div className={`w-full sm:max-w-[460px] sm:rounded-[2.5rem] sm:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.1)] bg-white min-h-screen sm:min-h-0 relative z-10 overflow-hidden ${hasCustomBg ? "sm:bg-white/95 sm:backdrop-blur-sm" : ""}`}>
+      <div className={`w-full lg:max-w-[460px] lg:rounded-[2.5rem] lg:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.1)] bg-white min-h-screen lg:min-h-0 relative z-10 overflow-hidden ${hasCustomBg ? "lg:bg-white/95 lg:backdrop-blur-sm" : ""}`}>
         {/* Cover */}
         <div className="relative">
           {creator.cover ? (
-            <div className="h-48 sm:rounded-t-[2.5rem] overflow-hidden">
+            <div className="h-48 lg:rounded-t-[2.5rem] overflow-hidden">
               <img src={creator.cover} alt="" className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-transparent to-white" />
             </div>
           ) : (
-            <div className="h-40 sm:h-44 sm:rounded-t-[2.5rem] relative overflow-hidden" style={{ background: `linear-gradient(135deg, ${accent}08 0%, ${accent}04 100%)` }}>
+            <div className="h-40 sm:h-44 lg:rounded-t-[2.5rem] relative overflow-hidden" style={{ background: `linear-gradient(135deg, ${accent}08 0%, ${accent}04 100%)` }}>
               <div className="absolute inset-0 bg-gradient-to-br from-stone-50/80 via-amber-50/40 to-orange-50/30" />
               <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "radial-gradient(circle at 2px 2px, currentColor 1px, transparent 0)", backgroundSize: "32px 32px" }} />
             </div>
@@ -460,7 +460,7 @@ function TemplateGlass({ creator }: { creator: Creator }) {
 
       <div className="absolute top-4 right-4 z-20"><ShareBtn slug={creator.slug} light /></div>
 
-      <div className="relative z-10 max-w-[480px] mx-auto px-5 sm:px-6 pt-12 pb-10 min-h-screen flex flex-col">
+      <div className="relative z-10 max-w-[480px] mx-auto px-5 lg:px-6 pt-12 pb-10 min-h-screen flex flex-col">
         {/* Main glass identity card */}
         <div className="text-center mb-6 bg-white/[0.06] backdrop-blur-2xl rounded-[2rem] p-8 sm:p-10 border border-white/[0.08] shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
           {/* Avatar with accent glow ring */}
@@ -547,9 +547,9 @@ function TemplateBold({ creator }: { creator: Creator }) {
   const hasCustomBg = !!creator.linkBioBgType;
 
   return (
-    <div className="min-h-screen flex items-start sm:items-center justify-center sm:py-10 sm:px-4" style={{ background: hasCustomBg ? "transparent" : "#0a0a0a" }}>
+    <div className="min-h-screen flex items-start lg:items-center justify-center lg:py-10 lg:px-4" style={{ background: hasCustomBg ? "transparent" : "#0a0a0a" }}>
       {hasCustomBg && <BgLayer creator={creator} />}
-      <div className="w-full sm:max-w-[460px] sm:rounded-[2.5rem] bg-neutral-950 min-h-screen sm:min-h-0 relative z-10 overflow-hidden" style={{ boxShadow: `0 0 0 1px rgba(255,255,255,0.06), 0 25px 60px -12px ${accent}20` }}>
+      <div className="w-full lg:max-w-[460px] lg:rounded-[2.5rem] bg-neutral-950 min-h-screen lg:min-h-0 relative z-10 overflow-hidden" style={{ boxShadow: `0 0 0 1px rgba(255,255,255,0.06), 0 25px 60px -12px ${accent}20` }}>
         {/* Accent stripe at top */}
         <div className="h-[2px] w-full" style={{ background: `linear-gradient(90deg, transparent, ${accent}, transparent)` }} />
 
@@ -638,9 +638,9 @@ function TemplateShowcase({ creator }: { creator: Creator }) {
   const accent = creator.linkBioAccent || "#171717";
 
   return (
-    <div className="min-h-screen flex items-start sm:items-center justify-center sm:py-10 sm:px-4" style={{ background: hasCustomBg ? "transparent" : "linear-gradient(160deg, #f8f9fa 0%, #e9ecef 100%)" }}>
+    <div className="min-h-screen flex items-start lg:items-center justify-center lg:py-10 lg:px-4" style={{ background: hasCustomBg ? "transparent" : "linear-gradient(160deg, #f8f9fa 0%, #e9ecef 100%)" }}>
       {hasCustomBg && <BgLayer creator={creator} />}
-      <div className="w-full sm:max-w-[480px] sm:rounded-[2rem] sm:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] bg-white min-h-screen sm:min-h-0 relative z-10 overflow-hidden">
+      <div className="w-full lg:max-w-[480px] lg:rounded-[2rem] lg:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] bg-white min-h-screen lg:min-h-0 relative z-10 overflow-hidden">
         {/* Prominent cover */}
         <div className="relative">
           {creator.cover ? (
@@ -733,10 +733,10 @@ function TemplateNeon({ creator }: { creator: Creator }) {
   const hasCustomBg = !!creator.linkBioBgType;
 
   return (
-    <div className="min-h-screen flex items-start sm:items-center justify-center sm:py-10 sm:px-4" style={{ background: hasCustomBg ? "transparent" : "#000000" }}>
+    <div className="min-h-screen flex items-start lg:items-center justify-center lg:py-10 lg:px-4" style={{ background: hasCustomBg ? "transparent" : "#000000" }}>
       {hasCustomBg && <BgLayer creator={creator} />}
 
-      <div className="w-full sm:max-w-[460px] sm:rounded-[2rem] bg-[#0a0a0a] min-h-screen sm:min-h-0 relative z-10 overflow-hidden" style={{ boxShadow: `0 0 80px -20px ${accent}50, inset 0 1px 0 rgba(255,255,255,0.05)` }}>
+      <div className="w-full lg:max-w-[460px] lg:rounded-[2rem] bg-[#0a0a0a] min-h-screen lg:min-h-0 relative z-10 overflow-hidden" style={{ boxShadow: `0 0 80px -20px ${accent}50, inset 0 1px 0 rgba(255,255,255,0.05)` }}>
         {/* Neon scanline at top */}
         <div className="h-px w-full" style={{ background: `linear-gradient(90deg, transparent 10%, ${accent} 50%, transparent 90%)`, opacity: 0.7 }} />
         {/* Subtle scanline texture */}
@@ -861,7 +861,7 @@ function TemplateCollage({ creator }: { creator: Creator }) {
 
       <div className="absolute top-4 right-4 z-20"><ShareBtn slug={creator.slug} light /></div>
 
-      <div className="relative z-10 max-w-[480px] mx-auto px-4 sm:px-5 pt-12 pb-10 min-h-screen flex flex-col">
+      <div className="relative z-10 max-w-[480px] mx-auto px-4 lg:px-5 pt-12 pb-10 min-h-screen flex flex-col">
         {/* Frosted content panel */}
         <div className="bg-black/30 backdrop-blur-2xl rounded-3xl border border-white/10 p-6 sm:p-8 mb-5 text-center shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
           {/* Avatar — square with subtle rotation for artistic flair */}
@@ -1102,7 +1102,7 @@ function TemplateSplit({ creator }: { creator: Creator }) {
 
         {/* Right 55% — scrollable content */}
         <div className="sm:w-[55%] sm:overflow-y-auto sm:h-screen">
-          <div className="px-6 sm:px-8 lg:px-10 py-6 sm:py-10">
+          <div className="px-6 sm:px-8 lg:px-10 py-6 lg:py-10">
             {/* Desktop header */}
             <div className="hidden sm:block mb-8">
               <div className="flex items-center gap-4 mb-4">
@@ -1284,7 +1284,7 @@ function TemplateFounder({ creator }: { creator: Creator }) {
   return (
     <div className="min-h-screen" style={{ background: hasCustomBg ? "transparent" : "linear-gradient(160deg, #111827 0%, #1f2937 100%)" }}>
       {hasCustomBg && <BgLayer creator={creator} />}
-      <div className="relative z-10 max-w-[520px] mx-auto px-5 sm:px-6 pt-12 pb-10 min-h-screen">
+      <div className="relative z-10 max-w-[520px] mx-auto px-5 lg:px-6 pt-12 pb-10 min-h-screen">
         <div className="absolute top-4 right-4 z-20"><ShareBtn slug={creator.slug} light /></div>
 
         {/* Identity */}

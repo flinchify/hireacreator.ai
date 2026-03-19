@@ -157,10 +157,10 @@ export function Header({ theme = "light" }: { theme?: HeaderTheme }) {
             </>
           ) : (
             <>
-              <button onClick={openLogin} className={`px-4 py-2 text-[13px] font-medium rounded-xl transition-all ${t.loginBtn}`}>
+              <button onClick={openLogin} className={`px-4 py-2 text-[13px] font-medium rounded-xl active:scale-[0.98] transition-all ${t.loginBtn}`}>
                 Log in
               </button>
-              <button onClick={() => openSignup()} className={`px-5 py-2 text-[13px] font-medium rounded-xl transition-colors ${t.ctaBtn}`}>
+              <button onClick={() => openSignup()} className={`px-5 py-2 text-[13px] font-medium rounded-xl active:scale-[0.98] transition-all ${t.ctaBtn}`}>
                 Get Started
               </button>
             </>

@@ -3,22 +3,19 @@ import Image from "next/image";
 
 const footerLinks = {
   Platform: [
-    { label: "Browse Marketplace", href: "/browse" },
-    { label: "For Creators", href: "/for-creators" },
-    { label: "For Brands", href: "/for-brands" },
+    { label: "Browse Creators", href: "/browse" },
     { label: "Pricing", href: "/pricing" },
+    { label: "Leaderboard", href: "/leaderboard" },
+    { label: "API", href: "/api" },
   ],
   Resources: [
     { label: "Blog", href: "/blog" },
-    { label: "API Docs", href: "/api" },
-    { label: "Compare", href: "/compare" },
-    { label: "Animations", href: "/animations" },
+    { label: "For Brands", href: "/for-brands" },
+    { label: "For Creators", href: "/for-creators" },
   ],
-  Company: [
-    { label: "About", href: "/about" },
-    { label: "Contact", href: "/contact" },
-    { label: "Privacy Policy", href: "/privacy" },
+  Legal: [
     { label: "Terms of Service", href: "/terms" },
+    { label: "Privacy Policy", href: "/privacy" },
   ],
 };
 
@@ -26,7 +23,7 @@ export function Footer() {
   return (
     <footer className="bg-neutral-950 text-neutral-400">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-2 mb-4">
               <Image

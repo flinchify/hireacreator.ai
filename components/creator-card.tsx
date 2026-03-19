@@ -24,7 +24,7 @@ export function CreatorCard({
 }) {
   return (
     <Link href={`/creators/${creator.slug}`} className="group block">
-      <div className="bg-white rounded-xl border border-neutral-200 overflow-hidden hover:border-neutral-300 hover:shadow-lg hover:scale-[1.02] transition-all duration-200">
+      <div className="bg-white rounded-2xl border border-neutral-200 overflow-hidden hover:border-neutral-300 hover:shadow-sm transition-all duration-200">
         <div className="relative h-32 bg-neutral-100">
           {creator.cover ? (
             <img

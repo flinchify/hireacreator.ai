@@ -527,7 +527,7 @@ function TestimonialsManager() {
       )}
 
       {loading ? (
-        <div className="flex justify-center py-12"><div className="w-6 h-6 border-2 border-neutral-300 border-t-neutral-900 rounded-full animate-spin" /></div>
+        <div className="space-y-3">{[...Array(3)].map((_,i) => <div key={i} className="animate-pulse bg-neutral-100 rounded-2xl h-24" />)}</div>
       ) : testimonials.length > 0 ? (
         <div className="space-y-3">
           {testimonials.map((t: any) => (
@@ -655,7 +655,7 @@ function ProductsManager() {
       )}
 
       {loading ? (
-        <div className="flex justify-center py-12"><div className="w-6 h-6 border-2 border-neutral-300 border-t-neutral-900 rounded-full animate-spin" /></div>
+        <div className="space-y-3">{[...Array(2)].map((_,i) => <div key={i} className="animate-pulse bg-neutral-100 rounded-2xl h-20" />)}</div>
       ) : products.length > 0 ? (
         <div className="space-y-3">
           {products.map((p: any) => (
@@ -835,7 +835,7 @@ function MyBookings() {
       </div>
 
       {loading ? (
-        <div className="flex justify-center py-12"><div className="w-6 h-6 border-2 border-neutral-300 border-t-neutral-900 rounded-full animate-spin" /></div>
+        <div className="space-y-3">{[...Array(3)].map((_,i) => <div key={i} className="animate-pulse bg-neutral-100 rounded-2xl h-28" />)}</div>
       ) : bookings.length > 0 ? (
         <div className="space-y-3">
           {bookings.map((b: any) => (
@@ -1075,7 +1075,7 @@ export function DashboardContent() {
     setTimeout(() => setCopied(false), 1500);
   }
 
-  if (loading) return <div className="min-h-screen bg-neutral-50 flex items-center justify-center"><div className="w-6 h-6 border-2 border-neutral-300 border-t-neutral-900 rounded-full animate-spin" /></div>;
+  if (loading) return <div className="min-h-screen bg-[#f8f8fa] pt-24 px-4"><div className="max-w-4xl mx-auto space-y-4"><div className="animate-pulse bg-neutral-100 rounded-2xl h-16" /><div className="grid grid-cols-2 sm:grid-cols-4 gap-3">{[...Array(4)].map((_,i) => <div key={i} className="animate-pulse bg-neutral-100 rounded-2xl h-24" />)}</div><div className="grid sm:grid-cols-2 gap-4">{[...Array(2)].map((_,i) => <div key={i} className="animate-pulse bg-neutral-100 rounded-2xl h-40" />)}</div></div></div>;
   if (!user) return <div className="min-h-screen bg-neutral-50 flex items-center justify-center px-4"><div className="text-center"><h2 className="font-display text-xl font-bold text-neutral-900 mb-3">Sign in to continue</h2><p className="text-sm text-neutral-500 mb-6">You need an account to access the dashboard.</p><Link href="/" className="px-6 py-3 bg-neutral-900 text-white text-sm font-semibold rounded-full">Go Home</Link></div></div>;
 
   const bioUrl = `hireacreator.ai/u/${user.slug}`;

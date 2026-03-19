@@ -16,7 +16,7 @@ import {
 } from "@/components/icons/platforms";
 import { PlatformTicker } from "@/components/platform-ticker";
 import type { Creator } from "@/lib/types";
-import { HeroFlow3D } from "@/components/3d/hero-flow-dynamic";
+
 
 /* ──────────────────────── Utility Icons ──────────────────────── */
 
@@ -123,15 +123,12 @@ function CrownIcon() {
 /* ──────────────────────── FAQ Search + Accordion ──────────────────────── */
 
 const faqItems = [
-  { q: "Is HireACreator really free for creators?", a: "Yes. Creators pay 0% commission on every booking. Brands pay a small service fee, not creators. There are optional paid upgrades (Creator Pro at $19/mo) for premium features, but the core platform is free.", cat: "pricing" },
-  { q: "How is this different from Fiverr or Upwork?", a: "Fiverr takes 20% of your earnings. Upwork takes 10-20%. HireACreator takes 0% from creators. You also get a built-in link-in-bio page, portfolio showcase, and direct bookings without back-and-forth messaging.", cat: "general" },
-  { q: "How do payments work?", a: "Payments are processed via Stripe. Brands pay upfront, funds are held securely until you approve, and released to creators via Stripe Connect once work is delivered. No payout delays, no minimum thresholds.", cat: "payments" },
-  { q: "Can I use HireACreator as my link-in-bio?", a: "Absolutely. Every creator gets a customizable link-in-bio page with 8 templates, video backgrounds, button styling, and portfolio sections. Put it in your Instagram, TikTok, or Twitter bio.", cat: "features" },
-  { q: "Do you have an API for AI agents?", a: "Yes. HireACreator offers both MCP (Model Context Protocol) and REST API access. AI agents can search creators, filter by category, and initiate bookings programmatically.", cat: "api" },
-  { q: "What types of creators can join?", a: "UGC creators, videographers, photographers, social media managers, graphic designers, editors, TikTok creators, YouTube creators, Instagram creators — anyone selling creative services.", cat: "general" },
-  { q: "What is MCP?", a: "Model Context Protocol is a standard that lets AI agents interact with external services. HireACreator's MCP server means any AI assistant — Claude, GPT, or custom agents — can search creators, check availability, and book services programmatically.", cat: "api" },
-  { q: "Can AI agents actually hire creators?", a: "Yes. Through our API and MCP server, AI marketing agents can search our creator database, match against a brief, and process payments via Stripe. The workflow can be fully autonomous or human-supervised.", cat: "api" },
-  { q: "How is this different from Linktree or Stan Store?", a: "Linktree is a link page. Stan is a creator storefront. HireACreator is both a marketplace AND an API — the only platform where AI agents can programmatically discover, hire, and pay creators. Humans and agents use the same infrastructure.", cat: "general" },
+  { q: "Is HireACreator really free for creators?", a: "Yes — 0% commission on every booking. Brands pay a small service fee, not creators.", cat: "pricing" },
+  { q: "How is this different from Fiverr or Upwork?", a: "They take 10–20% of your earnings. We take 0%, and you get a link-in-bio page, portfolio, and direct bookings.", cat: "general" },
+  { q: "How do payments work?", a: "Brands pay upfront via Stripe. Funds release to your Stripe Connect account once you deliver.", cat: "payments" },
+  { q: "Can I use HireACreator as my link-in-bio?", a: "Yes. Every creator gets a customizable link-in-bio with 8 templates, video backgrounds, and portfolio sections.", cat: "features" },
+  { q: "Do you have an API for AI agents?", a: "Yes — both MCP and REST. AI agents can search creators, filter by category, and initiate bookings programmatically.", cat: "api" },
+  { q: "What types of creators can join?", a: "UGC creators, videographers, photographers, designers, editors, social media managers — anyone selling creative services.", cat: "general" },
 ];
 
 const faqCatIcons: Record<string, React.ReactNode> = {
@@ -213,12 +210,12 @@ export function HomepageContent({
               <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
                 <button
                   onClick={() => openSignup("creator")}
-                  className="px-8 py-3.5 text-base font-medium text-white bg-neutral-900 rounded-full hover:bg-neutral-800 transition-colors duration-300 shadow-lg shadow-neutral-900/20 w-full sm:w-auto"
+                  className="px-8 py-3.5 text-base font-medium text-white bg-neutral-900 rounded-full hover:bg-neutral-800 active:scale-[0.98] transition-all duration-300 shadow-lg shadow-neutral-900/20 w-full sm:w-auto"
                 >
                   Get Started Free
                 </button>
                 <Link href="/api">
-                  <button className="px-8 py-3.5 text-base font-medium text-neutral-700 bg-white/80 backdrop-blur rounded-full border border-neutral-200 hover:border-neutral-300 hover:bg-white transition-all duration-300 w-full sm:w-auto">
+                  <button className="px-8 py-3.5 text-base font-medium text-neutral-700 bg-white/80 backdrop-blur rounded-full border border-neutral-200 hover:border-neutral-300 hover:bg-white active:scale-[0.98] transition-all duration-300 w-full sm:w-auto">
                     View API Docs
                   </button>
                 </Link>
@@ -270,24 +267,6 @@ export function HomepageContent({
         </div>
       </section>
 
-      {/* ═══════════════════ 3D FLOW GRAPH ═══════════════════ */}
-      <section className="relative hidden lg:block py-16 overflow-hidden">
-        {/* Radial glow behind the 3D scene */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none" aria-hidden="true">
-          <div className="w-[700px] h-[400px] rounded-full blur-[60px]" style={{ background: "radial-gradient(ellipse, rgba(196,181,253,0.3), rgba(191,219,254,0.2) 50%, transparent 80%)" }} />
-        </div>
-        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-8">
-            <p className="text-sm font-semibold tracking-widest text-blue-600 uppercase">How it works</p>
-            <h2 className="mt-2 font-display text-2xl sm:text-3xl font-bold text-neutral-900">
-              From signup to delivery — in one seamless flow
-            </h2>
-          </div>
-          <div className="mx-auto max-w-5xl h-[500px] rounded-2xl overflow-hidden">
-            <HeroFlow3D />
-          </div>
-        </div>
-      </section>
 
       {/* ═══════════════════ PLATFORM TRUST TICKER ═══════════════════ */}
       <AnimateOnScroll as="section" className="bg-gradient-to-b from-neutral-50/60 via-neutral-50/30 to-white border-y border-neutral-100">
@@ -314,7 +293,7 @@ export function HomepageContent({
 
           <StaggerChildren className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6" staggerMs={150}>
             {/* Card 1 — Profile with real screenshots */}
-            <div className="aos-stagger-item group bg-white rounded-2xl border border-neutral-200 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+            <div className="aos-stagger-item group bg-white rounded-2xl border border-neutral-200 overflow-hidden hover:shadow-sm transition-all duration-200">
               <div className="relative p-6 pb-4 bg-gradient-to-br from-neutral-50/80 to-neutral-100/60">
                 <div className="text-neutral-500"><ProfileStarIcon /></div>
                 {/* Real link-in-bio screenshots — phone frames */}
@@ -337,7 +316,7 @@ export function HomepageContent({
             </div>
 
             {/* Card 2 — Marketplace */}
-            <div className="aos-stagger-item group bg-white rounded-2xl border border-neutral-200 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+            <div className="aos-stagger-item group bg-white rounded-2xl border border-neutral-200 overflow-hidden hover:shadow-sm transition-all duration-200">
               <div className="relative p-6 pb-4 bg-gradient-to-br from-neutral-50/80 to-neutral-100/60">
                 <div className="text-neutral-600"><MarketplaceGridIcon /></div>
                 {/* Mini browser frame with screenshot */}
@@ -360,7 +339,7 @@ export function HomepageContent({
             </div>
 
             {/* Card 3 — Payments */}
-            <div className="aos-stagger-item group bg-white rounded-2xl border border-neutral-200 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+            <div className="aos-stagger-item group bg-white rounded-2xl border border-neutral-200 overflow-hidden hover:shadow-sm transition-all duration-200">
               <div className="relative p-6 pb-4 bg-gradient-to-br from-emerald-50/80 to-green-50/60">
                 <div className="text-emerald-600"><ShieldCheckIcon /></div>
                 {/* Payment success graphic */}
@@ -451,7 +430,7 @@ export function HomepageContent({
               <div className="mt-8">
                 <button
                   onClick={() => openSignup("creator")}
-                  className="px-8 py-3.5 text-base font-medium text-white bg-neutral-900 rounded-full hover:bg-neutral-800 transition-colors duration-300"
+                  className="px-8 py-3.5 text-base font-medium text-white bg-neutral-900 rounded-full hover:bg-neutral-800 active:scale-[0.98] transition-all duration-300"
                 >
                   Create Your Profile
                 </button>
@@ -522,7 +501,7 @@ export function HomepageContent({
             <div className="text-center mt-10">
               <Link
                 href="/browse"
-                className="inline-flex items-center gap-2 px-8 py-3 text-sm font-medium text-white bg-neutral-900 rounded-full hover:bg-neutral-800 transition-colors duration-300"
+                className="inline-flex items-center gap-2 px-8 py-3 text-sm font-medium text-white bg-neutral-900 rounded-full hover:bg-neutral-800 active:scale-[0.98] transition-all duration-300"
               >
                 Browse All Creators <ArrowRightIcon />
               </Link>
@@ -550,7 +529,7 @@ export function HomepageContent({
 
           <StaggerChildren className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6" staggerMs={120}>
             {/* Search */}
-            <div className="aos-stagger-item group relative bg-gradient-to-br from-neutral-50 to-white rounded-2xl p-7 border border-neutral-200 hover:border-neutral-300 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+            <div className="aos-stagger-item group relative bg-gradient-to-br from-neutral-50 to-white rounded-2xl p-7 border border-neutral-200 hover:border-neutral-300 hover:shadow-sm transition-all duration-200 overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-neutral-100/30 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
               <div className="relative">
                 <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center mb-5 text-blue-600 group-hover:scale-110 transition-transform duration-300">
@@ -565,7 +544,7 @@ export function HomepageContent({
             </div>
 
             {/* Book */}
-            <div className="aos-stagger-item group relative bg-gradient-to-br from-amber-50 to-white rounded-2xl p-7 border border-amber-100/80 hover:border-amber-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+            <div className="aos-stagger-item group relative bg-gradient-to-br from-amber-50 to-white rounded-2xl p-7 border border-amber-100/80 hover:border-amber-200 hover:shadow-sm transition-all duration-200 overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-amber-100/30 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
               <div className="relative">
                 <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center mb-5 text-amber-700 group-hover:scale-110 transition-transform duration-300">
@@ -580,7 +559,7 @@ export function HomepageContent({
             </div>
 
             {/* Ship */}
-            <div className="aos-stagger-item group relative bg-gradient-to-br from-emerald-50 to-white rounded-2xl p-7 border border-emerald-100/80 hover:border-emerald-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+            <div className="aos-stagger-item group relative bg-gradient-to-br from-emerald-50 to-white rounded-2xl p-7 border border-emerald-100/80 hover:border-emerald-200 hover:shadow-sm transition-all duration-200 overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-100/30 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
               <div className="relative">
                 <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center mb-5 text-emerald-700 group-hover:scale-110 transition-transform duration-300">
@@ -597,7 +576,7 @@ export function HomepageContent({
 
           <div className="mt-10 text-center">
             <Link href="/browse">
-              <button className="px-8 py-3.5 text-base font-medium text-white bg-neutral-900 rounded-full hover:bg-neutral-800 transition-colors duration-300 shadow-lg shadow-neutral-900/10">
+              <button className="px-8 py-3.5 text-base font-medium text-white bg-neutral-900 rounded-full hover:bg-neutral-800 active:scale-[0.98] transition-all duration-300 shadow-lg shadow-neutral-900/10">
                 Find a Creator
               </button>
             </Link>
@@ -717,7 +696,7 @@ export function HomepageContent({
 
           <StaggerChildren className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto" staggerMs={120}>
             {/* Free */}
-            <div className="aos-stagger-item bg-white rounded-2xl border border-neutral-200 p-8 hover:border-neutral-300 hover:shadow-lg transition-all duration-300">
+            <div className="aos-stagger-item bg-white rounded-2xl border border-neutral-200 p-8 hover:border-neutral-300 hover:shadow-sm transition-all duration-200">
               <div className="text-sm font-medium text-neutral-400 uppercase tracking-wider mb-2">Free</div>
               <div className="flex items-baseline gap-1 mb-4">
                 <span className="font-display text-3xl font-bold text-neutral-900">$0</span>
@@ -739,14 +718,14 @@ export function HomepageContent({
               </ul>
               <button
                 onClick={() => openSignup("creator")}
-                className="w-full py-2.5 text-sm font-medium rounded-full border border-neutral-300 text-neutral-700 hover:bg-neutral-50 transition-colors duration-300"
+                className="w-full py-2.5 text-sm font-medium rounded-full border border-neutral-300 text-neutral-700 hover:bg-neutral-50 active:scale-[0.98] transition-colors duration-300"
               >
                 Get Started Free
               </button>
             </div>
 
             {/* Popular */}
-            <div className="aos-stagger-item bg-white rounded-2xl border-2 border-neutral-900 p-8 relative hover:shadow-xl transition-all duration-300">
+            <div className="aos-stagger-item bg-white rounded-2xl border-2 border-neutral-900 p-8 relative hover:shadow-sm transition-all duration-200">
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-blue-600 to-sky-500 text-white text-xs font-medium rounded-full">
                 Popular
               </div>
@@ -770,14 +749,14 @@ export function HomepageContent({
                 ))}
               </ul>
               <Link href="/pricing">
-                <button className="w-full py-2.5 text-sm font-medium rounded-full bg-gradient-to-r from-blue-600 to-sky-500 text-white hover:from-blue-700 hover:to-sky-600 transition-colors duration-300">
+                <button className="w-full py-2.5 text-sm font-medium rounded-full bg-gradient-to-r from-blue-600 to-sky-500 text-white hover:from-blue-700 hover:to-sky-600 active:scale-[0.98] transition-all duration-300">
                   See Pro Features
                 </button>
               </Link>
             </div>
 
             {/* Business */}
-            <div className="aos-stagger-item bg-white rounded-2xl border border-neutral-200 p-8 hover:border-neutral-300 hover:shadow-lg transition-all duration-300">
+            <div className="aos-stagger-item bg-white rounded-2xl border border-neutral-200 p-8 hover:border-neutral-300 hover:shadow-sm transition-all duration-200">
               <div className="text-sm font-medium text-neutral-400 uppercase tracking-wider mb-2">Creator Business</div>
               <div className="flex items-baseline gap-1 mb-4">
                 <span className="font-display text-3xl font-bold text-neutral-900">$49</span>
@@ -798,7 +777,7 @@ export function HomepageContent({
                 ))}
               </ul>
               <Link href="/pricing">
-                <button className="w-full py-2.5 text-sm font-medium rounded-full border border-neutral-300 text-neutral-700 hover:bg-neutral-50 transition-colors duration-300">
+                <button className="w-full py-2.5 text-sm font-medium rounded-full border border-neutral-300 text-neutral-700 hover:bg-neutral-50 active:scale-[0.98] transition-colors duration-300">
                   See Business Features
                 </button>
               </Link>
@@ -857,11 +836,7 @@ export function HomepageContent({
                   { feature: "Verified creator profiles", us: true, linktree: false, fiverr: false },
                   { feature: "Brand marketplace discovery", us: true, linktree: false, fiverr: true },
                   { feature: "AI agent API (MCP + REST)", us: true, linktree: false, fiverr: false },
-                  { feature: "Programmatic payments (Stripe MPP)", us: true, linktree: false, fiverr: false },
-                  { feature: "Agent-to-creator autonomous workflow", us: true, linktree: false, fiverr: false },
                   { feature: "Calendar & availability", us: true, linktree: false, fiverr: false },
-                  { feature: "Custom domain", us: true, linktree: true, fiverr: false },
-                  { feature: "You set your own rates", us: true, linktree: false, fiverr: false },
                 ].map((row, i) => (
                   <tr key={i} className="border-b border-neutral-100 comparison-row transition-colors duration-300">
                     <td className="py-3 sm:py-3.5 px-3 sm:px-4 text-neutral-700 font-medium text-xs sm:text-sm sticky left-0 bg-white z-10">{row.feature}</td>
@@ -973,12 +948,12 @@ export function HomepageContent({
         "@context": "https://schema.org",
         "@type": "FAQPage",
         mainEntity: [
-          { "@type": "Question", name: "Is HireACreator really free for creators?", acceptedAnswer: { "@type": "Answer", text: "Yes. Creators pay 0% commission on every booking. Brands pay a small service fee, not creators." } },
-          { "@type": "Question", name: "How is HireACreator different from Fiverr or Upwork?", acceptedAnswer: { "@type": "Answer", text: "Fiverr takes 20% of your earnings. Upwork takes 10-20%. HireACreator takes 0% from creators. You also get a built-in link-in-bio page, portfolio showcase, and direct bookings." } },
-          { "@type": "Question", name: "How do payments work on HireACreator?", acceptedAnswer: { "@type": "Answer", text: "Payments are processed via Stripe. Brands pay upfront, funds are held securely until you approve, and released to creators via Stripe Connect once work is delivered." } },
-          { "@type": "Question", name: "Can I use HireACreator as my link-in-bio?", acceptedAnswer: { "@type": "Answer", text: "Yes. Every creator gets a customizable link-in-bio page with 8 templates, video backgrounds, button styling, and portfolio sections." } },
-          { "@type": "Question", name: "Does HireACreator have an API for AI agents?", acceptedAnswer: { "@type": "Answer", text: "Yes. HireACreator offers both MCP (Model Context Protocol) and REST API access for AI agents to search creators, filter by category, and initiate bookings." } },
-          { "@type": "Question", name: "What types of creators can join HireACreator?", acceptedAnswer: { "@type": "Answer", text: "UGC creators, videographers, photographers, social media managers, graphic designers, editors, TikTok creators, YouTube creators, Instagram creators — anyone selling creative services." } },
+          { "@type": "Question", name: "Is HireACreator really free for creators?", acceptedAnswer: { "@type": "Answer", text: "Yes — 0% commission on every booking. Brands pay a small service fee, not creators." } },
+          { "@type": "Question", name: "How is HireACreator different from Fiverr or Upwork?", acceptedAnswer: { "@type": "Answer", text: "They take 10–20% of your earnings. We take 0%, and you get a link-in-bio page, portfolio, and direct bookings." } },
+          { "@type": "Question", name: "How do payments work on HireACreator?", acceptedAnswer: { "@type": "Answer", text: "Brands pay upfront via Stripe. Funds release to your Stripe Connect account once you deliver." } },
+          { "@type": "Question", name: "Can I use HireACreator as my link-in-bio?", acceptedAnswer: { "@type": "Answer", text: "Yes. Every creator gets a customizable link-in-bio with 8 templates, video backgrounds, and portfolio sections." } },
+          { "@type": "Question", name: "Does HireACreator have an API for AI agents?", acceptedAnswer: { "@type": "Answer", text: "Yes — both MCP and REST. AI agents can search creators, filter by category, and initiate bookings programmatically." } },
+          { "@type": "Question", name: "What types of creators can join HireACreator?", acceptedAnswer: { "@type": "Answer", text: "UGC creators, videographers, photographers, designers, editors, social media managers — anyone selling creative services." } },
         ],
       })}} />
 
@@ -1010,12 +985,12 @@ export function HomepageContent({
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <button
               onClick={() => openSignup("creator")}
-              className="px-10 py-4 text-base font-medium text-neutral-900 bg-white rounded-full hover:bg-neutral-100 transition-colors duration-300 shadow-xl shadow-white/10 w-full sm:w-auto"
+              className="px-10 py-4 text-base font-medium text-neutral-900 bg-white rounded-full hover:bg-neutral-100 active:scale-[0.98] transition-all duration-300 shadow-xl shadow-white/10 w-full sm:w-auto"
             >
               Get Started — it's free
             </button>
             <Link href="/browse">
-              <button className="px-10 py-4 text-base font-medium text-white bg-white/10 backdrop-blur rounded-full border border-white/20 hover:bg-white/20 transition-all duration-300 w-full sm:w-auto">
+              <button className="px-10 py-4 text-base font-medium text-white bg-white/10 backdrop-blur rounded-full border border-white/20 hover:bg-white/20 active:scale-[0.98] transition-all duration-300 w-full sm:w-auto">
                 Browse Creators
               </button>
             </Link>

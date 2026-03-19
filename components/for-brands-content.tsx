@@ -175,7 +175,7 @@ export function ForBrandsContent() {
 
         <StaggerChildren className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6" staggerMs={150}>
           {/* Step 1 */}
-          <div className="aos-stagger-item group bg-white border border-neutral-200 rounded-2xl p-8 hover:border-neutral-300 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+          <div className="aos-stagger-item group bg-white border border-neutral-200 rounded-2xl p-8 hover:border-neutral-300 hover:shadow-sm transition-all duration-200">
             <div className="flex items-center gap-4 mb-6">
               <span className="font-display text-3xl font-bold text-neutral-200 group-hover:text-neutral-300 transition-colors">01</span>
               <SearchIcon />
@@ -191,7 +191,7 @@ export function ForBrandsContent() {
           </div>
 
           {/* Step 2 */}
-          <div className="aos-stagger-item group bg-white border border-neutral-200 rounded-2xl p-8 hover:border-neutral-300 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+          <div className="aos-stagger-item group bg-white border border-neutral-200 rounded-2xl p-8 hover:border-neutral-300 hover:shadow-sm transition-all duration-200">
             <div className="flex items-center gap-4 mb-6">
               <span className="font-display text-3xl font-bold text-neutral-200 group-hover:text-neutral-300 transition-colors">02</span>
               <BookPayIcon />
@@ -207,7 +207,7 @@ export function ForBrandsContent() {
           </div>
 
           {/* Step 3 */}
-          <div className="aos-stagger-item group bg-white border border-neutral-200 rounded-2xl p-8 hover:border-neutral-300 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+          <div className="aos-stagger-item group bg-white border border-neutral-200 rounded-2xl p-8 hover:border-neutral-300 hover:shadow-sm transition-all duration-200">
             <div className="flex items-center gap-4 mb-6">
               <span className="font-display text-3xl font-bold text-neutral-200 group-hover:text-neutral-300 transition-colors">03</span>
               <DeliverIcon />
@@ -346,7 +346,7 @@ export function ForBrandsContent() {
 
           <StaggerChildren className="grid sm:grid-cols-2 gap-6 max-w-3xl mx-auto" staggerMs={150}>
             {/* Brand Analytics */}
-            <div className="aos-stagger-item group border border-neutral-200 rounded-2xl p-8 hover:border-neutral-300 hover:shadow-lg transition-all duration-300">
+            <div className="aos-stagger-item group border border-neutral-200 rounded-2xl p-8 hover:border-neutral-300 hover:shadow-sm transition-all duration-200">
               <h3 className="font-display text-lg font-bold text-neutral-900 mb-1">Brand Analytics</h3>
               <div className="flex items-baseline gap-1 mb-6">
                 <span className="font-display text-4xl font-bold text-neutral-900">$199</span>
@@ -408,7 +408,7 @@ export function ForBrandsContent() {
               { title: "Dispute resolution", desc: "If something goes wrong, our team steps in. Funds stay held securely until the issue is resolved." },
               { title: "Data privacy", desc: "SOC 2 compliant infrastructure. Your data and creator communications are encrypted at rest and in transit." },
             ].map((item) => (
-              <div key={item.title} className="aos-stagger-item flex items-start gap-3 bg-white border border-neutral-200 rounded-2xl p-6 hover:border-neutral-300 hover:shadow-md transition-all duration-300">
+              <div key={item.title} className="aos-stagger-item flex items-start gap-3 bg-white border border-neutral-200 rounded-2xl p-5 sm:p-6 hover:border-neutral-300 hover:shadow-sm transition-all duration-200">
                 <ShieldIcon />
                 <div>
                   <h3 className="font-display font-bold text-neutral-900 mb-1">{item.title}</h3>
