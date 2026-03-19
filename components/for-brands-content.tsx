@@ -362,7 +362,7 @@ export function ForBrandsContent() {
             </div>
 
             {/* Enterprise */}
-            <div className="aos-stagger-item group border-2 border-neutral-900 rounded-2xl p-8 hover:shadow-lg transition-all duration-300">
+            <div className="aos-stagger-item group border-2 border-neutral-900 rounded-2xl p-8 hover:shadow-sm transition-all duration-200">
               <h3 className="font-display text-lg font-bold text-neutral-900 mb-1">Enterprise</h3>
               <div className="flex items-baseline gap-1 mb-6">
                 <span className="font-display text-4xl font-bold text-neutral-900">$999</span>

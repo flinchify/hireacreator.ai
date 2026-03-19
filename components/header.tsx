@@ -194,7 +194,7 @@ export function Header({ theme = "light" }: { theme?: HeaderTheme }) {
             ) : (
               <>
                 <button onClick={() => { setMobileOpen(false); openLogin(); }} className={`px-4 py-3 text-sm font-medium rounded-xl text-left min-h-[44px] flex items-center ${t.mobileLink}`}>Log in</button>
-                <button onClick={() => { setMobileOpen(false); openSignup(); }} className={`px-4 py-3 text-sm font-medium text-center rounded-xl min-h-[44px] flex items-center justify-center ${t.mobileCta}`}>Get Started</button>
+                <button onClick={() => { setMobileOpen(false); openSignup(); }} className={`px-4 py-3 text-sm font-medium text-center rounded-xl min-h-[44px] flex items-center justify-center active:scale-[0.98] transition-transform ${t.mobileCta}`}>Get Started</button>
               </>
             )}
           </div>

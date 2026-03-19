@@ -289,7 +289,7 @@ export function ForAgentsContent() {
             ].map((item) => (
               <div
                 key={item.name}
-                className="group bg-gradient-to-br from-neutral-50 to-white border border-neutral-200 rounded-2xl p-6 hover:border-neutral-300 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+                className="group bg-gradient-to-br from-neutral-50 to-white border border-neutral-200 rounded-2xl p-5 sm:p-6 hover:border-neutral-300 hover:shadow-sm transition-all duration-200"
               >
                 <h3 className="font-display font-bold text-neutral-900 mb-1">{item.name}</h3>
                 <p className="text-sm text-neutral-500 leading-relaxed">{item.desc}</p>
