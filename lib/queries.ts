@@ -365,82 +365,90 @@ export async function getCreatorCount(): Promise<number> {
 }
 
 export async function getFeaturedCreatorsRotation(): Promise<Creator[]> {
-  const sql = getDb();
+  try {
+    const sql = getDb();
 
-  // Get current week boundaries (Monday to Sunday)
-  const now = new Date();
-  const dayOfWeek = now.getDay();
-  const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-  const weekStart = new Date(now);
-  weekStart.setDate(now.getDate() + mondayOffset);
-  weekStart.setHours(0, 0, 0, 0);
-  const weekEnd = new Date(weekStart);
-  weekEnd.setDate(weekStart.getDate() + 6);
-  const wsStr = weekStart.toISOString().split("T")[0];
-  const weStr = weekEnd.toISOString().split("T")[0];
+    // Get current week boundaries (Monday to Sunday)
+    const now = new Date();
+    const dayOfWeek = now.getDay();
+    const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+    const weekStart = new Date(now);
+    weekStart.setDate(now.getDate() + mondayOffset);
+    weekStart.setHours(0, 0, 0, 0);
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekStart.getDate() + 6);
+    const wsStr = weekStart.toISOString().split("T")[0];
+    const weStr = weekEnd.toISOString().split("T")[0];
 
-  // 1. Check for existing rotation this week
-  const existing = await sql`
-    SELECT fr.creator_id FROM featured_rotations fr
-    WHERE fr.week_start = ${wsStr}
-    ORDER BY fr.position ASC
-  `;
-
-  if (existing.length > 0) {
-    const ids = existing.map((r) => r.creator_id);
-    const users = await sql`
-      SELECT * FROM users WHERE id = ANY(${ids})
-        AND (is_banned IS NULL OR is_banned = FALSE)
+    // 1. Check for existing rotation this week
+    const existing = await sql`
+      SELECT fr.creator_id FROM featured_rotations fr
+      WHERE fr.week_start = ${wsStr}
+      ORDER BY fr.position ASC
     `;
-    if (users.length > 0) {
-      const userIds = users.map((u) => u.id);
-      const socials = await sql`SELECT * FROM social_connections WHERE user_id = ANY(${userIds})`;
-      // Maintain position order
-      const userMap = new Map(users.map((u) => [u.id, u]));
-      return ids
-        .filter((id) => userMap.has(id))
-        .map((id) => assembleCreator(userMap.get(id)!, socials.filter((s) => s.user_id === id)));
+
+    if (existing.length > 0) {
+      const ids = existing.map((r) => r.creator_id);
+      const users = await sql`
+        SELECT * FROM users WHERE id = ANY(${ids})
+          AND (is_banned IS NULL OR is_banned = FALSE)
+      `;
+      if (users.length > 0) {
+        const userIds = users.map((u) => u.id);
+        const socials = await sql`SELECT * FROM social_connections WHERE user_id = ANY(${userIds})`;
+        // Maintain position order
+        const userMap = new Map(users.map((u) => [u.id, u]));
+        return ids
+          .filter((id) => userMap.has(id))
+          .map((id) => assembleCreator(userMap.get(id)!, socials.filter((s) => s.user_id === id)));
+      }
+    }
+
+    // 2. Auto-select 4 creators based on profile completeness, verification, recency, randomness
+    const candidates = await sql`
+      SELECT u.*,
+        (CASE WHEN u.bio IS NOT NULL AND u.bio != '' THEN 1 ELSE 0 END
+         + CASE WHEN u.avatar_url IS NOT NULL THEN 1 ELSE 0 END
+         + CASE WHEN EXISTS (SELECT 1 FROM services s WHERE s.user_id = u.id AND s.is_active = TRUE) THEN 1 ELSE 0 END
+         + CASE WHEN EXISTS (SELECT 1 FROM social_connections sc WHERE sc.user_id = u.id) THEN 1 ELSE 0 END
+         + CASE WHEN u.verification_status = 'verified' THEN 2 ELSE 0 END
+        ) AS completeness_score,
+        (SELECT MAX(fr.week_start) FROM featured_rotations fr WHERE fr.creator_id = u.id) AS last_featured
+      FROM users u
+      WHERE u.role IN ('creator', 'admin')
+        AND u.visible_in_marketplace = TRUE
+        AND (u.is_banned IS NULL OR u.is_banned = FALSE)
+        AND u.avatar_url IS NOT NULL
+      ORDER BY completeness_score DESC, last_featured ASC NULLS FIRST, RANDOM()
+      LIMIT 4
+    `;
+
+    if (candidates.length === 0) {
+      // Fallback to old getFeaturedCreators behavior
+      return getFeaturedCreators();
+    }
+
+    // 3. Insert into featured_rotations
+    for (let i = 0; i < candidates.length; i++) {
+      const c = candidates[i];
+      await sql`
+        INSERT INTO featured_rotations (creator_id, week_start, week_end, position, reason)
+        VALUES (${c.id}, ${wsStr}, ${weStr}, ${i}, 'auto-selected')
+        ON CONFLICT (creator_id, week_start) DO NOTHING
+      `;
+    }
+
+    const userIds = candidates.map((u) => u.id);
+    const socials = await sql`SELECT * FROM social_connections WHERE user_id = ANY(${userIds})`;
+    return candidates.map((user) =>
+      assembleCreator(user, socials.filter((s) => s.user_id === user.id))
+    );
+  } catch (e) {
+    console.error('[getFeaturedCreatorsRotation] Error:', e);
+    try {
+      return await getFeaturedCreators();
+    } catch {
+      return [];
     }
   }
-
-  // 2. Auto-select 4 creators based on profile completeness, verification, recency, randomness
-  const candidates = await sql`
-    SELECT u.*,
-      (CASE WHEN u.bio IS NOT NULL AND u.bio != '' THEN 1 ELSE 0 END
-       + CASE WHEN u.avatar_url IS NOT NULL THEN 1 ELSE 0 END
-       + CASE WHEN EXISTS (SELECT 1 FROM services s WHERE s.user_id = u.id AND s.is_active = TRUE) THEN 1 ELSE 0 END
-       + CASE WHEN EXISTS (SELECT 1 FROM social_connections sc WHERE sc.user_id = u.id) THEN 1 ELSE 0 END
-       + CASE WHEN u.verification_status = 'verified' THEN 2 ELSE 0 END
-      ) AS completeness_score,
-      (SELECT MAX(fr.week_start) FROM featured_rotations fr WHERE fr.creator_id = u.id) AS last_featured
-    FROM users u
-    WHERE u.role IN ('creator', 'admin')
-      AND u.visible_in_marketplace = TRUE
-      AND (u.is_banned IS NULL OR u.is_banned = FALSE)
-      AND u.email_verified = TRUE
-      AND u.avatar_url IS NOT NULL
-    ORDER BY completeness_score DESC, last_featured ASC NULLS FIRST, RANDOM()
-    LIMIT 4
-  `;
-
-  if (candidates.length === 0) {
-    // Fallback to old getFeaturedCreators behavior
-    return getFeaturedCreators();
-  }
-
-  // 3. Insert into featured_rotations
-  for (let i = 0; i < candidates.length; i++) {
-    const c = candidates[i];
-    await sql`
-      INSERT INTO featured_rotations (creator_id, week_start, week_end, position, reason)
-      VALUES (${c.id}, ${wsStr}, ${weStr}, ${i}, 'auto-selected')
-      ON CONFLICT (creator_id, week_start) DO NOTHING
-    `;
-  }
-
-  const userIds = candidates.map((u) => u.id);
-  const socials = await sql`SELECT * FROM social_connections WHERE user_id = ANY(${userIds})`;
-  return candidates.map((user) =>
-    assembleCreator(user, socials.filter((s) => s.user_id === user.id))
-  );
 }

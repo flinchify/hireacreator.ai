@@ -93,9 +93,12 @@ export default async function CreatorProfilePage({
   fetch(`${process.env.NEXT_PUBLIC_BASE_URL || "https://hireacreator.ai"}/api/profile/view?slug=${params.slug}`).catch(() => {});
 
   // Fetch calendar sessions if enabled
-  const calendarSessions = creator.calendarEnabled
-    ? await getCreatorCalendarSessions(creator.id)
-    : [];
+  let calendarSessions: Awaited<ReturnType<typeof getCreatorCalendarSessions>> = [];
+  if (creator.calendarEnabled) {
+    try {
+      calendarSessions = await getCreatorCalendarSessions(creator.id);
+    } catch {}
+  }
 
   return (
     <div className="min-h-screen bg-neutral-50">
