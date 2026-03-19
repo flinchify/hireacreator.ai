@@ -595,7 +595,7 @@ function PlanTab({ settings }: { settings: Settings }) {
 
 /* ───── Admin Tab ───── */
 function AdminTab() {
-  const [adminSection, setAdminSection] = useState<"users" | "payments">("users");
+  const [adminSection, setAdminSection] = useState<"users" | "payments" | "outreach">("users");
 
   return (
     <div className="space-y-6">
@@ -613,10 +613,17 @@ function AdminTab() {
         >
           Payments
         </button>
+        <button
+          onClick={() => setAdminSection("outreach")}
+          className={`flex-1 py-2 text-sm font-medium rounded-lg transition-colors ${adminSection === "outreach" ? "bg-white text-neutral-900 shadow-sm" : "text-neutral-500 hover:text-neutral-700"}`}
+        >
+          Outreach
+        </button>
       </div>
 
       {adminSection === "users" && <AdminUsersSection />}
       {adminSection === "payments" && <AdminPaymentsSection />}
+      {adminSection === "outreach" && <AdminOutreachSection />}
     </div>
   );
 }
@@ -1103,6 +1110,459 @@ function AdminUsersSection() {
             )}
           </div>
         </Card>
+      )}
+    </div>
+  );
+}
+
+/* ───── Admin Outreach Section ───── */
+function AdminOutreachSection() {
+  const [subTab, setSubTab] = useState<"contacts" | "templates" | "send" | "stats">("contacts");
+  const [contacts, setContacts] = useState<any[]>([]);
+  const [templates, setTemplates] = useState<any[]>([]);
+  const [stats, setStats] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+
+  // Add contact form
+  const [addForm, setAddForm] = useState({ businessName: "", contactName: "", email: "", industry: "", website: "" });
+  const [addLoading, setAddLoading] = useState(false);
+
+  // CSV import
+  const [csvLoading, setCsvLoading] = useState(false);
+
+  // Template editing
+  const [editTemplate, setEditTemplate] = useState<any>(null);
+  const [tplForm, setTplForm] = useState({ name: "", subject: "", bodyHtml: "" });
+  const [tplLoading, setTplLoading] = useState(false);
+
+  // Send state
+  const [sendTemplateId, setSendTemplateId] = useState("");
+  const [sendTarget, setSendTarget] = useState<"selected" | "all_pending">("selected");
+  const [customMessage, setCustomMessage] = useState("");
+  const [sending, setSending] = useState(false);
+  const [sendResult, setSendResult] = useState<any>(null);
+  const [previewHtml, setPreviewHtml] = useState("");
+
+  function loadContacts() {
+    fetch("/api/admin/outreach/contacts").then(r => r.json()).then(d => {
+      if (d.contacts) setContacts(d.contacts);
+      setLoading(false);
+    }).catch(() => setLoading(false));
+  }
+
+  function loadTemplates() {
+    fetch("/api/admin/outreach/templates").then(r => r.json()).then(d => {
+      if (d.templates) setTemplates(d.templates);
+    }).catch(() => {});
+  }
+
+  function loadStats() {
+    fetch("/api/admin/outreach/stats").then(r => r.json()).then(d => {
+      if (!d.error) setStats(d);
+    }).catch(() => {});
+  }
+
+  useEffect(() => {
+    loadContacts();
+    loadTemplates();
+    loadStats();
+  }, []);
+
+  async function addContact(e: React.FormEvent) {
+    e.preventDefault();
+    if (!addForm.email || !addForm.businessName) return;
+    setAddLoading(true);
+    await fetch("/api/admin/outreach/contacts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ businessName: addForm.businessName, contactName: addForm.contactName, email: addForm.email, industry: addForm.industry, website: addForm.website }),
+    });
+    setAddForm({ businessName: "", contactName: "", email: "", industry: "", website: "" });
+    setAddLoading(false);
+    loadContacts();
+  }
+
+  async function handleCsvImport(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setCsvLoading(true);
+    const text = await file.text();
+    const res = await fetch("/api/admin/outreach/contacts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ csvData: text }),
+    });
+    const data = await res.json();
+    setCsvLoading(false);
+    alert(`Imported: ${data.added} added, ${data.skipped} duplicates skipped`);
+    loadContacts();
+    e.target.value = "";
+  }
+
+  function toggleSelect(id: string) {
+    setSelected(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  function toggleSelectAll() {
+    if (selected.size === contacts.length) setSelected(new Set());
+    else setSelected(new Set(contacts.map(c => c.id)));
+  }
+
+  async function saveTemplate(e: React.FormEvent) {
+    e.preventDefault();
+    setTplLoading(true);
+    if (editTemplate?.id) {
+      await fetch("/api/admin/outreach/templates", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: editTemplate.id, name: tplForm.name, subject: tplForm.subject, bodyHtml: tplForm.bodyHtml }),
+      });
+    } else {
+      await fetch("/api/admin/outreach/templates", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: tplForm.name, subject: tplForm.subject, bodyHtml: tplForm.bodyHtml }),
+      });
+    }
+    setTplLoading(false);
+    setEditTemplate(null);
+    setTplForm({ name: "", subject: "", bodyHtml: "" });
+    loadTemplates();
+  }
+
+  async function deleteTemplate(id: string) {
+    if (!confirm("Delete this template?")) return;
+    await fetch(`/api/admin/outreach/templates?id=${id}`, { method: "DELETE" });
+    loadTemplates();
+  }
+
+  function showPreview() {
+    const tpl = templates.find(t => t.id === sendTemplateId);
+    if (!tpl) return;
+    const sample = contacts[0] || { business_name: "Acme Corp", contact_name: "John", industry: "Marketing" };
+    let html = (tpl.body_html as string)
+      .replace(/\{business_name\}/g, sample.business_name || "Business")
+      .replace(/\{contact_name\}/g, sample.contact_name || "there")
+      .replace(/\{industry\}/g, sample.industry || "your industry")
+      .replace(/\{custom_message\}/g, customMessage || "")
+      .replace(/\{unsubscribe_url\}/g, "#");
+    setPreviewHtml(html);
+  }
+
+  async function sendEmails() {
+    if (!sendTemplateId) return alert("Select a template first");
+    const ids = sendTarget === "all_pending" ? "all_pending" : Array.from(selected);
+    if (sendTarget === "selected" && (ids as string[]).length === 0) return alert("Select contacts first");
+    if (!confirm(`Send emails to ${sendTarget === "all_pending" ? "all pending contacts" : `${(ids as string[]).length} selected contacts`}?`)) return;
+
+    setSending(true);
+    setSendResult(null);
+    const res = await fetch("/api/admin/outreach/send", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ contactIds: ids, templateId: sendTemplateId, customMessage }),
+    });
+    const data = await res.json();
+    setSending(false);
+    setSendResult(data);
+    loadContacts();
+    loadStats();
+  }
+
+  return (
+    <div className="space-y-4">
+      {/* Sub-navigation */}
+      <div className="flex gap-2 flex-wrap">
+        {(["contacts", "templates", "send", "stats"] as const).map(t => (
+          <button
+            key={t}
+            onClick={() => setSubTab(t)}
+            className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${subTab === t ? "bg-neutral-900 text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"}`}
+          >
+            {t.charAt(0).toUpperCase() + t.slice(1)}
+          </button>
+        ))}
+      </div>
+
+      {/* ── Contacts ── */}
+      {subTab === "contacts" && (
+        <div className="space-y-4">
+          {/* Add Contact Form */}
+          <Card className="p-4">
+            <h3 className="font-semibold text-sm text-neutral-900 mb-3">Add Contact</h3>
+            <form onSubmit={addContact} className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              <Input placeholder="Business name *" value={addForm.businessName} onChange={e => setAddForm(p => ({ ...p, businessName: e.target.value }))} required />
+              <Input placeholder="Contact name" value={addForm.contactName} onChange={e => setAddForm(p => ({ ...p, contactName: e.target.value }))} />
+              <Input placeholder="Email *" type="email" value={addForm.email} onChange={e => setAddForm(p => ({ ...p, email: e.target.value }))} required />
+              <Input placeholder="Industry" value={addForm.industry} onChange={e => setAddForm(p => ({ ...p, industry: e.target.value }))} />
+              <Input placeholder="Website" value={addForm.website} onChange={e => setAddForm(p => ({ ...p, website: e.target.value }))} />
+              <Button type="submit" disabled={addLoading} size="sm">{addLoading ? "Adding..." : "Add"}</Button>
+            </form>
+            <div className="mt-3 flex items-center gap-3">
+              <label className="text-xs text-neutral-500 cursor-pointer hover:text-neutral-700">
+                <span className="underline">{csvLoading ? "Importing..." : "Import CSV"}</span>
+                <input type="file" accept=".csv" onChange={handleCsvImport} className="hidden" disabled={csvLoading} />
+              </label>
+              <span className="text-xs text-neutral-400">Format: business_name, email, industry, ...</span>
+            </div>
+          </Card>
+
+          {/* Contacts Table */}
+          <Card className="p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-semibold text-sm text-neutral-900">Contacts ({contacts.length})</h3>
+              {selected.size > 0 && (
+                <Button size="sm" onClick={() => { setSubTab("send"); setSendTarget("selected"); }}>
+                  Send to {selected.size} selected
+                </Button>
+              )}
+            </div>
+            {loading ? (
+              <div className="py-8 text-center text-sm text-neutral-400">Loading...</div>
+            ) : contacts.length === 0 ? (
+              <div className="py-8 text-center text-sm text-neutral-400">No contacts yet. Add one above or import CSV.</div>
+            ) : (
+              <div className="overflow-x-auto -mx-4 px-4">
+                <table className="w-full text-xs">
+                  <thead>
+                    <tr className="border-b text-left text-neutral-500">
+                      <th className="pb-2 pr-2"><input type="checkbox" checked={selected.size === contacts.length && contacts.length > 0} onChange={toggleSelectAll} /></th>
+                      <th className="pb-2 pr-2">Business</th>
+                      <th className="pb-2 pr-2">Contact</th>
+                      <th className="pb-2 pr-2">Email</th>
+                      <th className="pb-2 pr-2">Industry</th>
+                      <th className="pb-2 pr-2">Status</th>
+                      <th className="pb-2">Sent</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {contacts.map(c => (
+                      <tr key={c.id} className="border-b border-neutral-100 hover:bg-neutral-50">
+                        <td className="py-2 pr-2"><input type="checkbox" checked={selected.has(c.id)} onChange={() => toggleSelect(c.id)} /></td>
+                        <td className="py-2 pr-2 font-medium text-neutral-900">{c.business_name}</td>
+                        <td className="py-2 pr-2 text-neutral-600">{c.contact_name || "—"}</td>
+                        <td className="py-2 pr-2 text-neutral-600">{c.email}</td>
+                        <td className="py-2 pr-2 text-neutral-500">{c.industry || "—"}</td>
+                        <td className="py-2 pr-2">
+                          <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-medium ${c.status === "sent" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}>
+                            {c.status}
+                          </span>
+                        </td>
+                        <td className="py-2 text-neutral-500">{c.send_count || 0}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </Card>
+        </div>
+      )}
+
+      {/* ── Templates ── */}
+      {subTab === "templates" && (
+        <div className="space-y-4">
+          {/* Template list */}
+          <Card className="p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-semibold text-sm text-neutral-900">Templates ({templates.length})</h3>
+              <Button size="sm" variant="outline" onClick={() => { setEditTemplate({}); setTplForm({ name: "", subject: "", bodyHtml: "" }); }}>New Template</Button>
+            </div>
+            {templates.length === 0 ? (
+              <div className="py-8 text-center text-sm text-neutral-400">No templates.</div>
+            ) : (
+              <div className="space-y-2">
+                {templates.map(t => (
+                  <div key={t.id} className="flex items-center justify-between p-3 bg-neutral-50 rounded-lg">
+                    <div>
+                      <div className="text-sm font-medium text-neutral-900">{t.name}</div>
+                      <div className="text-xs text-neutral-500 mt-0.5">Subject: {t.subject}</div>
+                    </div>
+                    <div className="flex gap-2">
+                      <button onClick={() => { setEditTemplate(t); setTplForm({ name: t.name, subject: t.subject, bodyHtml: t.body_html }); }} className="text-xs text-neutral-500 hover:text-neutral-900 underline">Edit</button>
+                      <button onClick={() => deleteTemplate(t.id)} className="text-xs text-red-500 hover:text-red-700 underline">Delete</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </Card>
+
+          {/* Variable helper */}
+          <Card className="p-4">
+            <h4 className="text-xs font-semibold text-neutral-700 mb-2">Available Variables</h4>
+            <div className="flex flex-wrap gap-1.5">
+              {["{business_name}", "{contact_name}", "{industry}", "{custom_message}", "{unsubscribe_url}"].map(v => (
+                <code key={v} className="text-[11px] px-2 py-1 bg-neutral-100 rounded text-neutral-700">{v}</code>
+              ))}
+            </div>
+          </Card>
+
+          {/* Edit/Create form */}
+          {editTemplate && (
+            <Card className="p-4">
+              <h3 className="font-semibold text-sm text-neutral-900 mb-3">{editTemplate.id ? "Edit Template" : "New Template"}</h3>
+              <form onSubmit={saveTemplate} className="space-y-3">
+                <Input placeholder="Template name" value={tplForm.name} onChange={e => setTplForm(p => ({ ...p, name: e.target.value }))} required />
+                <Input placeholder="Subject line" value={tplForm.subject} onChange={e => setTplForm(p => ({ ...p, subject: e.target.value }))} required />
+                <textarea
+                  placeholder="Body HTML"
+                  value={tplForm.bodyHtml}
+                  onChange={e => setTplForm(p => ({ ...p, bodyHtml: e.target.value }))}
+                  className="w-full h-48 text-xs font-mono p-3 border rounded-lg resize-y bg-white text-neutral-800 focus:outline-none focus:ring-2 focus:ring-neutral-900"
+                  required
+                />
+                <div className="flex gap-2">
+                  <Button type="submit" size="sm" disabled={tplLoading}>{tplLoading ? "Saving..." : "Save"}</Button>
+                  <Button type="button" size="sm" variant="outline" onClick={() => setEditTemplate(null)}>Cancel</Button>
+                </div>
+              </form>
+            </Card>
+          )}
+        </div>
+      )}
+
+      {/* ── Send ── */}
+      {subTab === "send" && (
+        <div className="space-y-4">
+          <Card className="p-4 space-y-4">
+            <h3 className="font-semibold text-sm text-neutral-900">Send Outreach Emails</h3>
+
+            {/* Target */}
+            <div>
+              <label className="text-xs font-medium text-neutral-700 mb-1 block">Recipients</label>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setSendTarget("all_pending")}
+                  className={`px-3 py-1.5 text-xs rounded-lg ${sendTarget === "all_pending" ? "bg-neutral-900 text-white" : "bg-neutral-100 text-neutral-600"}`}
+                >
+                  All Pending ({contacts.filter(c => c.status === "pending").length})
+                </button>
+                <button
+                  onClick={() => setSendTarget("selected")}
+                  className={`px-3 py-1.5 text-xs rounded-lg ${sendTarget === "selected" ? "bg-neutral-900 text-white" : "bg-neutral-100 text-neutral-600"}`}
+                >
+                  Selected ({selected.size})
+                </button>
+              </div>
+            </div>
+
+            {/* Template selection */}
+            <div>
+              <label className="text-xs font-medium text-neutral-700 mb-1 block">Template</label>
+              <select
+                value={sendTemplateId}
+                onChange={e => setSendTemplateId(e.target.value)}
+                className="w-full text-sm border rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-neutral-900"
+              >
+                <option value="">Select a template...</option>
+                {templates.map(t => <option key={t.id} value={t.id}>{t.name} — {t.subject}</option>)}
+              </select>
+            </div>
+
+            {/* Custom message */}
+            <div>
+              <label className="text-xs font-medium text-neutral-700 mb-1 block">Custom Message (fills {"{custom_message}"} variable)</label>
+              <textarea
+                value={customMessage}
+                onChange={e => setCustomMessage(e.target.value)}
+                placeholder="Optional personalized message..."
+                className="w-full h-20 text-sm p-3 border rounded-lg resize-y bg-white text-neutral-800 focus:outline-none focus:ring-2 focus:ring-neutral-900"
+              />
+            </div>
+
+            {/* Actions */}
+            <div className="flex gap-2 flex-wrap">
+              <Button size="sm" variant="outline" onClick={showPreview} disabled={!sendTemplateId}>Preview</Button>
+              <Button size="sm" onClick={sendEmails} disabled={sending || !sendTemplateId}>
+                {sending ? "Sending..." : "Send Emails"}
+              </Button>
+            </div>
+
+            {/* Send result */}
+            {sendResult && (
+              <div className={`p-3 rounded-lg text-sm ${sendResult.error ? "bg-red-50 text-red-700" : "bg-emerald-50 text-emerald-700"}`}>
+                {sendResult.error ? `Error: ${sendResult.error}` : `Done! ${sendResult.sent} sent, ${sendResult.failed} failed.`}
+              </div>
+            )}
+          </Card>
+
+          {/* Preview */}
+          {previewHtml && (
+            <Card className="p-4">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="font-semibold text-sm text-neutral-900">Email Preview</h3>
+                <button onClick={() => setPreviewHtml("")} className="text-xs text-neutral-500 hover:text-neutral-900">Close</button>
+              </div>
+              <div className="border rounded-lg p-4 bg-white" dangerouslySetInnerHTML={{ __html: previewHtml }} />
+            </Card>
+          )}
+        </div>
+      )}
+
+      {/* ── Stats ── */}
+      {subTab === "stats" && (
+        <div className="space-y-4">
+          {/* Stat cards */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {[
+              { label: "Total Sent", value: stats?.totalSent || 0 },
+              { label: "Opened", value: stats?.totalOpened || 0 },
+              { label: "Open Rate", value: `${stats?.openRate || 0}%` },
+              { label: "Click Rate", value: `${stats?.clickRate || 0}%` },
+            ].map(s => (
+              <Card key={s.label} className="p-4 text-center">
+                <div className="font-display text-2xl font-bold text-neutral-900">{s.value}</div>
+                <div className="text-xs text-neutral-500 mt-1">{s.label}</div>
+              </Card>
+            ))}
+          </div>
+
+          {/* Recent sends */}
+          <Card className="p-4">
+            <h3 className="font-semibold text-sm text-neutral-900 mb-3">Recent Sends</h3>
+            {!stats?.recentSends?.length ? (
+              <div className="py-8 text-center text-sm text-neutral-400">No sends yet.</div>
+            ) : (
+              <div className="overflow-x-auto -mx-4 px-4">
+                <table className="w-full text-xs">
+                  <thead>
+                    <tr className="border-b text-left text-neutral-500">
+                      <th className="pb-2 pr-2">Business</th>
+                      <th className="pb-2 pr-2">Email</th>
+                      <th className="pb-2 pr-2">Template</th>
+                      <th className="pb-2 pr-2">Status</th>
+                      <th className="pb-2 pr-2">Opened</th>
+                      <th className="pb-2">Clicked</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {stats.recentSends.map((s: any) => (
+                      <tr key={s.id} className="border-b border-neutral-100">
+                        <td className="py-2 pr-2 font-medium text-neutral-900">{s.business_name}</td>
+                        <td className="py-2 pr-2 text-neutral-600">{s.contact_email}</td>
+                        <td className="py-2 pr-2 text-neutral-500">{s.template_name}</td>
+                        <td className="py-2 pr-2">
+                          <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-medium ${s.status === "sent" ? "bg-emerald-100 text-emerald-700" : s.status === "failed" ? "bg-red-100 text-red-700" : "bg-neutral-100 text-neutral-600"}`}>
+                            {s.status}
+                          </span>
+                        </td>
+                        <td className="py-2 pr-2 text-neutral-500">{s.opened_at ? new Date(s.opened_at).toLocaleDateString() : "—"}</td>
+                        <td className="py-2 text-neutral-500">{s.clicked_at ? new Date(s.clicked_at).toLocaleDateString() : "—"}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </Card>
+        </div>
       )}
     </div>
   );
