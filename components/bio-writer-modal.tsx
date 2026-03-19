@@ -51,7 +51,7 @@ export function BioWriterModal({ open, onClose, onUseBio }: { open: boolean; onC
                 <div key={i} className="bg-neutral-50 rounded-2xl border border-neutral-200/60 p-4 hover:border-neutral-300 transition-colors">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider">{b.label}</span>
-                    <button onClick={() => { onUseBio(b.bio); onClose(); }} className="px-3 py-1.5 text-xs font-semibold text-white bg-neutral-900 rounded-lg hover:bg-neutral-800 transition-colors">
+                    <button onClick={async () => { await onUseBio(b.bio); onClose(); }} className="px-3 py-1.5 text-xs font-semibold text-white bg-neutral-900 rounded-lg hover:bg-neutral-800 transition-colors">
                       Use This
                     </button>
                   </div>

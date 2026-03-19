@@ -63,6 +63,18 @@ function EditProfileSheet({ user, open, onClose, onOpenBioWriter }: { user: User
     is_online: user.isOnline,
   });
 
+  // Sync form with user data when it changes (e.g., AI bio writer updates)
+  useEffect(() => {
+    setForm(f => ({
+      ...f,
+      full_name: user.name || f.full_name,
+      bio: user.bio || f.bio,
+      headline: user.headline || f.headline,
+      location: user.location || f.location,
+      category: user.category || f.category,
+    }));
+  }, [user.name, user.bio, user.headline, user.location, user.category]);
+
   async function save() {
     setSaving(true);
     const res = await fetch("/api/profile", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...form, hourly_rate: form.hourly_rate ? Number(form.hourly_rate) : null }) });
