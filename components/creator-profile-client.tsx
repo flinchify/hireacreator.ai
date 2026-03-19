@@ -17,8 +17,6 @@ export function CreatorHeroActions({
 }) {
   const { user, openLogin } = useAuth();
 
-  if (!hasServices && !allowMessages) return null;
-
   function handleBook() {
     if (!user) {
       openLogin();
@@ -28,6 +26,10 @@ export function CreatorHeroActions({
   }
 
   async function handleMessage() {
+    if (!allowMessages) {
+      alert("This creator has messaging disabled.");
+      return;
+    }
     if (!user) {
       openLogin();
       return;
@@ -57,11 +59,9 @@ export function CreatorHeroActions({
           Book Now
         </Button>
       )}
-      {allowMessages && (
-        <Button variant="outline" size="lg" className="hover:scale-105 transition-transform" onClick={handleMessage}>
-          Message
-        </Button>
-      )}
+      <Button variant="outline" size="lg" className="hover:scale-105 transition-transform" onClick={handleMessage}>
+        Message
+      </Button>
     </div>
   );
 }
@@ -111,9 +111,11 @@ export function ServiceAction({ serviceId, price, creatorId }: { serviceId: stri
 export function ContactCreatorButton({ creatorName, creatorId, allowMessages }: { creatorName: string; creatorId: string; allowMessages: boolean }) {
   const { user, openLogin } = useAuth();
 
-  if (!allowMessages) return null;
-
   async function handleContact() {
+    if (!allowMessages) {
+      alert("This creator has messaging disabled.");
+      return;
+    }
     if (!user) {
       openLogin();
       return;

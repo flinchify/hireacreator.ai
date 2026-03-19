@@ -919,12 +919,17 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
                       )}
                     </button>
                     {settings.bgValue && settings.bgValue.startsWith("http") && (
-                      <div className="relative rounded-xl overflow-hidden aspect-video">
-                        <img src={settings.bgValue} alt="" className="w-full h-full object-cover" onError={e => (e.currentTarget.style.display = "none")} />
-                        <button onClick={() => save({ bgValue: "" })} className="absolute top-2 right-2 w-7 h-7 bg-black/60 rounded-full flex items-center justify-center hover:bg-black/80">
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" /></svg>
+                      <>
+                        <div className="relative rounded-xl overflow-hidden aspect-video">
+                          <img src={settings.bgValue} alt="" className="w-full h-full object-cover" onError={e => (e.currentTarget.style.display = "none")} />
+                          <button onClick={() => save({ bgValue: "" })} className="absolute top-2 right-2 w-7 h-7 bg-black/60 rounded-full flex items-center justify-center hover:bg-black/80">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" /></svg>
+                          </button>
+                        </div>
+                        <button onClick={() => save({ bgValue: "" })} className="w-full py-2 text-xs font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors">
+                          Remove image
                         </button>
-                      </div>
+                      </>
                     )}
                   </div>
                 )}
@@ -942,16 +947,24 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
                       )}
                     </button>
                     {settings.bgImages.length > 0 && (
-                      <div className="grid grid-cols-5 gap-2">
-                        {settings.bgImages.map((img, i) => (
-                          <div key={i} className="relative aspect-square rounded-xl overflow-hidden group">
-                            <img src={img} alt="" className="w-full h-full object-cover" />
-                            <button onClick={() => removePhoto(i)} className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" /></svg>
-                            </button>
-                          </div>
-                        ))}
-                      </div>
+                      <>
+                        <div className="grid grid-cols-5 gap-2">
+                          {settings.bgImages.map((img, i) => (
+                            <div key={i} className="relative aspect-square rounded-xl overflow-hidden group">
+                              <img src={img} alt="" className="w-full h-full object-cover" />
+                              <button onClick={() => removePhoto(i)} className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" /></svg>
+                              </button>
+                              <button onClick={() => removePhoto(i)} className="absolute top-1 right-1 w-5 h-5 bg-black/70 rounded-full flex items-center justify-center hover:bg-black/90 z-10">
+                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" /></svg>
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                        <button onClick={() => save({ bgImages: [] })} className="w-full py-2 text-xs font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors">
+                          Remove all photos
+                        </button>
+                      </>
                     )}
                   </div>
                 )}
@@ -968,12 +981,17 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
                       )}
                     </button>
                     {settings.bgVideo && (
-                      <div className="relative rounded-xl overflow-hidden aspect-video bg-black">
-                        <video src={settings.bgVideo} autoPlay muted loop playsInline className="w-full h-full object-cover" />
-                        <button onClick={() => save({ bgVideo: "" })} className="absolute top-2 right-2 w-7 h-7 bg-black/60 rounded-full flex items-center justify-center hover:bg-black/80">
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" /></svg>
+                      <>
+                        <div className="relative rounded-xl overflow-hidden aspect-video bg-black">
+                          <video src={settings.bgVideo} autoPlay muted loop playsInline className="w-full h-full object-cover" />
+                          <button onClick={() => save({ bgVideo: "" })} className="absolute top-2 right-2 w-7 h-7 bg-black/60 rounded-full flex items-center justify-center hover:bg-black/80">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" /></svg>
+                          </button>
+                        </div>
+                        <button onClick={() => save({ bgVideo: "" })} className="w-full py-2 text-xs font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors">
+                          Remove video
                         </button>
-                      </div>
+                      </>
                     )}
                   </div>
                 )}
