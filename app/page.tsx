@@ -1,14 +1,14 @@
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { HomepageContent } from "@/components/homepage-content";
-import { getFeaturedCreators, getCreatorCount } from "@/lib/queries";
+import { getFeaturedCreatorsRotation, getCreatorCount } from "@/lib/queries";
 
 export default async function HomePage() {
-  let featured: Awaited<ReturnType<typeof getFeaturedCreators>> = [];
+  let featured: Awaited<ReturnType<typeof getFeaturedCreatorsRotation>> = [];
   let creatorCount = 0;
   try {
     [featured, creatorCount] = await Promise.all([
-      getFeaturedCreators(),
+      getFeaturedCreatorsRotation(),
       getCreatorCount(),
     ]);
   } catch {

@@ -679,8 +679,95 @@ function ProductsManager() {
   );
 }
 
+/* ═══ Admin Featured Creators ═══ */
+function AdminFeaturedCreators() {
+  const [featured, setFeatured] = useState<any[]>([]);
+  const [weekStart, setWeekStart] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [searching, setSearching] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/admin/featured").then(r => r.json()).then(d => {
+      setFeatured(d.featured || []);
+      setWeekStart(d.weekStart || "");
+    }).catch(() => {});
+  }, []);
+
+  async function searchCreators(q: string) {
+    setSearchQuery(q);
+    if (q.length < 2) { setSearchResults([]); return; }
+    setSearching(true);
+    const res = await fetch(`/api/admin/users?search=${encodeURIComponent(q)}`);
+    const data = await res.json();
+    setSearchResults((data.users || []).filter((u: any) => u.role === "creator" || u.role === "admin").slice(0, 8));
+    setSearching(false);
+  }
+
+  function addCreator(user: any) {
+    if (featured.some(f => f.creator_id === user.id)) return;
+    setFeatured(prev => [...prev, { creator_id: user.id, full_name: user.full_name, slug: user.slug, avatar_url: user.avatar_url, category: user.category || "" }]);
+    setSearchQuery("");
+    setSearchResults([]);
+  }
+
+  function removeCreator(creatorId: string) {
+    setFeatured(prev => prev.filter(f => f.creator_id !== creatorId));
+  }
+
+  async function saveOverride() {
+    setSaving(true);
+    const ids = featured.map(f => f.creator_id);
+    await fetch("/api/admin/featured", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ creatorIds: ids }),
+    });
+    setSaving(false);
+  }
+
+  return (
+    <div className="border-t border-purple-100 pt-3">
+      <h3 className="text-xs font-bold text-neutral-900 mb-2">Featured Creators (Week of {weekStart})</h3>
+      <div className="space-y-1.5 mb-3">
+        {featured.map(f => (
+          <div key={f.creator_id} className="flex items-center gap-2 py-1.5 px-2 bg-purple-50/50 rounded-lg">
+            {f.avatar_url ? <img src={f.avatar_url} alt="" className="w-6 h-6 rounded-full object-cover" /> : <div className="w-6 h-6 rounded-full bg-neutral-200" />}
+            <span className="text-xs text-neutral-700 flex-1 truncate">{f.full_name || f.slug}</span>
+            <button onClick={() => removeCreator(f.creator_id)} className="text-neutral-400 hover:text-red-500 text-xs">&times;</button>
+          </div>
+        ))}
+        {featured.length === 0 && <p className="text-[10px] text-neutral-400">No manual overrides — auto-rotation active.</p>}
+      </div>
+      <div className="relative mb-2">
+        <input
+          value={searchQuery}
+          onChange={e => searchCreators(e.target.value)}
+          placeholder="Search creators to feature..."
+          className="w-full px-3 py-2 text-xs border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-purple-300"
+        />
+        {searchResults.length > 0 && (
+          <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-neutral-200 rounded-lg shadow-lg z-20 max-h-48 overflow-y-auto">
+            {searchResults.map((u: any) => (
+              <button key={u.id} onClick={() => addCreator(u)} className="flex items-center gap-2 w-full px-3 py-2 text-xs hover:bg-neutral-50 text-left">
+                {u.avatar_url ? <img src={u.avatar_url} alt="" className="w-5 h-5 rounded-full object-cover" /> : <div className="w-5 h-5 rounded-full bg-neutral-200" />}
+                <span className="truncate">{u.full_name}</span>
+                <span className="text-neutral-400 ml-auto">@{u.slug}</span>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+      <button onClick={saveOverride} disabled={saving} className="w-full py-2 text-xs font-semibold bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50">
+        {saving ? "Saving..." : "Save Featured Override"}
+      </button>
+    </div>
+  );
+}
+
 /* ═══ Sidebar nav items ═══ */
-type Section = "overview" | "links" | "services" | "products" | "calendar" | "bookings" | "earn" | "analytics" | "earnings" | "messages" | "animations" | "templates" | "verification" | "testimonials" | "settings";
+type Section = "overview" | "links" | "services" | "products" | "portfolio" | "calendar" | "bookings" | "earn" | "analytics" | "earnings" | "messages" | "animations" | "templates" | "verification" | "testimonials" | "settings";
 
 const NAV_MAIN = [
   { id: "overview" as Section, label: "Overview", icon: icons.overview },
@@ -1179,10 +1266,11 @@ export function DashboardContent() {
                   {user.role === "admin" && (
                     <div className="bg-white rounded-2xl border border-purple-200/60 p-5">
                       <h2 className="text-sm font-bold text-neutral-900 flex items-center gap-2 mb-3"><span className="px-2 py-0.5 bg-purple-100 text-purple-700 text-[9px] font-bold rounded-full uppercase">Admin</span></h2>
-                      <div className="flex gap-3">
+                      <div className="flex gap-3 mb-3">
                         <Link href="/dashboard/settings?tab=admin" className="flex-1 py-2.5 text-xs font-medium text-center bg-purple-50 text-purple-700 rounded-xl hover:bg-purple-100 transition-colors">Users & Orders</Link>
                         <Link href="/dashboard/settings?tab=admin" className="flex-1 py-2.5 text-xs font-medium text-center bg-purple-50 text-purple-700 rounded-xl hover:bg-purple-100 transition-colors">Marketplace Toggle</Link>
                       </div>
+                      <AdminFeaturedCreators />
                     </div>
                   )}
                 </div>

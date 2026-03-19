@@ -388,20 +388,22 @@ export function HomepageContent({
                 Your profile
               </div>
               <h2 className="font-display text-3xl sm:text-4xl font-bold text-neutral-900 leading-tight mb-6">
-                Linktree shows links.<br />
-                This books clients.
+                You have the audience.<br />
+                Now monetize it.
               </h2>
               <p className="text-neutral-500 leading-relaxed mb-8 text-lg">
-                Your HireACreator profile is a complete storefront. Portfolio,
-                services with clear pricing, verified reviews, and a booking
-                system built in. Drop it in your bio and let it sell for you.
+                Millions of creators build audiences but struggle to turn followers into income.
+                A car creator with 500K followers on TikTok still can&apos;t easily sell
+                detailing walkthroughs, mod consultations, or sponsored review slots.
+                HireACreator gives every creator a storefront that converts — portfolio,
+                services, payments, and booking in one link.
               </p>
               <ul className="space-y-4">
                 {[
-                  "Portfolio, pricing, and booking in one page",
-                  "Connect Instagram, TikTok, YouTube, and more",
+                  "Turn your content niche into bookable services",
                   "Accept payments directly via Stripe — 0% platform fee",
-                  "Verified badge builds instant trust with brands",
+                  "Sell consultations, reviews, UGC, tutorials — anything",
+                  "Verified profile builds trust so brands find and pay you",
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-3">
                     <div className="mt-0.5 w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
@@ -474,7 +476,10 @@ export function HomepageContent({
             </div>
             <StaggerChildren className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5" staggerMs={100}>
               {featured.map((creator) => (
-                <div key={creator.id} className="aos-stagger-item">
+                <div key={creator.id} className="aos-stagger-item relative">
+                  <div className="absolute top-2 left-2 z-10 px-2 py-0.5 bg-neutral-900 text-white text-[9px] font-bold uppercase tracking-wider rounded-full shadow-sm">
+                    Featured This Week
+                  </div>
                   <CreatorCard creator={creator} />
                 </div>
               ))}

@@ -534,10 +534,10 @@ export default async function CreatorProfilePage({
                             {session.price === 0 ? 'Free' : `$${session.price}`}
                           </div>
                           <a
-                            href={`/${creator.slug}/links`}
+                            href={`/u/${creator.slug}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-xs font-medium text-blue-600 hover:text-blue-700 transition-colors"
+                            className="text-xs font-medium text-neutral-900 hover:text-neutral-600 transition-colors"
                           >
                             Book
                           </a>
@@ -554,7 +554,7 @@ export default async function CreatorProfilePage({
               <Card className="p-5">
                 <h3 className="font-semibold text-neutral-900 mb-3">Creator Page</h3>
                 <a
-                  href={`/${creator.slug}/links`}
+                  href={`/u/${creator.slug}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors group"
