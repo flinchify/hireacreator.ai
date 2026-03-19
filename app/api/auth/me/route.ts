@@ -15,7 +15,7 @@ export async function GET() {
       SELECT u.id, u.email, u.full_name, u.slug, u.avatar_url, u.cover_url,
              u.headline, u.bio, u.location, u.role, u.category,
              u.hourly_rate, u.currency, u.is_verified, u.is_featured,
-             u.is_online, u.subscription_tier, u.website_url,
+             u.is_online, u.subscription_tier, u.stripe_account_id, u.website_url,
              u.business_name, u.business_url, u.has_intro_animation,
              u.rating, u.review_count, u.total_projects, u.total_earnings,
              u.email_verified, u.onboarding_complete
@@ -65,6 +65,7 @@ export async function GET() {
       totalEarnings: u.total_earnings,
       emailVerified: u.email_verified || false,
       onboardingComplete: u.onboarding_complete || false,
+      stripeAccountId: u.stripe_account_id || null,
     },
   });
 }

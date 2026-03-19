@@ -32,6 +32,7 @@ export interface User {
   totalEarnings: number;
   emailVerified: boolean;
   onboardingComplete: boolean;
+  stripeAccountId: string | null;
 }
 
 interface AuthContextType {

@@ -195,8 +195,26 @@ function ServicesSheet({ user, open, onClose }: { user: User; open: boolean; onC
 
   useEffect(() => { if (open) fetch("/api/profile").then(r => r.json()).then(d => setServices(d.services || [])).catch(() => {}); }, [open]);
 
+  const [connectingStripe, setConnectingStripe] = useState(false);
+
+  async function startStripeConnect() {
+    setConnectingStripe(true);
+    try {
+      const res = await fetch("/api/stripe/connect", { method: "POST" });
+      const data = await res.json();
+      if (data.url) window.location.href = data.url;
+      else setError(data.error || "Failed to start Stripe onboarding");
+    } catch { setError("Failed to connect Stripe"); }
+    setConnectingStripe(false);
+  }
+
   async function add() {
     if (!form.title || !form.price) return;
+    // Gate: require Stripe for paid services
+    if (Number(form.price) > 0 && !user.stripeAccountId) {
+      setError("stripe_required");
+      return;
+    }
     setAdding(true); setError("");
     const res = await fetch("/api/profile/services", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ title: form.title, description: form.description, price: Number(form.price), delivery_days: Number(form.delivery_days) || 7, category: form.category || null }) });
     const data = await res.json();
@@ -223,7 +241,24 @@ function ServicesSheet({ user, open, onClose }: { user: User; open: boolean; onC
             <button onClick={() => remove(s.id)} className="text-xs text-red-500 hover:text-red-700 mt-2">Delete</button>
           </div>
         ))}
-        {error && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{error}</p>}
+        {error === "stripe_required" ? (
+          <div className="p-4 bg-amber-50 border border-amber-200/60 rounded-xl">
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center shrink-0">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-amber-600"><path d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" strokeLinecap="round" strokeLinejoin="round" /></svg>
+              </div>
+              <div className="flex-1">
+                <h4 className="text-sm font-semibold text-neutral-900">Connect Stripe to accept payments</h4>
+                <p className="text-xs text-neutral-500 mt-0.5">You need to connect a Stripe account before adding paid services. Free services (price $0) don&apos;t require Stripe.</p>
+                <button onClick={startStripeConnect} disabled={connectingStripe} className="mt-3 px-4 py-2 bg-neutral-900 text-white text-xs font-semibold rounded-lg hover:bg-neutral-800 transition-colors disabled:opacity-50">
+                  {connectingStripe ? "Connecting..." : "Connect Stripe"}
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : error ? (
+          <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{error}</p>
+        ) : null}
         <div className="border-t border-neutral-100 pt-4 space-y-3">
           <h4 className="text-sm font-medium text-neutral-900">Add Service</h4>
           <input placeholder="Service title" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} className={inp} />
@@ -1204,6 +1239,26 @@ export function DashboardContent() {
                       </div>
                     );
                   })()}
+
+                  {/* Stripe connection banner */}
+                  {dataLoaded && !user.stripeAccountId && (
+                    <div className="p-4 bg-violet-50 border border-violet-200/60 rounded-2xl flex items-start gap-3">
+                      <div className="w-8 h-8 rounded-xl bg-violet-100 flex items-center justify-center shrink-0">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-violet-600"><path d="M21 4H3a2 2 0 00-2 2v12a2 2 0 002 2h18a2 2 0 002-2V6a2 2 0 00-2-2z" strokeLinecap="round" strokeLinejoin="round"/><path d="M1 10h22" strokeLinecap="round"/></svg>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-sm font-semibold text-neutral-900">Connect Stripe to accept payments</h3>
+                        <p className="text-xs text-neutral-500 mt-0.5">Set up Stripe to receive payments for your paid services.</p>
+                        <button onClick={async () => { const res = await fetch("/api/stripe/connect", { method: "POST" }); const data = await res.json(); if (data.url) window.location.href = data.url; }} className="mt-2 px-4 py-2 bg-neutral-900 text-white text-xs font-semibold rounded-lg hover:bg-neutral-800 transition-colors">Connect Stripe</button>
+                      </div>
+                    </div>
+                  )}
+                  {dataLoaded && user.stripeAccountId && (
+                    <div className="flex items-center gap-2 px-4 py-3 bg-emerald-50 border border-emerald-200/60 rounded-2xl">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-emerald-600 shrink-0"><path d="M20 6L9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                      <span className="text-sm font-medium text-emerald-700">Payments connected via Stripe</span>
+                    </div>
+                  )}
 
                   {/* Mobile profile card */}
                   <div className="lg:hidden bg-white rounded-2xl border border-neutral-200/60 p-5">
