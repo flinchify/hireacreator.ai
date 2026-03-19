@@ -205,7 +205,6 @@ export default async function CreatorProfilePage({
             <div className="flex flex-col gap-3 sm:items-end mt-4 sm:mt-0">
               <CreatorHeroActions
                 hasServices={creator.services.length > 0}
-                allowMessages={creator.allowMessages}
                 creatorName={creator.name}
                 creatorId={creator.id}
               />
@@ -457,7 +456,7 @@ export default async function CreatorProfilePage({
                 <p className="text-sm text-neutral-500 mb-3">
                   This creator hasn&apos;t listed any services yet.
                 </p>
-                <ContactCreatorButton creatorName={creator.name} creatorId={creator.id} allowMessages={creator.allowMessages} />
+                <ContactCreatorButton creatorName={creator.name} creatorId={creator.id} />
               </Card>
             )}
 
