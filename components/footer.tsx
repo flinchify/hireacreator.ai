@@ -68,9 +68,14 @@ export function Footer() {
         </div>
 
         <div className="border-t border-neutral-800 mt-12 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-sm">
-            &copy; {new Date().getFullYear()} HireACreator.ai. All rights reserved.
-          </p>
+          <div>
+            <p className="text-sm">
+              &copy; {new Date().getFullYear()} HireACreator.ai. All rights reserved.
+            </p>
+            <p className="text-[10px] text-neutral-600 mt-2 max-w-lg leading-relaxed">
+              All third-party trademarks (including logos and names) referenced on this site remain the property of their respective owners. HireACreator is not affiliated with, endorsed by, or sponsored by any of these companies.
+            </p>
+          </div>
           <div className="flex items-center gap-4">
             <a href="https://x.com/hireacreatorAI" target="_blank" rel="noopener noreferrer" className="text-neutral-400 hover:text-white transition-colors" aria-label="X (Twitter)">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>

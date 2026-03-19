@@ -295,7 +295,7 @@ export function HomepageContent({
 
       {/* ═══════════════════ WHAT YOU GET ═══════════════════ */}
       <section className="bg-neutral-50/50 border-y border-neutral-100">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
           <AnimateOnScroll className="text-center mb-14">
             <div className="text-sm font-medium text-neutral-400 uppercase tracking-wider mb-4">What you get</div>
             <h2 className="font-display text-2xl sm:text-4xl font-bold text-neutral-900 leading-tight">
@@ -378,7 +378,7 @@ export function HomepageContent({
 
       {/* ═══════════════════ PLATFORM PREVIEW — Real Screenshots ═══════════════════ */}
       <AnimateOnScroll as="section" id="for-creators" className="bg-white">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             {/* Left — Two real link-in-bio screenshots in phone frames, slightly overlapping */}
             <div className="order-2 lg:order-1">
@@ -479,7 +479,7 @@ export function HomepageContent({
       {/* ═══════════════════ FEATURED CREATORS ═══════════════════ */}
       {featured.length > 0 && (
         <AnimateOnScroll as="section" className="bg-gradient-to-b from-blue-50/30 to-white border-t border-neutral-100">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
             <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10">
               <div>
                 <h2 className="font-display text-2xl sm:text-3xl font-bold text-neutral-900">
@@ -520,7 +520,7 @@ export function HomepageContent({
 
       {/* ═══════════════════ FOR BRANDS ═══════════════════ */}
       <AnimateOnScroll as="section" id="for-brands" className="bg-white">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28 border-t border-neutral-100">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20 border-t border-neutral-100">
           <div className="text-center mb-14">
             <div className="text-sm font-medium text-neutral-400 uppercase tracking-wider mb-4">
               For Brands & Agencies
@@ -594,7 +594,7 @@ export function HomepageContent({
 
       {/* ═══════════════════ FOR AI AGENTS ═══════════════════ */}
       <AnimateOnScroll as="section" id="for-agents" className="bg-gradient-to-b from-neutral-950 to-neutral-900 text-white">
-        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28 overflow-hidden">
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20 overflow-hidden">
           {/* Subtle dot grid */}
           <div className="absolute inset-0 dot-grid-light opacity-30" />
 
@@ -689,7 +689,7 @@ export function HomepageContent({
       <AnimateOnScroll as="section" id="pricing" className="relative bg-white overflow-hidden">
         {/* Subtle background pattern */}
         <div className="absolute inset-0 dot-grid opacity-20" />
-        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
           <div className="text-center mb-14">
             <div className="text-sm font-medium text-neutral-400 uppercase tracking-wider mb-4">
               Pricing
@@ -805,7 +805,7 @@ export function HomepageContent({
 
       {/* ═══════════════════ COMPARISON TABLE ═══════════════════ */}
       <AnimateOnScroll as="section" className="bg-neutral-50 border-y border-neutral-100">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
           <div className="text-center mb-14">
             <h2 className="font-display text-3xl sm:text-4xl font-bold text-neutral-900 mb-4">
               Why not just use Linktree or Fiverr?
@@ -883,16 +883,16 @@ export function HomepageContent({
             </table>
             </div>
           </div>
+
+          <p className="text-[10px] text-neutral-400 text-center max-w-2xl mx-auto mt-10 leading-relaxed">
+            Fiverr&reg; is a registered trademark of Fiverr International Ltd. Upwork&reg; is a registered trademark of Upwork Inc. Linktree&reg; is a registered trademark of Linktree Pty Ltd. HireACreator is not affiliated with, endorsed by, or sponsored by any of these companies. Comparisons are based on publicly available information as of March 2026.
+          </p>
         </div>
       </AnimateOnScroll>
 
-      <p className="text-xs text-neutral-400 text-center max-w-2xl mx-auto mt-12 px-4">
-        Fiverr is a registered trademark of Fiverr International Ltd. Upwork is a registered trademark of Upwork Inc. Linktree is a registered trademark of Linktree Pty Ltd. HireACreator is not affiliated with, endorsed by, or sponsored by any of these companies. Comparisons are based on publicly available information as of March 2026.
-      </p>
-
       {/* ═══════════════════ FAQ ═══════════════════ */}
       <AnimateOnScroll as="section" className="bg-white border-t border-neutral-100">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
           <h2 className="font-display text-3xl font-bold text-neutral-900 text-center mb-4">
             Frequently asked questions
           </h2>

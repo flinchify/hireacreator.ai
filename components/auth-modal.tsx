@@ -126,7 +126,7 @@ export function AuthModal() {
       style={{ animation: "modalFadeIn 0.15s ease-out" }}
     >
       <div
-        className="relative w-full sm:max-w-sm bg-white rounded-t-2xl sm:rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto"
+        className="relative w-full sm:max-w-sm bg-white rounded-t-2xl sm:rounded-2xl shadow-2xl overflow-hidden max-h-[85vh] overflow-y-auto"
         style={{ animation: "modalSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1)" }}
       >
         <button

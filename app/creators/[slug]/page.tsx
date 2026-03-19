@@ -103,7 +103,7 @@ export default async function CreatorProfilePage({
 
       {/* Cover + Avatar Hero with fade-in */}
       <div className="relative animate-fadeIn">
-        <div className="h-32 sm:h-72 bg-neutral-200 overflow-hidden relative">
+        <div className="h-32 sm:h-48 lg:h-72 bg-neutral-200 overflow-hidden relative">
           {creator.cover ? (
             <img
               src={creator.cover}
@@ -123,10 +123,10 @@ export default async function CreatorProfilePage({
                 <img
                   src={creator.avatar}
                   alt={creator.name}
-                  className="w-28 h-28 sm:w-36 sm:h-36 rounded-2xl border-4 border-white object-cover shadow-lg transition-transform group-hover:scale-105"
+                  className="w-20 h-20 sm:w-28 sm:h-28 lg:w-36 lg:h-36 rounded-2xl border-4 border-white object-cover shadow-lg transition-transform group-hover:scale-105"
                 />
               ) : (
-                <div className="w-28 h-28 sm:w-36 sm:h-36 rounded-2xl border-4 border-white bg-gradient-to-br from-neutral-100 to-neutral-200 flex items-center justify-center shadow-lg">
+                <div className="w-20 h-20 sm:w-28 sm:h-28 lg:w-36 lg:h-36 rounded-2xl border-4 border-white bg-gradient-to-br from-neutral-100 to-neutral-200 flex items-center justify-center shadow-lg">
                   <span className="text-3xl font-bold text-neutral-400">
                     {creator.name.charAt(0)}
                   </span>
