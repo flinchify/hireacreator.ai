@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { PlatformIcon } from "@/components/icons/platforms";
-import { getCreatorBySlug } from "@/lib/queries";
+import { getCreatorBySlug, getCreatorCalendarSessions } from "@/lib/queries";
 import { AnimateOnScroll, StaggerChildren } from "@/components/animate-on-scroll";
 import { CountUp } from "@/components/count-up";
 import { CreatorHeroActions, ServiceAction, ContactCreatorButton, BoostProfileButton } from "@/components/creator-profile-client";
@@ -91,6 +91,11 @@ export default async function CreatorProfilePage({
 
   // Fire-and-forget view tracking
   fetch(`${process.env.NEXT_PUBLIC_BASE_URL || "https://hireacreator.ai"}/api/profile/view?slug=${params.slug}`).catch(() => {});
+
+  // Fetch calendar sessions if enabled
+  const calendarSessions = creator.calendarEnabled
+    ? await getCreatorCalendarSessions(creator.id)
+    : [];
 
   return (
     <div className="min-h-screen bg-neutral-50">
@@ -455,6 +460,63 @@ export default async function CreatorProfilePage({
                 <ContactCreatorButton creatorName={creator.name} creatorId={creator.id} allowMessages={creator.allowMessages} />
               </Card>
             )}
+
+            {/* Book a Session */}
+            {creator.calendarEnabled && calendarSessions.length > 0 && (
+              <AnimateOnScroll>
+                <Card className="p-5">
+                  <h3 className="font-semibold text-neutral-900 mb-3">Book a Session</h3>
+                  <div className="space-y-3">
+                    {calendarSessions.map((session) => (
+                      <div key={session.id} className="flex items-start justify-between gap-3 pb-3 border-b border-neutral-100 last:border-0 last:pb-0">
+                        <div className="min-w-0">
+                          <div className="font-medium text-sm text-neutral-900">{session.title}</div>
+                          <div className="text-xs text-neutral-500 mt-0.5">{session.duration_min} min</div>
+                          {session.description && (
+                            <p className="text-xs text-neutral-400 mt-1 line-clamp-2">{session.description}</p>
+                          )}
+                        </div>
+                        <div className="text-right shrink-0">
+                          <div className="text-sm font-semibold text-neutral-900">
+                            {session.price === 0 ? 'Free' : `$${session.price}`}
+                          </div>
+                          <a
+                            href={`/${creator.slug}/links`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs font-medium text-blue-600 hover:text-blue-700 transition-colors"
+                          >
+                            Book
+                          </a>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </Card>
+              </AnimateOnScroll>
+            )}
+
+            {/* Link in Bio */}
+            <AnimateOnScroll>
+              <Card className="p-5">
+                <h3 className="font-semibold text-neutral-900 mb-3">Creator Page</h3>
+                <a
+                  href={`/${creator.slug}/links`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors group"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+                    <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" />
+                    <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" />
+                  </svg>
+                  <span className="group-hover:underline">View link-in-bio page</span>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-0 group-hover:opacity-100 transition-opacity">
+                    <path d="M7 17L17 7M7 7h10v10" />
+                  </svg>
+                </a>
+              </Card>
+            </AnimateOnScroll>
 
             {/* Share Profile */}
             <AnimateOnScroll>

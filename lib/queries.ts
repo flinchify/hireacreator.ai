@@ -288,6 +288,17 @@ export async function getTopCreatorsByCategory(): Promise<Record<string, Creator
   return byCategory;
 }
 
+export async function getCreatorCalendarSessions(userId: string) {
+  const sql = getDb();
+  const sessions = await sql`
+    SELECT id, title, duration_min, price, description
+    FROM calendar_sessions
+    WHERE user_id = ${userId} AND is_active = TRUE
+    ORDER BY price ASC
+  `;
+  return sessions as { id: string; title: string; duration_min: number; price: number; description: string | null }[];
+}
+
 export async function getCreatorCount(): Promise<number> {
   const sql = getDb();
   const result = await sql`SELECT COUNT(*) as count FROM users WHERE role = 'creator'`;
