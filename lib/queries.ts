@@ -1,6 +1,6 @@
 // v2 - force redeploy
 import { getDb } from "./db";
-import type { Creator, Social, Service, PortfolioItem, Review, Product, Testimonial, ServicePackage } from "./types";
+import type { Creator, Social, Service, PortfolioItem, Review, Product, Testimonial, ServicePackage, PortfolioTemplateType } from "./types";
 
 function formatFollowers(count: number): string {
   if (count >= 1_000_000) return `${(count / 1_000_000).toFixed(1)}M`;
@@ -104,6 +104,8 @@ function assembleCreator(
       video: (p.video_url as string) || undefined,
       category: (p.category as string) || "",
       mediaType: ((p.media_type as string) || "image") as "image" | "video",
+      templateType: ((p.template_type as string) || "standard") as PortfolioTemplateType,
+      templateData: (() => { try { const v = p.template_data; return typeof v === "string" ? JSON.parse(v) : (v || {}); } catch { return {}; } })(),
     })),
     reviews: reviews.map((r) => ({
       id: r.id as string,
