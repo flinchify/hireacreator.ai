@@ -169,31 +169,6 @@ export function HomepageContent({
         {/* Subtle gradient background */}
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #fafafa 0%, #ffffff 30%, #f8faff 60%, #ffffff 100%)" }} />
 
-        {/* Floating platform logos — scattered behind text */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden hidden sm:block" aria-hidden="true">
-          <div className="absolute top-32 left-[8%] opacity-[0.07] animate-float">
-            <InstagramIcon size={48} className="text-neutral-900" />
-          </div>
-          <div className="absolute top-44 right-[12%] opacity-[0.06] animate-float-slow">
-            <TikTokIcon size={40} className="text-neutral-900" />
-          </div>
-          <div className="absolute top-64 left-[18%] opacity-[0.05] animate-float-delayed">
-            <YouTubeIcon size={44} className="text-neutral-900" />
-          </div>
-          <div className="absolute top-36 right-[28%] opacity-[0.06] animate-float">
-            <TwitterIcon size={36} className="text-neutral-900" />
-          </div>
-          <div className="absolute top-72 right-[8%] opacity-[0.05] animate-float-slow">
-            <LinkedInIcon size={38} className="text-neutral-900" />
-          </div>
-          <div className="absolute top-56 left-[35%] opacity-[0.04] animate-float-delayed">
-            <TwitchIcon size={34} className="text-neutral-900" />
-          </div>
-          <div className="absolute top-80 left-[6%] opacity-[0.05] animate-float">
-            <SnapchatIcon size={32} className="text-neutral-900" />
-          </div>
-        </div>
-
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
               <h1
@@ -202,88 +177,69 @@ export function HomepageContent({
                 Hire creators.<br className="hidden sm:block" /> Or let your <span className="bg-gradient-to-r from-blue-600 to-sky-500 bg-clip-text text-transparent">AI agent</span> do it.
               </h1>
 
-              <p className="mt-6 text-lg sm:text-xl text-neutral-500 max-w-2xl mx-auto leading-relaxed">
-                You don&apos;t need millions of followers. You need one skill and a profile.
-                Whether you edit videos, tutor math, train clients, or review products — if you have a skill, you&apos;re a creator.
-                Get booked by brands directly, or let AI agents find you via our API.
+              <p className="mt-5 text-base sm:text-lg text-neutral-500 max-w-lg mx-auto leading-relaxed">
+                One skill. One profile. Get booked by brands or discovered by AI agents.
               </p>
 
-              <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+              <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
                 <button
                   onClick={() => openSignup("creator")}
-                  className="px-8 py-3.5 text-base font-medium text-white bg-neutral-900 rounded-full hover:bg-neutral-800 active:scale-[0.98] transition-all duration-300 shadow-lg shadow-neutral-900/20 w-full sm:w-auto"
+                  className="px-10 py-4 text-base font-semibold text-white bg-neutral-900 rounded-full hover:bg-neutral-800 active:scale-[0.98] transition-all duration-200 shadow-lg shadow-neutral-900/20 w-full sm:w-auto"
                 >
                   Get Started Free
                 </button>
-                <Link href="/api">
-                  <button className="px-8 py-3.5 text-base font-medium text-neutral-700 bg-white/80 backdrop-blur rounded-full border border-neutral-200 hover:border-neutral-300 hover:bg-white active:scale-[0.98] transition-all duration-300 w-full sm:w-auto">
-                    View API Docs
+                <Link href="/browse">
+                  <button className="px-8 py-4 text-base font-medium text-neutral-600 bg-transparent rounded-full border border-neutral-200 hover:border-neutral-300 hover:bg-neutral-50 active:scale-[0.98] transition-all duration-200 w-full sm:w-auto">
+                    Browse Creators
                   </button>
                 </Link>
               </div>
 
-              <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
-                <span className="text-sm text-neutral-400 flex items-center gap-1.5">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 6L9 17l-5-5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                  0% creator commission
-                </span>
-                <span className="text-sm text-neutral-400 flex items-center gap-1.5">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                  Stripe-secured payments
-                </span>
-                <span className="text-sm text-neutral-400 flex items-center gap-1.5">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 20V10M12 20V4M6 20v-6" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                  MCP + API ready
-                </span>
+              {/* Platform icons — trust signal */}
+              <div className="mt-10">
+                <PlatformTicker />
               </div>
-
-              <p className="mt-6 text-sm text-neutral-400">
-                Link-in-bio + marketplace + AI agent API. Built for the creator economy.
-              </p>
           </div>
 
           {/* AI Integration Features */}
-          <div className="mt-16 mx-auto max-w-5xl">
-            <div className="grid sm:grid-cols-3 gap-4">
+          <div className="mt-12 mx-auto max-w-4xl">
+            <div className="grid sm:grid-cols-3 gap-3">
               {/* MCP Server */}
-              <div className="group bg-neutral-950 rounded-2xl p-6 hover:scale-[1.02] transition-all duration-300">
-                <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center mb-4">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2"><polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" /></svg>
+              <div className="group bg-neutral-950 rounded-2xl p-5 hover:scale-[1.02] transition-all duration-300">
+                <div className="w-9 h-9 rounded-lg bg-blue-500/20 flex items-center justify-center mb-3">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2"><polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" /></svg>
                 </div>
-                <h3 className="font-display font-bold text-white mb-2">MCP Server</h3>
-                <p className="text-sm text-neutral-400 leading-relaxed mb-4">AI agents discover and book creators through Model Context Protocol.</p>
-                <div className="bg-white/5 rounded-xl p-3 font-mono text-[11px] text-blue-400 overflow-hidden">
-                  <span className="text-neutral-500">{"{"}</span> tool: <span className="text-emerald-400">&quot;search_creators&quot;</span>,<br/>
-                  &nbsp;&nbsp;niche: <span className="text-amber-400">&quot;UGC&quot;</span>,<br/>
-                  &nbsp;&nbsp;budget: <span className="text-amber-400">500</span> <span className="text-neutral-500">{"}"}</span>
+                <h3 className="font-display font-bold text-white text-sm mb-1">MCP Server</h3>
+                <p className="text-xs text-neutral-500 leading-relaxed mb-3">AI agents discover and book creators via MCP.</p>
+                <div className="bg-white/5 rounded-lg p-2.5 font-mono text-[10px] text-blue-400 overflow-hidden">
+                  <span className="text-neutral-600">{"{"}</span> tool: <span className="text-emerald-400">&quot;search_creators&quot;</span>,<br/>
+                  &nbsp;&nbsp;niche: <span className="text-amber-400">&quot;UGC&quot;</span> <span className="text-neutral-600">{"}"}</span>
                 </div>
               </div>
 
               {/* REST API */}
-              <div className="group bg-neutral-950 rounded-2xl p-6 hover:scale-[1.02] transition-all duration-300">
-                <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center mb-4">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2"><path d="M18 20V10M12 20V4M6 20v-6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+              <div className="group bg-neutral-950 rounded-2xl p-5 hover:scale-[1.02] transition-all duration-300">
+                <div className="w-9 h-9 rounded-lg bg-emerald-500/20 flex items-center justify-center mb-3">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2"><path d="M18 20V10M12 20V4M6 20v-6" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 </div>
-                <h3 className="font-display font-bold text-white mb-2">REST API</h3>
-                <p className="text-sm text-neutral-400 leading-relaxed mb-4">Full programmatic access. Search, book, and pay creators via API.</p>
-                <div className="bg-white/5 rounded-xl p-3 font-mono text-[11px] text-emerald-400 overflow-hidden">
-                  <span className="text-neutral-500">GET</span> /api/creators<br/>
-                  <span className="text-neutral-500">POST</span> /api/bookings<br/>
-                  <span className="text-neutral-500">POST</span> /api/payments
+                <h3 className="font-display font-bold text-white text-sm mb-1">REST API</h3>
+                <p className="text-xs text-neutral-500 leading-relaxed mb-3">Search, book, and pay creators programmatically.</p>
+                <div className="bg-white/5 rounded-lg p-2.5 font-mono text-[10px] text-emerald-400 overflow-hidden">
+                  <span className="text-neutral-600">GET</span> /api/creators<br/>
+                  <span className="text-neutral-600">POST</span> /api/bookings
                 </div>
               </div>
 
               {/* Stripe Payments */}
-              <div className="group bg-neutral-950 rounded-2xl p-6 hover:scale-[1.02] transition-all duration-300">
-                <div className="w-10 h-10 rounded-xl bg-violet-500/20 flex items-center justify-center mb-4">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" strokeLinecap="round" strokeLinejoin="round" /></svg>
+              <div className="group bg-neutral-950 rounded-2xl p-5 hover:scale-[1.02] transition-all duration-300">
+                <div className="w-9 h-9 rounded-lg bg-violet-500/20 flex items-center justify-center mb-3">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 </div>
-                <h3 className="font-display font-bold text-white mb-2">Stripe Payments</h3>
-                <p className="text-sm text-neutral-400 leading-relaxed mb-4">Secure payments, instant payouts. Creators keep 100%.</p>
-                <div className="bg-white/5 rounded-xl p-3 font-mono text-[11px] text-violet-400 overflow-hidden">
-                  <span className="text-neutral-500">agent</span> → finds creator<br/>
-                  <span className="text-neutral-500">agent</span> → books service<br/>
-                  <span className="text-neutral-500">stripe</span> → processes payment
+                <h3 className="font-display font-bold text-white text-sm mb-1">Stripe Payments</h3>
+                <p className="text-xs text-neutral-500 leading-relaxed mb-3">Secure payments. Creators keep 100%.</p>
+                <div className="bg-white/5 rounded-lg p-2.5 font-mono text-[10px] text-violet-400 overflow-hidden">
+                  <span className="text-neutral-600">agent</span> → find → book<br/>
+                  <span className="text-neutral-600">stripe</span> → pay creator
                 </div>
               </div>
             </div>
@@ -292,18 +248,7 @@ export function HomepageContent({
       </section>
 
 
-      {/* ═══════════════════ PLATFORM TRUST TICKER ═══════════════════ */}
-      <AnimateOnScroll as="section" className="bg-gradient-to-b from-neutral-50/60 via-neutral-50/30 to-white border-y border-neutral-100">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-16">
-          <div className="text-center mb-8">
-            <h2 className="font-display text-2xl sm:text-3xl font-bold text-neutral-900 mb-3">
-              Trusted by creators and brands worldwide
-            </h2>
-            <p className="text-neutral-500">The platforms your audience lives on, connected to your storefront.</p>
-          </div>
-          <PlatformTicker />
-        </div>
-      </AnimateOnScroll>
+      {/* Platform ticker moved into hero — removed duplicate */}
 
       {/* ═══════════════════ WHAT YOU GET ═══════════════════ */}
       <section className="bg-neutral-50/50 border-y border-neutral-100">
