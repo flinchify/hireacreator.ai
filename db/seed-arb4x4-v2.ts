@@ -211,11 +211,7 @@ async function run() {
     (${userId}, 'twitter', 'ARB4x4', 'https://twitter.com/ARB4x4', 18000)
   `;
 
-  // Services (what Linktree can't do)
-  await sql`INSERT INTO services (user_id, title, description, price, delivery_days, category, is_active) VALUES
-    (${userId}, 'Sponsored Product Review', 'Professional 4x4 accessory review with installation footage and honest assessment. Published on our channel.', 5000, 14, 'UGC Content', true),
-    (${userId}, 'Vehicle Build Feature', 'Full vehicle build feature showcasing your products installed on a customer build. Multi-angle, professional quality.', 15000, 30, 'Video Production', true)
-  `;
+  // No fake services — this is a link-in-bio demo only
 
   console.log("\nDone! View at: hireacreator.ai/u/arb4x4");
   console.log("Dark theme, cover photo, avatar, 17 links, 4 socials, 2 services");
