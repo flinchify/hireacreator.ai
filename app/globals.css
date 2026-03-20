@@ -189,3 +189,17 @@ details[open] .faq-content {
   0%, 100% { transform: translateY(0px); }
   50% { transform: translateY(-6px); }
 }
+
+@keyframes drift {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -20px) scale(1.05); }
+  66% { transform: translate(-20px, 15px) scale(0.95); }
+}
+
+@keyframes orbit {
+  0% { top: -10px; left: -10px; }
+  25% { top: -10px; left: calc(100% - 10px); }
+  50% { top: calc(100% - 10px); left: calc(100% - 10px); }
+  75% { top: calc(100% - 10px); left: -10px; }
+  100% { top: -10px; left: -10px; }
+}

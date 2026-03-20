@@ -9,7 +9,7 @@ type HeaderTheme = "light" | "dark";
 
 const themes = {
   light: {
-    nav: "border-neutral-200/40 bg-white/60 backdrop-blur-2xl shadow-sm",
+    nav: "border-white/40 bg-white/30 backdrop-blur-2xl shadow-[0_0_30px_-5px_rgba(255,255,255,0.5)] relative overflow-hidden",
     link: "text-neutral-600 hover:text-neutral-900",
     logo: "text-neutral-900",
     loginBtn: "text-neutral-600 hover:text-neutral-900 border border-neutral-200 hover:border-neutral-300",
@@ -173,6 +173,11 @@ export function Header({ theme = "light" }: { theme?: HeaderTheme }) {
             {mobileOpen ? <path d="M4 4l12 12M4 16L16 4" /> : <path d="M3 6h14M3 10h14M3 14h14" />}
           </svg>
         </button>
+
+        {/* Orbiting light spec */}
+        <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
+          <div className="absolute w-20 h-20 bg-white/40 rounded-full blur-xl animate-[orbit_6s_linear_infinite]" />
+        </div>
       </nav>
 
       {/* Mobile menu */}

@@ -165,7 +165,13 @@ export function HomepageContent({
       {/* Top gradient wash removed — was causing visual artifacts on mobile */}
 
       {/* ═══════════════════ HERO ═══════════════════ */}
-      <section className="relative pt-40 sm:pt-56 pb-20 sm:pb-28 overflow-hidden" style={{ background: "linear-gradient(180deg, #f0f4ff 0%, #e8eeff 20%, #f5f0ff 40%, #ffffff 70%, #ffffff 100%)" }}>
+      <section className="relative pt-36 sm:pt-48 pb-20 sm:pb-28 overflow-hidden" style={{ background: "linear-gradient(180deg, #e0eaff 0%, #dde4ff 15%, #e8e0ff 35%, #f0f0ff 55%, #ffffff 80%)" }}>
+        {/* Animated gradient orbs */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-20 -left-20 w-72 h-72 bg-blue-200/30 rounded-full blur-3xl animate-[drift_8s_ease-in-out_infinite]" />
+          <div className="absolute top-40 -right-20 w-80 h-80 bg-violet-200/20 rounded-full blur-3xl animate-[drift_10s_ease-in-out_infinite_2s]" />
+          <div className="absolute bottom-20 left-1/3 w-64 h-64 bg-sky-200/20 rounded-full blur-3xl animate-[drift_12s_ease-in-out_infinite_4s]" />
+        </div>
 
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
@@ -182,7 +188,7 @@ export function HomepageContent({
               <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
                 <button
                   onClick={() => openSignup("creator")}
-                  className="px-10 py-4 text-base font-semibold text-white bg-neutral-900 rounded-full hover:bg-neutral-800 active:scale-[0.98] transition-all duration-200 shadow-lg shadow-neutral-900/20 w-full sm:w-auto"
+                  className="px-10 py-4 text-base font-semibold text-white bg-neutral-900 rounded-xl hover:bg-neutral-800 active:scale-[0.98] transition-all duration-200 shadow-lg shadow-neutral-900/20 w-full sm:w-auto"
                 >
                   Get Started Free
                 </button>
