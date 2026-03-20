@@ -17,7 +17,7 @@ export default async function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white overflow-x-hidden">
       <Header />
       <HomepageContent featured={featured} creatorCount={creatorCount} />
       <Footer />
