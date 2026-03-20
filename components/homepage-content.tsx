@@ -242,27 +242,50 @@ export function HomepageContent({
               </p>
           </div>
 
-          {/* Hero screenshot in browser chrome */}
-          <div className="mt-16 mx-auto max-w-4xl screenshot-perspective">
-            <div className="browser-chrome rounded-xl overflow-hidden border border-neutral-200/80 bg-white">
-              <div className="flex items-center gap-2 px-4 py-3 bg-neutral-100/80 border-b border-neutral-200/60">
-                <div className="flex gap-1.5">
-                  <div className="w-3 h-3 rounded-full bg-red-400/80" />
-                  <div className="w-3 h-3 rounded-full bg-amber-400/80" />
-                  <div className="w-3 h-3 rounded-full bg-green-400/80" />
+          {/* AI Integration Features */}
+          <div className="mt-16 mx-auto max-w-5xl">
+            <div className="grid sm:grid-cols-3 gap-4">
+              {/* MCP Server */}
+              <div className="group bg-neutral-950 rounded-2xl p-6 hover:scale-[1.02] transition-all duration-300">
+                <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center mb-4">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2"><polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" /></svg>
                 </div>
-                <div className="flex-1 mx-4">
-                  <div className="bg-white rounded-md px-3 py-1 text-xs text-neutral-400 text-center border border-neutral-200/60">
-                    hireacreator.ai/browse
-                  </div>
+                <h3 className="font-display font-bold text-white mb-2">MCP Server</h3>
+                <p className="text-sm text-neutral-400 leading-relaxed mb-4">AI agents discover and book creators through Model Context Protocol.</p>
+                <div className="bg-white/5 rounded-xl p-3 font-mono text-[11px] text-blue-400 overflow-hidden">
+                  <span className="text-neutral-500">{"{"}</span> tool: <span className="text-emerald-400">&quot;search_creators&quot;</span>,<br/>
+                  &nbsp;&nbsp;niche: <span className="text-amber-400">&quot;UGC&quot;</span>,<br/>
+                  &nbsp;&nbsp;budget: <span className="text-amber-400">500</span> <span className="text-neutral-500">{"}"}</span>
                 </div>
               </div>
-              <img
-                src="/screenshots/browse.png"
-                alt="HireACreator marketplace — browse and discover creators"
-                className="w-full h-auto"
-                loading="eager"
-              />
+
+              {/* REST API */}
+              <div className="group bg-neutral-950 rounded-2xl p-6 hover:scale-[1.02] transition-all duration-300">
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center mb-4">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2"><path d="M18 20V10M12 20V4M6 20v-6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                </div>
+                <h3 className="font-display font-bold text-white mb-2">REST API</h3>
+                <p className="text-sm text-neutral-400 leading-relaxed mb-4">Full programmatic access. Search, book, and pay creators via API.</p>
+                <div className="bg-white/5 rounded-xl p-3 font-mono text-[11px] text-emerald-400 overflow-hidden">
+                  <span className="text-neutral-500">GET</span> /api/creators<br/>
+                  <span className="text-neutral-500">POST</span> /api/bookings<br/>
+                  <span className="text-neutral-500">POST</span> /api/payments
+                </div>
+              </div>
+
+              {/* Stripe Payments */}
+              <div className="group bg-neutral-950 rounded-2xl p-6 hover:scale-[1.02] transition-all duration-300">
+                <div className="w-10 h-10 rounded-xl bg-violet-500/20 flex items-center justify-center mb-4">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                </div>
+                <h3 className="font-display font-bold text-white mb-2">Stripe Payments</h3>
+                <p className="text-sm text-neutral-400 leading-relaxed mb-4">Secure payments, instant payouts. Creators keep 100%.</p>
+                <div className="bg-white/5 rounded-xl p-3 font-mono text-[11px] text-violet-400 overflow-hidden">
+                  <span className="text-neutral-500">agent</span> → finds creator<br/>
+                  <span className="text-neutral-500">agent</span> → books service<br/>
+                  <span className="text-neutral-500">stripe</span> → processes payment
+                </div>
+              </div>
             </div>
           </div>
         </div>
