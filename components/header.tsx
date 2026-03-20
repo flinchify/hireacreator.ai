@@ -9,7 +9,7 @@ type HeaderTheme = "light" | "dark";
 
 const themes = {
   light: {
-    nav: "border-white/40 bg-white/30 backdrop-blur-2xl shadow-[0_0_30px_-5px_rgba(255,255,255,0.5)] relative overflow-hidden",
+    nav: "border-white/40 bg-white/30 backdrop-blur-2xl shadow-[0_0_30px_-5px_rgba(255,255,255,0.5)] relative",
     link: "text-neutral-600 hover:text-neutral-900",
     logo: "text-neutral-900",
     loginBtn: "text-neutral-600 hover:text-neutral-900 border border-neutral-200 hover:border-neutral-300",
