@@ -209,18 +209,7 @@ export function HomepageContent({
       </section>
 
       {/* ═══════════════════ PARTNER LOGOS ═══════════════════ */}
-      <section className="border-t border-neutral-200/60 bg-white">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-12 sm:py-14">
-          <p className="text-[10px] font-medium text-neutral-400 uppercase tracking-[0.2em] text-center mb-8">Built with</p>
-          <div className="flex items-center justify-center gap-8 sm:gap-14 flex-wrap opacity-30 grayscale hover:opacity-50 transition-opacity duration-500">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" alt="Stripe" className="h-7 sm:h-8" loading="lazy" />
-            <img src="https://assets.vercel.com/image/upload/v1588805858/repositories/vercel/logo.png" alt="Vercel" className="h-5 sm:h-6" loading="lazy" />
-            <img src="https://mintlify.s3-us-west-1.amazonaws.com/anthropic/logo/dark.svg" alt="Anthropic" className="h-5 sm:h-6" loading="lazy" />
-            <img src="https://upload.wikimedia.org/wikipedia/commons/4/4d/OpenAI_Logo.svg" alt="OpenAI" className="h-5 sm:h-6" loading="lazy" />
-            <img src="https://neon.tech/brand/neon-logo-dark-color.svg" alt="Neon" className="h-5 sm:h-6" loading="lazy" />
-          </div>
-        </div>
-      </section>
+      {/* Partner logos removed */}
 
       {/* ═══════════════════ AI INTEGRATION CARDS ═══════════════════ */}
       <AnimateOnScroll as="section" className="bg-white">
