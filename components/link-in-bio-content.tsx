@@ -19,21 +19,21 @@ const FONT_MAP: Record<string, string> = {
 
 /* ── Size mapping constants ── */
 const TEXT_SIZES: Record<string, { name: string; bio: string; link: string; headline: string }> = {
-  small: { name: 'text-base', bio: 'text-xs', link: 'text-xs', headline: 'text-xs' },
-  medium: { name: 'text-xl', bio: 'text-sm', link: 'text-sm', headline: 'text-sm' },
-  large: { name: 'text-2xl sm:text-3xl', bio: 'text-base', link: 'text-base', headline: 'text-base' },
+  small: { name: 'text-lg', bio: 'text-xs', link: 'text-sm', headline: 'text-xs' },
+  medium: { name: 'text-2xl font-bold', bio: 'text-sm', link: 'text-base font-semibold', headline: 'text-sm' },
+  large: { name: 'text-3xl sm:text-4xl font-bold', bio: 'text-base', link: 'text-base font-semibold', headline: 'text-base' },
 };
 
 const AVATAR_SIZES: Record<string, string> = {
-  small: 'w-16 h-16',
+  small: 'w-20 h-20',
   medium: 'w-24 h-24',
   large: 'w-32 h-32',
 };
 
 const BUTTON_SIZES: Record<string, string> = {
-  small: 'py-2.5 px-4 text-xs',
-  medium: 'py-3.5 px-5 text-sm',
-  large: 'py-5 px-6 text-base',
+  small: 'py-3 px-5 text-sm min-h-[48px]',
+  medium: 'py-4 px-6 text-base min-h-[56px]',
+  large: 'py-5 px-6 text-lg min-h-[60px]',
 };
 
 /* ── Button shape classes ── */
@@ -66,10 +66,10 @@ function BgLayer({ creator, fallback }: { creator: Creator; fallback?: React.Rea
   const { linkBioBgType: bgType, linkBioBgValue: bgValue, linkBioBgVideo: bgVideo, linkBioBgImages: bgImages } = creator;
 
   if (bgType === "video" && bgVideo) {
-    return <div className="fixed inset-0 z-0"><video autoPlay muted loop playsInline className="w-full h-full object-cover"><source src={bgVideo} type="video/mp4" /></video><div className="absolute inset-0 bg-black/40" /></div>;
+    return <div className="fixed inset-0 z-0"><video autoPlay muted loop playsInline className="w-full h-full object-cover"><source src={bgVideo} type="video/mp4" /></video><div className="absolute inset-0 bg-black/60" /></div>;
   }
   if (bgType === "image" && bgValue) {
-    return <div className="fixed inset-0 z-0"><img src={bgValue} alt="" className="w-full h-full object-cover" /><div className="absolute inset-0 bg-black/30" /></div>;
+    return <div className="fixed inset-0 z-0"><img src={bgValue} alt="" className="w-full h-full object-cover" style={{ backgroundRepeat: "no-repeat" }} /><div className="absolute inset-0 bg-black/60" /></div>;
   }
   if (bgType === "collage" && bgImages && bgImages.length > 0) {
     const tiles = Array.from({ length: 12 }, (_, i) => bgImages[i % bgImages.length]);
@@ -229,7 +229,7 @@ function BioLinksSection({ creator, light }: { creator: Creator; light?: boolean
   }
 
   return (
-    <div className="space-y-5 my-5">
+    <div className="space-y-3 my-4">
       {/* Standalone links */}
       {standalone.map(link => renderLink(link))}
 
@@ -422,7 +422,7 @@ function CTAButton({ creator, light, accent }: { creator: Creator; light?: boole
   const bs = BUTTON_SIZES[creator.linkBioButtonSize || "medium"] || BUTTON_SIZES.medium;
   return (
     <a href={`/creators/${creator.slug}`}
-      className={`block w-full mt-8 font-semibold text-center rounded-2xl ${bs} transition-all duration-200 hover:scale-[1.02] hover:shadow-xl shadow-lg text-white`}
+      className={`block w-full mt-4 font-semibold text-center rounded-2xl ${bs} transition-all duration-200 hover:scale-[1.02] hover:shadow-xl shadow-lg text-white`}
       style={{ background: ac }}>
       View Full Profile
     </a>
@@ -543,7 +543,7 @@ function TemplateGlass({ creator }: { creator: Creator }) {
 
       <div className="absolute top-4 right-4 z-20"><ShareBtn slug={creator.slug} light /></div>
 
-      <div className="relative z-10 max-w-[480px] mx-auto px-5 lg:px-6 pt-12 pb-10 min-h-screen flex flex-col">
+      <div className="relative z-10 w-full lg:max-w-[480px] mx-auto px-5 lg:px-6 pt-12 pb-10 min-h-screen flex flex-col justify-between">
         {/* Main glass identity card */}
         <div className="text-center mb-6 bg-white/[0.06] backdrop-blur-2xl rounded-[2rem] p-8 sm:p-10 border border-white/[0.08] shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
           {/* Avatar with accent glow ring */}
@@ -671,7 +671,7 @@ function TemplateBold({ creator }: { creator: Creator }) {
               </div>
               <div className="space-y-2.5">
                 {creator.services.map(s => (
-                  <a key={s.id} href={`/creators/${creator.slug}`} className={`group block w-full bg-white/[0.03] border border-white/[0.06] ${btnClass(creator.linkBioButtonShape)} px-5 py-4 sm:py-5 text-left hover:bg-white/[0.06] hover:border-white/[0.10] hover:scale-[1.02] transition-all duration-200`}>
+                  <a key={s.id} href={`/creators/${creator.slug}`} className={`group block w-full bg-white/[0.03] border border-white/[0.06] ${btnClass(creator.linkBioButtonShape)} px-6 py-4 min-h-[56px] text-base sm:py-5 text-left hover:bg-white/[0.06] hover:border-white/[0.10] hover:scale-[1.02] transition-all duration-200`}>
                     <div className="flex items-center justify-between">
                       <div>
                         <span className="font-bold text-white text-[15px]">{s.title}</span>
@@ -784,7 +784,7 @@ function TemplateShowcase({ creator }: { creator: Creator }) {
               <SectionLabel>Services</SectionLabel>
               <div className="space-y-2.5">
                 {creator.services.map(s => (
-                  <a key={s.id} href={`/creators/${creator.slug}`} className={`group block w-full ${btnClass(creator.linkBioButtonShape)} bg-white border border-neutral-200/80 shadow-sm px-5 py-4 sm:py-5 hover:border-neutral-300 hover:shadow-md hover:scale-[1.02] transition-all duration-200`}>
+                  <a key={s.id} href={`/creators/${creator.slug}`} className={`group block w-full ${btnClass(creator.linkBioButtonShape)} bg-white border border-neutral-200/80 shadow-sm px-6 py-4 min-h-[56px] text-base sm:py-5 hover:border-neutral-300 hover:shadow-md hover:scale-[1.02] transition-all duration-200`}>
                     <div className="flex items-center justify-between">
                       <div className="min-w-0 flex-1">
                         <div className="font-semibold text-sm text-neutral-900">{s.title}</div>
@@ -883,7 +883,7 @@ function TemplateNeon({ creator }: { creator: Creator }) {
             <div className="space-y-2.5 mb-5">
               {creator.services.map(s => (
                 <a key={s.id} href={`/creators/${creator.slug}`}
-                  className={`group block w-full ${btnClass(creator.linkBioButtonShape)} px-5 py-4 sm:py-5 text-center transition-all duration-200 hover:scale-[1.02]`}
+                  className={`group block w-full ${btnClass(creator.linkBioButtonShape)} px-6 py-4 min-h-[56px] text-base sm:py-5 text-center transition-all duration-200 hover:scale-[1.02]`}
                   style={{ border: `1px solid ${accent}18`, background: `${accent}06` }}
                   onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = `0 0 30px ${accent}20`; }}
                   onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = "none"; }}>
@@ -949,7 +949,7 @@ function TemplateCollage({ creator }: { creator: Creator }) {
 
       <div className="absolute top-4 right-4 z-20"><ShareBtn slug={creator.slug} light /></div>
 
-      <div className="relative z-10 max-w-[480px] mx-auto px-4 lg:px-5 pt-12 pb-10 min-h-screen flex flex-col">
+      <div className="relative z-10 w-full lg:max-w-[480px] mx-auto px-4 lg:px-5 pt-12 pb-10 min-h-screen flex flex-col justify-between">
         {/* Frosted content panel */}
         <div className="bg-black/30 backdrop-blur-2xl rounded-3xl border border-white/10 p-6 sm:p-8 mb-5 text-center shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
           {/* Avatar — square with subtle rotation for artistic flair */}
@@ -1025,8 +1025,8 @@ function TemplateBento({ creator }: { creator: Creator }) {
     <div className="min-h-screen p-3 sm:p-5" style={{ background: hasCustomBg ? "transparent" : "#0a0a0a" }}>
       {hasCustomBg && <BgLayer creator={creator} />}
       <div className="absolute top-4 right-4 z-20"><ShareBtn slug={creator.slug} light /></div>
-      <div className="max-w-[520px] mx-auto relative z-10">
-        <div className="grid grid-cols-4 gap-2.5 sm:gap-3 auto-rows-[85px]">
+      <div className="w-full lg:max-w-[520px] mx-auto relative z-10">
+        <div className="grid grid-cols-4 gap-2.5 sm:gap-3 auto-rows-[95px]">
           {/* Identity card — col-span-4 row-span-2, accent gradient overlay */}
           <div className="col-span-4 row-span-2 rounded-3xl overflow-hidden relative" style={{ background: `linear-gradient(135deg, ${accent}18, ${accent}08)`, border: `1px solid ${accent}25` }}>
             {creator.cover && <img src={creator.cover} alt="" className="absolute inset-0 w-full h-full object-cover opacity-15" />}
@@ -1053,18 +1053,18 @@ function TemplateBento({ creator }: { creator: Creator }) {
 
           {/* Bio — col-span-4 */}
           {creator.bio && (
-            <div className="col-span-4 row-span-1 rounded-2xl bg-neutral-900 border border-neutral-800 px-5 flex items-center">
-              <p className="text-xs text-neutral-400 line-clamp-2 leading-relaxed">{creator.bio}</p>
+            <div className="col-span-4 row-span-1 rounded-2xl bg-neutral-900 border border-neutral-800 px-5 py-3 flex items-center">
+              <p className="text-sm text-neutral-400 line-clamp-2 leading-relaxed">{creator.bio}</p>
             </div>
           )}
 
           {/* Social icons — col-span-2 */}
           {creator.socials.length > 0 && (
-            <div className="col-span-2 row-span-1 rounded-2xl bg-neutral-900 border border-neutral-800 flex items-center justify-center gap-2 px-3">
+            <div className="col-span-2 row-span-1 rounded-2xl bg-neutral-900 border border-neutral-800 flex items-center justify-center gap-3 px-4 min-h-[80px]">
               {creator.socials.slice(0, 5).map(s => (
                 <a key={s.platform} href={s.url || "#"} target="_blank" rel="noopener noreferrer" aria-label={`Visit ${s.platform}`}
-                  className="w-8 h-8 rounded-lg bg-neutral-800 flex items-center justify-center hover:bg-neutral-700 hover:scale-110 transition-all duration-200">
-                  <PlatformIcon platform={s.platform} size={14} className="text-neutral-400" />
+                  className="w-10 h-10 rounded-lg bg-neutral-800 flex items-center justify-center hover:bg-neutral-700 hover:scale-110 transition-all duration-200">
+                  <PlatformIcon platform={s.platform} size={18} className="text-neutral-400" />
                 </a>
               ))}
             </div>
@@ -1302,7 +1302,7 @@ function TemplateCustom({ creator }: { creator: Creator }) {
           <div className="absolute bottom-[-15%] right-[-10%] w-[50%] h-[50%] rounded-full opacity-10" style={{ background: "radial-gradient(circle, #ec489960 0%, transparent 70%)" }} />
         </div>
       )}
-      <div className="relative z-10 max-w-[480px] mx-auto px-5 pt-14 pb-10 min-h-screen flex flex-col">
+      <div className="relative z-10 w-full lg:max-w-[480px] mx-auto px-5 pt-14 pb-10 min-h-screen flex flex-col justify-between">
         <div className="text-center mb-8">
           {/* Avatar with glow ring on dark bg */}
           <div className="relative inline-block">
@@ -1377,7 +1377,7 @@ function TemplateFounder({ creator }: { creator: Creator }) {
   return (
     <div className="min-h-screen" style={{ background: hasCustomBg ? "transparent" : "linear-gradient(160deg, #111827 0%, #1f2937 100%)" }}>
       {hasCustomBg && <BgLayer creator={creator} />}
-      <div className="relative z-10 max-w-[520px] mx-auto px-5 lg:px-6 pt-12 pb-10 min-h-screen">
+      <div className="relative z-10 w-full lg:max-w-[520px] mx-auto px-5 lg:px-6 pt-12 pb-10 min-h-screen flex flex-col justify-between">
         <div className="absolute top-4 right-4 z-20"><ShareBtn slug={creator.slug} light /></div>
 
         {/* Identity */}
@@ -1472,7 +1472,7 @@ function TemplateFounder({ creator }: { creator: Creator }) {
         {/* GitHub special card */}
         {githubLink && (
           <a href={githubLink.url} target="_blank" rel="noopener noreferrer"
-            className="group flex items-center gap-4 w-full bg-[#0d1117] border border-white/[0.08] rounded-2xl px-5 py-4 mb-3 hover:border-white/[0.15] hover:scale-[1.02] transition-all">
+            className="group flex items-center gap-4 w-full bg-[#0d1117] border border-white/[0.08] rounded-2xl px-6 py-4 min-h-[56px] mb-3 hover:border-white/[0.15] hover:scale-[1.02] transition-all">
             <div className="w-10 h-10 rounded-xl bg-white/[0.06] flex items-center justify-center shrink-0">
               <PlatformIcon platform="github" size={20} className="text-white/80" />
             </div>
@@ -1490,7 +1490,7 @@ function TemplateFounder({ creator }: { creator: Creator }) {
             {otherLinks.map(link => (
               <a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer"
                 onClick={() => { fetch("/api/links/click", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ linkId: link.id }) }).catch(() => {}); }}
-                className="group flex items-center gap-3.5 w-full px-5 py-4 rounded-2xl bg-white/[0.05] border border-white/[0.08] hover:bg-white/[0.09] hover:scale-[1.02] transition-all">
+                className="group flex items-center gap-3.5 w-full px-6 py-4 min-h-[56px] rounded-2xl bg-white/[0.05] border border-white/[0.08] hover:bg-white/[0.09] hover:scale-[1.02] transition-all">
                 {link.thumbnailUrl ? (
                   <img src={link.thumbnailUrl} alt="" className="w-12 h-12 rounded-xl object-cover shrink-0" />
                 ) : (
@@ -1515,7 +1515,7 @@ function TemplateFounder({ creator }: { creator: Creator }) {
             <div className="space-y-2.5 mb-6">
               {creator.services.map(s => (
                 <a key={s.id} href={`/creators/${creator.slug}`}
-                  className="group block w-full rounded-2xl bg-white/[0.05] border border-white/[0.08] px-5 py-4 hover:bg-white/[0.08] hover:scale-[1.02] transition-all">
+                  className="group block w-full rounded-2xl bg-white/[0.05] border border-white/[0.08] px-6 py-4 min-h-[56px] hover:bg-white/[0.08] hover:scale-[1.02] transition-all">
                   <div className="flex items-center justify-between">
                     <div>
                       <div className="font-semibold text-sm text-white">{s.title}</div>
@@ -1686,7 +1686,7 @@ function TemplateAurora({ creator }: { creator: Creator }) {
       </div>
       <style>{`@keyframes auroraShift { 0%,100% { background-position: 0% 50% } 50% { background-position: 100% 50% } }`}</style>
 
-      <div className="relative z-10 max-w-[460px] mx-auto px-5 pt-12 pb-10 min-h-screen text-center">
+      <div className="relative z-10 w-full lg:max-w-[460px] mx-auto px-5 pt-12 pb-10 min-h-screen text-center flex flex-col justify-between">
         <div className="absolute top-3 right-4"><ShareBtn slug={creator.slug} light /></div>
 
         <div className="relative inline-block mb-5">
@@ -1720,7 +1720,7 @@ function TemplateAurora({ creator }: { creator: Creator }) {
             <SectionLabel light>Services</SectionLabel>
             {creator.services.map(s => (
               <a key={s.id} href={`/creators/${creator.slug}`}
-                className="block w-full rounded-2xl px-5 py-4 bg-white/10 backdrop-blur-md border border-white/10 text-left hover:bg-white/15 transition-all hover:scale-[1.02]">
+                className="block w-full rounded-2xl px-6 py-4 min-h-[56px] bg-white/10 backdrop-blur-md border border-white/10 text-left hover:bg-white/15 transition-all hover:scale-[1.02]">
                 <div className="font-semibold text-white text-sm">{s.title}</div>
                 <div className="text-xs mt-0.5 text-white/40">{priceLabel(s.price, s.deliveryDays)}</div>
               </a>
@@ -1758,7 +1758,7 @@ function TemplateSunset({ creator }: { creator: Creator }) {
 
   return (
     <div className="min-h-screen relative overflow-hidden" style={{ background: "linear-gradient(180deg, #f97316 0%, #ec4899 40%, #8b5cf6 80%, #4c1d95 100%)" }}>
-      <div className="relative z-10 max-w-[460px] mx-auto px-5 pt-12 pb-10 min-h-screen text-center">
+      <div className="relative z-10 w-full lg:max-w-[460px] mx-auto px-5 pt-12 pb-10 min-h-screen text-center flex flex-col justify-between">
         <div className="absolute top-3 right-4"><ShareBtn slug={creator.slug} light /></div>
 
         <div className="relative inline-block mb-5">
@@ -1791,7 +1791,7 @@ function TemplateSunset({ creator }: { creator: Creator }) {
             <SectionLabel light>Services</SectionLabel>
             {creator.services.map(s => (
               <a key={s.id} href={`/creators/${creator.slug}`}
-                className="block w-full rounded-2xl px-5 py-4 bg-white/15 backdrop-blur-sm border border-white/20 text-left hover:bg-white/25 transition-all hover:scale-[1.02]">
+                className="block w-full rounded-2xl px-6 py-4 min-h-[56px] bg-white/15 backdrop-blur-sm border border-white/20 text-left hover:bg-white/25 transition-all hover:scale-[1.02]">
                 <div className="font-semibold text-white text-sm">{s.title}</div>
                 <div className="text-xs mt-0.5" style={{ color: "#fcd34d" }}>{priceLabel(s.price, s.deliveryDays)}</div>
               </a>
@@ -1951,7 +1951,7 @@ function TemplatePastel({ creator }: { creator: Creator }) {
 
   return (
     <div className="min-h-screen" style={{ background: "linear-gradient(160deg, #fce7f3 0%, #ede9fe 35%, #dbeafe 65%, #d1fae5 100%)" }}>
-      <div className="max-w-[460px] mx-auto px-5 pt-12 pb-10 min-h-screen text-center">
+      <div className="w-full lg:max-w-[460px] mx-auto px-5 pt-12 pb-10 min-h-screen text-center flex flex-col justify-between">
         <div className="absolute top-3 right-4"><ShareBtn slug={creator.slug} /></div>
 
         <div className="relative inline-block mb-5">
@@ -2126,7 +2126,7 @@ function TemplateRetro({ creator }: { creator: Creator }) {
 
   return (
     <div className="min-h-screen" style={{ background: "#fff200" }}>
-      <div className="max-w-[460px] mx-auto px-5 pt-12 pb-10 min-h-screen text-center">
+      <div className="w-full lg:max-w-[460px] mx-auto px-5 pt-12 pb-10 min-h-screen text-center flex flex-col justify-between">
         <div className="absolute top-3 right-4"><ShareBtn slug={creator.slug} /></div>
 
         {/* Avatar with chunky shadow */}
@@ -2235,7 +2235,7 @@ function TemplateMidnight({ creator }: { creator: Creator }) {
       {/* Subtle blue glow at bottom */}
       <div className="fixed bottom-0 left-0 right-0 h-[40%] pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 100%, rgba(99,102,241,0.08) 0%, transparent 70%)" }} />
 
-      <div className="relative z-10 max-w-[460px] mx-auto px-5 pt-12 pb-10 min-h-screen text-center">
+      <div className="relative z-10 w-full lg:max-w-[460px] mx-auto px-5 pt-12 pb-10 min-h-screen text-center flex flex-col justify-between">
         <div className="absolute top-3 right-4"><ShareBtn slug={creator.slug} light /></div>
 
         <div className="relative inline-block mb-5">
@@ -2268,7 +2268,7 @@ function TemplateMidnight({ creator }: { creator: Creator }) {
             <SectionLabel light>Services</SectionLabel>
             {creator.services.map(s => (
               <a key={s.id} href={`/creators/${creator.slug}`}
-                className="block w-full rounded-2xl px-5 py-4 bg-white/[0.04] border border-white/[0.08] text-left transition-all hover:scale-[1.02] hover:border-indigo-400/30"
+                className="block w-full rounded-2xl px-6 py-4 min-h-[56px] bg-white/[0.04] border border-white/[0.08] text-left transition-all hover:scale-[1.02] hover:border-indigo-400/30"
                 style={{ transition: "all 0.2s, box-shadow 0.2s" }}
                 onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = `0 0 25px ${accent}15`; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = "none"; }}>
@@ -2311,7 +2311,7 @@ function TemplateClay({ creator }: { creator: Creator }) {
 
   return (
     <div className="min-h-screen" style={{ background: bg }}>
-      <div className="max-w-[460px] mx-auto px-5 pt-12 pb-10 min-h-screen text-center">
+      <div className="w-full lg:max-w-[460px] mx-auto px-5 pt-12 pb-10 min-h-screen text-center flex flex-col justify-between">
         <div className="absolute top-3 right-4"><ShareBtn slug={creator.slug} /></div>
 
         <div className="relative inline-block mb-5">
@@ -2412,7 +2412,7 @@ function TemplateGradientMesh({ creator }: { creator: Creator }) {
         }} />
       </div>
 
-      <div className="relative z-10 max-w-[460px] mx-auto px-5 pt-12 pb-10 min-h-screen text-center">
+      <div className="relative z-10 w-full lg:max-w-[460px] mx-auto px-5 pt-12 pb-10 min-h-screen text-center flex flex-col justify-between">
         <div className="absolute top-3 right-4"><ShareBtn slug={creator.slug} /></div>
 
         {/* Frosted card container */}
@@ -2451,7 +2451,7 @@ function TemplateGradientMesh({ creator }: { creator: Creator }) {
               <SectionLabel>Services</SectionLabel>
               {creator.services.map(s => (
                 <a key={s.id} href={`/creators/${creator.slug}`}
-                  className="block w-full rounded-2xl px-5 py-4 bg-white/70 backdrop-blur-md border border-white/60 text-left shadow-sm hover:shadow-md hover:scale-[1.02] transition-all">
+                  className="block w-full rounded-2xl px-6 py-4 min-h-[56px] bg-white/70 backdrop-blur-md border border-white/60 text-left shadow-sm hover:shadow-md hover:scale-[1.02] transition-all">
                   <div className="font-semibold text-neutral-800 text-sm">{s.title}</div>
                   <div className="text-xs mt-0.5" style={{ color: accent }}>{priceLabel(s.price, s.deliveryDays)}</div>
                 </a>
