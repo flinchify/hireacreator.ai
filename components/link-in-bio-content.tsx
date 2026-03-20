@@ -1575,7 +1575,7 @@ function TemplateBrutalist({ creator }: { creator: Creator }) {
 
   return (
     <div className="min-h-screen bg-black text-white" style={{ fontFamily: "'Courier New', Courier, monospace" }}>
-      <div className="max-w-[500px] mx-auto px-5 pt-10 pb-10 min-h-screen">
+      <div className="w-full lg:max-w-[500px] mx-auto px-5 pt-10 pb-10 min-h-screen">
         <div className="absolute top-3 right-4 z-10"><ShareBtn slug={creator.slug} light /></div>
 
         <div className="border-b-[3px] border-white pb-6 mb-6">
@@ -1839,7 +1839,7 @@ function TemplateTerminal({ creator }: { creator: Creator }) {
       {/* Scanline overlay */}
       <div className="fixed inset-0 pointer-events-none z-20 opacity-[0.04]" style={{ backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,0,0.1) 2px, rgba(0,255,0,0.1) 4px)" }} />
 
-      <div className="relative z-10 max-w-[500px] mx-auto px-5 pt-8 pb-10 min-h-screen">
+      <div className="relative z-10 w-full lg:max-w-[500px] mx-auto px-5 pt-8 pb-10 min-h-screen">
         <div className="absolute top-3 right-4"><ShareBtn slug={creator.slug} light /></div>
 
         {/* Terminal header bar */}
@@ -2042,7 +2042,7 @@ function TemplateMagazine({ creator }: { creator: Creator }) {
 
   return (
     <div className="min-h-screen bg-[#fafaf9]">
-      <div className="max-w-[540px] mx-auto px-6 pt-10 pb-10 min-h-screen">
+      <div className="w-full lg:max-w-[540px] mx-auto px-6 pt-10 pb-10 min-h-screen">
         <div className="absolute top-3 right-4"><ShareBtn slug={creator.slug} /></div>
 
         {/* Masthead */}
