@@ -3,6 +3,7 @@ import { getDb } from "@/lib/db";
 import { calculateCreatorScore } from "@/lib/creator-score";
 
 export async function GET(request: Request) {
+  try {
   const authHeader = request.headers.get("authorization");
   const cronSecret = process.env.CRON_SECRET;
 
@@ -108,4 +109,8 @@ export async function GET(request: Request) {
   `;
 
   return NextResponse.json({ message: "Scores recalculated", updated });
+  } catch (e) {
+    console.error('[RecalculateScores]', e);
+    return NextResponse.json({ error: 'Internal error' }, { status: 500 });
+  }
 }

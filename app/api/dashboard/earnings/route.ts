@@ -118,7 +118,7 @@ export async function GET() {
     })),
   });
   } catch (e) {
-    console.error("[Earnings] Error:", e);
-    return NextResponse.json({ totalEarned: 0, thisMonth: 0, pending: 0, available: 0, monthlyData: [], recentBookings: [] });
+    console.error('[Earnings]', e);
+    return NextResponse.json({ error: 'Internal error' }, { status: 500 });
   }
 }

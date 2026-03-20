@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { getDb } from "@/lib/db";
 
 export async function GET(request: Request) {
+  try {
   const token = cookies().get("session_token")?.value;
   if (!token) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 
@@ -42,4 +43,8 @@ export async function GET(request: Request) {
   }
 
   return NextResponse.json({ available: true });
+  } catch (e) {
+    console.error('[CheckSlug]', e);
+    return NextResponse.json({ error: 'Internal error' }, { status: 500 });
+  }
 }

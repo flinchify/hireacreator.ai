@@ -15,79 +15,89 @@ async function getUser() {
 }
 
 export async function GET() {
-  const sql = getDb();
-  const user = await getUser();
+  try {
+    const sql = getDb();
+    const user = await getUser();
 
-  // Always return star counts (public data)
-  const countRows = await sql`
-    SELECT creator_id, COUNT(*)::int as count
-    FROM creator_stars
-    GROUP BY creator_id
-  `;
-  const counts: Record<string, number> = {};
-  for (const r of countRows) {
-    counts[r.creator_id as string] = r.count as number;
-  }
-
-  // Return starred IDs only if logged in
-  let starredCreatorIds: string[] = [];
-  if (user) {
-    const rows = await sql`
-      SELECT creator_id FROM creator_stars WHERE user_id = ${user.id}
+    // Always return star counts (public data)
+    const countRows = await sql`
+      SELECT creator_id, COUNT(*)::int as count
+      FROM creator_stars
+      GROUP BY creator_id
     `;
-    starredCreatorIds = rows.map((r: any) => r.creator_id);
-  }
+    const counts: Record<string, number> = {};
+    for (const r of countRows) {
+      counts[r.creator_id as string] = r.count as number;
+    }
 
-  return NextResponse.json({ starredCreatorIds, starCounts: counts });
+    // Return starred IDs only if logged in
+    let starredCreatorIds: string[] = [];
+    if (user) {
+      const rows = await sql`
+        SELECT creator_id FROM creator_stars WHERE user_id = ${user.id}
+      `;
+      starredCreatorIds = rows.map((r: any) => r.creator_id);
+    }
+
+    return NextResponse.json({ starredCreatorIds, starCounts: counts });
+  } catch (e) {
+    console.error('[StarsGET]', e);
+    return NextResponse.json({ error: 'Internal error' }, { status: 500 });
+  }
 }
 
 export async function POST(request: NextRequest) {
-  const user = await getUser();
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  try {
+    const user = await getUser();
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-  const body = await request.json();
-  const { creatorId } = body;
+    const body = await request.json();
+    const { creatorId } = body;
 
-  if (!creatorId) {
-    return NextResponse.json({ error: "creatorId required" }, { status: 400 });
-  }
+    if (!creatorId) {
+      return NextResponse.json({ error: "creatorId required" }, { status: 400 });
+    }
 
-  const sql = getDb();
+    const sql = getDb();
 
-  // Check if already starred
-  const existing = await sql`
-    SELECT id FROM creator_stars
-    WHERE user_id = ${user.id} AND creator_id = ${creatorId}
-  `;
-
-  let starred: boolean;
-
-  if (existing.length > 0) {
-    // Unstar
-    await sql`
-      DELETE FROM creator_stars
+    // Check if already starred
+    const existing = await sql`
+      SELECT id FROM creator_stars
       WHERE user_id = ${user.id} AND creator_id = ${creatorId}
     `;
-    starred = false;
-  } else {
-    // Star
-    await sql`
-      INSERT INTO creator_stars (user_id, creator_id)
-      VALUES (${user.id}, ${creatorId})
+
+    let starred: boolean;
+
+    if (existing.length > 0) {
+      // Unstar
+      await sql`
+        DELETE FROM creator_stars
+        WHERE user_id = ${user.id} AND creator_id = ${creatorId}
+      `;
+      starred = false;
+    } else {
+      // Star
+      await sql`
+        INSERT INTO creator_stars (user_id, creator_id)
+        VALUES (${user.id}, ${creatorId})
+      `;
+      starred = true;
+    }
+
+    // Get updated count
+    const countRows = await sql`
+      SELECT COUNT(*)::int as count FROM creator_stars
+      WHERE creator_id = ${creatorId}
     `;
-    starred = true;
+
+    return NextResponse.json({
+      starred,
+      starCount: countRows[0].count,
+    });
+  } catch (e) {
+    console.error('[StarsPOST]', e);
+    return NextResponse.json({ error: 'Internal error' }, { status: 500 });
   }
-
-  // Get updated count
-  const countRows = await sql`
-    SELECT COUNT(*)::int as count FROM creator_stars
-    WHERE creator_id = ${creatorId}
-  `;
-
-  return NextResponse.json({
-    starred,
-    starCount: countRows[0].count,
-  });
 }

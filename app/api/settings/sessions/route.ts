@@ -16,16 +16,21 @@ async function getUser() {
 
 // DELETE — sign out all other sessions
 export async function DELETE() {
-  const user = await getUser();
-  if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  try {
+    const user = await getUser();
+    if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 
-  const currentToken = cookies().get("session_token")?.value;
-  const sql = getDb();
+    const currentToken = cookies().get("session_token")?.value;
+    const sql = getDb();
 
-  await sql`
-    DELETE FROM auth_sessions
-    WHERE user_id = ${user.id} AND token != ${currentToken}
-  `;
+    await sql`
+      DELETE FROM auth_sessions
+      WHERE user_id = ${user.id} AND token != ${currentToken}
+    `;
 
-  return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true });
+  } catch (e) {
+    console.error('[SettingsSessions]', e);
+    return NextResponse.json({ error: 'Internal error' }, { status: 500 });
+  }
 }

@@ -5,6 +5,7 @@ import { fetchFollowerCount } from "@/lib/fetch-followers";
 const BATCH_SIZE = 50;
 
 export async function GET(request: Request) {
+  try {
   // Verify cron secret (Vercel cron sends Authorization header, or check custom header)
   const authHeader = request.headers.get("authorization");
   const cronSecret = process.env.CRON_SECRET;
@@ -71,4 +72,8 @@ export async function GET(request: Request) {
   }
 
   return NextResponse.json({ message: "Cron refresh complete", updated, failed, total: stale.length });
+  } catch (e) {
+    console.error('[CronRefreshFollowers]', e);
+    return NextResponse.json({ error: 'Internal error' }, { status: 500 });
+  }
 }

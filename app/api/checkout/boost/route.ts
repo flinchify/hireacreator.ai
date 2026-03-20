@@ -16,35 +16,40 @@ async function getUser() {
 }
 
 export async function POST() {
-  const user = await getUser();
-  if (!user) return NextResponse.json({ error: "unauthorized", message: "Please sign in first." }, { status: 401 });
+  try {
+    const user = await getUser();
+    if (!user) return NextResponse.json({ error: "unauthorized", message: "Please sign in first." }, { status: 401 });
 
-  const stripe = getStripe();
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    const stripe = getStripe();
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
-  // Get or create Stripe customer
-  let customerId = user.stripe_customer_id;
-  if (!customerId) {
-    const customer = await stripe.customers.create({
-      email: user.email,
-      metadata: { userId: user.id },
-    });
-    customerId = customer.id;
-    const sql = getDb();
-    await sql`UPDATE users SET stripe_customer_id = ${customerId} WHERE id = ${user.id}`;
-  }
+    // Get or create Stripe customer
+    let customerId = user.stripe_customer_id;
+    if (!customerId) {
+      const customer = await stripe.customers.create({
+        email: user.email,
+        metadata: { userId: user.id },
+      });
+      customerId = customer.id;
+      const sql = getDb();
+      await sql`UPDATE users SET stripe_customer_id = ${customerId} WHERE id = ${user.id}`;
+    }
 
-  const session = await stripe.checkout.sessions.create({
-    customer: customerId,
-    mode: "subscription",
-    line_items: [{ price: PRICES.BOOSTED, quantity: 1 }],
-    success_url: `${appUrl}/dashboard?subscription=success&plan=boosted`,
-    cancel_url: `${appUrl}/dashboard?cancelled=true`,
-    metadata: { userId: user.id, plan: "boosted" },
-    subscription_data: {
+    const session = await stripe.checkout.sessions.create({
+      customer: customerId,
+      mode: "subscription",
+      line_items: [{ price: PRICES.BOOSTED, quantity: 1 }],
+      success_url: `${appUrl}/dashboard?subscription=success&plan=boosted`,
+      cancel_url: `${appUrl}/dashboard?cancelled=true`,
       metadata: { userId: user.id, plan: "boosted" },
-    },
-  });
+      subscription_data: {
+        metadata: { userId: user.id, plan: "boosted" },
+      },
+    });
 
-  return NextResponse.json({ url: session.url });
+    return NextResponse.json({ url: session.url });
+  } catch (e) {
+    console.error('[CheckoutBoost]', e);
+    return NextResponse.json({ error: 'Internal error' }, { status: 500 });
+  }
 }

@@ -17,41 +17,46 @@ async function getUser() {
 }
 
 export async function POST() {
-  const user = await getUser();
-  if (!user) {
-    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
-  }
+  try {
+    const user = await getUser();
+    if (!user) {
+      return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+    }
 
-  const stripe = getStripe();
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-  const sql = getDb();
+    const stripe = getStripe();
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    const sql = getDb();
 
-  let accountId = user.stripe_account_id as string | null;
+    let accountId = user.stripe_account_id as string | null;
 
-  if (!accountId) {
-    // Create a new Stripe Connect Express account
-    const account = await stripe.accounts.create({
-      type: "express",
-      email: user.email as string,
-      metadata: { userId: user.id as string },
-      capabilities: {
-        card_payments: { requested: true },
-        transfers: { requested: true },
-      },
+    if (!accountId) {
+      // Create a new Stripe Connect Express account
+      const account = await stripe.accounts.create({
+        type: "express",
+        email: user.email as string,
+        metadata: { userId: user.id as string },
+        capabilities: {
+          card_payments: { requested: true },
+          transfers: { requested: true },
+        },
+      });
+      accountId = account.id;
+
+      // Save to database
+      await sql`UPDATE users SET stripe_account_id = ${accountId} WHERE id = ${user.id}`;
+    }
+
+    // Create an onboarding link
+    const accountLink = await stripe.accountLinks.create({
+      account: accountId,
+      refresh_url: `${appUrl}/dashboard?stripe=refresh`,
+      return_url: `${appUrl}/dashboard?stripe=connected`,
+      type: "account_onboarding",
     });
-    accountId = account.id;
 
-    // Save to database
-    await sql`UPDATE users SET stripe_account_id = ${accountId} WHERE id = ${user.id}`;
+    return NextResponse.json({ url: accountLink.url });
+  } catch (e) {
+    console.error('[StripeConnect]', e);
+    return NextResponse.json({ error: 'Internal error' }, { status: 500 });
   }
-
-  // Create an onboarding link
-  const accountLink = await stripe.accountLinks.create({
-    account: accountId,
-    refresh_url: `${appUrl}/dashboard?stripe=refresh`,
-    return_url: `${appUrl}/dashboard?stripe=connected`,
-    type: "account_onboarding",
-  });
-
-  return NextResponse.json({ url: accountLink.url });
 }

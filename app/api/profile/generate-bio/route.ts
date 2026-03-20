@@ -52,22 +52,27 @@ function generateBios(profile: {
 }
 
 export async function POST() {
-  const user = await getUser();
-  if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  try {
+    const user = await getUser();
+    if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 
-  const sql = getDb();
-  const [services, socials] = await Promise.all([
-    sql`SELECT title FROM services WHERE user_id = ${user.id} AND is_active = TRUE ORDER BY price DESC LIMIT 5`,
-    sql`SELECT platform FROM social_connections WHERE user_id = ${user.id}`,
-  ]);
+    const sql = getDb();
+    const [services, socials] = await Promise.all([
+      sql`SELECT title FROM services WHERE user_id = ${user.id} AND is_active = TRUE ORDER BY price DESC LIMIT 5`,
+      sql`SELECT platform FROM social_connections WHERE user_id = ${user.id}`,
+    ]);
 
-  const bios = generateBios({
-    name: String(user.full_name || "Creator"),
-    category: user.category as string | null,
-    location: user.location as string | null,
-    services: services.map((s) => String(s.title)),
-    socials: socials.map((s) => String(s.platform)),
-  });
+    const bios = generateBios({
+      name: String(user.full_name || "Creator"),
+      category: user.category as string | null,
+      location: user.location as string | null,
+      services: services.map((s) => String(s.title)),
+      socials: socials.map((s) => String(s.platform)),
+    });
 
-  return NextResponse.json({ bios });
+    return NextResponse.json({ bios });
+  } catch (e) {
+    console.error('[GenerateBio]', e);
+    return NextResponse.json({ error: 'Internal error' }, { status: 500 });
+  }
 }

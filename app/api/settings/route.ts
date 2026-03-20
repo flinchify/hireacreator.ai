@@ -16,34 +16,39 @@ async function getUser() {
 
 // GET — full settings data
 export async function GET() {
-  const user = await getUser();
-  if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  try {
+    const user = await getUser();
+    if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 
-  const sql = getDb();
+    const sql = getDb();
 
-  // Count active sessions
-  const sessions = await sql`
-    SELECT COUNT(*)::int AS count FROM auth_sessions
-    WHERE user_id = ${user.id} AND expires_at > NOW()
-  `;
+    // Count active sessions
+    const sessions = await sql`
+      SELECT COUNT(*)::int AS count FROM auth_sessions
+      WHERE user_id = ${user.id} AND expires_at > NOW()
+    `;
 
-  return NextResponse.json({
-    email: user.email,
-    emailVerified: user.email_verified || false,
-    hasPassword: !!user.password_hash,
-    totpEnabled: user.totp_enabled || false,
-    subscriptionTier: user.subscription_tier || "free",
-    role: user.role,
-    activeSessions: sessions[0]?.count || 1,
-    privacy: {
-      profilePublic: user.privacy_profile_public !== false,
-      showEmail: user.privacy_show_email || false,
-      showEarnings: user.privacy_show_earnings || false,
-      showLocation: user.privacy_show_location !== false,
-      allowMessages: user.privacy_allow_messages !== false,
-      searchable: user.privacy_searchable !== false,
-      is18Plus: user.is_18_plus_content || false,
-    },
-    createdAt: user.created_at,
-  });
+    return NextResponse.json({
+      email: user.email,
+      emailVerified: user.email_verified || false,
+      hasPassword: !!user.password_hash,
+      totpEnabled: user.totp_enabled || false,
+      subscriptionTier: user.subscription_tier || "free",
+      role: user.role,
+      activeSessions: sessions[0]?.count || 1,
+      privacy: {
+        profilePublic: user.privacy_profile_public !== false,
+        showEmail: user.privacy_show_email || false,
+        showEarnings: user.privacy_show_earnings || false,
+        showLocation: user.privacy_show_location !== false,
+        allowMessages: user.privacy_allow_messages !== false,
+        searchable: user.privacy_searchable !== false,
+        is18Plus: user.is_18_plus_content || false,
+      },
+      createdAt: user.created_at,
+    });
+  } catch (e) {
+    console.error('[Settings]', e);
+    return NextResponse.json({ error: 'Internal error' }, { status: 500 });
+  }
 }
