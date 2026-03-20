@@ -577,6 +577,7 @@ export function HomepageContent({
       </AnimateOnScroll>
 
       {/* ═══════════════════ FOR AI AGENTS ═══════════════════ */}
+      <div className="h-24 sm:h-32 bg-gradient-to-b from-white to-neutral-950" />
       <AnimateOnScroll as="section" id="for-agents" className="bg-gradient-to-b from-neutral-950 to-neutral-900 text-white">
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20 overflow-hidden">
           {/* Subtle dot grid */}
@@ -668,6 +669,7 @@ export function HomepageContent({
           </div>
         </div>
       </AnimateOnScroll>
+      <div className="h-24 sm:h-32 bg-gradient-to-b from-neutral-900 to-white" />
 
       {/* ═══════════════════ PRICING ═══════════════════ */}
       <AnimateOnScroll as="section" id="pricing" className="relative bg-white overflow-hidden">
@@ -950,6 +952,8 @@ export function HomepageContent({
       })}} />
 
       {/* ═══════════════════ FINAL CTA ═══════════════════ */}
+      {/* Gradient fade from white into dark */}
+      <div className="h-32 sm:h-48 bg-gradient-to-b from-white via-neutral-100 to-neutral-950" />
       <section className="relative overflow-hidden bg-gradient-to-br from-neutral-950 via-blue-950 to-blue-900">
         {/* Floating particles */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
@@ -989,6 +993,8 @@ export function HomepageContent({
           </div>
         </div>
       </section>
+      {/* Gradient fade from dark CTA into footer */}
+      <div className="h-16 bg-gradient-to-b from-blue-900 to-neutral-950" />
     </>
   );
 }
