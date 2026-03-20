@@ -145,72 +145,45 @@ function BioLinksSection({ creator, light }: { creator: Creator; light?: boolean
   const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
   const bs = BUTTON_SIZES[creator.linkBioButtonSize || "medium"] || BUTTON_SIZES.medium;
 
-  return (
-    <div className="space-y-3 my-5">
-      {creator.bioLinks.filter(l => l.isVisible).map(link => {
-        const platform = getPlatform(link.url);
+  const visibleLinks = creator.bioLinks.filter(l => l.isVisible);
+  const standalone = visibleLinks.filter(l => !l.sectionName);
+  const sections = new Map<string, typeof visibleLinks>();
+  visibleLinks.filter(l => l.sectionName).forEach(l => {
+    const existing = sections.get(l.sectionName!) || [];
+    existing.push(l);
+    sections.set(l.sectionName!, existing);
+  });
 
-        // Rich link card: full-width image when thumbnail is present
-        if (link.thumbnailUrl) {
-          return (
-            <a
-              key={link.id}
-              href={link.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => trackClick(link.id)}
-              className={`group block w-full overflow-hidden transition-all duration-200 hover:scale-[1.02] hover:shadow-lg ${shape} ${light
-                ? "bg-white/[0.08] backdrop-blur-md border border-white/[0.12] hover:bg-white/[0.14]"
-                : "bg-white border border-neutral-200/80 hover:border-neutral-300 shadow-sm"
-              }`}
-            >
-              <div className="relative w-full aspect-[2/1] overflow-hidden">
-                <img src={link.thumbnailUrl} alt="" className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
-              </div>
-              <div className={`flex items-center gap-3 ${bs}`}>
-                {platform && (
-                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${light ? "bg-white/10" : "bg-neutral-100"}`}>
-                    {platform === "calendar" ? (
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={light ? "white" : "#555"} strokeWidth="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18" strokeLinecap="round"/></svg>
-                    ) : (
-                      <PlatformIcon platform={platform} size={14} className={light ? "text-white/70" : "text-neutral-500"} />
-                    )}
-                  </div>
-                )}
-                <div className="flex-1 min-w-0">
-                  <div className={`font-semibold ${ts.link} ${light ? "text-white" : "text-neutral-900"}`}>{link.title}</div>
-                  <div className={`text-[11px] mt-0.5 truncate ${light ? "text-white/30" : "text-neutral-400"}`}>{link.url.replace(/^https?:\/\/(www\.)?/, '').split('/')[0]}</div>
-                </div>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={`shrink-0 transition-all duration-200 ${light ? "text-white/20 group-hover:text-white/50" : "text-neutral-300 group-hover:text-neutral-500"} group-hover:translate-x-0.5`}>
-                  <path d="M7 17L17 7M17 7H7M17 7v10" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </div>
-            </a>
-          );
-        }
+  // Render a single standalone link (button or rich card)
+  function renderLink(link: typeof visibleLinks[0]) {
+    const platform = getPlatform(link.url);
 
-        // Standard button link (no thumbnail)
-        return (
-          <a
-            key={link.id}
-            href={link.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={() => trackClick(link.id)}
-            className={`group flex items-center gap-3 w-full ${bs} transition-all duration-200 hover:scale-[1.02] hover:shadow-lg ${shape} ${light
-              ? "bg-white/[0.08] backdrop-blur-md border border-white/[0.12] hover:bg-white/[0.14]"
-              : "bg-white border border-neutral-200/80 hover:border-neutral-300 shadow-sm"
-            }`}
-          >
-            {platform ? (
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${light ? "bg-white/10" : "bg-neutral-100"}`}>
+    if (link.thumbnailUrl) {
+      return (
+        <a
+          key={link.id}
+          href={link.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => trackClick(link.id)}
+          className={`group block w-full overflow-hidden transition-all duration-200 hover:scale-[1.02] hover:shadow-lg ${shape} ${light
+            ? "bg-white/[0.08] backdrop-blur-md border border-white/[0.12] hover:bg-white/[0.14]"
+            : "bg-white border border-neutral-200/80 hover:border-neutral-300 shadow-sm"
+          }`}
+        >
+          <div className="relative w-full aspect-[2/1] overflow-hidden">
+            <img src={link.thumbnailUrl} alt="" className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+          </div>
+          <div className={`flex items-center gap-3 ${bs}`}>
+            {platform && (
+              <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${light ? "bg-white/10" : "bg-neutral-100"}`}>
                 {platform === "calendar" ? (
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={light ? "white" : "#555"} strokeWidth="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18" strokeLinecap="round"/></svg>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={light ? "white" : "#555"} strokeWidth="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18" strokeLinecap="round"/></svg>
                 ) : (
-                  <PlatformIcon platform={platform} size={18} className={light ? "text-white/70" : "text-neutral-500"} />
+                  <PlatformIcon platform={platform} size={14} className={light ? "text-white/70" : "text-neutral-500"} />
                 )}
               </div>
-            ) : null}
+            )}
             <div className="flex-1 min-w-0">
               <div className={`font-semibold ${ts.link} ${light ? "text-white" : "text-neutral-900"}`}>{link.title}</div>
               <div className={`text-[11px] mt-0.5 truncate ${light ? "text-white/30" : "text-neutral-400"}`}>{link.url.replace(/^https?:\/\/(www\.)?/, '').split('/')[0]}</div>
@@ -218,9 +191,90 @@ function BioLinksSection({ creator, light }: { creator: Creator; light?: boolean
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={`shrink-0 transition-all duration-200 ${light ? "text-white/20 group-hover:text-white/50" : "text-neutral-300 group-hover:text-neutral-500"} group-hover:translate-x-0.5`}>
               <path d="M7 17L17 7M17 7H7M17 7v10" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-          </a>
-        );
-      })}
+          </div>
+        </a>
+      );
+    }
+
+    return (
+      <a
+        key={link.id}
+        href={link.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={() => trackClick(link.id)}
+        className={`group flex items-center gap-3 w-full ${bs} transition-all duration-200 hover:scale-[1.02] hover:shadow-lg ${shape} ${light
+          ? "bg-white/[0.08] backdrop-blur-md border border-white/[0.12] hover:bg-white/[0.14]"
+          : "bg-white border border-neutral-200/80 hover:border-neutral-300 shadow-sm"
+        }`}
+      >
+        {platform ? (
+          <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${light ? "bg-white/10" : "bg-neutral-100"}`}>
+            {platform === "calendar" ? (
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={light ? "white" : "#555"} strokeWidth="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18" strokeLinecap="round"/></svg>
+            ) : (
+              <PlatformIcon platform={platform} size={18} className={light ? "text-white/70" : "text-neutral-500"} />
+            )}
+          </div>
+        ) : null}
+        <div className="flex-1 min-w-0">
+          <div className={`font-semibold ${ts.link} ${light ? "text-white" : "text-neutral-900"}`}>{link.title}</div>
+          <div className={`text-[11px] mt-0.5 truncate ${light ? "text-white/30" : "text-neutral-400"}`}>{link.url.replace(/^https?:\/\/(www\.)?/, '').split('/')[0]}</div>
+        </div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={`shrink-0 transition-all duration-200 ${light ? "text-white/20 group-hover:text-white/50" : "text-neutral-300 group-hover:text-neutral-500"} group-hover:translate-x-0.5`}>
+          <path d="M7 17L17 7M17 7H7M17 7v10" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </a>
+    );
+  }
+
+  return (
+    <div className="space-y-5 my-5">
+      {/* Standalone links */}
+      {standalone.map(link => renderLink(link))}
+
+      {/* Sections as horizontal sliders */}
+      {Array.from(sections.entries()).map(([name, sectionLinks]) => (
+        <div key={name}>
+          <h3 className={`text-xs font-bold uppercase tracking-wider mb-3 px-1 ${light ? "text-white/40" : "text-neutral-400"}`}>{name}</h3>
+          <div className="flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide -mx-1 px-1">
+            {sectionLinks.map(link => (
+              <a
+                key={link.id}
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => trackClick(link.id)}
+                className={`snap-start shrink-0 w-[260px] rounded-xl overflow-hidden transition-all hover:shadow-lg group ${light
+                  ? "bg-white/[0.08] backdrop-blur-md border border-white/[0.12] hover:bg-white/[0.14]"
+                  : "bg-white border border-neutral-200/80 hover:border-neutral-300 shadow-sm"
+                }`}
+              >
+                {link.thumbnailUrl ? (
+                  <div className="relative aspect-video overflow-hidden">
+                    <img src={link.thumbnailUrl} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+                    {link.url.includes("youtube") && (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="w-12 h-12 bg-black/60 backdrop-blur-sm rounded-full flex items-center justify-center">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z" /></svg>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className={`aspect-video flex items-center justify-center ${light ? "bg-white/5" : "bg-neutral-100"}`}>
+                    <span className={`text-xs ${light ? "text-white/20" : "text-neutral-300"}`}>No preview</span>
+                  </div>
+                )}
+                <div className="p-3">
+                  <div className={`text-sm font-semibold truncate ${light ? "text-white" : "text-neutral-900"}`}>{link.title}</div>
+                  <div className={`text-[10px] mt-0.5 truncate ${light ? "text-white/30" : "text-neutral-400"}`}>{link.url.replace(/^https?:\/\/(www\.)?/, '').split('/')[0]}</div>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      ))}
     </div>
   );
 }

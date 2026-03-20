@@ -143,7 +143,7 @@ export type Creator = {
   nicheRank: number;
   creatorScore: number;
   scoreBreakdown: { profile?: number; reach?: number; engagement?: number; reputation?: number; experience?: number; trust?: number; total?: number };
-  bioLinks: { id: string; title: string; url: string; thumbnailUrl: string | null; isVisible: boolean; isPinned: boolean; clickCount: number }[];
+  bioLinks: { id: string; title: string; url: string; thumbnailUrl: string | null; isVisible: boolean; isPinned: boolean; clickCount: number; sectionName: string | null; displayStyle: string }[];
   socials: Social[];
   services: Service[];
   portfolio: PortfolioItem[];

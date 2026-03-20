@@ -73,6 +73,8 @@ function assembleCreator(
       isVisible: l.is_visible !== false,
       isPinned: (l.is_pinned as boolean) || false,
       clickCount: (l.click_count as number) || 0,
+      sectionName: (l.section_name as string) || null,
+      displayStyle: (l.display_style as string) || "button",
     })),
     socials: socials.map((s) => ({
       platform: s.platform as string,

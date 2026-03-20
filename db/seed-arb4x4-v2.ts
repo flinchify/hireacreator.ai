@@ -62,109 +62,130 @@ async function run() {
   const userId = users[0].id;
   console.log("Created ARB 4x4 user:", userId);
 
-  // Links with thumbnails
-  const links = [
-    { 
-      title: "Weekends Are Calling...", 
-      url: "https://arb.com.au/weekends", 
+  // Links with thumbnails and sections
+  const links: { title: string; url: string; thumbnail: string | null; position: number; section: string | null }[] = [
+    // Standalone links (no section)
+    {
+      title: "Weekends Are Calling...",
+      url: "https://arb.com.au/weekends",
       thumbnail: "https://www.arb.com.au/media/wysiwyg/Homepage-Banners/Weekends-Are-Calling-HP-Banner.jpg",
-      position: 0 
+      position: 0,
+      section: null
     },
-    { 
-      title: "ARB Home Page", 
-      url: "https://www.arb.com.au", 
+    {
+      title: "ARB Home Page",
+      url: "https://www.arb.com.au",
       thumbnail: "https://www.arb.com.au/media/wysiwyg/Homepage-Banners/OME-Triton-HP-banner-desktop.jpg",
-      position: 1 
+      position: 1,
+      section: null
     },
-    { 
-      title: "ARB Accessories for the Ford Super Duty!", 
-      url: "https://www.youtube.com/watch?v=1JwpLak9rCY", 
+    // YouTube Videos section
+    {
+      title: "ARB Accessories for the Ford Super Duty!",
+      url: "https://www.youtube.com/watch?v=1JwpLak9rCY",
       thumbnail: "https://img.youtube.com/vi/1JwpLak9rCY/hqdefault.jpg",
-      position: 2 
+      position: 2,
+      section: "Youtube Videos"
     },
-    { 
-      title: "ARB 50th Anniversary Series | Watch now!", 
+    {
+      title: "ARB 50th Anniversary Series | Watch now!",
       url: "https://youtube.com/playlist?list=PL835UyMZLOIUVEuYxzZSasKGSwXnz76mN",
       thumbnail: "https://img.youtube.com/vi/PL835UyMZLO/hqdefault.jpg",
-      position: 3 
+      position: 3,
+      section: "Youtube Videos"
     },
-    { 
-      title: "Shop Intrepid", 
-      url: "https://www.arb.com.au/intrepid", 
+    // Shop ARB section
+    {
+      title: "Shop Intrepid",
+      url: "https://www.arb.com.au/intrepid",
       thumbnail: null,
-      position: 4 
+      position: 4,
+      section: "Shop ARB"
     },
-    { 
-      title: "Shop Bull Bars", 
-      url: "https://www.arb.com.au/products/4x4-protection/bull-bars", 
+    {
+      title: "Shop Bull Bars",
+      url: "https://www.arb.com.au/products/4x4-protection/bull-bars",
       thumbnail: null,
-      position: 5 
+      position: 5,
+      section: "Shop ARB"
     },
-    { 
-      title: "Shop Old Man Emu Suspension Kits", 
-      url: "https://www.arb.com.au/products/old-man-emu-suspension/old-man-emu-suspension-kits", 
+    {
+      title: "Shop Old Man Emu Suspension Kits",
+      url: "https://www.arb.com.au/products/old-man-emu-suspension/old-man-emu-suspension-kits",
       thumbnail: null,
-      position: 6 
+      position: 6,
+      section: "Shop ARB"
     },
-    { 
-      title: "Shop Back of Ute", 
-      url: "https://www.arb.com.au/products/back-of-ute", 
+    {
+      title: "Shop Back of Ute",
+      url: "https://www.arb.com.au/products/back-of-ute",
       thumbnail: null,
-      position: 7 
+      position: 7,
+      section: "Shop ARB"
     },
-    { 
-      title: "Shop Driving Lights", 
-      url: "https://www.arb.com.au/products/electrical-and-lighting/driving-lights", 
+    {
+      title: "Shop Driving Lights",
+      url: "https://www.arb.com.au/products/electrical-and-lighting/driving-lights",
       thumbnail: null,
-      position: 8 
+      position: 8,
+      section: "Shop ARB"
     },
-    { 
-      title: "Shop Camping & Touring", 
-      url: "https://www.arb.com.au/products/camping-and-touring", 
+    {
+      title: "Shop Camping & Touring",
+      url: "https://www.arb.com.au/products/camping-and-touring",
       thumbnail: null,
-      position: 9 
+      position: 9,
+      section: "Shop ARB"
     },
-    { 
-      title: "Shop ARB Air Lockers", 
-      url: "https://www.arb.com.au/products/drivetrain-performance/arb-air-lockers", 
+    {
+      title: "Shop ARB Air Lockers",
+      url: "https://www.arb.com.au/products/drivetrain-performance/arb-air-lockers",
       thumbnail: null,
-      position: 10 
+      position: 10,
+      section: "Shop ARB"
     },
-    { 
-      title: "Shop Air Compressors & Accessories", 
-      url: "https://www.arb.com.au/products/air-compressors-tyre-accessories", 
+    {
+      title: "Shop Air Compressors & Accessories",
+      url: "https://www.arb.com.au/products/air-compressors-tyre-accessories",
       thumbnail: null,
-      position: 11 
+      position: 11,
+      section: "Shop ARB"
     },
-    { 
-      title: "Gift Cards, Apparel & Merchandise", 
-      url: "https://www.arb.com.au/products/gift-cards-apparel-merchandise", 
+    {
+      title: "Gift Cards, Apparel & Merchandise",
+      url: "https://www.arb.com.au/products/gift-cards-apparel-merchandise",
       thumbnail: null,
-      position: 12 
+      position: 12,
+      section: "Shop ARB"
     },
-    { 
-      title: "Shop Roof Racks & BASE Racks", 
-      url: "https://www.arb.com.au/products/roof-racks-and-base-racks", 
+    {
+      title: "Shop Roof Racks & BASE Racks",
+      url: "https://www.arb.com.au/products/roof-racks-and-base-racks",
       thumbnail: null,
-      position: 13 
+      position: 13,
+      section: "Shop ARB"
     },
-    { 
-      title: "Shop Recovery Equipment", 
-      url: "https://www.arb.com.au/products/recovery-equipment", 
+    {
+      title: "Shop Recovery Equipment",
+      url: "https://www.arb.com.au/products/recovery-equipment",
       thumbnail: null,
-      position: 14 
+      position: 14,
+      section: "Shop ARB"
     },
-    { 
-      title: "4x4 Culture Issue 68", 
-      url: "https://view.publitas.com/arb-4x4-accessories-1/4x4-culture-issue-68/page/1", 
+    // 4x4 Culture section
+    {
+      title: "4x4 Culture Issue 68",
+      url: "https://view.publitas.com/arb-4x4-accessories-1/4x4-culture-issue-68/page/1",
       thumbnail: null,
-      position: 15 
+      position: 15,
+      section: "4x4 Culture"
     },
-    { 
-      title: "4x4 Culture Issue 67", 
-      url: "https://view.publitas.com/arb-4x4-accessories-1/4x4-culture-issue-67/", 
+    {
+      title: "4x4 Culture Issue 67",
+      url: "https://view.publitas.com/arb-4x4-accessories-1/4x4-culture-issue-67/",
       thumbnail: null,
-      position: 16 
+      position: 16,
+      section: "4x4 Culture"
     },
   ];
 
@@ -174,11 +195,12 @@ async function run() {
       console.log(`  Fetching OG for: ${link.title}...`);
       link.thumbnail = await fetchOgImage(link.url);
     }
+    const displayStyle = link.section ? "slide" : "button";
     await sql`
-      INSERT INTO bio_links (user_id, title, url, thumbnail_url, position, is_visible, is_pinned, click_count)
-      VALUES (${userId}, ${link.title}, ${link.url}, ${link.thumbnail}, ${link.position}, true, false, 0)
+      INSERT INTO bio_links (user_id, title, url, thumbnail_url, position, is_visible, is_pinned, click_count, section_name, display_style)
+      VALUES (${userId}, ${link.title}, ${link.url}, ${link.thumbnail}, ${link.position}, true, false, 0, ${link.section}, ${displayStyle})
     `;
-    console.log(`  + ${link.title} ${link.thumbnail ? "(thumb)" : ""}`);
+    console.log(`  + ${link.title} ${link.thumbnail ? "(thumb)" : ""} ${link.section ? `[${link.section}]` : ""}`);
   }
 
   // Socials

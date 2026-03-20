@@ -15,7 +15,11 @@ interface BioLink {
   click_count: number;
   schedule_start: string | null;
   schedule_end: string | null;
+  section_name: string | null;
+  display_style: string;
 }
+
+const SECTION_PRESETS = ["Youtube Videos", "Shop", "Articles", "Podcasts", "Music", "Custom"] as const;
 
 /* ── Toast ── */
 function Toast({ message, type, onDone }: { message: string; type: "success" | "error"; onDone: () => void }) {
@@ -46,6 +50,8 @@ export function LinkManager() {
   const [adding, setAdding] = useState(false);
   const [fetchingPreview, setFetchingPreview] = useState(false);
   const [titleManuallySet, setTitleManuallySet] = useState(false);
+  const [newSection, setNewSection] = useState("");
+  const [newSectionCustom, setNewSectionCustom] = useState("");
 
   // Edit form
   const [editTitle, setEditTitle] = useState("");
@@ -54,6 +60,16 @@ export function LinkManager() {
   const [editError, setEditError] = useState("");
   const [editSaving, setEditSaving] = useState(false);
   const [editFetchingPreview, setEditFetchingPreview] = useState(false);
+  const [editSection, setEditSection] = useState("");
+  const [editSectionCustom, setEditSectionCustom] = useState("");
+
+  // Linktree import
+  const [showImport, setShowImport] = useState(false);
+  const [importUrl, setImportUrl] = useState("");
+  const [importLoading, setImportLoading] = useState(false);
+  const [importError, setImportError] = useState("");
+  const [importPreview, setImportPreview] = useState<{ profile: { name: string; bio: string; avatar: string }; links: { title: string; url: string; thumbnail: string | null; section: string | null }[] } | null>(null);
+  const [importingAll, setImportingAll] = useState(false);
 
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const addTitleRef = useRef<HTMLInputElement>(null);
@@ -156,16 +172,17 @@ export function LinkManager() {
     const url = normalizeUrl(newUrl);
 
     setAdding(true); setAddError("");
+    const sectionName = newSection === "Custom" ? newSectionCustom.trim() : (newSection || null);
     try {
       const res = await fetch("/api/links", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title: newTitle.trim(), url, thumbnailUrl: newThumbnail || null }),
+        body: JSON.stringify({ title: newTitle.trim(), url, thumbnailUrl: newThumbnail || null, sectionName: sectionName || null }),
       });
       const data = await res.json();
       if (!res.ok) { setAddError(data.error || "Failed to add link. Check your connection."); setAdding(false); return; }
       setLinks([...links, data.link]);
-      setNewTitle(""); setNewUrl(""); setNewThumbnail(""); setTitleManuallySet(false); setShowAdd(false);
+      setNewTitle(""); setNewUrl(""); setNewThumbnail(""); setTitleManuallySet(false); setNewSection(""); setNewSectionCustom(""); setShowAdd(false);
       showToast("Link added");
     } catch { setAddError("Network error. Check your connection and try again."); }
     setAdding(false);
@@ -178,14 +195,15 @@ export function LinkManager() {
     const url = normalizeUrl(editUrl);
 
     setEditSaving(true); setEditError("");
+    const sectionName = editSection === "Custom" ? editSectionCustom.trim() : (editSection || null);
     try {
       const res = await fetch("/api/links", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: editingId, title: editTitle.trim(), url, thumbnailUrl: editThumbnail }),
+        body: JSON.stringify({ id: editingId, title: editTitle.trim(), url, thumbnailUrl: editThumbnail, sectionName: sectionName || null }),
       });
       if (!res.ok) { const d = await res.json().catch(() => ({})); setEditError(d.error || "Save failed."); setEditSaving(false); return; }
-      setLinks(links.map(l => l.id === editingId ? { ...l, title: editTitle.trim(), url, thumbnail_url: editThumbnail } : l));
+      setLinks(links.map(l => l.id === editingId ? { ...l, title: editTitle.trim(), url, thumbnail_url: editThumbnail, section_name: sectionName || null } : l));
       setEditingId(null);
       showToast("Link updated");
     } catch { setEditError("Network error. Try again."); }
@@ -276,6 +294,14 @@ export function LinkManager() {
     setEditUrl(link.url);
     setEditThumbnail(link.thumbnail_url);
     setEditError("");
+    const sn = link.section_name || "";
+    if (sn && !SECTION_PRESETS.includes(sn as any)) {
+      setEditSection("Custom");
+      setEditSectionCustom(sn);
+    } else {
+      setEditSection(sn);
+      setEditSectionCustom("");
+    }
   }
 
   function getDomain(url: string): string {
@@ -285,6 +311,40 @@ export function LinkManager() {
   function copyUrl(url: string) {
     navigator.clipboard?.writeText(url);
     showToast("Link URL copied");
+  }
+
+  async function fetchLinktree() {
+    if (!importUrl.trim()) { setImportError("Paste your Linktree URL"); return; }
+    setImportLoading(true); setImportError(""); setImportPreview(null);
+    try {
+      const res = await fetch("/api/import/linktree", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: importUrl.trim() }),
+      });
+      const data = await res.json();
+      if (!res.ok) { setImportError(data.error || "Failed to fetch Linktree page"); setImportLoading(false); return; }
+      setImportPreview(data);
+    } catch { setImportError("Network error. Check your connection."); }
+    setImportLoading(false);
+  }
+
+  async function importAll() {
+    if (!importPreview) return;
+    setImportingAll(true);
+    try {
+      for (const link of importPreview.links) {
+        await fetch("/api/links", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title: link.title, url: link.url, thumbnailUrl: link.thumbnail, sectionName: link.section }),
+        });
+      }
+      await load();
+      setShowImport(false); setImportUrl(""); setImportPreview(null);
+      showToast(`Imported ${importPreview.links.length} links`);
+    } catch { setImportError("Failed to import some links"); }
+    setImportingAll(false);
   }
 
   const activeLinks = links.filter(l => !l.is_archived);
@@ -373,6 +433,18 @@ export function LinkManager() {
                     </div>
                   </div>
                 </div>
+                {/* Section */}
+                <div>
+                  <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Section <span className="normal-case font-normal text-neutral-400">(groups links into a slider)</span></label>
+                  <select value={editSection} onChange={e => { setEditSection(e.target.value); if (e.target.value !== "Custom") setEditSectionCustom(""); }} className="w-full mt-1 px-3 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900/20 focus:bg-white transition-all">
+                    <option value="">None (standalone)</option>
+                    {SECTION_PRESETS.filter(s => s !== "Custom").map(s => <option key={s} value={s}>{s}</option>)}
+                    <option value="Custom">Custom...</option>
+                  </select>
+                  {editSection === "Custom" && (
+                    <input type="text" value={editSectionCustom} onChange={e => setEditSectionCustom(e.target.value)} placeholder="Section name" className="w-full mt-2 px-3 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900/20 focus:bg-white transition-all" />
+                  )}
+                </div>
                 {editError && <p id={`edit-err-${link.id}`} className="text-xs text-red-600 flex items-center gap-1" role="alert"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10" /><path d="M12 8v4M12 16h.01" stroke="white" strokeWidth="2" strokeLinecap="round" /></svg>{editError}</p>}
                 <div className="flex gap-2">
                   <button onClick={() => setEditingId(null)} className="flex-1 py-2.5 text-xs font-medium text-neutral-600 bg-neutral-100 rounded-xl hover:bg-neutral-200 transition-colors focus:outline-none focus:ring-2 focus:ring-neutral-900/20">Cancel</button>
@@ -398,6 +470,7 @@ export function LinkManager() {
                 <button className="flex-1 min-w-0 text-left focus:outline-none focus:ring-2 focus:ring-neutral-900/20 rounded-lg p-1 -m-1" onClick={() => startEdit(link)} aria-label={`Edit ${link.title}`}>
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-semibold text-neutral-900 truncate">{link.title}</span>
+                    {link.section_name && <span className="text-[8px] font-bold bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded-full uppercase shrink-0">{link.section_name}</span>}
                     {link.is_pinned && <span className="text-[8px] font-bold bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full uppercase shrink-0">Pinned</span>}
                     {!link.is_visible && <span className="text-[8px] font-bold bg-neutral-200 text-neutral-500 px-1.5 py-0.5 rounded-full uppercase shrink-0">Hidden</span>}
                   </div>
@@ -532,9 +605,21 @@ export function LinkManager() {
               </div>
             </div>
           </div>
+          {/* Section */}
+          <div>
+            <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Section <span className="normal-case font-normal text-neutral-400">(optional — groups links into a slider)</span></label>
+            <select value={newSection} onChange={e => { setNewSection(e.target.value); if (e.target.value !== "Custom") setNewSectionCustom(""); }} className="w-full mt-1 px-3 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900/20 focus:bg-white transition-all">
+              <option value="">None (standalone)</option>
+              {SECTION_PRESETS.filter(s => s !== "Custom").map(s => <option key={s} value={s}>{s}</option>)}
+              <option value="Custom">Custom...</option>
+            </select>
+            {newSection === "Custom" && (
+              <input type="text" value={newSectionCustom} onChange={e => setNewSectionCustom(e.target.value)} placeholder="Section name" className="w-full mt-2 px-3 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900/20 focus:bg-white transition-all" />
+            )}
+          </div>
           {addError && <p id="add-error" className="text-xs text-red-600 flex items-center gap-1" role="alert"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10" /><path d="M12 8v4M12 16h.01" stroke="white" strokeWidth="2" strokeLinecap="round" /></svg>{addError}</p>}
           <div className="flex gap-2">
-            <button onClick={() => { setShowAdd(false); setAddError(""); setNewTitle(""); setNewUrl(""); setNewThumbnail(""); setTitleManuallySet(false); }} className="flex-1 py-2.5 text-xs font-medium text-neutral-600 bg-neutral-100 rounded-xl hover:bg-neutral-200 transition-colors focus:outline-none focus:ring-2 focus:ring-neutral-900/20">Cancel</button>
+            <button onClick={() => { setShowAdd(false); setAddError(""); setNewTitle(""); setNewUrl(""); setNewThumbnail(""); setTitleManuallySet(false); setNewSection(""); setNewSectionCustom(""); }} className="flex-1 py-2.5 text-xs font-medium text-neutral-600 bg-neutral-100 rounded-xl hover:bg-neutral-200 transition-colors focus:outline-none focus:ring-2 focus:ring-neutral-900/20">Cancel</button>
             <button onClick={addLink} disabled={adding} className="flex-1 py-2.5 text-xs font-medium text-white bg-neutral-900 rounded-xl hover:bg-neutral-800 transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-neutral-900/20">{adding ? "Adding..." : "Add Link"}</button>
           </div>
         </div>
@@ -573,6 +658,63 @@ export function LinkManager() {
           )}
         </div>
       )}
+
+      {/* Linktree Import */}
+      <div className="mt-6 pt-4 border-t border-neutral-200">
+        {!showImport ? (
+          <button onClick={() => setShowImport(true)} className="flex items-center gap-2 text-xs font-semibold text-neutral-500 hover:text-neutral-700 transition-colors">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            Import from Linktree
+          </button>
+        ) : (
+          <div className="bg-white rounded-2xl border border-neutral-200 p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-bold text-neutral-900">Import from Linktree</h3>
+              <button onClick={() => { setShowImport(false); setImportUrl(""); setImportPreview(null); setImportError(""); }} className="text-neutral-400 hover:text-neutral-600 p-1">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" strokeLinecap="round"/></svg>
+              </button>
+            </div>
+            <div>
+              <input type="url" value={importUrl} onChange={e => { setImportUrl(e.target.value); setImportError(""); }} placeholder="https://linktr.ee/username" className="w-full px-3 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900/20 focus:bg-white transition-all" onKeyDown={e => e.key === "Enter" && fetchLinktree()} />
+            </div>
+            {importError && <p className="text-xs text-red-600">{importError}</p>}
+            {!importPreview && (
+              <button onClick={fetchLinktree} disabled={importLoading} className="w-full py-2.5 text-xs font-medium text-white bg-neutral-900 rounded-xl hover:bg-neutral-800 transition-colors disabled:opacity-50">
+                {importLoading ? "Fetching..." : "Fetch Links"}
+              </button>
+            )}
+            {importPreview && (
+              <div className="space-y-3">
+                {importPreview.profile.name && (
+                  <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-xl">
+                    {importPreview.profile.avatar && <img src={importPreview.profile.avatar} alt="" className="w-10 h-10 rounded-full object-cover" />}
+                    <div>
+                      <div className="text-sm font-semibold text-neutral-900">{importPreview.profile.name}</div>
+                      {importPreview.profile.bio && <div className="text-xs text-neutral-400 mt-0.5">{importPreview.profile.bio}</div>}
+                    </div>
+                  </div>
+                )}
+                <div className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Found {importPreview.links.length} links</div>
+                <div className="max-h-[240px] overflow-y-auto space-y-1.5">
+                  {importPreview.links.map((link, i) => (
+                    <div key={i} className="flex items-center gap-2 p-2 bg-neutral-50 rounded-lg">
+                      {link.thumbnail && <img src={link.thumbnail} alt="" className="w-8 h-8 rounded object-cover shrink-0" />}
+                      <div className="flex-1 min-w-0">
+                        <div className="text-xs font-medium text-neutral-900 truncate">{link.title}</div>
+                        <div className="text-[10px] text-neutral-400 truncate">{link.url}</div>
+                      </div>
+                      {link.section && <span className="text-[8px] font-bold bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded-full uppercase shrink-0">{link.section}</span>}
+                    </div>
+                  ))}
+                </div>
+                <button onClick={importAll} disabled={importingAll} className="w-full py-2.5 text-xs font-medium text-white bg-neutral-900 rounded-xl hover:bg-neutral-800 transition-colors disabled:opacity-50">
+                  {importingAll ? "Importing..." : `Import All ${importPreview.links.length} Links`}
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
 
       <style>{`@keyframes slideUp { from { transform: translate(-50%, 20px); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }`}</style>
     </div>

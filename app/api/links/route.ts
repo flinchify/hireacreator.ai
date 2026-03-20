@@ -32,7 +32,7 @@ export async function POST(request: Request) {
     const user = await getUser();
     if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
     const body = await request.json().catch(() => ({}));
-    const { title, url, thumbnailUrl, icon } = body;
+    const { title, url, thumbnailUrl, icon, sectionName, displayStyle } = body;
 
     if (!title?.trim()) return NextResponse.json({ error: "Title is required" }, { status: 400 });
     if (!url?.trim()) return NextResponse.json({ error: "URL is required" }, { status: 400 });
@@ -46,9 +46,12 @@ export async function POST(request: Request) {
     const maxPos = await sql`SELECT COALESCE(MAX(position), -1) + 1 as next FROM bio_links WHERE user_id = ${user.id}`;
     const position = maxPos[0].next;
 
+    // Auto-set display_style to 'slide' when in a section
+    const style = sectionName ? (displayStyle || "slide") : (displayStyle || "button");
+
     const link = await sql`
-      INSERT INTO bio_links (user_id, title, url, thumbnail_url, icon, position)
-      VALUES (${user.id}, ${title.trim()}, ${url.trim()}, ${thumbnailUrl || null}, ${icon || null}, ${position})
+      INSERT INTO bio_links (user_id, title, url, thumbnail_url, icon, position, section_name, display_style)
+      VALUES (${user.id}, ${title.trim()}, ${url.trim()}, ${thumbnailUrl || null}, ${icon || null}, ${position}, ${sectionName || null}, ${style})
       RETURNING *
     `;
     return NextResponse.json({ link: link[0] });
@@ -74,7 +77,7 @@ export async function PATCH(request: Request) {
     }
 
     // Update single link
-    const { id, title, url, thumbnailUrl, icon, isVisible, isPinned, isArchived, scheduleStart, scheduleEnd } = body;
+    const { id, title, url, thumbnailUrl, icon, isVisible, isPinned, isArchived, scheduleStart, scheduleEnd, sectionName, displayStyle } = body;
     if (!id) return NextResponse.json({ error: "id required" }, { status: 400 });
 
     if (url) {
@@ -83,6 +86,8 @@ export async function PATCH(request: Request) {
 
     const hasThumb = thumbnailUrl !== undefined;
     const hasIcon = icon !== undefined;
+    const hasSection = sectionName !== undefined;
+    const hasStyle = displayStyle !== undefined;
 
     await sql`
       UPDATE bio_links SET
@@ -95,6 +100,8 @@ export async function PATCH(request: Request) {
         is_archived = COALESCE(${isArchived ?? null}, is_archived),
         schedule_start = CASE WHEN ${scheduleStart !== undefined} THEN ${scheduleStart ?? null}::timestamptz ELSE schedule_start END,
         schedule_end = CASE WHEN ${scheduleEnd !== undefined} THEN ${scheduleEnd ?? null}::timestamptz ELSE schedule_end END,
+        section_name = CASE WHEN ${hasSection} THEN ${sectionName || null} ELSE section_name END,
+        display_style = CASE WHEN ${hasStyle} THEN ${displayStyle || 'button'} ELSE display_style END,
         updated_at = NOW()
       WHERE id = ${id} AND user_id = ${user.id}
     `;

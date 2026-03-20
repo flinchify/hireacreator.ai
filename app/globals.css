@@ -203,3 +203,7 @@ details[open] .faq-content {
   75% { top: calc(100% - 10px); left: -10px; }
   100% { top: -10px; left: -10px; }
 }
+
+/* Hide scrollbar for horizontal sliders */
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
