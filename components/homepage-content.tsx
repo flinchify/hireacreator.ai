@@ -186,16 +186,15 @@ export function HomepageContent({
                 >
                   Get Started Free
                 </button>
-                <Link href="/browse">
-                  <button className="px-8 py-4 text-base font-medium text-neutral-600 bg-transparent rounded-full border border-neutral-200 hover:border-neutral-300 hover:bg-neutral-50 active:scale-[0.98] transition-all duration-200 w-full sm:w-auto">
-                    Browse Creators
-                  </button>
-                </Link>
               </div>
 
+              <Link href="/browse" className="inline-flex items-center gap-1 mt-5 text-sm font-medium text-neutral-500 hover:text-neutral-900 transition-colors">
+                Browse Creators <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              </Link>
+
               {/* Platform icons — trust signal */}
-              <p className="text-xs font-medium text-neutral-400 uppercase tracking-widest mt-10">Connect 15+ platforms</p>
-              <div className="mt-3">
+              <p className="text-[10px] font-medium text-neutral-400 uppercase tracking-[0.2em] mt-14 mb-4">Connect 15+ platforms</p>
+              <div>
                 <PlatformTicker />
               </div>
           </div>
@@ -203,8 +202,81 @@ export function HomepageContent({
         </div>
       </section>
 
+      {/* ═══════════════════ PARTNER LOGOS ═══════════════════ */}
+      <section className="border-t border-neutral-200/60 bg-white">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-12 sm:py-14">
+          <p className="text-[10px] font-medium text-neutral-400 uppercase tracking-[0.2em] text-center mb-8">Built with</p>
+          <div className="flex items-center justify-center gap-8 sm:gap-14 flex-wrap opacity-30 grayscale hover:opacity-50 transition-opacity duration-500">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" alt="Stripe" className="h-7 sm:h-8" loading="lazy" />
+            <img src="https://assets.vercel.com/image/upload/v1588805858/repositories/vercel/logo.png" alt="Vercel" className="h-5 sm:h-6" loading="lazy" />
+            <img src="https://mintlify.s3-us-west-1.amazonaws.com/anthropic/logo/dark.svg" alt="Anthropic" className="h-5 sm:h-6" loading="lazy" />
+            <img src="https://upload.wikimedia.org/wikipedia/commons/4/4d/OpenAI_Logo.svg" alt="OpenAI" className="h-5 sm:h-6" loading="lazy" />
+            <img src="https://neon.tech/brand/neon-logo-dark-color.svg" alt="Neon" className="h-5 sm:h-6" loading="lazy" />
+          </div>
+        </div>
+      </section>
 
-      {/* Platform ticker moved into hero — removed duplicate */}
+      {/* ═══════════════════ AI INTEGRATION CARDS ═══════════════════ */}
+      <AnimateOnScroll as="section" className="bg-white">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+          <div className="text-center mb-12">
+            <h2 className="font-display text-2xl sm:text-3xl font-bold text-neutral-900">Built for the AI era</h2>
+            <p className="text-neutral-500 mt-2 text-sm">The only creator marketplace with native AI agent integration.</p>
+          </div>
+          <StaggerChildren className="grid sm:grid-cols-3 gap-5" staggerMs={150}>
+            {/* MCP */}
+            <div className="aos-stagger-item group relative bg-gradient-to-br from-white to-blue-50/30 rounded-2xl border border-neutral-200/80 p-7 hover:border-blue-200 hover:shadow-xl hover:shadow-blue-500/10 hover:-translate-y-1 transition-all duration-300 overflow-hidden animate-[subtle-float_4s_ease-in-out_infinite]">
+              <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-blue-500/[0.06] to-transparent rounded-bl-full" />
+              <div className="relative">
+                <div className="flex items-center gap-3 mb-5">
+                  <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/25">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" /></svg>
+                  </div>
+                  <div>
+                    <h3 className="font-display font-bold text-neutral-900">MCP Protocol</h3>
+                    <p className="text-[10px] text-neutral-400">by Anthropic</p>
+                  </div>
+                </div>
+                <p className="text-sm text-neutral-500 leading-relaxed">AI agents like Claude discover, evaluate, and book creators autonomously.</p>
+              </div>
+            </div>
+
+            {/* REST API */}
+            <div className="aos-stagger-item group relative bg-gradient-to-br from-white to-emerald-50/30 rounded-2xl border border-neutral-200/80 p-7 hover:border-emerald-200 hover:shadow-xl hover:shadow-emerald-500/10 hover:-translate-y-1 transition-all duration-300 overflow-hidden animate-[subtle-float_4s_ease-in-out_infinite_0.5s]">
+              <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-emerald-500/[0.06] to-transparent rounded-bl-full" />
+              <div className="relative">
+                <div className="flex items-center gap-3 mb-5">
+                  <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center shadow-lg shadow-emerald-500/25">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><path d="M18 20V10M12 20V4M6 20v-6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                  </div>
+                  <div>
+                    <h3 className="font-display font-bold text-neutral-900">REST API</h3>
+                    <p className="text-[10px] text-neutral-400">OpenAPI 3.0</p>
+                  </div>
+                </div>
+                <p className="text-sm text-neutral-500 leading-relaxed">Full programmatic access. Search creators, manage bookings, process payments.</p>
+              </div>
+            </div>
+
+            {/* Stripe */}
+            <div className="aos-stagger-item group relative bg-gradient-to-br from-white to-violet-50/30 rounded-2xl border border-neutral-200/80 p-7 hover:border-violet-200 hover:shadow-xl hover:shadow-violet-500/10 hover:-translate-y-1 transition-all duration-300 overflow-hidden animate-[subtle-float_4s_ease-in-out_infinite_1s]">
+              <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-violet-500/[0.06] to-transparent rounded-bl-full" />
+              <div className="relative">
+                <div className="flex items-center gap-3 mb-5">
+                  <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-violet-500/25">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                  </div>
+                  <div>
+                    <h3 className="font-display font-bold text-neutral-900">Stripe Connect</h3>
+                    <p className="text-[10px] text-neutral-400">by Stripe</p>
+                  </div>
+                </div>
+                <p className="text-sm text-neutral-500 leading-relaxed">Secure payments, instant payouts. Creators keep 100% of their earnings.</p>
+              </div>
+            </div>
+          </StaggerChildren>
+        </div>
+      </AnimateOnScroll>
 
       {/* ═══════════════════ WHAT YOU GET ═══════════════════ */}
       <section className="bg-neutral-50/50 border-y border-neutral-100">
