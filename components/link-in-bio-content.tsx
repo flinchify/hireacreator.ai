@@ -1564,6 +1564,928 @@ function TemplateFounder({ creator }: { creator: Creator }) {
 }
 
 /* ══════════════════════════════════════════════════════════════
+   TEMPLATE: BRUTALIST — Raw, bold, anti-design. Punk zine aesthetic.
+   ══════════════════════════════════════════════════════════════ */
+function TemplateBrutalist({ creator }: { creator: Creator }) {
+  const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
+  const accent = creator.linkBioAccent || "#ffffff";
+  const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
+  const avatarSz = AVATAR_SIZES[creator.linkBioAvatarSize || "medium"] || AVATAR_SIZES.medium;
+  const bs = BUTTON_SIZES[creator.linkBioButtonSize || "medium"] || BUTTON_SIZES.medium;
+
+  return (
+    <div className="min-h-screen bg-black text-white" style={{ fontFamily: "'Courier New', Courier, monospace" }}>
+      <div className="max-w-[500px] mx-auto px-5 pt-10 pb-10 min-h-screen">
+        <div className="absolute top-3 right-4 z-10"><ShareBtn slug={creator.slug} light /></div>
+
+        <div className="border-b-[3px] border-white pb-6 mb-6">
+          <div className="flex items-start gap-5">
+            {creator.avatar ? (
+              <img src={creator.avatar} alt="" className={`${avatarSz} object-cover border-[3px] border-white`} />
+            ) : (
+              <div className={`${avatarSz} border-[3px] border-white flex items-center justify-center bg-white/5`}>
+                <span className="text-3xl font-bold text-white/60">{(creator.name || "?")[0]}</span>
+              </div>
+            )}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-1.5">
+                <h1 className={`${ts.name} font-black uppercase tracking-wider`} style={{ fontFamily: "'Courier New', monospace" }}>{creator.name || "YOUR NAME"}</h1>
+                {creator.isVerified && <VerifiedBadge light />}{creator.isPro && <ProBadge />}
+              </div>
+              <p className="text-xs text-white/50 uppercase tracking-[0.3em] mt-1">@{creator.slug}</p>
+              {creator.headline && <p className={`mt-2 ${ts.headline} text-white/70 uppercase tracking-wide`}>{creator.headline}</p>}
+            </div>
+          </div>
+        </div>
+
+        {creator.bio && (
+          <div className="border-[3px] border-white p-4 mb-6">
+            <p className={`${ts.bio} text-white/80 leading-relaxed`}>{creator.bio}</p>
+          </div>
+        )}
+
+        <NicheRankBadge creator={creator} light />
+
+        {creator.socials.length > 0 && (
+          <div className="flex items-center gap-3 my-6 flex-wrap">
+            {creator.socials.map(s => (
+              <a key={s.platform} href={s.url || "#"} target="_blank" rel="noopener noreferrer"
+                className="w-10 h-10 border-[2px] border-white flex items-center justify-center hover:bg-white hover:text-black transition-colors"
+                aria-label={`Visit ${s.platform}`}>
+                <PlatformIcon platform={s.platform} size={16} className="text-white" />
+              </a>
+            ))}
+          </div>
+        )}
+
+        <BioLinksSection creator={creator} light />
+        <ProductsSection creator={creator} light accent={accent} />
+
+        {creator.services.length > 0 && (
+          <div className="space-y-3 mb-6">
+            <div className="text-xs font-bold uppercase tracking-[0.4em] text-white/40 border-b border-white/20 pb-1">Services</div>
+            {creator.services.map(s => (
+              <a key={s.id} href={`/creators/${creator.slug}`}
+                className={`block w-full ${bs} border-[3px] border-white text-white hover:bg-white hover:text-black transition-colors uppercase tracking-wider font-bold`}>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm">{s.title}</span>
+                  <span className="text-xs">{priceLabel(s.price, s.deliveryDays)}</span>
+                </div>
+              </a>
+            ))}
+          </div>
+        )}
+
+        {creator.portfolio.length > 0 && (
+          <div className="grid grid-cols-3 gap-1 mb-6">
+            {creator.portfolio.slice(0, 6).map(p => (
+              <div key={p.id} className="aspect-square overflow-hidden border border-white/20">
+                {p.image ? <img src={p.image} alt={p.title} className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all" /> : <div className="w-full h-full bg-white/5 flex items-center justify-center text-xs text-white/20">{p.title}</div>}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {creator.calendarEnabled && <div className="my-6"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
+        {isEmpty && <EmptyState light />}
+        {!isEmpty && (
+          <a href={`/creators/${creator.slug}`}
+            className={`block w-full mt-8 font-black text-center ${bs} border-[3px] border-white text-white hover:bg-white hover:text-black transition-colors uppercase tracking-[0.3em]`}>
+            VIEW FULL PROFILE
+          </a>
+        )}
+        <Branding light />
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TEMPLATE: AURORA — Animated gradient aurora bg, glassmorphic cards
+   ══════════════════════════════════════════════════════════════ */
+function TemplateAurora({ creator }: { creator: Creator }) {
+  const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
+  const accent = creator.linkBioAccent || "#60a5fa";
+  const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
+  const avatarSz = AVATAR_SIZES[creator.linkBioAvatarSize || "medium"] || AVATAR_SIZES.medium;
+
+  return (
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Animated aurora background */}
+      <div className="fixed inset-0 z-0" style={{ background: "#0a0a1a" }}>
+        <div className="absolute inset-0 opacity-60" style={{
+          background: "linear-gradient(135deg, #1e3a5f 0%, #0d1b2a 25%, #1a0a2e 50%, #0d2818 75%, #1e3a5f 100%)",
+          backgroundSize: "400% 400%",
+          animation: "auroraShift 15s ease infinite",
+        }} />
+        <div className="absolute inset-0 opacity-40" style={{
+          background: "radial-gradient(ellipse at 20% 50%, #4f46e580 0%, transparent 50%), radial-gradient(ellipse at 80% 20%, #06b6d480 0%, transparent 50%), radial-gradient(ellipse at 50% 80%, #8b5cf680 0%, transparent 50%)",
+          backgroundSize: "200% 200%",
+          animation: "auroraShift 20s ease-in-out infinite reverse",
+        }} />
+      </div>
+      <style>{`@keyframes auroraShift { 0%,100% { background-position: 0% 50% } 50% { background-position: 100% 50% } }`}</style>
+
+      <div className="relative z-10 max-w-[460px] mx-auto px-5 pt-12 pb-10 min-h-screen text-center">
+        <div className="absolute top-3 right-4"><ShareBtn slug={creator.slug} light /></div>
+
+        <div className="relative inline-block mb-5">
+          <div className="absolute -inset-3 rounded-full opacity-30 blur-xl" style={{ background: "linear-gradient(135deg, #60a5fa, #a78bfa, #34d399)" }} />
+          {creator.avatar ? (
+            <img src={creator.avatar} alt="" className={`relative ${avatarSz} rounded-full object-cover shadow-2xl ring-2 ring-white/20`} />
+          ) : (
+            <div className={`relative ${avatarSz} rounded-full bg-white/10 backdrop-blur-xl flex items-center justify-center ring-2 ring-white/20`}>
+              <span className="text-3xl font-bold text-white/60">{(creator.name || "?")[0]}</span>
+            </div>
+          )}
+          {creator.isOnline && <span className="absolute bottom-0 right-0 flex h-4 w-4"><span className="animate-ping absolute h-full w-full rounded-full bg-emerald-400 opacity-75" /><span className="relative rounded-full h-4 w-4 bg-emerald-500 ring-2 ring-[#0a0a1a]" /></span>}
+        </div>
+
+        <div className="flex items-center justify-center gap-1.5">
+          <h1 className={`${ts.name} font-bold text-white tracking-tight`}>{creator.name || "Your Name"}</h1>
+          {creator.isVerified && <VerifiedBadge light />}{creator.isPro && <ProBadge />}
+        </div>
+        <p className="text-xs text-white/40 mt-0.5">@{creator.slug}</p>
+        <NicheRankBadge creator={creator} light />
+        {creator.headline && <p className={`mt-3 ${ts.headline} text-white/60 max-w-[300px] mx-auto leading-relaxed`}>{creator.headline}</p>}
+        {creator.location && <p className="mt-2 text-xs text-white/30 flex items-center justify-center gap-1"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>{creator.location}</p>}
+
+        <Socials creator={creator} light />
+        {creator.bio && <p className={`${ts.bio} text-white/50 mb-5 leading-relaxed`}>{creator.bio}</p>}
+        <BioLinksSection creator={creator} light />
+        <ProductsSection creator={creator} light accent={accent} />
+
+        {creator.services.length > 0 && (
+          <div className="space-y-2.5 mb-5">
+            <SectionLabel light>Services</SectionLabel>
+            {creator.services.map(s => (
+              <a key={s.id} href={`/creators/${creator.slug}`}
+                className="block w-full rounded-2xl px-5 py-4 bg-white/10 backdrop-blur-md border border-white/10 text-left hover:bg-white/15 transition-all hover:scale-[1.02]">
+                <div className="font-semibold text-white text-sm">{s.title}</div>
+                <div className="text-xs mt-0.5 text-white/40">{priceLabel(s.price, s.deliveryDays)}</div>
+              </a>
+            ))}
+          </div>
+        )}
+
+        {creator.portfolio.length > 0 && (
+          <div className="grid grid-cols-3 gap-2 mb-5">
+            {creator.portfolio.slice(0, 6).map(p => (
+              <div key={p.id} className="aspect-square rounded-xl overflow-hidden bg-white/5 backdrop-blur-sm border border-white/10">
+                {p.image ? <img src={p.image} alt={p.title} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-xs text-white/20">{p.title}</div>}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {creator.calendarEnabled && <div className="my-6"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
+        {isEmpty && <EmptyState light />}
+        {!isEmpty && <CTAButton creator={creator} light accent={accent} />}
+        <Branding light />
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TEMPLATE: SUNSET — Warm gradient (orange→pink→purple)
+   ══════════════════════════════════════════════════════════════ */
+function TemplateSunset({ creator }: { creator: Creator }) {
+  const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
+  const accent = creator.linkBioAccent || "#f59e0b";
+  const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
+  const avatarSz = AVATAR_SIZES[creator.linkBioAvatarSize || "medium"] || AVATAR_SIZES.medium;
+
+  return (
+    <div className="min-h-screen relative overflow-hidden" style={{ background: "linear-gradient(180deg, #f97316 0%, #ec4899 40%, #8b5cf6 80%, #4c1d95 100%)" }}>
+      <div className="relative z-10 max-w-[460px] mx-auto px-5 pt-12 pb-10 min-h-screen text-center">
+        <div className="absolute top-3 right-4"><ShareBtn slug={creator.slug} light /></div>
+
+        <div className="relative inline-block mb-5">
+          {creator.avatar ? (
+            <img src={creator.avatar} alt="" className={`${avatarSz} rounded-full object-cover shadow-2xl ring-4 ring-white/30`} />
+          ) : (
+            <div className={`${avatarSz} rounded-full bg-white/20 backdrop-blur-xl flex items-center justify-center ring-4 ring-white/30`}>
+              <span className="text-3xl font-bold text-white/80">{(creator.name || "?")[0]}</span>
+            </div>
+          )}
+          {creator.isOnline && <OnlineDot light />}
+        </div>
+
+        <div className="flex items-center justify-center gap-1.5">
+          <h1 className={`${ts.name} font-bold text-white tracking-tight drop-shadow-lg`}>{creator.name || "Your Name"}</h1>
+          {creator.isVerified && <VerifiedBadge light />}{creator.isPro && <ProBadge />}
+        </div>
+        <p className="text-xs text-white/50 mt-0.5">@{creator.slug}</p>
+        <NicheRankBadge creator={creator} light />
+        {creator.headline && <p className={`mt-3 ${ts.headline} text-white/70 max-w-[300px] mx-auto leading-relaxed`}>{creator.headline}</p>}
+        {creator.location && <p className="mt-2 text-xs text-white/40 flex items-center justify-center gap-1"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>{creator.location}</p>}
+
+        <Socials creator={creator} light />
+        {creator.bio && <p className={`${ts.bio} text-white/60 mb-5 leading-relaxed`}>{creator.bio}</p>}
+        <BioLinksSection creator={creator} light />
+        <ProductsSection creator={creator} light accent={accent} />
+
+        {creator.services.length > 0 && (
+          <div className="space-y-2.5 mb-5">
+            <SectionLabel light>Services</SectionLabel>
+            {creator.services.map(s => (
+              <a key={s.id} href={`/creators/${creator.slug}`}
+                className="block w-full rounded-2xl px-5 py-4 bg-white/15 backdrop-blur-sm border border-white/20 text-left hover:bg-white/25 transition-all hover:scale-[1.02]">
+                <div className="font-semibold text-white text-sm">{s.title}</div>
+                <div className="text-xs mt-0.5" style={{ color: "#fcd34d" }}>{priceLabel(s.price, s.deliveryDays)}</div>
+              </a>
+            ))}
+          </div>
+        )}
+
+        {creator.portfolio.length > 0 && (
+          <div className="grid grid-cols-3 gap-2 mb-5">
+            {creator.portfolio.slice(0, 6).map(p => (
+              <div key={p.id} className="aspect-square rounded-xl overflow-hidden bg-white/10 border border-white/10">
+                {p.image ? <img src={p.image} alt={p.title} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-xs text-white/20">{p.title}</div>}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {creator.calendarEnabled && <div className="my-6"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
+        {isEmpty && <EmptyState light />}
+        {!isEmpty && (
+          <a href={`/creators/${creator.slug}`}
+            className="block w-full mt-8 font-semibold text-center rounded-2xl py-4 px-5 transition-all hover:scale-[1.02] hover:shadow-xl shadow-lg"
+            style={{ background: "rgba(255,255,255,0.25)", color: "white", backdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.3)" }}>
+            View Full Profile
+          </a>
+        )}
+        <Branding light />
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TEMPLATE: TERMINAL — Hacker/dev green-on-black terminal aesthetic
+   ══════════════════════════════════════════════════════════════ */
+function TemplateTerminal({ creator }: { creator: Creator }) {
+  const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
+  const accent = creator.linkBioAccent || "#00ff00";
+  const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
+  const avatarSz = AVATAR_SIZES[creator.linkBioAvatarSize || "medium"] || AVATAR_SIZES.medium;
+  const bs = BUTTON_SIZES[creator.linkBioButtonSize || "medium"] || BUTTON_SIZES.medium;
+
+  return (
+    <div className="min-h-screen relative" style={{ background: "#0a0a0a", fontFamily: "'Courier New', Courier, monospace" }}>
+      {/* Scanline overlay */}
+      <div className="fixed inset-0 pointer-events-none z-20 opacity-[0.04]" style={{ backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,0,0.1) 2px, rgba(0,255,0,0.1) 4px)" }} />
+
+      <div className="relative z-10 max-w-[500px] mx-auto px-5 pt-8 pb-10 min-h-screen">
+        <div className="absolute top-3 right-4"><ShareBtn slug={creator.slug} light /></div>
+
+        {/* Terminal header bar */}
+        <div className="flex items-center gap-2 mb-6 pb-2 border-b border-[#00ff00]/20">
+          <div className="flex gap-1.5">
+            <div className="w-3 h-3 rounded-full bg-red-500/80" />
+            <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
+            <div className="w-3 h-3 rounded-full bg-green-500/80" />
+          </div>
+          <span className="text-[10px] text-[#00ff00]/40 ml-2">~/{creator.slug}</span>
+        </div>
+
+        <div className="text-center mb-6">
+          {creator.avatar ? (
+            <img src={creator.avatar} alt="" className={`${avatarSz} rounded-sm object-cover mx-auto border border-[#00ff00]/30`} style={{ filter: "saturate(0.3) brightness(0.9)" }} />
+          ) : (
+            <div className={`${avatarSz} rounded-sm mx-auto border border-[#00ff00]/30 flex items-center justify-center bg-[#00ff00]/5`}>
+              <span className="text-3xl font-bold text-[#00ff00]/60">{(creator.name || "?")[0]}</span>
+            </div>
+          )}
+        </div>
+
+        <div className="mb-6">
+          <div className="flex items-center gap-1.5">
+            <span className="text-[#00ff00]/50">$</span>
+            <h1 className={`${ts.name} font-bold`} style={{ color: "#00ff00" }}>
+              {creator.name || "user"}
+              <span className="animate-pulse">_</span>
+            </h1>
+            {creator.isVerified && <VerifiedBadge light />}{creator.isPro && <ProBadge />}
+          </div>
+          <p className="text-xs mt-1" style={{ color: "#00ff00", opacity: 0.4 }}>// @{creator.slug}</p>
+          <NicheRankBadge creator={creator} light />
+          {creator.headline && <p className={`mt-2 ${ts.headline}`} style={{ color: "#00ff00", opacity: 0.6 }}># {creator.headline}</p>}
+          {creator.location && <p className="mt-1 text-xs" style={{ color: "#00ff00", opacity: 0.3 }}>location: {creator.location}</p>}
+        </div>
+
+        {creator.bio && (
+          <div className="mb-6 p-3 border border-[#00ff00]/15 bg-[#00ff00]/[0.02]">
+            <p className={`${ts.bio} leading-relaxed`} style={{ color: "#00ff00", opacity: 0.7 }}>/* {creator.bio} */</p>
+          </div>
+        )}
+
+        {creator.socials.length > 0 && (
+          <div className="flex items-center gap-3 my-5 flex-wrap">
+            {creator.socials.map(s => (
+              <a key={s.platform} href={s.url || "#"} target="_blank" rel="noopener noreferrer"
+                className="w-9 h-9 border border-[#00ff00]/20 flex items-center justify-center hover:bg-[#00ff00]/10 transition-colors"
+                aria-label={`Visit ${s.platform}`}>
+                <PlatformIcon platform={s.platform} size={14} className="text-[#00ff00]/60" />
+              </a>
+            ))}
+          </div>
+        )}
+
+        <BioLinksSection creator={creator} light />
+        <ProductsSection creator={creator} light accent={accent} />
+
+        {creator.services.length > 0 && (
+          <div className="space-y-2 mb-6">
+            <div className="text-xs font-bold" style={{ color: "#00ff00", opacity: 0.3 }}>--- SERVICES ---</div>
+            {creator.services.map(s => (
+              <a key={s.id} href={`/creators/${creator.slug}`}
+                className={`block w-full ${bs} border border-[#00ff00]/20 hover:bg-[#00ff00]/10 transition-colors`}
+                style={{ color: "#00ff00" }}>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm">&gt; {s.title}</span>
+                  <span className="text-xs opacity-50">{priceLabel(s.price, s.deliveryDays)}</span>
+                </div>
+              </a>
+            ))}
+          </div>
+        )}
+
+        {creator.portfolio.length > 0 && (
+          <div className="grid grid-cols-3 gap-1 mb-6">
+            {creator.portfolio.slice(0, 6).map(p => (
+              <div key={p.id} className="aspect-square overflow-hidden border border-[#00ff00]/10">
+                {p.image ? <img src={p.image} alt={p.title} className="w-full h-full object-cover" style={{ filter: "saturate(0) brightness(0.7) contrast(1.3)" }} /> : <div className="w-full h-full bg-[#00ff00]/5 flex items-center justify-center text-xs text-[#00ff00]/20">{p.title}</div>}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {creator.calendarEnabled && <div className="my-6"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
+        {isEmpty && <EmptyState light />}
+        {!isEmpty && (
+          <a href={`/creators/${creator.slug}`}
+            className={`block w-full mt-8 font-bold text-center ${bs} border-2 transition-colors hover:bg-[#00ff00]/10`}
+            style={{ borderColor: "#00ff00", color: "#00ff00" }}>
+            &gt; VIEW_FULL_PROFILE
+          </a>
+        )}
+        <Branding light />
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TEMPLATE: PASTEL — Soft pastel colors, cute, rounded
+   ══════════════════════════════════════════════════════════════ */
+function TemplatePastel({ creator }: { creator: Creator }) {
+  const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
+  const accent = creator.linkBioAccent || "#c084fc";
+  const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
+  const avatarSz = AVATAR_SIZES[creator.linkBioAvatarSize || "medium"] || AVATAR_SIZES.medium;
+  const bs = BUTTON_SIZES[creator.linkBioButtonSize || "medium"] || BUTTON_SIZES.medium;
+
+  return (
+    <div className="min-h-screen" style={{ background: "linear-gradient(160deg, #fce7f3 0%, #ede9fe 35%, #dbeafe 65%, #d1fae5 100%)" }}>
+      <div className="max-w-[460px] mx-auto px-5 pt-12 pb-10 min-h-screen text-center">
+        <div className="absolute top-3 right-4"><ShareBtn slug={creator.slug} /></div>
+
+        <div className="relative inline-block mb-5">
+          {creator.avatar ? (
+            <img src={creator.avatar} alt="" className={`${avatarSz} rounded-full object-cover shadow-lg ring-4 ring-white`} />
+          ) : (
+            <div className={`${avatarSz} rounded-full bg-white shadow-lg flex items-center justify-center ring-4 ring-white`}>
+              <span className="text-3xl font-bold text-purple-300">{(creator.name || "?")[0]}</span>
+            </div>
+          )}
+          {creator.isOnline && <OnlineDot />}
+        </div>
+
+        <div className="flex items-center justify-center gap-1.5">
+          <h1 className={`${ts.name} font-bold text-neutral-700 tracking-tight`}>{creator.name || "Your Name"}</h1>
+          {creator.isVerified && <VerifiedBadge />}{creator.isPro && <ProBadge />}
+        </div>
+        <p className="text-xs text-neutral-400 mt-0.5">@{creator.slug}</p>
+        <NicheRankBadge creator={creator} />
+        {creator.headline && <p className={`mt-3 ${ts.headline} text-neutral-500 max-w-[300px] mx-auto leading-relaxed`}>{creator.headline}</p>}
+        {creator.location && <p className="mt-2 text-xs text-neutral-400 flex items-center justify-center gap-1"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>{creator.location}</p>}
+
+        {creator.socials.length > 0 && (
+          <div className="flex items-center justify-center gap-2.5 my-5 flex-wrap">
+            {creator.socials.map(s => (
+              <a key={s.platform} href={s.url || "#"} target="_blank" rel="noopener noreferrer"
+                className="w-11 h-11 rounded-full bg-white shadow-sm flex items-center justify-center hover:scale-110 hover:shadow-md transition-all"
+                aria-label={`Visit ${s.platform}`}>
+                <PlatformIcon platform={s.platform} size={18} className="text-neutral-400" />
+              </a>
+            ))}
+          </div>
+        )}
+
+        {creator.bio && <p className={`${ts.bio} text-neutral-500 mb-5 leading-relaxed`}>{creator.bio}</p>}
+        <BioLinksSection creator={creator} />
+        <ProductsSection creator={creator} accent={accent} />
+
+        {creator.services.length > 0 && (
+          <div className="space-y-2.5 mb-5">
+            <SectionLabel>Services</SectionLabel>
+            {creator.services.map(s => (
+              <a key={s.id} href={`/creators/${creator.slug}`}
+                className={`block w-full rounded-full ${bs} bg-white shadow-sm border border-neutral-100 text-left hover:shadow-md hover:scale-[1.02] transition-all`}>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-semibold text-neutral-700">{s.title}</span>
+                  <span className="text-xs font-medium" style={{ color: accent }}>{priceLabel(s.price, s.deliveryDays)}</span>
+                </div>
+              </a>
+            ))}
+          </div>
+        )}
+
+        {creator.portfolio.length > 0 && (
+          <div className="grid grid-cols-3 gap-2.5 mb-5">
+            {creator.portfolio.slice(0, 6).map(p => (
+              <div key={p.id} className="aspect-square rounded-2xl overflow-hidden bg-white shadow-sm border border-neutral-100">
+                {p.image ? <img src={p.image} alt={p.title} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-xs text-neutral-300">{p.title}</div>}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {creator.calendarEnabled && <div className="my-6"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
+        {isEmpty && <EmptyState />}
+        {!isEmpty && (
+          <a href={`/creators/${creator.slug}`}
+            className={`block w-full mt-8 font-semibold text-center rounded-full ${bs} shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all text-white`}
+            style={{ background: accent }}>
+            View Full Profile
+          </a>
+        )}
+        <Branding />
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TEMPLATE: MAGAZINE — Editorial layout, serif headings, clean
+   ══════════════════════════════════════════════════════════════ */
+function TemplateMagazine({ creator }: { creator: Creator }) {
+  const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
+  const accent = creator.linkBioAccent || "#171717";
+  const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
+  const avatarSz = AVATAR_SIZES[creator.linkBioAvatarSize || "medium"] || AVATAR_SIZES.medium;
+  const bs = BUTTON_SIZES[creator.linkBioButtonSize || "medium"] || BUTTON_SIZES.medium;
+
+  return (
+    <div className="min-h-screen bg-[#fafaf9]">
+      <div className="max-w-[540px] mx-auto px-6 pt-10 pb-10 min-h-screen">
+        <div className="absolute top-3 right-4"><ShareBtn slug={creator.slug} /></div>
+
+        {/* Masthead */}
+        <div className="text-center border-b-2 border-neutral-900 pb-4 mb-6">
+          <div className="border-b border-neutral-300 pb-3 mb-3">
+            <div className="flex items-center justify-center gap-3 mb-2">
+              {creator.avatar ? (
+                <img src={creator.avatar} alt="" className={`${avatarSz} rounded-full object-cover`} />
+              ) : (
+                <div className={`${avatarSz} rounded-full bg-neutral-100 flex items-center justify-center`}>
+                  <span className="text-3xl font-bold text-neutral-400">{(creator.name || "?")[0]}</span>
+                </div>
+              )}
+            </div>
+            <h1 className={`${ts.name} font-bold text-neutral-900 tracking-tight`} style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
+              {creator.name || "Your Name"}
+            </h1>
+            <div className="flex items-center justify-center gap-1.5 mt-1">
+              {creator.isVerified && <VerifiedBadge />}{creator.isPro && <ProBadge />}
+            </div>
+          </div>
+          <p className="text-xs text-neutral-400 uppercase tracking-[0.3em]">@{creator.slug}</p>
+          <NicheRankBadge creator={creator} />
+          {creator.headline && <p className={`mt-2 ${ts.headline} text-neutral-600 max-w-[360px] mx-auto leading-relaxed italic`} style={{ fontFamily: "Georgia, serif" }}>{creator.headline}</p>}
+          {creator.location && <p className="mt-2 text-xs text-neutral-400 flex items-center justify-center gap-1"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>{creator.location}</p>}
+          {creator.isOnline && <OnlineDot />}
+        </div>
+
+        <Socials creator={creator} />
+        {creator.bio && <p className={`${ts.bio} text-neutral-600 mb-6 leading-relaxed text-center`} style={{ fontFamily: "Georgia, serif" }}>{creator.bio}</p>}
+
+        {/* Thin divider */}
+        {creator.bio && <div className="flex items-center gap-4 mb-6"><div className="h-px flex-1 bg-neutral-200" /><span className="text-neutral-300 text-xs">&#9830;</span><div className="h-px flex-1 bg-neutral-200" /></div>}
+
+        <BioLinksSection creator={creator} />
+        <ProductsSection creator={creator} accent={accent} />
+
+        {creator.services.length > 0 && (
+          <div className="mb-6">
+            <div className="flex items-center gap-4 mb-4"><div className="h-px flex-1 bg-neutral-200" /><span className="text-xs font-semibold uppercase tracking-[0.3em] text-neutral-400">Services</span><div className="h-px flex-1 bg-neutral-200" /></div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {creator.services.map(s => (
+                <a key={s.id} href={`/creators/${creator.slug}`}
+                  className={`block w-full ${bs} border border-neutral-200 bg-white hover:border-neutral-400 transition-all rounded-lg`}>
+                  <div className="font-semibold text-neutral-900 text-sm" style={{ fontFamily: "Georgia, serif" }}>{s.title}</div>
+                  <div className="text-xs mt-0.5 text-neutral-400">{priceLabel(s.price, s.deliveryDays)}</div>
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {creator.portfolio.length > 0 && (
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-6">
+            {creator.portfolio.slice(0, 6).map(p => (
+              <div key={p.id} className="aspect-[4/3] rounded-lg overflow-hidden bg-neutral-100 border border-neutral-200">
+                {p.image ? <img src={p.image} alt={p.title} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-xs text-neutral-300">{p.title}</div>}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {creator.calendarEnabled && <div className="my-6"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
+        {isEmpty && <EmptyState />}
+        {!isEmpty && <CTAButton creator={creator} accent={accent} />}
+        <Branding />
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TEMPLATE: RETRO — 90s/Y2K, bright colors, chunky offset shadows
+   ══════════════════════════════════════════════════════════════ */
+function TemplateRetro({ creator }: { creator: Creator }) {
+  const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
+  const accent = creator.linkBioAccent || "#ec4899";
+  const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
+  const avatarSz = AVATAR_SIZES[creator.linkBioAvatarSize || "medium"] || AVATAR_SIZES.medium;
+  const bs = BUTTON_SIZES[creator.linkBioButtonSize || "medium"] || BUTTON_SIZES.medium;
+
+  return (
+    <div className="min-h-screen" style={{ background: "#fff200" }}>
+      <div className="max-w-[460px] mx-auto px-5 pt-12 pb-10 min-h-screen text-center">
+        <div className="absolute top-3 right-4"><ShareBtn slug={creator.slug} /></div>
+
+        {/* Avatar with chunky shadow */}
+        <div className="relative inline-block mb-5">
+          {creator.avatar ? (
+            <img src={creator.avatar} alt="" className={`${avatarSz} rounded-xl object-cover border-4 border-black`} style={{ boxShadow: "5px 5px 0 #000" }} />
+          ) : (
+            <div className={`${avatarSz} rounded-xl border-4 border-black flex items-center justify-center`} style={{ boxShadow: "5px 5px 0 #000", background: "#00e5ff" }}>
+              <span className="text-3xl font-black text-black">{(creator.name || "?")[0]}</span>
+            </div>
+          )}
+          {creator.isOnline && <OnlineDot />}
+        </div>
+
+        <div className="flex items-center justify-center gap-1.5">
+          <h1 className={`${ts.name} font-black text-black uppercase tracking-tight`}>{creator.name || "Your Name"}</h1>
+          {creator.isVerified && <VerifiedBadge />}{creator.isPro && <ProBadge />}
+        </div>
+        <p className="text-xs text-black/50 mt-0.5 font-bold uppercase tracking-widest">@{creator.slug}</p>
+        <NicheRankBadge creator={creator} />
+        {creator.headline && <p className={`mt-3 ${ts.headline} text-black/70 max-w-[300px] mx-auto leading-relaxed font-bold`}>{creator.headline}</p>}
+        {creator.location && <p className="mt-2 text-xs text-black/40 flex items-center justify-center gap-1"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>{creator.location}</p>}
+
+        {creator.socials.length > 0 && (
+          <div className="flex items-center justify-center gap-2.5 my-5 flex-wrap">
+            {creator.socials.map(s => (
+              <a key={s.platform} href={s.url || "#"} target="_blank" rel="noopener noreferrer"
+                className="w-11 h-11 rounded-lg bg-white border-3 border-black flex items-center justify-center hover:scale-110 transition-all"
+                style={{ boxShadow: "3px 3px 0 #000", borderWidth: "3px" }}
+                aria-label={`Visit ${s.platform}`}>
+                <PlatformIcon platform={s.platform} size={18} className="text-black" />
+              </a>
+            ))}
+          </div>
+        )}
+
+        {creator.bio && (
+          <div className="bg-white border-3 border-black rounded-xl p-4 mb-5 text-left" style={{ boxShadow: "4px 4px 0 #000", borderWidth: "3px" }}>
+            <p className={`${ts.bio} text-black/80 leading-relaxed`}>{creator.bio}</p>
+          </div>
+        )}
+
+        <BioLinksSection creator={creator} />
+        <ProductsSection creator={creator} accent={accent} />
+
+        {creator.services.length > 0 && (
+          <div className="space-y-3 mb-5">
+            {creator.services.map((s, i) => {
+              const colors = ["#00e5ff", "#ff6ec7", "#7fff00", "#ff4500"];
+              const bg = colors[i % colors.length];
+              return (
+                <a key={s.id} href={`/creators/${creator.slug}`}
+                  className={`block w-full ${bs} rounded-xl border-black font-bold text-black hover:translate-x-[2px] hover:translate-y-[2px] transition-all`}
+                  style={{ background: bg, boxShadow: "4px 4px 0 #000", borderWidth: "3px" }}>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm uppercase">{s.title}</span>
+                    <span className="text-xs">{priceLabel(s.price, s.deliveryDays)}</span>
+                  </div>
+                </a>
+              );
+            })}
+          </div>
+        )}
+
+        {creator.portfolio.length > 0 && (
+          <div className="grid grid-cols-3 gap-2 mb-5">
+            {creator.portfolio.slice(0, 6).map(p => (
+              <div key={p.id} className="aspect-square rounded-lg overflow-hidden border-2 border-black" style={{ boxShadow: "3px 3px 0 #000" }}>
+                {p.image ? <img src={p.image} alt={p.title} className="w-full h-full object-cover" /> : <div className="w-full h-full bg-[#00e5ff] flex items-center justify-center text-xs text-black/40 font-bold">{p.title}</div>}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {creator.calendarEnabled && <div className="my-6"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
+        {isEmpty && <EmptyState />}
+        {!isEmpty && (
+          <a href={`/creators/${creator.slug}`}
+            className={`block w-full mt-8 font-black text-center rounded-xl ${bs} border-black uppercase tracking-wider hover:translate-x-[2px] hover:translate-y-[2px] transition-all`}
+            style={{ background: "#ff6ec7", boxShadow: "5px 5px 0 #000", borderWidth: "3px", color: "#000" }}>
+            View Full Profile
+          </a>
+        )}
+        <Branding />
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TEMPLATE: MIDNIGHT — Deep navy, star dots, silver/white, elegant
+   ══════════════════════════════════════════════════════════════ */
+function TemplateMidnight({ creator }: { creator: Creator }) {
+  const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
+  const accent = creator.linkBioAccent || "#818cf8";
+  const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
+  const avatarSz = AVATAR_SIZES[creator.linkBioAvatarSize || "medium"] || AVATAR_SIZES.medium;
+
+  return (
+    <div className="min-h-screen relative overflow-hidden" style={{ background: "#0a0e27" }}>
+      {/* Star dots via radial gradients */}
+      <div className="fixed inset-0 pointer-events-none" style={{
+        backgroundImage: "radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,0.4) 0%, transparent 100%), radial-gradient(1px 1px at 30% 60%, rgba(255,255,255,0.3) 0%, transparent 100%), radial-gradient(1px 1px at 50% 10%, rgba(255,255,255,0.5) 0%, transparent 100%), radial-gradient(1px 1px at 70% 40%, rgba(255,255,255,0.3) 0%, transparent 100%), radial-gradient(1px 1px at 90% 80%, rgba(255,255,255,0.4) 0%, transparent 100%), radial-gradient(1px 1px at 20% 90%, rgba(255,255,255,0.2) 0%, transparent 100%), radial-gradient(1px 1px at 60% 70%, rgba(255,255,255,0.3) 0%, transparent 100%), radial-gradient(1px 1px at 80% 15%, rgba(255,255,255,0.25) 0%, transparent 100%), radial-gradient(1.5px 1.5px at 45% 45%, rgba(255,255,255,0.5) 0%, transparent 100%), radial-gradient(1px 1px at 15% 55%, rgba(255,255,255,0.35) 0%, transparent 100%)",
+        backgroundSize: "200px 200px",
+      }} />
+      {/* Subtle blue glow at bottom */}
+      <div className="fixed bottom-0 left-0 right-0 h-[40%] pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 100%, rgba(99,102,241,0.08) 0%, transparent 70%)" }} />
+
+      <div className="relative z-10 max-w-[460px] mx-auto px-5 pt-12 pb-10 min-h-screen text-center">
+        <div className="absolute top-3 right-4"><ShareBtn slug={creator.slug} light /></div>
+
+        <div className="relative inline-block mb-5">
+          {creator.avatar ? (
+            <img src={creator.avatar} alt="" className={`${avatarSz} rounded-full object-cover shadow-2xl ring-2 ring-white/10`} />
+          ) : (
+            <div className={`${avatarSz} rounded-full bg-white/5 flex items-center justify-center ring-2 ring-white/10`}>
+              <span className="text-3xl font-bold text-white/40">{(creator.name || "?")[0]}</span>
+            </div>
+          )}
+          {creator.isOnline && <span className="absolute bottom-0 right-0 flex h-4 w-4"><span className="animate-ping absolute h-full w-full rounded-full bg-emerald-400 opacity-75" /><span className="relative rounded-full h-4 w-4 bg-emerald-500 ring-2 ring-[#0a0e27]" /></span>}
+        </div>
+
+        <div className="flex items-center justify-center gap-1.5">
+          <h1 className={`${ts.name} font-bold text-white/90 tracking-tight`}>{creator.name || "Your Name"}</h1>
+          {creator.isVerified && <VerifiedBadge light />}{creator.isPro && <ProBadge />}
+        </div>
+        <p className="text-xs text-white/25 mt-0.5 tracking-wider">@{creator.slug}</p>
+        <NicheRankBadge creator={creator} light />
+        {creator.headline && <p className={`mt-3 ${ts.headline} text-white/40 max-w-[300px] mx-auto leading-relaxed`}>{creator.headline}</p>}
+        {creator.location && <p className="mt-2 text-xs text-white/20 flex items-center justify-center gap-1"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>{creator.location}</p>}
+
+        <Socials creator={creator} light />
+        {creator.bio && <p className={`${ts.bio} text-white/35 mb-5 leading-relaxed`}>{creator.bio}</p>}
+        <BioLinksSection creator={creator} light />
+        <ProductsSection creator={creator} light accent={accent} />
+
+        {creator.services.length > 0 && (
+          <div className="space-y-2.5 mb-5">
+            <SectionLabel light>Services</SectionLabel>
+            {creator.services.map(s => (
+              <a key={s.id} href={`/creators/${creator.slug}`}
+                className="block w-full rounded-2xl px-5 py-4 bg-white/[0.04] border border-white/[0.08] text-left transition-all hover:scale-[1.02] hover:border-indigo-400/30"
+                style={{ transition: "all 0.2s, box-shadow 0.2s" }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = `0 0 25px ${accent}15`; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = "none"; }}>
+                <div className="font-semibold text-white/80 text-sm">{s.title}</div>
+                <div className="text-xs mt-0.5 text-white/25">{priceLabel(s.price, s.deliveryDays)}</div>
+              </a>
+            ))}
+          </div>
+        )}
+
+        {creator.portfolio.length > 0 && (
+          <div className="grid grid-cols-3 gap-2 mb-5">
+            {creator.portfolio.slice(0, 6).map(p => (
+              <div key={p.id} className="aspect-square rounded-xl overflow-hidden bg-white/[0.03] border border-white/[0.06]">
+                {p.image ? <img src={p.image} alt={p.title} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-xs text-white/10">{p.title}</div>}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {creator.calendarEnabled && <div className="my-6"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
+        {isEmpty && <EmptyState light />}
+        {!isEmpty && <CTAButton creator={creator} light accent={accent} />}
+        <Branding light />
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TEMPLATE: CLAY — Soft 3D neumorphism, tactile clay buttons
+   ══════════════════════════════════════════════════════════════ */
+function TemplateClay({ creator }: { creator: Creator }) {
+  const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
+  const accent = creator.linkBioAccent || "#6366f1";
+  const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
+  const avatarSz = AVATAR_SIZES[creator.linkBioAvatarSize || "medium"] || AVATAR_SIZES.medium;
+  const bs = BUTTON_SIZES[creator.linkBioButtonSize || "medium"] || BUTTON_SIZES.medium;
+  const bg = "#e0e0e0";
+
+  return (
+    <div className="min-h-screen" style={{ background: bg }}>
+      <div className="max-w-[460px] mx-auto px-5 pt-12 pb-10 min-h-screen text-center">
+        <div className="absolute top-3 right-4"><ShareBtn slug={creator.slug} /></div>
+
+        <div className="relative inline-block mb-5">
+          {creator.avatar ? (
+            <img src={creator.avatar} alt="" className={`${avatarSz} rounded-full object-cover`} style={{ boxShadow: "8px 8px 16px #bebebe, -8px -8px 16px #ffffff" }} />
+          ) : (
+            <div className={`${avatarSz} rounded-full flex items-center justify-center`} style={{ background: bg, boxShadow: "8px 8px 16px #bebebe, -8px -8px 16px #ffffff" }}>
+              <span className="text-3xl font-bold text-neutral-400">{(creator.name || "?")[0]}</span>
+            </div>
+          )}
+          {creator.isOnline && <OnlineDot />}
+        </div>
+
+        <div className="flex items-center justify-center gap-1.5">
+          <h1 className={`${ts.name} font-bold text-neutral-700 tracking-tight`}>{creator.name || "Your Name"}</h1>
+          {creator.isVerified && <VerifiedBadge />}{creator.isPro && <ProBadge />}
+        </div>
+        <p className="text-xs text-neutral-400 mt-0.5">@{creator.slug}</p>
+        <NicheRankBadge creator={creator} />
+        {creator.headline && <p className={`mt-3 ${ts.headline} text-neutral-500 max-w-[300px] mx-auto leading-relaxed`}>{creator.headline}</p>}
+        {creator.location && <p className="mt-2 text-xs text-neutral-400 flex items-center justify-center gap-1"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>{creator.location}</p>}
+
+        {creator.socials.length > 0 && (
+          <div className="flex items-center justify-center gap-3 my-5 flex-wrap">
+            {creator.socials.map(s => (
+              <a key={s.platform} href={s.url || "#"} target="_blank" rel="noopener noreferrer"
+                className="w-11 h-11 rounded-xl flex items-center justify-center hover:scale-105 transition-all"
+                style={{ background: bg, boxShadow: "5px 5px 10px #bebebe, -5px -5px 10px #ffffff" }}
+                aria-label={`Visit ${s.platform}`}>
+                <PlatformIcon platform={s.platform} size={18} className="text-neutral-500" />
+              </a>
+            ))}
+          </div>
+        )}
+
+        {creator.bio && <p className={`${ts.bio} text-neutral-500 mb-5 leading-relaxed`}>{creator.bio}</p>}
+        <BioLinksSection creator={creator} />
+        <ProductsSection creator={creator} accent={accent} />
+
+        {creator.services.length > 0 && (
+          <div className="space-y-3 mb-5">
+            <SectionLabel>Services</SectionLabel>
+            {creator.services.map(s => (
+              <a key={s.id} href={`/creators/${creator.slug}`}
+                className={`block w-full rounded-2xl ${bs} text-left transition-all hover:scale-[1.02]`}
+                style={{ background: bg, boxShadow: "6px 6px 12px #bebebe, -6px -6px 12px #ffffff" }}>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-semibold text-neutral-700">{s.title}</span>
+                  <span className="text-xs font-medium" style={{ color: accent }}>{priceLabel(s.price, s.deliveryDays)}</span>
+                </div>
+              </a>
+            ))}
+          </div>
+        )}
+
+        {creator.portfolio.length > 0 && (
+          <div className="grid grid-cols-3 gap-3 mb-5">
+            {creator.portfolio.slice(0, 6).map(p => (
+              <div key={p.id} className="aspect-square rounded-2xl overflow-hidden" style={{ boxShadow: "5px 5px 10px #bebebe, -5px -5px 10px #ffffff" }}>
+                {p.image ? <img src={p.image} alt={p.title} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-xs text-neutral-300" style={{ background: bg }}>{p.title}</div>}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {creator.calendarEnabled && <div className="my-6"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
+        {isEmpty && <EmptyState />}
+        {!isEmpty && (
+          <a href={`/creators/${creator.slug}`}
+            className={`block w-full mt-8 font-semibold text-center rounded-2xl ${bs} text-white transition-all hover:scale-[1.02]`}
+            style={{ background: accent, boxShadow: "6px 6px 12px #bebebe, -6px -6px 12px #ffffff" }}>
+            View Full Profile
+          </a>
+        )}
+        <Branding />
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TEMPLATE: GRADIENT MESH — Multi-color mesh bg, white blur cards
+   ══════════════════════════════════════════════════════════════ */
+function TemplateGradientMesh({ creator }: { creator: Creator }) {
+  const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
+  const accent = creator.linkBioAccent || "#ec4899";
+  const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
+  const avatarSz = AVATAR_SIZES[creator.linkBioAvatarSize || "medium"] || AVATAR_SIZES.medium;
+
+  return (
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Mesh gradient background */}
+      <div className="fixed inset-0 z-0" style={{
+        background: "#fafafa",
+      }}>
+        <div className="absolute inset-0" style={{
+          backgroundImage: "radial-gradient(at 0% 0%, #ec4899aa 0%, transparent 50%), radial-gradient(at 100% 0%, #3b82f6aa 0%, transparent 50%), radial-gradient(at 100% 100%, #10b981aa 0%, transparent 50%), radial-gradient(at 0% 100%, #f59e0baa 0%, transparent 50%), radial-gradient(at 50% 50%, #8b5cf6aa 0%, transparent 50%)",
+        }} />
+      </div>
+
+      <div className="relative z-10 max-w-[460px] mx-auto px-5 pt-12 pb-10 min-h-screen text-center">
+        <div className="absolute top-3 right-4"><ShareBtn slug={creator.slug} /></div>
+
+        {/* Frosted card container */}
+        <div className="bg-white/70 backdrop-blur-xl rounded-3xl p-6 sm:p-8 shadow-xl border border-white/80">
+          <div className="relative inline-block mb-4">
+            {creator.avatar ? (
+              <img src={creator.avatar} alt="" className={`${avatarSz} rounded-full object-cover shadow-lg ring-4 ring-white/80`} />
+            ) : (
+              <div className={`${avatarSz} rounded-full bg-white/80 shadow-lg flex items-center justify-center ring-4 ring-white/80`}>
+                <span className="text-3xl font-bold text-neutral-400">{(creator.name || "?")[0]}</span>
+              </div>
+            )}
+            {creator.isOnline && <OnlineDot />}
+          </div>
+
+          <div className="flex items-center justify-center gap-1.5">
+            <h1 className={`${ts.name} font-bold text-neutral-800 tracking-tight`}>{creator.name || "Your Name"}</h1>
+            {creator.isVerified && <VerifiedBadge />}{creator.isPro && <ProBadge />}
+          </div>
+          <p className="text-xs text-neutral-400 mt-0.5">@{creator.slug}</p>
+          <NicheRankBadge creator={creator} />
+          {creator.headline && <p className={`mt-3 ${ts.headline} text-neutral-500 max-w-[300px] mx-auto leading-relaxed`}>{creator.headline}</p>}
+          {creator.location && <p className="mt-2 text-xs text-neutral-400 flex items-center justify-center gap-1"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>{creator.location}</p>}
+
+          <Socials creator={creator} />
+          {creator.bio && <p className={`${ts.bio} text-neutral-500 mb-4 leading-relaxed`}>{creator.bio}</p>}
+        </div>
+
+        {/* Content below the card, floating on the mesh */}
+        <div className="mt-5 space-y-3">
+          <BioLinksSection creator={creator} />
+          <ProductsSection creator={creator} accent={accent} />
+
+          {creator.services.length > 0 && (
+            <div className="space-y-2.5">
+              <SectionLabel>Services</SectionLabel>
+              {creator.services.map(s => (
+                <a key={s.id} href={`/creators/${creator.slug}`}
+                  className="block w-full rounded-2xl px-5 py-4 bg-white/70 backdrop-blur-md border border-white/60 text-left shadow-sm hover:shadow-md hover:scale-[1.02] transition-all">
+                  <div className="font-semibold text-neutral-800 text-sm">{s.title}</div>
+                  <div className="text-xs mt-0.5" style={{ color: accent }}>{priceLabel(s.price, s.deliveryDays)}</div>
+                </a>
+              ))}
+            </div>
+          )}
+
+          {creator.portfolio.length > 0 && (
+            <div className="grid grid-cols-3 gap-2">
+              {creator.portfolio.slice(0, 6).map(p => (
+                <div key={p.id} className="aspect-square rounded-2xl overflow-hidden bg-white/60 backdrop-blur-sm border border-white/50 shadow-sm">
+                  {p.image ? <img src={p.image} alt={p.title} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-xs text-neutral-300">{p.title}</div>}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {creator.calendarEnabled && <div className="my-6"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
+          {isEmpty && <EmptyState />}
+          {!isEmpty && (
+            <a href={`/creators/${creator.slug}`}
+              className="block w-full mt-6 font-semibold text-center rounded-2xl py-4 px-5 shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all text-white"
+              style={{ background: accent }}>
+              View Full Profile
+            </a>
+          )}
+          <Branding />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════
    MAIN EXPORT
    ══════════════════════════════════════════════════════════════ */
 const TEMPLATES: Record<string, React.ComponentType<{ creator: Creator }>> = {
@@ -1577,17 +2499,16 @@ const TEMPLATES: Record<string, React.ComponentType<{ creator: Creator }>> = {
   split: TemplateSplit,
   founder: TemplateFounder,
   custom: TemplateCustom,
-  // All other template names map to custom (user-designed)
-  aurora: TemplateCustom,
-  brutalist: TemplateCustom,
-  sunset: TemplateCustom,
-  terminal: TemplateCustom,
-  pastel: TemplateCustom,
-  magazine: TemplateCustom,
-  retro: TemplateCustom,
-  midnight: TemplateCustom,
-  clay: TemplateCustom,
-  "gradient-mesh": TemplateCustom,
+  aurora: TemplateAurora,
+  brutalist: TemplateBrutalist,
+  sunset: TemplateSunset,
+  terminal: TemplateTerminal,
+  pastel: TemplatePastel,
+  magazine: TemplateMagazine,
+  retro: TemplateRetro,
+  midnight: TemplateMidnight,
+  clay: TemplateClay,
+  "gradient-mesh": TemplateGradientMesh,
 };
 
 /* ── Intro Animation Overlay ── */
