@@ -203,8 +203,9 @@ export function HomepageContent({
               </h1>
 
               <p className="mt-6 text-lg sm:text-xl text-neutral-500 max-w-2xl mx-auto leading-relaxed">
-                The first creator marketplace with a full API, MCP server, and Stripe payment integration.
-                Source creators, book services, and process payments — manually or programmatically.
+                You don&apos;t need millions of followers. You need one skill and a profile.
+                Whether you edit videos, tutor math, train clients, or review products — if you have a skill, you&apos;re a creator.
+                Get booked by brands directly, or let AI agents find you via our API.
               </p>
 
               <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">

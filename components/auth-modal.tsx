@@ -228,7 +228,7 @@ export function AuthModal() {
 
               <div className="grid grid-cols-3 gap-2 mb-5">
                 {([
-                  { value: "creator" as Role, label: "Creator", desc: "Offer services" },
+                  { value: "creator" as Role, label: "Creator", desc: "Anyone with a skill — editing, tutoring, consulting, anything" },
                   { value: "brand" as Role, label: "Brand", desc: "Hire creators" },
                   { value: "agent" as Role, label: "Agent", desc: "API access" },
                 ]).map(r => (

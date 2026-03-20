@@ -45,12 +45,13 @@ export function ForCreatorsContent() {
           </div>
 
           <h1 className="font-display text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-neutral-900 leading-[1.1]">
-            Stop selling yourself short
+            Anyone can be a creator
           </h1>
 
           <p className="mt-6 text-lg sm:text-xl text-neutral-500 max-w-2xl mx-auto leading-relaxed">
-            You have the talent. You have the audience. You just need a place where brands
-            find you, book you, and pay you what you&apos;re worth. No middleman fees. No DM negotiations.
+            You don&apos;t need millions of followers. Edit videos? Tutor students? Train clients?
+            Review products? Cook meals? Fix cars? If you have a skill, you&apos;re a creator.
+            Get a profile, list your services, and start getting booked.
           </p>
 
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
