@@ -59,6 +59,8 @@ function assembleCreator(
     linkBioTextSize: (user.link_bio_text_size as string) || "medium",
     linkBioAvatarSize: (user.link_bio_avatar_size as string) || "medium",
     linkBioButtonSize: (user.link_bio_button_size as string) || "medium",
+    linkBioContentPosition: (user.link_bio_content_position as string) || "top",
+    linkBioContentAlign: (user.link_bio_content_align as string) || "center",
     hasStripeAccount: !!(user.stripe_account_id as string),
     calendarEnabled: (user.calendar_enabled as boolean) || false,
     profileViews: (user.profile_views as number) || 0,

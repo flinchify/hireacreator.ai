@@ -91,6 +91,8 @@ export async function PATCH(request: Request) {
         link_bio_text_size = COALESCE(${body.link_bio_text_size ?? null}, link_bio_text_size),
         link_bio_avatar_size = COALESCE(${body.link_bio_avatar_size ?? null}, link_bio_avatar_size),
         link_bio_button_size = COALESCE(${body.link_bio_button_size ?? null}, link_bio_button_size),
+        link_bio_content_position = COALESCE(${body.link_bio_content_position ?? null}, link_bio_content_position),
+        link_bio_content_align = COALESCE(${body.link_bio_content_align ?? null}, link_bio_content_align),
         updated_at = NOW()
       WHERE id = ${user.id}
     `;

@@ -22,6 +22,8 @@ type Settings = {
   textSize: string;
   avatarSize: string;
   buttonSize: string;
+  contentPosition: string;
+  contentAlign: string;
 };
 
 /* ── Constants ── */
@@ -724,6 +726,8 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
     textSize: user.link_bio_text_size || "medium",
     avatarSize: user.link_bio_avatar_size || "medium",
     buttonSize: user.link_bio_button_size || "medium",
+    contentPosition: user.link_bio_content_position || "top",
+    contentAlign: user.link_bio_content_align || "center",
   });
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -767,6 +771,8 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
           link_bio_text_size: next.textSize,
           link_bio_avatar_size: next.avatarSize,
           link_bio_button_size: next.buttonSize,
+          link_bio_content_position: next.contentPosition,
+          link_bio_content_align: next.contentAlign,
         }),
       });
       if (!res.ok) {
@@ -821,6 +827,7 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
     { id: "background", name: "Background" },
     { id: "typography", name: "Typography" },
     { id: "buttons", name: "Buttons" },
+    { id: "layout", name: "Layout" },
     { id: "sizes", name: "Sizes" },
     { id: "animation", name: "Animation" },
     { id: "colors", name: "Colors" },
@@ -1101,6 +1108,55 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
                     {CARD_STYLES.map(c => (
                       <button key={c.id} onClick={() => save({ cardStyle: c.id })} className={`py-2.5 rounded-xl text-[10px] font-semibold transition-all ${settings.cardStyle === c.id ? "bg-neutral-900 text-white" : "bg-neutral-50 text-neutral-500 hover:bg-neutral-100"}`}>
                         {c.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ─── LAYOUT ─── */}
+            {section === "layout" && (
+              <div className="bg-white rounded-2xl border border-neutral-200/60 p-5 space-y-6">
+                {/* Content Position (vertical) */}
+                <div>
+                  <h2 className="text-sm font-bold text-neutral-900 mb-1">Content Position</h2>
+                  <p className="text-[11px] text-neutral-400 mb-3">Controls where content sits vertically on the page</p>
+                  <div className="grid grid-cols-3 gap-2">
+                    {([
+                      { id: "top", label: "Top" },
+                      { id: "center", label: "Center" },
+                      { id: "bottom", label: "Bottom" },
+                    ] as const).map(p => (
+                      <button key={p.id} onClick={() => save({ contentPosition: p.id })} className={`p-3 min-h-[80px] rounded-xl text-center transition-all flex flex-col items-center justify-center gap-2 ${settings.contentPosition === p.id ? "border-2 border-neutral-900 bg-neutral-50" : "border border-neutral-200 bg-white hover:bg-neutral-50"}`}>
+                        <div className="w-8 h-14 rounded-md border border-neutral-300 bg-neutral-50 flex flex-col justify-between p-1">
+                          {p.id === "top" && <><div className="w-full h-1.5 rounded-full bg-neutral-400" /><div /></>}
+                          {p.id === "center" && <><div /><div className="w-full h-1.5 rounded-full bg-neutral-400" /><div /></>}
+                          {p.id === "bottom" && <><div /><div className="w-full h-1.5 rounded-full bg-neutral-400" /></>}
+                        </div>
+                        <span className="text-[10px] font-semibold text-neutral-500">{p.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Content Alignment (horizontal) */}
+                <div>
+                  <h2 className="text-sm font-bold text-neutral-900 mb-1">Content Alignment</h2>
+                  <p className="text-[11px] text-neutral-400 mb-3">Controls horizontal text and content alignment</p>
+                  <div className="grid grid-cols-3 gap-2">
+                    {([
+                      { id: "left", label: "Left" },
+                      { id: "center", label: "Center" },
+                      { id: "right", label: "Right" },
+                    ] as const).map(a => (
+                      <button key={a.id} onClick={() => save({ contentAlign: a.id })} className={`p-3 min-h-[80px] rounded-xl text-center transition-all flex flex-col items-center justify-center gap-2 ${settings.contentAlign === a.id ? "border-2 border-neutral-900 bg-neutral-50" : "border border-neutral-200 bg-white hover:bg-neutral-50"}`}>
+                        <div className="w-10 h-10 rounded-md border border-neutral-300 bg-neutral-50 flex flex-col justify-center gap-1 p-1.5">
+                          {a.id === "left" && <><div className="w-full h-1 rounded-full bg-neutral-400" /><div className="w-3/4 h-1 rounded-full bg-neutral-300" /><div className="w-1/2 h-1 rounded-full bg-neutral-300" /></>}
+                          {a.id === "center" && <><div className="w-full h-1 rounded-full bg-neutral-400 mx-auto" /><div className="w-3/4 h-1 rounded-full bg-neutral-300 mx-auto" /><div className="w-1/2 h-1 rounded-full bg-neutral-300 mx-auto" /></>}
+                          {a.id === "right" && <><div className="w-full h-1 rounded-full bg-neutral-400 ml-auto" /><div className="w-3/4 h-1 rounded-full bg-neutral-300 ml-auto" /><div className="w-1/2 h-1 rounded-full bg-neutral-300 ml-auto" /></>}
+                        </div>
+                        <span className="text-[10px] font-semibold text-neutral-500">{a.label}</span>
                       </button>
                     ))}
                   </div>

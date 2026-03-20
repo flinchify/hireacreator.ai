@@ -36,6 +36,25 @@ const BUTTON_SIZES: Record<string, string> = {
   large: 'py-5 px-6 text-lg min-h-[60px]',
 };
 
+/* ── Content position/alignment ── */
+const CONTENT_JUSTIFY: Record<string, string> = {
+  top: 'justify-start',
+  center: 'justify-center',
+  bottom: 'justify-end',
+};
+
+const CONTENT_ITEMS: Record<string, string> = {
+  top: 'items-start',
+  center: 'items-center',
+  bottom: 'items-end',
+};
+
+const CONTENT_ALIGN: Record<string, string> = {
+  left: 'text-left items-start',
+  center: 'text-center items-center',
+  right: 'text-right items-end',
+};
+
 /* ── Button shape classes ── */
 function btnClass(shape: string): string {
   switch (shape) {
@@ -438,9 +457,11 @@ function TemplateMinimal({ creator }: { creator: Creator }) {
   const hasCustomBg = creator.linkBioBgType && creator.linkBioBgType !== "gradient";
   const accent = creator.linkBioAccent || "#171717";
   const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
+  const items = CONTENT_ITEMS[creator.linkBioContentPosition || 'top'] || CONTENT_ITEMS.top;
+  const align = CONTENT_ALIGN[creator.linkBioContentAlign || 'center'] || CONTENT_ALIGN.center;
 
   return (
-    <div className="min-h-screen flex items-start lg:items-center justify-center lg:py-10 lg:px-4" style={{ background: hasCustomBg ? "transparent" : "linear-gradient(160deg, #fdf8f4 0%, #f5ede6 40%, #ebe3da 100%)" }}>
+    <div className={`min-h-screen flex ${items} justify-center lg:py-10 lg:px-4`} style={{ background: hasCustomBg ? "transparent" : "linear-gradient(160deg, #fdf8f4 0%, #f5ede6 40%, #ebe3da 100%)" }}>
       {hasCustomBg && <BgLayer creator={creator} />}
       <div className={`w-full lg:max-w-[460px] lg:rounded-[2.5rem] lg:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.1)] bg-white min-h-screen lg:min-h-0 relative z-10 overflow-hidden ${hasCustomBg ? "lg:bg-white/95 lg:backdrop-blur-sm" : ""}`}>
         {/* Cover */}
@@ -464,7 +485,7 @@ function TemplateMinimal({ creator }: { creator: Creator }) {
           </div>
         </div>
 
-        <div className="px-6 sm:px-8 pb-10 pt-[4.5rem] text-center">
+        <div className={`px-6 sm:px-8 pb-10 pt-[4.5rem] ${align}`}>
           <div className="flex items-center justify-center gap-1.5">
             <h1 className={`font-display ${ts.name} font-bold text-neutral-900 tracking-tight`}>{creator.name || "Your Name"}</h1>
             {creator.isVerified && <VerifiedBadge />}{creator.isPro && <ProBadge />}
@@ -527,6 +548,8 @@ function TemplateGlass({ creator }: { creator: Creator }) {
   const accent = creator.linkBioAccent || "#818cf8";
   const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
   const avatarSz = AVATAR_SIZES[creator.linkBioAvatarSize || "medium"] || AVATAR_SIZES.medium;
+  const justify = CONTENT_JUSTIFY[creator.linkBioContentPosition || 'top'] || CONTENT_JUSTIFY.top;
+  const align = CONTENT_ALIGN[creator.linkBioContentAlign || 'center'] || CONTENT_ALIGN.center;
 
   return (
     <div className="min-h-screen relative overflow-hidden">
@@ -543,9 +566,9 @@ function TemplateGlass({ creator }: { creator: Creator }) {
 
       <div className="absolute top-4 right-4 z-20"><ShareBtn slug={creator.slug} light /></div>
 
-      <div className="relative z-10 w-full lg:max-w-[480px] mx-auto px-5 lg:px-6 pt-12 pb-10 min-h-screen flex flex-col justify-between">
+      <div className={`relative z-10 w-full lg:max-w-[480px] mx-auto px-5 lg:px-6 pt-12 pb-10 min-h-screen flex flex-col ${justify}`}>
         {/* Main glass identity card */}
-        <div className="text-center mb-6 bg-white/[0.06] backdrop-blur-2xl rounded-[2rem] p-8 sm:p-10 border border-white/[0.08] shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
+        <div className={`${align} mb-6 bg-white/[0.06]` backdrop-blur-2xl rounded-[2rem] p-8 sm:p-10 border border-white/[0.08] shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
           {/* Avatar with accent glow ring */}
           <div className="relative inline-block mb-5">
             <div className="absolute -inset-4 rounded-full opacity-30 blur-2xl" style={{ background: accent }} />
@@ -589,7 +612,7 @@ function TemplateGlass({ creator }: { creator: Creator }) {
         <BioLinksSection creator={creator} light />
         <ProductsSection creator={creator} light accent={accent} />
 
-        <div className="flex-1 space-y-3">
+        <div className="space-y-3">
           {creator.services.length > 0 && (
             <>
               <SectionLabel light>Services</SectionLabel>
@@ -629,9 +652,11 @@ function TemplateBold({ creator }: { creator: Creator }) {
   const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
   const hasCustomBg = !!creator.linkBioBgType;
   const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
+  const items = CONTENT_ITEMS[creator.linkBioContentPosition || 'top'] || CONTENT_ITEMS.top;
+  const align = CONTENT_ALIGN[creator.linkBioContentAlign || 'center'] || CONTENT_ALIGN.center;
 
   return (
-    <div className="min-h-screen flex items-start lg:items-center justify-center lg:py-10 lg:px-4" style={{ background: hasCustomBg ? "transparent" : "#0a0a0a" }}>
+    <div className={`min-h-screen flex ${items} justify-center lg:py-10 lg:px-4`} style={{ background: hasCustomBg ? "transparent" : "#0a0a0a" }}>
       {hasCustomBg && <BgLayer creator={creator} />}
       <div className="w-full lg:max-w-[460px] lg:rounded-[2.5rem] bg-neutral-950 min-h-screen lg:min-h-0 relative z-10 overflow-hidden" style={{ boxShadow: `0 0 0 1px rgba(255,255,255,0.06), 0 25px 60px -12px ${accent}20` }}>
         {/* Accent stripe at top */}
@@ -639,7 +664,7 @@ function TemplateBold({ creator }: { creator: Creator }) {
 
         <div className="absolute top-5 right-5 z-10"><ShareBtn slug={creator.slug} light /></div>
 
-        <div className="px-6 sm:px-8 pb-10 pt-10 text-center">
+        <div className={`px-6 sm:px-8 pb-10 pt-10 ${align}`}>
           {/* Square avatar with accent border and glow */}
           <div className="relative inline-block">
             <div className="absolute -inset-3 rounded-2xl opacity-20 blur-xl" style={{ background: accent }} />
@@ -721,9 +746,11 @@ function TemplateShowcase({ creator }: { creator: Creator }) {
   const hasCustomBg = !!creator.linkBioBgType;
   const accent = creator.linkBioAccent || "#171717";
   const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
+  const items = CONTENT_ITEMS[creator.linkBioContentPosition || 'top'] || CONTENT_ITEMS.top;
+  const align = CONTENT_ALIGN[creator.linkBioContentAlign || 'center'] || CONTENT_ALIGN.center;
 
   return (
-    <div className="min-h-screen flex items-start lg:items-center justify-center lg:py-10 lg:px-4" style={{ background: hasCustomBg ? "transparent" : "linear-gradient(160deg, #f8f9fa 0%, #e9ecef 100%)" }}>
+    <div className={`min-h-screen flex ${items} justify-center lg:py-10 lg:px-4`} style={{ background: hasCustomBg ? "transparent" : "linear-gradient(160deg, #f8f9fa 0%, #e9ecef 100%)" }}>
       {hasCustomBg && <BgLayer creator={creator} />}
       <div className="w-full lg:max-w-[480px] lg:rounded-[2rem] lg:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] bg-white min-h-screen lg:min-h-0 relative z-10 overflow-hidden">
         {/* Prominent cover */}
@@ -739,7 +766,7 @@ function TemplateShowcase({ creator }: { creator: Creator }) {
           <div className="absolute top-3 right-4 z-10"><ShareBtn slug={creator.slug} /></div>
         </div>
 
-        <div className="px-6 sm:px-8 pb-10 -mt-10 relative">
+        <div className={`px-6 sm:px-8 pb-10 -mt-10 relative ${align}`}>
           {/* Profile row — left-aligned editorial */}
           <div className="flex items-end gap-4 mb-5">
             <div className="shrink-0 p-1 bg-white rounded-2xl shadow-lg">
@@ -818,9 +845,11 @@ function TemplateNeon({ creator }: { creator: Creator }) {
   const hasCustomBg = !!creator.linkBioBgType;
   const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
   const avatarSz = AVATAR_SIZES[creator.linkBioAvatarSize || "medium"] || AVATAR_SIZES.medium;
+  const items = CONTENT_ITEMS[creator.linkBioContentPosition || 'top'] || CONTENT_ITEMS.top;
+  const align = CONTENT_ALIGN[creator.linkBioContentAlign || 'center'] || CONTENT_ALIGN.center;
 
   return (
-    <div className="min-h-screen flex items-start lg:items-center justify-center lg:py-10 lg:px-4" style={{ background: hasCustomBg ? "transparent" : "#000000" }}>
+    <div className={`min-h-screen flex ${items} justify-center lg:py-10 lg:px-4`} style={{ background: hasCustomBg ? "transparent" : "#000000" }}>
       {hasCustomBg && <BgLayer creator={creator} />}
 
       <div className="w-full lg:max-w-[460px] lg:rounded-[2rem] bg-[#0a0a0a] min-h-screen lg:min-h-0 relative z-10 overflow-hidden" style={{ boxShadow: `0 0 80px -20px ${accent}50, inset 0 1px 0 rgba(255,255,255,0.05)` }}>
@@ -834,7 +863,7 @@ function TemplateNeon({ creator }: { creator: Creator }) {
 
         <div className="absolute top-3 right-4 z-10"><ShareBtn slug={creator.slug} light /></div>
 
-        <div className="px-6 sm:px-8 pb-10 pt-10 text-center relative">
+        <div className={`px-6 sm:px-8 pb-10 pt-10 ${align} relative`}>
           {/* Avatar with double neon ring: outer accent, inner dark */}
           <div className="relative inline-block">
             <div className="absolute -inset-5 rounded-full opacity-25 blur-2xl" style={{ background: accent }} />
@@ -921,6 +950,8 @@ function TemplateNeon({ creator }: { creator: Creator }) {
 function TemplateCollage({ creator }: { creator: Creator }) {
   const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
   const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
+  const justify = CONTENT_JUSTIFY[creator.linkBioContentPosition || 'top'] || CONTENT_JUSTIFY.top;
+  const align = CONTENT_ALIGN[creator.linkBioContentAlign || 'center'] || CONTENT_ALIGN.center;
   const images = (creator.linkBioBgImages && creator.linkBioBgImages.length > 0)
     ? creator.linkBioBgImages
     : creator.portfolio.filter(p => p.image).map(p => p.image!);
@@ -949,9 +980,9 @@ function TemplateCollage({ creator }: { creator: Creator }) {
 
       <div className="absolute top-4 right-4 z-20"><ShareBtn slug={creator.slug} light /></div>
 
-      <div className="relative z-10 w-full lg:max-w-[480px] mx-auto px-4 lg:px-5 pt-12 pb-10 min-h-screen flex flex-col justify-between">
+      <div className={`relative z-10 w-full lg:max-w-[480px] mx-auto px-4 lg:px-5 pt-12 pb-10 min-h-screen flex flex-col ${justify}`}>
         {/* Frosted content panel */}
-        <div className="bg-black/30 backdrop-blur-2xl rounded-3xl border border-white/10 p-6 sm:p-8 mb-5 text-center shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
+        <div className={`bg-black/30 backdrop-blur-2xl rounded-3xl border border-white/10 p-6 sm:p-8 mb-5 ${align} shadow-[0_8px_32px_rgba(0,0,0,0.4)]`}>
           {/* Avatar — square with subtle rotation for artistic flair */}
           <div className="relative inline-block mb-4">
             <div className="rotate-2">
@@ -986,7 +1017,7 @@ function TemplateCollage({ creator }: { creator: Creator }) {
         <BioLinksSection creator={creator} light />
         <ProductsSection creator={creator} light />
 
-        <div className="flex-1 space-y-2.5">
+        <div className="space-y-2.5">
           {creator.services.length > 0 && creator.services.map(s => <ServiceCard key={s.id} service={s} creator={creator} light />)}
 
           {/* Portfolio strip — only show if not already used as mosaic bg */}
@@ -1020,12 +1051,14 @@ function TemplateBento({ creator }: { creator: Creator }) {
   const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
   const hasPortfolio = creator.portfolio.length > 0;
   const hasCustomBg = !!creator.linkBioBgType;
+  const justify = CONTENT_JUSTIFY[creator.linkBioContentPosition || 'top'] || CONTENT_JUSTIFY.top;
+  const align = CONTENT_ALIGN[creator.linkBioContentAlign || 'center'] || CONTENT_ALIGN.center;
 
   return (
-    <div className="min-h-screen p-3 sm:p-5" style={{ background: hasCustomBg ? "transparent" : "#0a0a0a" }}>
+    <div className={`min-h-screen p-3 sm:p-5 flex flex-col ${justify}`} style={{ background: hasCustomBg ? "transparent" : "#0a0a0a" }}>
       {hasCustomBg && <BgLayer creator={creator} />}
       <div className="absolute top-4 right-4 z-20"><ShareBtn slug={creator.slug} light /></div>
-      <div className="w-full lg:max-w-[520px] mx-auto relative z-10">
+      <div className={`w-full lg:max-w-[520px] mx-auto relative z-10 ${align}`}>
         <div className="grid grid-cols-4 gap-2.5 sm:gap-3 auto-rows-[95px]">
           {/* Identity card — col-span-4 row-span-2, accent gradient overlay */}
           <div className="col-span-4 row-span-2 rounded-3xl overflow-hidden relative" style={{ background: `linear-gradient(135deg, ${accent}18, ${accent}08)`, border: `1px solid ${accent}25` }}>
@@ -1149,6 +1182,8 @@ function TemplateSplit({ creator }: { creator: Creator }) {
   const accent = creator.linkBioAccent || "#171717";
   const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
   const heroImage = creator.cover || (creator.portfolio.length > 0 && creator.portfolio[0].image) || null;
+  const justify = CONTENT_JUSTIFY[creator.linkBioContentPosition || 'top'] || CONTENT_JUSTIFY.top;
+  const align = CONTENT_ALIGN[creator.linkBioContentAlign || 'center'] || CONTENT_ALIGN.center;
 
   return (
     <div className="min-h-screen bg-white">
@@ -1191,8 +1226,8 @@ function TemplateSplit({ creator }: { creator: Creator }) {
         </div>
 
         {/* Right 55% — scrollable content */}
-        <div className="sm:w-[55%] sm:overflow-y-auto sm:h-screen">
-          <div className="px-6 sm:px-8 lg:px-10 py-6 lg:py-10">
+        <div className={`sm:w-[55%] sm:overflow-y-auto sm:h-screen ${justify}`}>
+          <div className={`px-6 sm:px-8 lg:px-10 py-6 lg:py-10 ${align}`}>
             {/* Desktop header */}
             <div className="hidden sm:block mb-8">
               <div className="flex items-center gap-4 mb-4">
@@ -1287,6 +1322,8 @@ function TemplateCustom({ creator }: { creator: Creator }) {
   const hasCustomBg = !!creator.linkBioBgType;
   const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
   const avatarSz = AVATAR_SIZES[creator.linkBioAvatarSize || "medium"] || AVATAR_SIZES.medium;
+  const justify = CONTENT_JUSTIFY[creator.linkBioContentPosition || 'top'] || CONTENT_JUSTIFY.top;
+  const align = CONTENT_ALIGN[creator.linkBioContentAlign || 'center'] || CONTENT_ALIGN.center;
   const isDarkBg = hasCustomBg && (
     creator.linkBioBgType === "video" || creator.linkBioBgType === "image" || creator.linkBioBgType === "collage" ||
     (creator.linkBioBgType === "gradient" && (creator.linkBioBgValue?.includes("#0") || creator.linkBioBgValue?.includes("#1") || creator.linkBioBgValue?.includes("#2")))
@@ -1302,8 +1339,8 @@ function TemplateCustom({ creator }: { creator: Creator }) {
           <div className="absolute bottom-[-15%] right-[-10%] w-[50%] h-[50%] rounded-full opacity-10" style={{ background: "radial-gradient(circle, #ec489960 0%, transparent 70%)" }} />
         </div>
       )}
-      <div className="relative z-10 w-full lg:max-w-[480px] mx-auto px-5 pt-14 pb-10 min-h-screen flex flex-col justify-between">
-        <div className="text-center mb-8">
+      <div className={`relative z-10 w-full lg:max-w-[480px] mx-auto px-5 pt-14 pb-10 min-h-screen flex flex-col ${justify}`}>
+        <div className={`${align} mb-8`}>
           {/* Avatar with glow ring on dark bg */}
           <div className="relative inline-block">
             {isDarkBg && <div className="absolute inset-0 rounded-full opacity-30 blur-xl" style={{ background: accent }} />}
@@ -1337,7 +1374,7 @@ function TemplateCustom({ creator }: { creator: Creator }) {
         {creator.bio && <p className={`text-sm text-center mb-6 leading-relaxed ${isDarkBg ? "text-white/50" : "text-neutral-500"}`}>{creator.bio}</p>}
         <BioLinksSection creator={creator} light={isDarkBg} />
         <ProductsSection creator={creator} light={isDarkBg} accent={accent} />
-        <div className="flex-1 space-y-3">
+        <div className="space-y-3">
           {creator.services.map(s => <ServiceCard key={s.id} service={s} creator={creator} light={isDarkBg} accent={accent} />)}
           {creator.portfolio.length > 0 && <div className="grid grid-cols-3 gap-1.5 pt-2">{creator.portfolio.slice(0, 6).map(p => <div key={p.id} className={`aspect-square rounded-xl overflow-hidden ${isDarkBg ? "bg-white/5" : "bg-neutral-100"}`}>{p.image ? <img src={p.image} alt={p.title} className="w-full h-full object-cover" /> : <div className={`w-full h-full flex items-center justify-center text-xs ${isDarkBg ? "text-white/20" : "text-neutral-300"}`}>{p.title}</div>}</div>)}</div>}
           {creator.calendarEnabled && <div className="my-4"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
@@ -1359,6 +1396,8 @@ function TemplateFounder({ creator }: { creator: Creator }) {
   const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0 && creator.bioLinks.length === 0;
   const hasCustomBg = !!creator.linkBioBgType;
   const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
+  const justify = CONTENT_JUSTIFY[creator.linkBioContentPosition || 'top'] || CONTENT_JUSTIFY.top;
+  const align = CONTENT_ALIGN[creator.linkBioContentAlign || 'center'] || CONTENT_ALIGN.center;
 
   // Detect GitHub links from bioLinks
   const githubLink = creator.bioLinks.find(l => l.isVisible && l.url.toLowerCase().includes("github.com"));
@@ -1377,7 +1416,7 @@ function TemplateFounder({ creator }: { creator: Creator }) {
   return (
     <div className="min-h-screen" style={{ background: hasCustomBg ? "transparent" : "linear-gradient(160deg, #111827 0%, #1f2937 100%)" }}>
       {hasCustomBg && <BgLayer creator={creator} />}
-      <div className="relative z-10 w-full lg:max-w-[520px] mx-auto px-5 lg:px-6 pt-12 pb-10 min-h-screen flex flex-col justify-between">
+      <div className={`relative z-10 w-full lg:max-w-[520px] mx-auto px-5 lg:px-6 pt-12 pb-10 min-h-screen flex flex-col ${justify}`}>
         <div className="absolute top-4 right-4 z-20"><ShareBtn slug={creator.slug} light /></div>
 
         {/* Identity */}
@@ -1572,10 +1611,12 @@ function TemplateBrutalist({ creator }: { creator: Creator }) {
   const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
   const avatarSz = AVATAR_SIZES[creator.linkBioAvatarSize || "medium"] || AVATAR_SIZES.medium;
   const bs = BUTTON_SIZES[creator.linkBioButtonSize || "medium"] || BUTTON_SIZES.medium;
+  const justify = CONTENT_JUSTIFY[creator.linkBioContentPosition || 'top'] || CONTENT_JUSTIFY.top;
+  const align = CONTENT_ALIGN[creator.linkBioContentAlign || 'center'] || CONTENT_ALIGN.center;
 
   return (
     <div className="min-h-screen bg-black text-white" style={{ fontFamily: "'Courier New', Courier, monospace" }}>
-      <div className="w-full lg:max-w-[500px] mx-auto px-5 pt-10 pb-10 min-h-screen">
+      <div className={`w-full lg:max-w-[500px] mx-auto px-5 pt-10 pb-10 min-h-screen flex flex-col ${justify}`}>
         <div className="absolute top-3 right-4 z-10"><ShareBtn slug={creator.slug} light /></div>
 
         <div className="border-b-[3px] border-white pb-6 mb-6">
@@ -1668,6 +1709,8 @@ function TemplateAurora({ creator }: { creator: Creator }) {
   const accent = creator.linkBioAccent || "#60a5fa";
   const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
   const avatarSz = AVATAR_SIZES[creator.linkBioAvatarSize || "medium"] || AVATAR_SIZES.medium;
+  const justify = CONTENT_JUSTIFY[creator.linkBioContentPosition || 'top'] || CONTENT_JUSTIFY.top;
+  const align = CONTENT_ALIGN[creator.linkBioContentAlign || 'center'] || CONTENT_ALIGN.center;
 
   return (
     <div className="min-h-screen relative overflow-hidden">
@@ -1686,7 +1729,7 @@ function TemplateAurora({ creator }: { creator: Creator }) {
       </div>
       <style>{`@keyframes auroraShift { 0%,100% { background-position: 0% 50% } 50% { background-position: 100% 50% } }`}</style>
 
-      <div className="relative z-10 w-full lg:max-w-[460px] mx-auto px-5 pt-12 pb-10 min-h-screen text-center flex flex-col justify-between">
+      <div className={`relative z-10 w-full lg:max-w-[460px] mx-auto px-5 pt-12 pb-10 min-h-screen ${align} flex flex-col ${justify}`}>
         <div className="absolute top-3 right-4"><ShareBtn slug={creator.slug} light /></div>
 
         <div className="relative inline-block mb-5">
@@ -1755,10 +1798,12 @@ function TemplateSunset({ creator }: { creator: Creator }) {
   const accent = creator.linkBioAccent || "#f59e0b";
   const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
   const avatarSz = AVATAR_SIZES[creator.linkBioAvatarSize || "medium"] || AVATAR_SIZES.medium;
+  const justify = CONTENT_JUSTIFY[creator.linkBioContentPosition || 'top'] || CONTENT_JUSTIFY.top;
+  const align = CONTENT_ALIGN[creator.linkBioContentAlign || 'center'] || CONTENT_ALIGN.center;
 
   return (
     <div className="min-h-screen relative overflow-hidden" style={{ background: "linear-gradient(180deg, #f97316 0%, #ec4899 40%, #8b5cf6 80%, #4c1d95 100%)" }}>
-      <div className="relative z-10 w-full lg:max-w-[460px] mx-auto px-5 pt-12 pb-10 min-h-screen text-center flex flex-col justify-between">
+      <div className={`relative z-10 w-full lg:max-w-[460px] mx-auto px-5 pt-12 pb-10 min-h-screen ${align} flex flex-col ${justify}`}>
         <div className="absolute top-3 right-4"><ShareBtn slug={creator.slug} light /></div>
 
         <div className="relative inline-block mb-5">
@@ -1833,13 +1878,15 @@ function TemplateTerminal({ creator }: { creator: Creator }) {
   const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
   const avatarSz = AVATAR_SIZES[creator.linkBioAvatarSize || "medium"] || AVATAR_SIZES.medium;
   const bs = BUTTON_SIZES[creator.linkBioButtonSize || "medium"] || BUTTON_SIZES.medium;
+  const justify = CONTENT_JUSTIFY[creator.linkBioContentPosition || 'top'] || CONTENT_JUSTIFY.top;
+  const align = CONTENT_ALIGN[creator.linkBioContentAlign || 'center'] || CONTENT_ALIGN.center;
 
   return (
     <div className="min-h-screen relative" style={{ background: "#0a0a0a", fontFamily: "'Courier New', Courier, monospace" }}>
       {/* Scanline overlay */}
       <div className="fixed inset-0 pointer-events-none z-20 opacity-[0.04]" style={{ backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,0,0.1) 2px, rgba(0,255,0,0.1) 4px)" }} />
 
-      <div className="relative z-10 w-full lg:max-w-[500px] mx-auto px-5 pt-8 pb-10 min-h-screen">
+      <div className={`relative z-10 w-full lg:max-w-[500px] mx-auto px-5 pt-8 pb-10 min-h-screen flex flex-col ${justify}`}>
         <div className="absolute top-3 right-4"><ShareBtn slug={creator.slug} light /></div>
 
         {/* Terminal header bar */}
@@ -1948,10 +1995,12 @@ function TemplatePastel({ creator }: { creator: Creator }) {
   const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
   const avatarSz = AVATAR_SIZES[creator.linkBioAvatarSize || "medium"] || AVATAR_SIZES.medium;
   const bs = BUTTON_SIZES[creator.linkBioButtonSize || "medium"] || BUTTON_SIZES.medium;
+  const justify = CONTENT_JUSTIFY[creator.linkBioContentPosition || 'top'] || CONTENT_JUSTIFY.top;
+  const align = CONTENT_ALIGN[creator.linkBioContentAlign || 'center'] || CONTENT_ALIGN.center;
 
   return (
     <div className="min-h-screen" style={{ background: "linear-gradient(160deg, #fce7f3 0%, #ede9fe 35%, #dbeafe 65%, #d1fae5 100%)" }}>
-      <div className="w-full lg:max-w-[460px] mx-auto px-5 pt-12 pb-10 min-h-screen text-center flex flex-col justify-between">
+      <div className={`w-full lg:max-w-[460px] mx-auto px-5 pt-12 pb-10 min-h-screen ${align} flex flex-col ${justify}`}>
         <div className="absolute top-3 right-4"><ShareBtn slug={creator.slug} /></div>
 
         <div className="relative inline-block mb-5">
@@ -2039,6 +2088,8 @@ function TemplateMagazine({ creator }: { creator: Creator }) {
   const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
   const avatarSz = AVATAR_SIZES[creator.linkBioAvatarSize || "medium"] || AVATAR_SIZES.medium;
   const bs = BUTTON_SIZES[creator.linkBioButtonSize || "medium"] || BUTTON_SIZES.medium;
+  const justify = CONTENT_JUSTIFY[creator.linkBioContentPosition || 'top'] || CONTENT_JUSTIFY.top;
+  const align = CONTENT_ALIGN[creator.linkBioContentAlign || 'center'] || CONTENT_ALIGN.center;
 
   return (
     <div className="min-h-screen bg-[#fafaf9]">
@@ -2123,10 +2174,12 @@ function TemplateRetro({ creator }: { creator: Creator }) {
   const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
   const avatarSz = AVATAR_SIZES[creator.linkBioAvatarSize || "medium"] || AVATAR_SIZES.medium;
   const bs = BUTTON_SIZES[creator.linkBioButtonSize || "medium"] || BUTTON_SIZES.medium;
+  const justify = CONTENT_JUSTIFY[creator.linkBioContentPosition || 'top'] || CONTENT_JUSTIFY.top;
+  const align = CONTENT_ALIGN[creator.linkBioContentAlign || 'center'] || CONTENT_ALIGN.center;
 
   return (
     <div className="min-h-screen" style={{ background: "#fff200" }}>
-      <div className="w-full lg:max-w-[460px] mx-auto px-5 pt-12 pb-10 min-h-screen text-center flex flex-col justify-between">
+      <div className={`w-full lg:max-w-[460px] mx-auto px-5 pt-12 pb-10 min-h-screen ${align} flex flex-col ${justify}`}>
         <div className="absolute top-3 right-4"><ShareBtn slug={creator.slug} /></div>
 
         {/* Avatar with chunky shadow */}
@@ -2224,6 +2277,8 @@ function TemplateMidnight({ creator }: { creator: Creator }) {
   const accent = creator.linkBioAccent || "#818cf8";
   const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
   const avatarSz = AVATAR_SIZES[creator.linkBioAvatarSize || "medium"] || AVATAR_SIZES.medium;
+  const justify = CONTENT_JUSTIFY[creator.linkBioContentPosition || 'top'] || CONTENT_JUSTIFY.top;
+  const align = CONTENT_ALIGN[creator.linkBioContentAlign || 'center'] || CONTENT_ALIGN.center;
 
   return (
     <div className="min-h-screen relative overflow-hidden" style={{ background: "#0a0e27" }}>
@@ -2235,7 +2290,7 @@ function TemplateMidnight({ creator }: { creator: Creator }) {
       {/* Subtle blue glow at bottom */}
       <div className="fixed bottom-0 left-0 right-0 h-[40%] pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 100%, rgba(99,102,241,0.08) 0%, transparent 70%)" }} />
 
-      <div className="relative z-10 w-full lg:max-w-[460px] mx-auto px-5 pt-12 pb-10 min-h-screen text-center flex flex-col justify-between">
+      <div className={`relative z-10 w-full lg:max-w-[460px] mx-auto px-5 pt-12 pb-10 min-h-screen ${align} flex flex-col ${justify}`}>
         <div className="absolute top-3 right-4"><ShareBtn slug={creator.slug} light /></div>
 
         <div className="relative inline-block mb-5">
@@ -2308,10 +2363,12 @@ function TemplateClay({ creator }: { creator: Creator }) {
   const avatarSz = AVATAR_SIZES[creator.linkBioAvatarSize || "medium"] || AVATAR_SIZES.medium;
   const bs = BUTTON_SIZES[creator.linkBioButtonSize || "medium"] || BUTTON_SIZES.medium;
   const bg = "#e0e0e0";
+  const justify = CONTENT_JUSTIFY[creator.linkBioContentPosition || 'top'] || CONTENT_JUSTIFY.top;
+  const align = CONTENT_ALIGN[creator.linkBioContentAlign || 'center'] || CONTENT_ALIGN.center;
 
   return (
     <div className="min-h-screen" style={{ background: bg }}>
-      <div className="w-full lg:max-w-[460px] mx-auto px-5 pt-12 pb-10 min-h-screen text-center flex flex-col justify-between">
+      <div className={`w-full lg:max-w-[460px] mx-auto px-5 pt-12 pb-10 min-h-screen ${align} flex flex-col ${justify}`}>
         <div className="absolute top-3 right-4"><ShareBtn slug={creator.slug} /></div>
 
         <div className="relative inline-block mb-5">
@@ -2400,6 +2457,8 @@ function TemplateGradientMesh({ creator }: { creator: Creator }) {
   const accent = creator.linkBioAccent || "#ec4899";
   const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
   const avatarSz = AVATAR_SIZES[creator.linkBioAvatarSize || "medium"] || AVATAR_SIZES.medium;
+  const justify = CONTENT_JUSTIFY[creator.linkBioContentPosition || 'top'] || CONTENT_JUSTIFY.top;
+  const align = CONTENT_ALIGN[creator.linkBioContentAlign || 'center'] || CONTENT_ALIGN.center;
 
   return (
     <div className="min-h-screen relative overflow-hidden">
@@ -2412,11 +2471,11 @@ function TemplateGradientMesh({ creator }: { creator: Creator }) {
         }} />
       </div>
 
-      <div className="relative z-10 w-full lg:max-w-[460px] mx-auto px-5 pt-12 pb-10 min-h-screen text-center flex flex-col justify-between">
+      <div className={`relative z-10 w-full lg:max-w-[460px] mx-auto px-5 pt-12 pb-10 min-h-screen ${align} flex flex-col ${justify}`}>
         <div className="absolute top-3 right-4"><ShareBtn slug={creator.slug} /></div>
 
         {/* Frosted card container */}
-        <div className="bg-white/70 backdrop-blur-xl rounded-3xl p-6 sm:p-8 shadow-xl border border-white/80">
+        <div className={`bg-white/70 backdrop-blur-xl rounded-3xl p-6 sm:p-8 shadow-xl border border-white/80 ${align}`}>
           <div className="relative inline-block mb-4">
             {creator.avatar ? (
               <img src={creator.avatar} alt="" className={`${avatarSz} rounded-full object-cover shadow-lg ring-4 ring-white/80`} />
