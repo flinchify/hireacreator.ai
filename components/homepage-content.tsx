@@ -165,7 +165,7 @@ export function HomepageContent({
       {/* Top gradient wash removed — was causing visual artifacts on mobile */}
 
       {/* ═══════════════════ HERO ═══════════════════ */}
-      <section className="relative pt-32 sm:pt-52 pb-16 sm:pb-28 overflow-hidden">
+      <section className="relative pt-24 sm:pt-36 pb-16 sm:pb-28 overflow-hidden">
         {/* Subtle gradient background */}
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #fafafa 0%, #ffffff 30%, #f8faff 60%, #ffffff 100%)" }} />
 
@@ -196,50 +196,67 @@ export function HomepageContent({
               </div>
 
               {/* Platform icons — trust signal */}
-              <div className="mt-10">
+              <p className="text-xs font-medium text-neutral-400 uppercase tracking-widest mt-10">Connect 15+ platforms</p>
+              <div className="mt-3">
                 <PlatformTicker />
               </div>
           </div>
 
-          {/* AI Integration Features */}
-          <div className="mt-12 mx-auto max-w-4xl">
-            <div className="grid sm:grid-cols-3 gap-3">
-              {/* MCP Server */}
-              <div className="group bg-neutral-950 rounded-2xl p-5 hover:scale-[1.02] transition-all duration-300">
-                <div className="w-9 h-9 rounded-lg bg-blue-500/20 flex items-center justify-center mb-3">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2"><polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" /></svg>
-                </div>
-                <h3 className="font-display font-bold text-white text-sm mb-1">MCP Server</h3>
-                <p className="text-xs text-neutral-500 leading-relaxed mb-3">AI agents discover and book creators via MCP.</p>
-                <div className="bg-white/5 rounded-lg p-2.5 font-mono text-[10px] text-blue-400 overflow-hidden">
-                  <span className="text-neutral-600">{"{"}</span> tool: <span className="text-emerald-400">&quot;search_creators&quot;</span>,<br/>
-                  &nbsp;&nbsp;niche: <span className="text-amber-400">&quot;UGC&quot;</span> <span className="text-neutral-600">{"}"}</span>
+          {/* Built for the AI era */}
+          <div className="mt-16 mx-auto max-w-4xl">
+            <div className="text-center mb-8">
+              <h2 className="font-display text-xl sm:text-2xl font-bold text-neutral-900">Built for the AI era</h2>
+              <p className="text-sm text-neutral-500 mt-2">The only creator marketplace with native AI agent integration.</p>
+            </div>
+            <div className="grid sm:grid-cols-3 gap-4">
+              {/* MCP */}
+              <div className="group relative bg-gradient-to-br from-white to-neutral-50 rounded-2xl border border-neutral-200/80 p-6 hover:border-neutral-300 hover:shadow-xl hover:shadow-blue-500/5 hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-blue-500/5 to-transparent rounded-bl-full" />
+                <div className="relative">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/25">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" /></svg>
+                    </div>
+                    <div>
+                      <h3 className="font-display font-bold text-neutral-900 text-sm">MCP Protocol</h3>
+                      <p className="text-[10px] text-neutral-400">by Anthropic</p>
+                    </div>
+                  </div>
+                  <p className="text-xs text-neutral-500 leading-relaxed">AI agents like Claude discover, evaluate, and book creators autonomously through MCP.</p>
                 </div>
               </div>
 
               {/* REST API */}
-              <div className="group bg-neutral-950 rounded-2xl p-5 hover:scale-[1.02] transition-all duration-300">
-                <div className="w-9 h-9 rounded-lg bg-emerald-500/20 flex items-center justify-center mb-3">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2"><path d="M18 20V10M12 20V4M6 20v-6" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                </div>
-                <h3 className="font-display font-bold text-white text-sm mb-1">REST API</h3>
-                <p className="text-xs text-neutral-500 leading-relaxed mb-3">Search, book, and pay creators programmatically.</p>
-                <div className="bg-white/5 rounded-lg p-2.5 font-mono text-[10px] text-emerald-400 overflow-hidden">
-                  <span className="text-neutral-600">GET</span> /api/creators<br/>
-                  <span className="text-neutral-600">POST</span> /api/bookings
+              <div className="group relative bg-gradient-to-br from-white to-neutral-50 rounded-2xl border border-neutral-200/80 p-6 hover:border-neutral-300 hover:shadow-xl hover:shadow-emerald-500/5 hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-emerald-500/5 to-transparent rounded-bl-full" />
+                <div className="relative">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center shadow-lg shadow-emerald-500/25">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><path d="M18 20V10M12 20V4M6 20v-6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                    </div>
+                    <div>
+                      <h3 className="font-display font-bold text-neutral-900 text-sm">REST API</h3>
+                      <p className="text-[10px] text-neutral-400">OpenAPI 3.0</p>
+                    </div>
+                  </div>
+                  <p className="text-xs text-neutral-500 leading-relaxed">Full programmatic access. Search creators, manage bookings, and process payments via API.</p>
                 </div>
               </div>
 
-              {/* Stripe Payments */}
-              <div className="group bg-neutral-950 rounded-2xl p-5 hover:scale-[1.02] transition-all duration-300">
-                <div className="w-9 h-9 rounded-lg bg-violet-500/20 flex items-center justify-center mb-3">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                </div>
-                <h3 className="font-display font-bold text-white text-sm mb-1">Stripe Payments</h3>
-                <p className="text-xs text-neutral-500 leading-relaxed mb-3">Secure payments. Creators keep 100%.</p>
-                <div className="bg-white/5 rounded-lg p-2.5 font-mono text-[10px] text-violet-400 overflow-hidden">
-                  <span className="text-neutral-600">agent</span> → find → book<br/>
-                  <span className="text-neutral-600">stripe</span> → pay creator
+              {/* Stripe */}
+              <div className="group relative bg-gradient-to-br from-white to-neutral-50 rounded-2xl border border-neutral-200/80 p-6 hover:border-neutral-300 hover:shadow-xl hover:shadow-violet-500/5 hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-violet-500/5 to-transparent rounded-bl-full" />
+                <div className="relative">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-violet-500/25">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                    </div>
+                    <div>
+                      <h3 className="font-display font-bold text-neutral-900 text-sm">Stripe Connect</h3>
+                      <p className="text-[10px] text-neutral-400">by Stripe</p>
+                    </div>
+                  </div>
+                  <p className="text-xs text-neutral-500 leading-relaxed">Secure escrow payments. Instant creator payouts. 0% platform commission on earnings.</p>
                 </div>
               </div>
             </div>
