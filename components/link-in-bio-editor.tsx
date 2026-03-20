@@ -57,10 +57,6 @@ const FONTS = [
   { id: "space-grotesk", name: "Space Grotesk", css: "'Space Grotesk', sans-serif" },
   { id: "sora", name: "Sora", css: "'Sora', sans-serif" },
   { id: "manrope", name: "Manrope", css: "'Manrope', sans-serif" },
-  { id: "clash", name: "Clash Display", css: "'Clash Display', sans-serif" },
-  { id: "satoshi", name: "Satoshi", css: "'Satoshi', sans-serif" },
-  { id: "cabinet", name: "Cabinet Grotesk", css: "'Cabinet Grotesk', sans-serif" },
-  { id: "general-sans", name: "General Sans", css: "'General Sans', sans-serif" },
 ];
 
 const GRADIENTS = [
