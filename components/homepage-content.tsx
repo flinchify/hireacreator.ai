@@ -577,7 +577,7 @@ export function HomepageContent({
       </AnimateOnScroll>
 
       {/* ═══════════════════ FOR AI AGENTS ═══════════════════ */}
-      <div className="h-24 sm:h-32 bg-gradient-to-b from-white to-neutral-950" />
+      <div className="h-px bg-neutral-200" />
       <AnimateOnScroll as="section" id="for-agents" className="bg-gradient-to-b from-neutral-950 to-neutral-900 text-white">
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20 overflow-hidden">
           {/* Subtle dot grid */}
@@ -669,7 +669,7 @@ export function HomepageContent({
           </div>
         </div>
       </AnimateOnScroll>
-      <div className="h-24 sm:h-32 bg-gradient-to-b from-neutral-900 to-white" />
+      <div className="h-px bg-neutral-200" />
 
       {/* ═══════════════════ PRICING ═══════════════════ */}
       <AnimateOnScroll as="section" id="pricing" className="relative bg-white overflow-hidden">

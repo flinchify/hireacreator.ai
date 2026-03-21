@@ -9,14 +9,14 @@ type HeaderTheme = "light" | "dark";
 
 const themes = {
   light: {
-    nav: "border-white/40 bg-white/30 backdrop-blur-2xl shadow-[0_0_30px_-5px_rgba(255,255,255,0.5)] relative",
-    link: "text-neutral-600 hover:text-neutral-900",
+    nav: "border-neutral-200 bg-white shadow-sm relative",
+    link: "text-neutral-800 hover:text-black",
     logo: "text-neutral-900",
-    loginBtn: "text-neutral-600 hover:text-neutral-900 border border-neutral-200 hover:border-neutral-300",
+    loginBtn: "text-neutral-800 hover:text-black border border-neutral-200 hover:border-neutral-300",
     ctaBtn: "text-white bg-neutral-900 hover:bg-neutral-800",
-    mobileToggle: "text-neutral-600",
-    mobileMenu: "border-neutral-200/60 bg-white/95 backdrop-blur-2xl",
-    mobileLink: "text-neutral-700 hover:bg-neutral-100",
+    mobileToggle: "text-neutral-700",
+    mobileMenu: "border-neutral-200 bg-white",
+    mobileLink: "text-neutral-800 hover:bg-neutral-100",
     mobileDivider: "border-neutral-200",
     mobileCta: "text-white bg-neutral-900 hover:bg-neutral-800",
   },
@@ -174,10 +174,7 @@ export function Header({ theme = "light" }: { theme?: HeaderTheme }) {
           </svg>
         </button>
 
-        {/* Orbiting light spec */}
-        <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
-          <div className="absolute w-20 h-20 bg-white/40 rounded-full blur-xl animate-[orbit_6s_linear_infinite]" />
-        </div>
+
       </nav>
 
       {/* Mobile menu */}
