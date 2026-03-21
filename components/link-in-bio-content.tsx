@@ -568,7 +568,7 @@ function TemplateGlass({ creator }: { creator: Creator }) {
 
       <div className={`relative z-10 w-full lg:max-w-[480px] mx-auto px-5 lg:px-6 pt-12 pb-10 min-h-screen flex flex-col ${justify}`}>
         {/* Main glass identity card */}
-        <div className={`${align} mb-6 bg-white/[0.06]` backdrop-blur-2xl rounded-[2rem] p-8 sm:p-10 border border-white/[0.08] shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
+        <div className={`${align} mb-6 bg-white/[0.06] backdrop-blur-2xl rounded-[2rem] p-8 sm:p-10 border border-white/[0.08] shadow-[0_8px_32px_rgba(0,0,0,0.3)]`}>
           {/* Avatar with accent glow ring */}
           <div className="relative inline-block mb-5">
             <div className="absolute -inset-4 rounded-full opacity-30 blur-2xl" style={{ background: accent }} />
