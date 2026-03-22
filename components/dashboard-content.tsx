@@ -1191,7 +1191,7 @@ export function DashboardContent() {
               <div className="flex items-start justify-between gap-4 mt-3 mb-1">
                 <div className="min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <h1 className="font-display text-xl font-bold text-neutral-900 truncate">{user.name}</h1>
+                    <h1 style={{ fontFamily: "var(--font-serif)" }} className="text-xl font-bold text-neutral-900 truncate">{user.name}</h1>
                     {user.isPro && <span className="px-2 py-0.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[9px] font-bold uppercase tracking-wider rounded-full shadow-sm">PRO</span>}
                   </div>
                   {user.headline && <p className="text-sm text-neutral-500 truncate mt-0.5">{user.headline}</p>}
@@ -1286,7 +1286,7 @@ export function DashboardContent() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <h2 className="text-lg font-bold text-neutral-900 truncate">{user.name}</h2>
+                          <h2 style={{ fontFamily: "var(--font-serif)" }} className="text-lg font-bold text-neutral-900 truncate">{user.name}</h2>
                           {user.isPro && <span className="px-1.5 py-0.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[8px] font-bold uppercase rounded-full">PRO</span>}
                         </div>
                         {user.headline && <p className="text-sm text-neutral-500 truncate mt-0.5">{user.headline}</p>}
@@ -1349,7 +1349,7 @@ export function DashboardContent() {
 
                   {/* About + Socials */}
                   <div className="grid sm:grid-cols-2 gap-4">
-                    <div className="bg-white rounded-2xl border border-neutral-200/60 p-5">
+                    <div className="bg-white rounded-2xl border border-neutral-200/60 shadow-md shadow-blue-500/5 p-5">
                       <div className="flex items-center justify-between mb-3">
                         <h2 className="text-sm font-bold text-neutral-900">About</h2>
                         <button onClick={() => setEditProfile(true)} className="text-[11px] text-neutral-400 hover:text-neutral-600 font-medium">Edit</button>
@@ -1358,7 +1358,7 @@ export function DashboardContent() {
                       {user.location && <div className="mt-3 flex items-center gap-1.5 text-xs text-neutral-400"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" /><circle cx="12" cy="10" r="3" /></svg>{user.location}</div>}
                     </div>
 
-                    <div className="bg-white rounded-2xl border border-neutral-200/60 p-5">
+                    <div className="bg-white rounded-2xl border border-neutral-200/60 shadow-md shadow-blue-500/5 p-5">
                       <div className="flex items-center justify-between mb-3">
                         <h2 className="text-sm font-bold text-neutral-900">Socials</h2>
                         <button onClick={() => setEditSocials(true)} className="text-[11px] text-neutral-400 hover:text-neutral-600 font-medium">Edit</button>
@@ -1388,13 +1388,13 @@ export function DashboardContent() {
                         <h3 className="font-display font-bold text-white text-sm">Upgrade to Pro</h3>
                         <p className="text-xs text-white/50 mt-0.5">Unlimited services, custom domain, analytics, priority search</p>
                       </div>
-                      <Link href="/pricing" className="px-4 py-2 bg-white text-neutral-900 text-xs font-semibold rounded-full hover:bg-neutral-100 transition-colors shrink-0">$19/mo</Link>
+                      <Link href="/pricing" className="px-4 py-2 bg-white text-neutral-900 text-xs font-semibold rounded-lg hover:bg-neutral-100 transition-colors shrink-0">$19/mo</Link>
                     </div>
                   )}
 
                   {/* Admin */}
                   {user.role === "admin" && (
-                    <div className="bg-white rounded-2xl border border-purple-200/60 p-5">
+                    <div className="bg-white rounded-2xl border border-purple-200/60 shadow-md shadow-blue-500/5 p-5">
                       <h2 className="text-sm font-bold text-neutral-900 flex items-center gap-2 mb-3"><span className="px-2 py-0.5 bg-purple-100 text-purple-700 text-[9px] font-bold rounded-full uppercase">Admin</span></h2>
                       <div className="flex gap-3 mb-3">
                         <Link href="/dashboard/settings?tab=admin" className="flex-1 py-2.5 text-xs font-medium text-center bg-purple-50 text-purple-700 rounded-xl hover:bg-purple-100 transition-colors">Users & Orders</Link>

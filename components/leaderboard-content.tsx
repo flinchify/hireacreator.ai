@@ -100,7 +100,7 @@ export function LeaderboardContent() {
       <div className="flex flex-wrap gap-2 mb-8">
         <button
           onClick={() => setSelectedCategory("")}
-          className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
             !selectedCategory
               ? "bg-neutral-900 text-white"
               : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
@@ -112,7 +112,7 @@ export function LeaderboardContent() {
           <button
             key={cat.name}
             onClick={() => setSelectedCategory(cat.name)}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
               selectedCategory === cat.name
                 ? "bg-neutral-900 text-white"
                 : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
@@ -136,7 +136,7 @@ export function LeaderboardContent() {
             </svg>
           </div>
           <h3 className="font-semibold text-neutral-900 mb-1">No rankings yet</h3>
-          <p className="text-sm text-neutral-500">Creator Scores are being calculated. Check back soon.</p>
+          <p className="text-sm text-neutral-500">Creator Ratings are being calculated. Check back soon.</p>
         </div>
       ) : (
         <div className="space-y-2">
@@ -144,8 +144,8 @@ export function LeaderboardContent() {
           <div className="hidden sm:grid grid-cols-[3rem_1fr_5rem_5rem_5rem_4rem] gap-4 px-4 py-2 text-[10px] font-bold text-neutral-400 uppercase tracking-wider">
             <div>#</div>
             <div>Creator</div>
-            <div className="text-center">Score</div>
             <div className="text-center">Rating</div>
+            <div className="text-center">Reviews</div>
             <div className="text-center">Followers</div>
             <div className="text-center">Projects</div>
           </div>
@@ -161,8 +161,8 @@ export function LeaderboardContent() {
                   onClick={() => setExpandedId(isExpanded ? null : creator.id)}
                   className={`group grid grid-cols-[3rem_1fr_auto] sm:grid-cols-[3rem_1fr_5rem_5rem_5rem_4rem] gap-4 items-center px-4 py-3 rounded-xl transition-all cursor-pointer ${
                     creator.rank <= 3
-                      ? "bg-gradient-to-r from-amber-50/50 to-transparent border border-amber-100 hover:border-amber-200"
-                      : "bg-white border border-neutral-100 hover:border-neutral-200 hover:shadow-sm"
+                      ? "bg-gradient-to-r from-amber-50/50 to-transparent border border-amber-100 hover:border-amber-200 hover:shadow-md hover:shadow-blue-500/5"
+                      : "bg-white border border-neutral-100 hover:border-neutral-200 hover:shadow-md hover:shadow-blue-500/10"
                   }`}
                 >
                   {/* Rank */}
@@ -210,12 +210,12 @@ export function LeaderboardContent() {
                     </div>
                   </div>
 
-                  {/* Score - always visible */}
+                  {/* Rating - always visible */}
                   <div className="flex justify-center sm:justify-center">
                     <CreatorScoreBadge score={creator.score} size="sm" />
                   </div>
 
-                  {/* Rating - desktop only */}
+                  {/* Reviews - desktop only */}
                   <div className="hidden sm:flex items-center justify-center gap-1">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" className="text-amber-400">
                       <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
@@ -235,11 +235,11 @@ export function LeaderboardContent() {
                   </div>
                 </div>
 
-                {/* Expanded score breakdown */}
+                {/* Expanded rating breakdown */}
                 {isExpanded && (
                   <div className="mx-4 mt-1 mb-2 p-4 bg-neutral-50 rounded-xl border border-neutral-100 animate-in fade-in slide-in-from-top-1 duration-200">
                     <div className="flex items-center gap-3 mb-3">
-                      <h4 className="text-xs font-bold text-neutral-700 uppercase tracking-wider">Score Breakdown</h4>
+                      <h4 className="text-xs font-bold text-neutral-700 uppercase tracking-wider">Rating Breakdown</h4>
                       <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: tier.color }}>{tier.label}</span>
                     </div>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-2">
@@ -260,9 +260,9 @@ export function LeaderboardContent() {
         </div>
       )}
 
-      {/* How scoring works */}
-      <div className="mt-12 p-6 bg-neutral-50 rounded-2xl border border-neutral-200">
-        <h3 className="font-display text-lg font-bold text-neutral-900 mb-3">How Creator Score Works</h3>
+      {/* How ratings work */}
+      <div className="mt-12 p-8 bg-blue-50 rounded-3xl border border-blue-100 shadow-md shadow-blue-500/5">
+        <h3 style={{ fontFamily: "var(--font-serif)" }} className="text-xl font-bold text-neutral-900 mb-4">How Ratings Work</h3>
         <div className="grid sm:grid-cols-3 gap-4 text-sm">
           <div>
             <div className="font-semibold text-neutral-900 mb-1">Profile Quality (20pts)</div>

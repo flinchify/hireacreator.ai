@@ -133,7 +133,7 @@ export function PricingContent() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="text-center mb-10">
-            <h1 className="font-display text-3xl sm:text-5xl font-bold text-neutral-900 tracking-tight mb-4">
+            <h1 style={{ fontFamily: "var(--font-serif)" }} className="text-4xl sm:text-6xl font-bold text-neutral-900 tracking-tight mb-4">
               Simple, transparent pricing
             </h1>
             <p className="text-base sm:text-lg text-neutral-500 max-w-2xl mx-auto">
@@ -223,14 +223,14 @@ export function PricingContent() {
                   </ul>
                   <button
                     onClick={() => openSignup("creator")}
-                    className="w-full py-3 text-sm font-medium rounded-full border border-neutral-300 text-neutral-700 hover:bg-neutral-50 active:scale-[0.98] transition-all"
+                    className="w-full py-3 text-sm font-medium rounded-lg border border-neutral-300 text-neutral-700 hover:bg-neutral-50 active:scale-[0.98] transition-all"
                   >
                     Get Started Free
                   </button>
                 </div>
 
                 {/* Creator Pro */}
-                <div className="aos-stagger-item border-2 border-neutral-900 rounded-2xl p-8 relative flex flex-col">
+                <div className="aos-stagger-item relative rounded-2xl p-8 flex flex-col bg-gradient-to-r from-blue-50 via-white to-blue-50 border-2 border-blue-200">
                   <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 bg-neutral-900 text-white text-xs font-medium rounded-full">
                     Popular
                   </div>
@@ -280,7 +280,7 @@ export function PricingContent() {
                   )}
                   <button
                     onClick={() => handleCheckout("creator_pro")}
-                    className="w-full py-3 text-sm font-medium rounded-full bg-neutral-900 text-white hover:bg-neutral-800 active:scale-[0.98] transition-all"
+                    className="w-full py-3 text-sm font-medium rounded-lg bg-neutral-900 text-white hover:bg-neutral-800 active:scale-[0.98] transition-all"
                   >
                     Upgrade to Pro
                   </button>
@@ -332,7 +332,7 @@ export function PricingContent() {
                   )}
                   <button
                     onClick={() => handleCheckout("creator_biz")}
-                    className="w-full py-3 text-sm font-medium rounded-full border border-neutral-300 text-neutral-700 hover:bg-neutral-50 active:scale-[0.98] transition-all"
+                    className="w-full py-3 text-sm font-medium rounded-lg border border-neutral-300 text-neutral-700 hover:bg-neutral-50 active:scale-[0.98] transition-all"
                   >
                     Upgrade to Business
                   </button>
@@ -341,7 +341,7 @@ export function PricingContent() {
 
               {/* Creator Feature Comparison Table */}
               <AnimateOnScroll className="mt-16">
-                <h2 className="font-display text-2xl font-bold text-neutral-900 text-center mb-8">
+                <h2 style={{ fontFamily: "var(--font-serif)" }} className="text-2xl font-bold text-neutral-900 text-center mb-8">
                   Compare Creator plans
                 </h2>
                 <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
@@ -432,7 +432,7 @@ export function PricingContent() {
                   )}
                   <button
                     onClick={() => handleCheckout("brand_analytics")}
-                    className="w-full py-3 text-sm font-medium rounded-full bg-neutral-900 text-white hover:bg-neutral-800 active:scale-[0.98] transition-all"
+                    className="w-full py-3 text-sm font-medium rounded-lg bg-neutral-900 text-white hover:bg-neutral-800 active:scale-[0.98] transition-all"
                   >
                     Get Started
                   </button>
@@ -477,7 +477,7 @@ export function PricingContent() {
                   </ul>
                   <a
                     href="mailto:hello@hireacreator.ai"
-                    className="block w-full py-3 text-sm font-medium rounded-full border border-neutral-300 text-neutral-700 hover:bg-neutral-50 active:scale-[0.98] transition-colors text-center"
+                    className="block w-full py-3 text-sm font-medium rounded-lg border border-neutral-300 text-neutral-700 hover:bg-neutral-50 active:scale-[0.98] transition-colors text-center"
                   >
                     Contact Sales
                   </a>
@@ -486,7 +486,7 @@ export function PricingContent() {
 
               {/* Brand Feature Comparison Table */}
               <AnimateOnScroll className="mt-16">
-                <h2 className="font-display text-2xl font-bold text-neutral-900 text-center mb-8">
+                <h2 style={{ fontFamily: "var(--font-serif)" }} className="text-2xl font-bold text-neutral-900 text-center mb-8">
                   Compare Brand plans
                 </h2>
                 <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
@@ -566,7 +566,7 @@ export function PricingContent() {
                 )}
                 <button
                   onClick={() => handleCheckout("api_pro")}
-                  className="w-full py-3 text-sm font-medium rounded-full bg-neutral-900 text-white hover:bg-neutral-800 active:scale-[0.98] transition-all"
+                  className="w-full py-3 text-sm font-medium rounded-lg bg-neutral-900 text-white hover:bg-neutral-800 active:scale-[0.98] transition-all"
                 >
                   Get API Access
                 </button>
@@ -576,8 +576,8 @@ export function PricingContent() {
 
           {/* Add-ons */}
           <AnimateOnScroll className="mt-16">
-            <div className="max-w-3xl mx-auto">
-              <h2 className="font-display text-2xl font-bold text-neutral-900 text-center mb-8">
+            <div className="max-w-3xl mx-auto bg-gradient-to-br from-blue-50/30 via-white to-purple-50/20 rounded-3xl p-8">
+              <h2 style={{ fontFamily: "var(--font-serif)" }} className="text-2xl font-bold text-neutral-900 text-center mb-8">
                 Add-ons
               </h2>
               <div className="grid sm:grid-cols-2 gap-6">
@@ -590,7 +590,7 @@ export function PricingContent() {
                   <div className="font-display text-2xl font-bold text-neutral-900 mb-4">$10<span className="text-base font-normal text-neutral-500">/week</span></div>
                   <button
                     onClick={() => handleCheckout("boosted")}
-                    className="px-6 py-2.5 text-sm font-medium rounded-full bg-neutral-900 text-white hover:bg-neutral-800 active:scale-[0.98] transition-all"
+                    className="px-6 py-2.5 text-sm font-medium rounded-lg bg-neutral-900 text-white hover:bg-neutral-800 active:scale-[0.98] transition-all"
                   >
                     Boost Your Profile
                   </button>
@@ -605,7 +605,7 @@ export function PricingContent() {
                   <div className="font-display text-2xl font-bold text-neutral-900 mb-4">$4.99<span className="text-base font-normal text-neutral-500"> each</span></div>
                   <a
                     href="/animations"
-                    className="inline-block px-6 py-2.5 text-sm font-medium rounded-full border border-neutral-300 text-neutral-700 hover:bg-neutral-100 active:scale-[0.98] transition-colors"
+                    className="inline-block px-6 py-2.5 text-sm font-medium rounded-lg border border-neutral-300 text-neutral-700 hover:bg-neutral-100 active:scale-[0.98] transition-colors"
                   >
                     Browse Animations
                   </a>
@@ -617,7 +617,7 @@ export function PricingContent() {
           {/* FAQ */}
           <AnimateOnScroll className="mt-20">
             <div className="max-w-2xl mx-auto">
-              <h2 className="font-display text-2xl font-bold text-neutral-900 text-center mb-10">
+              <h2 style={{ fontFamily: "var(--font-serif)" }} className="text-2xl font-bold text-neutral-900 text-center mb-10">
                 Frequently asked questions
               </h2>
               <div className="space-y-0">
