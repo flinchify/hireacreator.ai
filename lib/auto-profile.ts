@@ -30,14 +30,55 @@ export async function generateAutoProfile(
 
   if (existing.length > 0) {
     const row = existing[0];
+    const cachedFollowers = (row.follower_count as number) || 0;
+    const cachedAvatar = row.avatar_url as string | null;
+
+    // If cached data is stale (0 followers or no avatar), re-fetch from platform
+    if (cachedFollowers === 0 || !cachedAvatar) {
+      const freshProfile = await fetchSocialProfile(platform, cleanHandle);
+      if (freshProfile && (freshProfile.followerCount > 0 || freshProfile.avatarUrl)) {
+        // Update the DB with fresh data
+        await db`
+          UPDATE claimed_profiles SET
+            follower_count = ${freshProfile.followerCount},
+            avatar_url = ${freshProfile.avatarUrl},
+            bio = ${freshProfile.bio || row.bio},
+            display_name = ${freshProfile.displayName || row.display_name},
+            following_count = ${freshProfile.followingCount},
+            post_count = ${freshProfile.postCount},
+            niche = ${freshProfile.category || row.niche},
+            updated_at = NOW()
+          WHERE id = ${row.id}
+        `.catch(() => {});
+
+        const score = calculateCreatorScore(freshProfile);
+        await db`
+          UPDATE claimed_profiles SET
+            creator_score = ${score.score},
+            score_breakdown = ${JSON.stringify(score.breakdown)},
+            estimated_post_value = ${score.estimatedPostValue}
+          WHERE id = ${row.id}
+        `.catch(() => {});
+
+        return {
+          profile: freshProfile,
+          score,
+          slug: row.auto_profile_slug as string,
+          profileUrl: `https://hireacreator.ai/u/${row.auto_profile_slug}`,
+          isExisting: true,
+          isClaimed: !!row.claimed_by,
+        };
+      }
+    }
+
     return {
       profile: {
         platform,
         handle: cleanHandle,
         displayName: (row.display_name as string) || cleanHandle,
-        avatarUrl: row.avatar_url as string | null,
+        avatarUrl: cachedAvatar,
         bio: row.bio as string | null,
-        followerCount: (row.follower_count as number) || 0,
+        followerCount: cachedFollowers,
         followingCount: (row.following_count as number) || 0,
         postCount: (row.post_count as number) || 0,
         isVerified: false,
