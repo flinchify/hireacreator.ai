@@ -89,7 +89,7 @@ export function ScoreChecker({
       <button
         type="submit"
         disabled={loading || !handle.trim()}
-        className={`min-h-[48px] px-8 rounded-full font-semibold text-sm transition-all whitespace-nowrap ${
+        className={`min-h-[48px] px-8 rounded-xl font-semibold text-sm transition-all whitespace-nowrap ${
           isOnBlue
             ? "bg-white text-blue-600 hover:bg-blue-50 shadow-lg shadow-white/10 disabled:bg-white/20 disabled:text-white/40"
             : "bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 shadow-lg shadow-blue-500/25 disabled:from-neutral-300 disabled:to-neutral-300 disabled:text-neutral-500 disabled:shadow-none"
@@ -98,10 +98,10 @@ export function ScoreChecker({
         {loading ? (
           <span className="flex items-center gap-2">
             <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
-            Scoring...
+            Loading...
           </span>
         ) : (
-          "Get My Score"
+          "Claim My Profile"
         )}
       </button>
     </form>

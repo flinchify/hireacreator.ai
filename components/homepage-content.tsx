@@ -122,12 +122,12 @@ const brandIcons = {
 
 /* ─── FAQ data ─── */
 const faqs = [
-  { q: "How does HireACreator work?", a: "Tag @hireacreator on any social platform (or enter your handle on our site). Our AI builds your creator profile, scores your brand-deal potential, and lists you in our marketplace for brands to discover." },
-  { q: "Is it free to use?", a: "Checking your score and claiming your profile is completely free. We take a small percentage only when you complete a paid brand deal through the platform." },
-  { q: "What is a creator score?", a: "A transparent 0-100 rating based on your profile quality, reach, engagement rate, niche demand, and content consistency. Brands use it to find the right creators for their campaigns." },
+  { q: "How does HireACreator work?", a: "Enter your social handle and we instantly build your creator profile. Customize it, go live in our marketplace, and start getting discovered by brands looking for creators like you." },
+  { q: "Is it free?", a: "Completely free to join and build your profile. We only take a small percentage when you complete a paid brand deal through the platform." },
   { q: "How do I get paid?", a: "Through Stripe. Once you complete a brand deal, payment is released from escrow directly to your bank account. No invoicing headaches." },
   { q: "Which platforms are supported?", a: "Instagram, TikTok, YouTube, X (Twitter), LinkedIn, Twitch, Spotify, Pinterest, Facebook, Snapchat, Discord, GitHub, Reddit, and more being added regularly." },
-  { q: "Can I claim a profile someone else tagged?", a: "Only the real account owner can claim a profile. We verify ownership through email or social login to prevent impersonation." },
+  { q: "What do brands see on my profile?", a: "Your content, audience stats, niche, engagement metrics, and a transparency rating. Everything they need to decide if you are the right fit for their campaign." },
+  { q: "Can someone else claim my profile?", a: "No. Only the real account owner can claim a profile. We verify ownership through email or social login to prevent impersonation." },
 ];
 
 export function HomepageContent({ featured, creatorCount }: { featured: Creator[]; creatorCount: number }) {
@@ -183,15 +183,14 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
             className="text-3xl sm:text-5xl lg:text-7xl text-neutral-800 leading-[1.1] mb-6"
             style={{ fontFamily: "var(--font-serif)" }}
           >
-            Find and hire{" "}
+            Your creator career{" "}
             <span className="bg-gradient-to-r from-blue-500 via-sky-500 to-cyan-500 bg-clip-text text-transparent">
-              creators
+              starts here
             </span>
-            , instantly.
           </h1>
 
           <p className="text-neutral-500 text-base sm:text-lg max-w-xl mx-auto">
-            Tag us on Instagram. We build your profile, score your potential, and connect you with brand deals.
+            Claim your free profile, get discovered by brands, and land your first deal — all in minutes.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center mt-10">
@@ -200,21 +199,21 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
               className="inline-flex items-center justify-center bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg px-8 py-3.5 font-semibold shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30 hover:scale-[1.02] transition-all min-h-[48px] text-sm"
               style={{ fontFamily: "var(--font-display)" }}
             >
-              Get Your Score
+              Claim Your Profile
             </a>
             <a
               href="/for-brands"
               className="inline-flex items-center justify-center bg-white/80 backdrop-blur-sm border border-neutral-200 text-neutral-700 rounded-lg px-8 py-3.5 font-medium hover:bg-white hover:border-neutral-300 transition-all min-h-[48px] text-sm"
               style={{ fontFamily: "var(--font-display)" }}
             >
-              For Brands
+              I'm a Brand
             </a>
           </div>
 
           <div className="mt-10 flex justify-center">
             <ScoreChecker variant="light" />
           </div>
-          <p className="text-xs text-neutral-400 mt-3">No signup required</p>
+          <p className="text-xs text-neutral-400 mt-3">Free forever. Takes 30 seconds.</p>
         </div>
 
         {/* Hero visual: floating creator profile mockups */}
@@ -275,18 +274,18 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
               {[
                 {
                   step: "1",
-                  title: "Tag @hireacreator",
-                  desc: "On Instagram, X, TikTok, or YouTube. Tag us or any creator and we build their profile instantly.",
+                  title: "Claim your profile",
+                  desc: "Enter your social handle. We instantly build your creator profile with your content, stats, and niche.",
                 },
                 {
                   step: "2",
-                  title: "AI scores your profile",
-                  desc: "We analyze your reach, engagement, niche, and content to generate your creator score and estimated brand deal rate.",
+                  title: "Get discovered",
+                  desc: "Your profile goes live in our marketplace. Brands browse by niche, platform, and audience to find you.",
                 },
                 {
                   step: "3",
-                  title: "Get brand deals",
-                  desc: "Claim your profile, appear in our marketplace, and start receiving brand deal offers that match your niche.",
+                  title: "Land brand deals",
+                  desc: "Receive offers directly, negotiate on your terms, and get paid securely through Stripe.",
                 },
               ].map((item) => (
                 <div
@@ -322,7 +321,7 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
           <StaggerChildren className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {[
               { icon: featureIcons.portfolio, title: "AI-Built Portfolio", desc: "We auto-generate a stunning portfolio page from your social profiles." },
-              { icon: featureIcons.score, title: "Creator Score", desc: "A transparent 0-100 score that shows brands exactly what you bring." },
+              { icon: featureIcons.score, title: "Transparency Rating", desc: "A clear rating that shows brands your reach, engagement, and value." },
               { icon: featureIcons.matching, title: "Brand Deal Matching", desc: "Get matched with campaigns that fit your niche and audience." },
               { icon: featureIcons.link, title: "Link-in-Bio", desc: "One link for all your platforms, content, and brand deal rates." },
               { icon: featureIcons.cross, title: "Cross-Platform Profile", desc: "Combine stats from 15+ platforms into one unified creator profile." },
@@ -348,10 +347,10 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
             className="text-2xl sm:text-3xl text-white font-serif"
             style={{ fontFamily: "var(--font-serif)" }}
           >
-            See what you are worth
+            Know your worth
           </h2>
           <p className="text-white/70 text-sm mt-2 max-w-md mx-auto">
-            Every creator gets a transparency score. This is what yours could look like.
+            Every creator profile includes a transparency rating. Brands see exactly what you bring to the table.
           </p>
 
           <div className="flex flex-col items-center gap-8 mt-10">
@@ -374,7 +373,7 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
               href="/claim"
               className="inline-flex items-center gap-2 bg-white text-blue-600 rounded-lg px-6 py-3 font-semibold text-sm hover:bg-blue-50 transition-colors shadow-lg shadow-blue-900/20 mt-8"
             >
-              Check your real score
+              Claim your profile
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
             </a>
           </div>
@@ -396,7 +395,7 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
           <StaggerChildren className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
             {[
               { icon: brandIcons.matched, title: "AI-Matched Creators", desc: "Our algorithm finds creators that fit your brand, niche, and budget." },
-              { icon: brandIcons.verified, title: "Scored & Verified", desc: "Every creator has a transparency score. Know what you are paying for." },
+              { icon: brandIcons.verified, title: "Rated & Verified", desc: "Every creator has a transparency rating. Know exactly what you are paying for." },
               { icon: brandIcons.campaign, title: "Campaign Management", desc: "Post briefs, review applications, and manage deals in one dashboard." },
               { icon: brandIcons.secure, title: "Secure Payments", desc: "Escrow-based payments through Stripe. Pay only when satisfied." },
             ].map((card) => (
@@ -466,7 +465,7 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
             className="text-2xl sm:text-3xl text-white font-serif"
             style={{ fontFamily: "var(--font-serif)" }}
           >
-            Start your creator career today
+            Ready to get discovered?
           </h2>
           <p className="text-neutral-400 text-sm mt-3 max-w-md mx-auto mb-10">
             {creatorCount > 0
