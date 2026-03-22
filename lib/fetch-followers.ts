@@ -19,13 +19,14 @@ export async function fetchFollowerCount(
         return await fetchGitHubFollowers(handle);
       case "twitter":
       case "x":
-        // X API requires paid tier — skip for MVP
-        return null;
+        return await fetchXFollowers(handle);
       case "instagram":
-        // No public API available — skip for MVP
-        return null;
+        return await fetchInstagramFollowers(handle);
+      case "linkedin":
+        return null; // Requires auth
+      case "spotify":
+        return await fetchSpotifyFollowers(handle);
       default:
-        // Kick, Snapchat, LinkedIn, Spotify, Pinterest, Discord, website, etc. — skip for MVP
         return null;
     }
   } catch {
@@ -150,6 +151,131 @@ async function fetchTwitchFollowers(handle: string): Promise<number | null> {
 
   const followData = await followRes.json();
   return typeof followData.total === "number" ? followData.total : null;
+}
+
+/** Instagram — scrape from public profile page */
+async function fetchInstagramFollowers(handle: string): Promise<number | null> {
+  const cleanHandle = handle.startsWith("@") ? handle.slice(1) : handle;
+  const profileUrl = `https://www.instagram.com/${encodeURIComponent(cleanHandle)}/`;
+
+  try {
+    const res = await fetch(profileUrl, {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        Accept: "text/html,application/xhtml+xml",
+        "Accept-Language": "en-US,en;q=0.9",
+      },
+      signal: AbortSignal.timeout(10000),
+      redirect: "follow",
+    });
+    if (!res.ok) return null;
+
+    const html = await res.text();
+
+    // Try meta tag: <meta property="og:description" content="123K Followers, ...">
+    const metaMatch = html.match(
+      /<meta[^>]*property="og:description"[^>]*content="([\d,.]+[KMB]?)\s*Followers/i
+    );
+    if (metaMatch) {
+      return parseAbbreviatedCount(metaMatch[1]);
+    }
+
+    // Try JSON data in page
+    const jsonMatch = html.match(/"edge_followed_by"\s*:\s*\{\s*"count"\s*:\s*(\d+)/);
+    if (jsonMatch) {
+      return parseInt(jsonMatch[1], 10) || null;
+    }
+
+    // Try alternate JSON format
+    const altMatch = html.match(/"follower_count"\s*:\s*(\d+)/);
+    if (altMatch) {
+      return parseInt(altMatch[1], 10) || null;
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+/** X/Twitter — scrape from public profile page or nitter */
+async function fetchXFollowers(handle: string): Promise<number | null> {
+  const cleanHandle = handle.startsWith("@") ? handle.slice(1) : handle;
+
+  // Try scraping X profile page
+  try {
+    const res = await fetch(`https://x.com/${encodeURIComponent(cleanHandle)}`, {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
+        Accept: "text/html",
+      },
+      signal: AbortSignal.timeout(10000),
+      redirect: "follow",
+    });
+    if (!res.ok) return null;
+
+    const html = await res.text();
+
+    // Look for followers count in various formats X embeds in the page
+    const patterns = [
+      /"followers_count"\s*:\s*(\d+)/,
+      /"followersCount"\s*:\s*(\d+)/,
+      /data-testid=".*[Ff]ollowers.*?"[^>]*>([\d,.]+[KMB]?)/,
+      /([\d,.]+[KMB]?)\s*Followers/i,
+    ];
+
+    for (const pattern of patterns) {
+      const match = html.match(pattern);
+      if (match) {
+        const val = parseAbbreviatedCount(match[1]);
+        if (val !== null && val > 0) return val;
+      }
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+/** Spotify — public artist page scraping */
+async function fetchSpotifyFollowers(handle: string): Promise<number | null> {
+  // Handle could be artist ID or URL
+  let artistId = handle;
+  const urlMatch = handle.match(/artist\/([a-zA-Z0-9]+)/);
+  if (urlMatch) artistId = urlMatch[1];
+
+  try {
+    const res = await fetch(`https://open.spotify.com/artist/${encodeURIComponent(artistId)}`, {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        Accept: "text/html",
+      },
+      signal: AbortSignal.timeout(10000),
+    });
+    if (!res.ok) return null;
+
+    const html = await res.text();
+    const match = html.match(/"followers"\s*:\s*\{\s*"total"\s*:\s*(\d+)/);
+    if (match) return parseInt(match[1], 10) || null;
+
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+/** Parse abbreviated counts like "1.2M", "45K", "12,345" */
+function parseAbbreviatedCount(str: string): number | null {
+  if (!str) return null;
+  const cleaned = str.replace(/,/g, "").trim();
+  const multipliers: Record<string, number> = { K: 1000, M: 1000000, B: 1000000000 };
+  const match = cleaned.match(/^([\d.]+)([KMB])?$/i);
+  if (!match) return null;
+  const num = parseFloat(match[1]);
+  const mult = match[2] ? multipliers[match[2].toUpperCase()] || 1 : 1;
+  const result = Math.round(num * mult);
+  return isNaN(result) ? null : result;
 }
 
 /** GitHub public API — no auth needed */
