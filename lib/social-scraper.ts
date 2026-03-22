@@ -134,12 +134,13 @@ async function fetchInstagramProfile(
     try {
       // Use Business Discovery to look up ANY public business/creator account
       const fields = "username,name,biography,followers_count,follows_count,media_count,profile_picture_url,website";
-      const searchRes = await fetch(
-        `https://graph.instagram.com/v21.0/${igAccountId}?fields=business_discovery.fields(${fields}){username=${encodeURIComponent(clean)}}&access_token=${igToken}`,
-        { signal: AbortSignal.timeout(8000) }
-      );
+      const bdUrl = `https://graph.facebook.com/v21.0/${igAccountId}?fields=business_discovery.fields(${fields}){username%3D${encodeURIComponent(clean)}}&access_token=${igToken}`;
+      console.log(`[IG Scraper] Trying Business Discovery for @${clean}`);
+      const searchRes = await fetch(bdUrl, { signal: AbortSignal.timeout(8000) });
+      const searchText = await searchRes.text();
+      console.log(`[IG Scraper] Business Discovery status: ${searchRes.status}, body: ${searchText.substring(0, 300)}`);
       if (searchRes.ok) {
-        const data = await searchRes.json();
+        const data = JSON.parse(searchText);
         const user = data?.business_discovery;
         if (user) {
           const bio = user.biography || null;
@@ -221,6 +222,7 @@ async function fetchInstagramProfile(
 
   // Fallback 2: scrape public Instagram profile page (works for ALL accounts including personal)
   try {
+    console.log(`[IG Scraper] Trying public page scrape for @${clean}`);
     const res = await fetch(`https://www.instagram.com/${encodeURIComponent(clean)}/`, {
       headers: {
         "User-Agent": "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
@@ -229,8 +231,10 @@ async function fetchInstagramProfile(
       signal: AbortSignal.timeout(10000),
       redirect: "follow",
     });
+    console.log(`[IG Scraper] Public page status: ${res.status}`);
     if (!res.ok) return null;
     const html = await res.text();
+    console.log(`[IG Scraper] HTML length: ${html.length}, has og:description: ${html.includes('og:description')}, has Followers: ${html.includes('Followers')}`);
 
     // Extract follower count from og:description: "600 Followers, 400 Following, 50 Posts"
     let followerCount = 0;
