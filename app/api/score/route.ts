@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateAutoProfile } from "@/lib/auto-profile";
 
+export const maxDuration = 30; // Allow up to 30 seconds for scraping
+
 // Simple in-memory rate limiter
 const rateMap = new Map<string, number[]>();
 
