@@ -15,7 +15,7 @@ function Step({ number, title, description, commands }: { number: string; title:
   return (
     <div className="border border-neutral-200 rounded-2xl p-8 hover:shadow-lg transition-shadow">
       <div className="flex items-start gap-5">
-        <div className="w-12 h-12 rounded-full bg-neutral-900 text-white flex items-center justify-center text-lg font-bold flex-shrink-0">
+        <div className="w-12 h-12 rounded-full bg-blue-500 text-white flex items-center justify-center text-lg font-bold flex-shrink-0">
           {number}
         </div>
         <div className="flex-1">
@@ -43,9 +43,10 @@ export default function HowItWorksPage() {
       <Header />
 
       {/* Hero */}
-      <section className="pt-32 pb-16 px-6">
-        <div className="max-w-3xl mx-auto text-center">
-          <h1 className="text-4xl sm:text-5xl font-bold text-neutral-900 mb-6" style={{ fontFamily: "var(--font-outfit)" }}>
+      <section className="pt-32 pb-16 px-6 bg-gradient-to-br from-blue-50 via-white to-blue-50/30 relative">
+        <div className="absolute inset-0 opacity-[0.02] bg-[radial-gradient(circle_at_1px_1px,rgb(0,0,0)_1px,transparent_0)] bg-[length:32px_32px]"></div>
+        <div className="max-w-3xl mx-auto text-center relative">
+          <h1 className="text-4xl sm:text-5xl font-bold text-neutral-900 mb-6" style={{ fontFamily: "var(--font-serif)" }}>
             How HireACreator Works
           </h1>
           <p className="text-lg text-neutral-600 max-w-2xl mx-auto leading-relaxed">
@@ -57,7 +58,7 @@ export default function HowItWorksPage() {
       {/* For Creators */}
       <section className="pb-24 px-6">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-2xl font-bold text-neutral-900 mb-8" style={{ fontFamily: "var(--font-outfit)" }}>
+          <h2 className="text-2xl font-bold text-neutral-900 mb-8" style={{ fontFamily: "var(--font-serif)" }}>
             For Creators
           </h2>
 
@@ -67,8 +68,8 @@ export default function HowItWorksPage() {
               title="Tag @hireacreator on Instagram or X"
               description="Post a story, comment, or tweet and tag @hireacreator. You can also tag another creator you think deserves brand deals. Our bot detects the tag within seconds."
               commands={[
-                { cmd: "@hireacreator", result: "We score you and build your profile automatically" },
-                { cmd: "@hireacreator @jessicafitness", result: "We score and build a profile for @jessicafitness" },
+                { cmd: "@hireacreator", result: "We rate you and build your profile automatically" },
+                { cmd: "@hireacreator @jessicafitness", result: "We rate and build a profile for @jessicafitness" },
               ]}
             />
 
@@ -80,8 +81,8 @@ export default function HowItWorksPage() {
 
             <Step
               number="3"
-              title="Get your creator score"
-              description="We rate you 0-100 based on your profile quality, reach, engagement, niche demand, content consistency, and platform. We also estimate what your posts are worth to brands. This score is visible to every brand on the platform."
+              title="Get your creator rating"
+              description="We rate you 0-100 based on your profile quality, reach, engagement, niche demand, content consistency, and platform. We also estimate what your posts are worth to brands. This rating is visible to every brand on the platform."
             />
 
             <Step
@@ -93,16 +94,16 @@ export default function HowItWorksPage() {
             <Step
               number="5"
               title="Get matched with brand deals"
-              description="Once claimed, your profile is live in the marketplace. Brands post campaigns and our AI matches you based on your niche, score, and audience size. Apply to campaigns, negotiate rates, and get paid through the platform."
+              description="Once claimed, your profile is live in the marketplace. Brands post campaigns and our AI matches you based on your niche, rating, and audience size. Apply to campaigns, negotiate rates, and get paid through the platform."
             />
           </div>
         </div>
       </section>
 
       {/* Bot Commands */}
-      <section className="py-24 px-6 bg-neutral-50">
+      <section className="py-24 px-6 bg-blue-50">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-2xl font-bold text-neutral-900 mb-4" style={{ fontFamily: "var(--font-outfit)" }}>
+          <h2 className="text-2xl font-bold text-neutral-900 mb-4" style={{ fontFamily: "var(--font-serif)" }}>
             Bot Commands
           </h2>
           <p className="text-neutral-600 mb-8">
@@ -113,12 +114,12 @@ export default function HowItWorksPage() {
             {[
               {
                 command: "@hireacreator",
-                description: "Score yourself. We analyze your profile and reply with your score and a link to your page.",
+                description: "Rate yourself. We analyze your profile and reply with your rating and a link to your page.",
                 example: "Just tag us in any post, story, or tweet.",
               },
               {
                 command: "@hireacreator @username",
-                description: "Score another creator. We build their profile and reply with their score.",
+                description: "Rate another creator. We build their profile and reply with their rating.",
                 example: "Tag us alongside any creator you think brands should know about.",
               },
               {
@@ -137,7 +138,7 @@ export default function HowItWorksPage() {
                 example: "Great for nominating creators you think deserve brand deals.",
               },
             ].map((item) => (
-              <div key={item.command} className="bg-white border border-neutral-200 rounded-2xl p-6">
+              <div key={item.command} className="bg-white border border-blue-100 rounded-2xl p-6">
                 <div className="font-mono text-sm font-semibold text-neutral-900 bg-neutral-50 inline-block px-3 py-1 rounded-lg mb-3">
                   {item.command}
                 </div>
@@ -152,15 +153,15 @@ export default function HowItWorksPage() {
       {/* For Brands */}
       <section className="py-24 px-6">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-2xl font-bold text-neutral-900 mb-8" style={{ fontFamily: "var(--font-outfit)" }}>
+          <h2 className="text-2xl font-bold text-neutral-900 mb-8" style={{ fontFamily: "var(--font-serif)" }}>
             For Brands
           </h2>
 
           <div className="space-y-6">
             <Step
               number="1"
-              title="Browse scored creators"
-              description="Every creator on the platform has a transparency score, verified social accounts, and estimated rates. Filter by niche, platform, follower range, and score to find the right fit."
+              title="Browse rated creators"
+              description="Every creator on the platform has a transparency rating, verified social accounts, and estimated rates. Filter by niche, platform, follower range, and rating to find the right fit."
             />
             <Step
               number="2"
@@ -170,7 +171,7 @@ export default function HowItWorksPage() {
             <Step
               number="3"
               title="Review applications and hire"
-              description="Creators apply to your campaign with a pitch. Review their profiles, scores, and portfolio. Accept the ones you want to work with."
+              description="Creators apply to your campaign with a pitch. Review their profiles, ratings, and portfolio. Accept the ones you want to work with."
             />
             <Step
               number="4"
@@ -181,14 +182,14 @@ export default function HowItWorksPage() {
         </div>
       </section>
 
-      {/* Scoring Breakdown */}
-      <section className="py-24 px-6 bg-neutral-50">
+      {/* Rating Breakdown */}
+      <section className="py-24 px-6 bg-blue-50">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-2xl font-bold text-neutral-900 mb-4" style={{ fontFamily: "var(--font-outfit)" }}>
-            How We Score Creators
+          <h2 className="text-2xl font-bold text-neutral-900 mb-4" style={{ fontFamily: "var(--font-serif)" }}>
+            How We Rate Creators
           </h2>
           <p className="text-neutral-600 mb-8">
-            Every creator gets a score from 0 to 100 based on six factors. This score helps brands find the right creators and helps creators understand their market value.
+            Every creator gets a rating from 0 to 100 based on six factors. This rating helps brands find the right creators and helps creators understand their market value.
           </p>
 
           <div className="grid sm:grid-cols-2 gap-4">
@@ -215,20 +216,20 @@ export default function HowItWorksPage() {
       {/* FAQ */}
       <section className="py-24 px-6">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-2xl font-bold text-neutral-900 mb-8" style={{ fontFamily: "var(--font-outfit)" }}>
+          <h2 className="text-2xl font-bold text-neutral-900 mb-8" style={{ fontFamily: "var(--font-serif)" }}>
             Questions
           </h2>
           <div className="space-y-4">
             {[
-              { q: "Is it really free?", a: "Checking your score and claiming your profile costs nothing. We take a small percentage of brand deals completed through the platform. Creators keep the rest." },
+              { q: "Is it really free?", a: "Checking your rating and claiming your profile costs nothing. We take a small percentage of brand deals completed through the platform. Creators keep the rest." },
               { q: "What data do you collect?", a: "Only publicly available profile information — your name, bio, avatar, follower count, and linked accounts. We never access private messages, stories, or analytics." },
               { q: "Can someone else claim my profile?", a: "No. We verify ownership through email or social login before allowing a claim. Only the real account owner can claim and customize their profile." },
-              { q: "What if my score is low?", a: "Your score updates as your profile grows. Improve it by completing your bio, posting consistently, and growing your audience. The score is transparent — you can see exactly which areas to improve." },
+              { q: "What if my rating is low?", a: "Your rating updates as your profile grows. Improve it by completing your bio, posting consistently, and growing your audience. The rating is transparent — you can see exactly which areas to improve." },
               { q: "Which platforms are supported?", a: "Instagram, TikTok, X (Twitter), and YouTube. We detect cross-linked accounts automatically — one profile shows all your platforms." },
-              { q: "How fast does the bot respond?", a: "Within seconds of detecting a tag. The reply appears as a public comment so everyone in the thread can see your score and profile link." },
-              { q: "Do I need to tag you to use the platform?", a: "No. You can also go directly to hireacreator.ai/claim and enter your handle to get scored and claim your profile without tagging." },
+              { q: "How fast does the bot respond?", a: "Within seconds of detecting a tag. The reply appears as a public comment so everyone in the thread can see your rating and profile link." },
+              { q: "Do I need to tag you to use the platform?", a: "No. You can also go directly to hireacreator.ai/claim and enter your handle to get rated and claim your profile without tagging." },
             ].map((faq) => (
-              <details key={faq.q} className="group border border-neutral-200 rounded-xl">
+              <details key={faq.q} className="group border border-neutral-100 rounded-xl">
                 <summary className="px-6 py-4 cursor-pointer font-medium text-neutral-900 flex justify-between items-center hover:bg-neutral-50 rounded-xl transition-colors">
                   {faq.q}
                   <svg className="w-5 h-5 text-neutral-400 group-open:rotate-180 transition-transform flex-shrink-0" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd"/></svg>
@@ -241,19 +242,19 @@ export default function HowItWorksPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-24 px-6 bg-neutral-900">
+      <section className="py-24 px-6 bg-gradient-to-r from-blue-600 to-blue-700">
         <div className="max-w-2xl mx-auto text-center">
-          <h2 className="text-3xl font-bold text-white mb-4" style={{ fontFamily: "var(--font-outfit)" }}>
+          <h2 className="text-3xl font-bold text-white mb-4" style={{ fontFamily: "var(--font-serif)" }}>
             Ready to get started?
           </h2>
-          <p className="text-neutral-400 mb-8">
-            Tag @hireacreator on Instagram or X. Or check your score right now.
+          <p className="text-blue-100 mb-8">
+            Tag @hireacreator on Instagram or X. Or check your rating right now.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="/claim" className="px-8 py-3 bg-white text-neutral-900 rounded-xl font-semibold text-sm hover:bg-neutral-100 transition-colors">
-              Check Your Score
+            <a href="/claim" className="px-8 py-3 bg-white text-neutral-900 rounded-lg font-semibold text-sm hover:bg-neutral-100 transition-colors">
+              Check Your Rating
             </a>
-            <a href="/campaigns" className="px-8 py-3 border border-white/20 text-white rounded-xl font-semibold text-sm hover:bg-white/10 transition-colors">
+            <a href="/campaigns" className="px-8 py-3 border border-white/20 text-white rounded-lg font-semibold text-sm hover:bg-white/10 transition-colors">
               Browse Campaigns
             </a>
           </div>

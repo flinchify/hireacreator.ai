@@ -126,19 +126,21 @@ export default function ComparePage({ params }: { params: { slug: string } }) {
   if (!d) return <div className="pt-32 text-center">Not found</div>;
 
   return (
-    <main className="max-w-4xl mx-auto px-4 sm:px-6 pt-32 pb-20">
-      {/* Breadcrumb */}
-      <nav className="mb-6 text-xs text-neutral-400">
-        <Link href="/" className="hover:text-neutral-600">Home</Link>
-        <span className="mx-1.5">/</span>
-        <Link href="/compare" className="hover:text-neutral-600">Compare</Link>
-        <span className="mx-1.5">/</span>
-        <span className="text-neutral-600">vs {d.competitor}</span>
-      </nav>
+    <main className="max-w-4xl mx-auto px-4 sm:px-6 pt-32 pb-20 bg-gradient-to-br from-blue-50 via-white to-blue-50/30 relative min-h-screen">
+      <div className="absolute inset-0 opacity-[0.02] bg-[radial-gradient(circle_at_1px_1px,rgb(0,0,0)_1px,transparent_0)] bg-[length:32px_32px]"></div>
+      <div className="relative">
+        {/* Breadcrumb */}
+        <nav className="mb-6 text-xs text-neutral-400">
+          <Link href="/" className="hover:text-neutral-600">Home</Link>
+          <span className="mx-1.5">/</span>
+          <Link href="/compare" className="hover:text-neutral-600">Compare</Link>
+          <span className="mx-1.5">/</span>
+          <span className="text-neutral-600">vs {d.competitor}</span>
+        </nav>
 
-      <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-neutral-900 tracking-tight leading-tight">
-        {d.heroLine}
-      </h1>
+        <h1 style={{ fontFamily: "var(--font-serif)" }} className="text-3xl sm:text-4xl lg:text-5xl font-bold text-neutral-900 tracking-tight leading-tight">
+          {d.heroLine}
+        </h1>
       <p className="mt-4 text-lg text-neutral-500">{d.subLine}</p>
 
       {/* Comparison table */}
@@ -167,7 +169,7 @@ export default function ComparePage({ params }: { params: { slug: string } }) {
       <div className="mt-16 space-y-12">
         {d.sections.map((s, i) => (
           <section key={i}>
-            <h2 className="font-display text-2xl font-bold text-neutral-900">{s.heading}</h2>
+            <h2 style={{ fontFamily: "var(--font-serif)" }} className="text-2xl font-bold text-neutral-900">{s.heading}</h2>
             <p className="mt-3 text-neutral-600 leading-relaxed">{s.body}</p>
           </section>
         ))}
@@ -175,13 +177,13 @@ export default function ComparePage({ params }: { params: { slug: string } }) {
 
       {/* Verdict */}
       <div className="mt-14 p-6 rounded-2xl bg-neutral-50 border border-neutral-200">
-        <h2 className="font-display text-xl font-bold text-neutral-900 mb-2">The verdict</h2>
+        <h2 style={{ fontFamily: "var(--font-serif)" }} className="text-xl font-bold text-neutral-900 mb-2">The verdict</h2>
         <p className="text-neutral-600 leading-relaxed">{d.verdict}</p>
       </div>
 
       {/* FAQ */}
       <div className="mt-14">
-        <h2 className="font-display text-2xl font-bold text-neutral-900 mb-6">Frequently asked questions</h2>
+        <h2 style={{ fontFamily: "var(--font-serif)" }} className="text-2xl font-bold text-neutral-900 mb-6">Frequently asked questions</h2>
         <div className="space-y-3">
           {d.faq.map((item, i) => (
             <details key={i} className="group p-4 rounded-xl border border-neutral-200 hover:border-neutral-300 transition-colors">
@@ -197,16 +199,17 @@ export default function ComparePage({ params }: { params: { slug: string } }) {
 
       {/* CTA */}
       <div className="mt-14 text-center">
-        <h2 className="font-display text-2xl font-bold text-neutral-900 mb-3">Ready to switch?</h2>
+        <h2 style={{ fontFamily: "var(--font-serif)" }} className="text-2xl font-bold text-neutral-900 mb-3">Ready to switch?</h2>
         <p className="text-neutral-500 mb-6">Join HireACreator for free — no credit card required.</p>
-        <Link href="/" className="inline-block px-8 py-3.5 bg-neutral-900 text-white font-medium rounded-full hover:bg-neutral-800 transition-colors">
+        <Link href="/" className="inline-block px-8 py-3.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-medium rounded-lg hover:from-blue-600 hover:to-blue-700 transition-colors">
           Get Started Free
         </Link>
       </div>
 
-      <p className="text-xs text-neutral-400 text-center max-w-2xl mx-auto mt-12 px-4">
-        Fiverr is a registered trademark of Fiverr International Ltd. Upwork is a registered trademark of Upwork Inc. Linktree is a registered trademark of Linktree Pty Ltd. HireACreator is not affiliated with, endorsed by, or sponsored by any of these companies. Comparisons are based on publicly available information as of March 2026.
-      </p>
+        <p className="text-xs text-neutral-400 text-center max-w-2xl mx-auto mt-12 px-4">
+          Fiverr is a registered trademark of Fiverr International Ltd. Upwork is a registered trademark of Upwork Inc. Linktree is a registered trademark of Linktree Pty Ltd. HireACreator is not affiliated with, endorsed by, or sponsored by any of these companies. Comparisons are based on publicly available information as of March 2026.
+        </p>
+      </div>
 
       {/* Schema */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({

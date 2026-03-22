@@ -14,10 +14,12 @@ const COMPARISONS = [
 
 export default function ComparePage() {
   return (
-    <main className="max-w-3xl mx-auto px-4 sm:px-6 pt-32 pb-20">
-      <h1 className="font-display text-3xl sm:text-4xl font-bold text-neutral-900 tracking-tight">
-        How HireACreator compares
-      </h1>
+    <main className="max-w-3xl mx-auto px-4 sm:px-6 pt-32 pb-20 bg-gradient-to-br from-blue-50 via-white to-blue-50/30 relative min-h-screen">
+      <div className="absolute inset-0 opacity-[0.02] bg-[radial-gradient(circle_at_1px_1px,rgb(0,0,0)_1px,transparent_0)] bg-[length:32px_32px]"></div>
+      <div className="relative">
+        <h1 style={{ fontFamily: "var(--font-serif)" }} className="text-3xl sm:text-4xl font-bold text-neutral-900 tracking-tight">
+          How HireACreator compares
+        </h1>
       <p className="mt-3 text-lg text-neutral-500">
         See why creators and brands are choosing HireACreator over the alternatives.
       </p>
@@ -35,9 +37,10 @@ export default function ComparePage() {
           </Link>
         ))}
       </div>
-      <p className="text-xs text-neutral-400 text-center max-w-2xl mx-auto mt-12 px-4">
-        Fiverr is a registered trademark of Fiverr International Ltd. Upwork is a registered trademark of Upwork Inc. Linktree is a registered trademark of Linktree Pty Ltd. HireACreator is not affiliated with, endorsed by, or sponsored by any of these companies. Comparisons are based on publicly available information as of March 2026.
-      </p>
+        <p className="text-xs text-neutral-400 text-center max-w-2xl mx-auto mt-12 px-4">
+          Fiverr is a registered trademark of Fiverr International Ltd. Upwork is a registered trademark of Upwork Inc. Linktree is a registered trademark of Linktree Pty Ltd. HireACreator is not affiliated with, endorsed by, or sponsored by any of these companies. Comparisons are based on publicly available information as of March 2026.
+        </p>
+      </div>
     </main>
   );
 }

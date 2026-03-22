@@ -15,7 +15,7 @@ const CATEGORY_ICONS: Record<string, string> = {
 
 function CheckIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="text-neutral-900 shrink-0">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="text-blue-500 shrink-0">
       <path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
@@ -38,13 +38,14 @@ export function ForCreatorsContent() {
     <>
       {/* Hero */}
       <section className="relative pt-32 sm:pt-40 pb-20 sm:pb-28 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-neutral-50 to-white" />
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-blue-50/30" />
+        <div className="absolute inset-0 opacity-[0.02] bg-[radial-gradient(circle_at_1px_1px,rgb(0,0,0)_1px,transparent_0)] bg-[length:32px_32px]" />
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-neutral-100 rounded-full text-sm font-medium text-neutral-600 mb-8">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-sm font-medium mb-8">
             For Creators
           </div>
 
-          <h1 className="font-display text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-neutral-900 leading-[1.1]">
+          <h1 style={{ fontFamily: "var(--font-serif)" }} className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-neutral-900 leading-[1.1]">
             Anyone can be a creator
           </h1>
 
@@ -57,12 +58,12 @@ export function ForCreatorsContent() {
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
             <button
               onClick={() => openSignup("creator")}
-              className="px-8 py-3.5 text-base font-medium text-white bg-neutral-900 rounded-full hover:bg-neutral-800 transition-colors shadow-lg shadow-neutral-900/20 w-full sm:w-auto"
+              className="px-8 py-3.5 text-base font-medium text-white bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-colors shadow-md shadow-blue-500/5 w-full sm:w-auto"
             >
               Claim Your Profile
             </button>
             <Link href="/browse">
-              <button className="px-8 py-3.5 text-base font-medium text-neutral-700 bg-transparent rounded-full border border-neutral-300 hover:border-neutral-400 hover:bg-neutral-50 transition-all w-full sm:w-auto">
+              <button className="px-8 py-3.5 text-base font-medium text-neutral-700 bg-white border border-neutral-200 rounded-lg hover:border-neutral-400 hover:bg-neutral-50 transition-all w-full sm:w-auto">
                 See Live Profiles
               </button>
             </Link>
@@ -74,13 +75,13 @@ export function ForCreatorsContent() {
       <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
         <AnimateOnScroll>
           <div className="text-center mb-14">
-            <h2 className="font-display text-3xl font-bold text-neutral-900 mb-4">
+            <h2 style={{ fontFamily: "var(--font-serif)" }} className="text-3xl font-bold text-neutral-900 mb-4">
               Sound familiar?
             </h2>
           </div>
         </AnimateOnScroll>
         <StaggerChildren className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4" staggerMs={150}>
-          <div className="aos-stagger-item bg-neutral-50 rounded-2xl p-8 border border-neutral-100">
+          <div className="aos-stagger-item bg-blue-50 rounded-2xl p-8 border border-blue-100">
             <div className="text-2xl mb-4">&#x1F4AC;</div>
             <h3 className="font-display font-bold text-neutral-900 mb-2">&ldquo;DM me for rates&rdquo;</h3>
             <p className="text-sm text-neutral-500 leading-relaxed">
@@ -88,7 +89,7 @@ export function ForCreatorsContent() {
               were never serious. Your inbox is a mess.
             </p>
           </div>
-          <div className="aos-stagger-item bg-neutral-50 rounded-2xl p-8 border border-neutral-100">
+          <div className="aos-stagger-item bg-blue-50 rounded-2xl p-8 border border-blue-100">
             <div className="text-2xl mb-4">&#x1F4B8;</div>
             <h3 className="font-display font-bold text-neutral-900 mb-2">Platforms take 20%+</h3>
             <p className="text-sm text-neutral-500 leading-relaxed">
@@ -96,7 +97,7 @@ export function ForCreatorsContent() {
               On a $1,000 job, that&apos;s $200 gone.
             </p>
           </div>
-          <div className="aos-stagger-item bg-neutral-50 rounded-2xl p-8 border border-neutral-100">
+          <div className="aos-stagger-item bg-blue-50 rounded-2xl p-8 border border-blue-100">
             <div className="text-2xl mb-4">&#x1F50D;</div>
             <h3 className="font-display font-bold text-neutral-900 mb-2">Brands can&apos;t find you</h3>
             <p className="text-sm text-neutral-500 leading-relaxed">
@@ -111,7 +112,7 @@ export function ForCreatorsContent() {
       <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
         <AnimateOnScroll>
           <div className="text-center mb-14">
-            <h2 className="font-display text-3xl font-bold text-neutral-900 mb-4">
+            <h2 style={{ fontFamily: "var(--font-serif)" }} className="text-3xl font-bold text-neutral-900 mb-4">
               Find your niche
             </h2>
             <p className="text-neutral-500 max-w-xl mx-auto">
@@ -124,7 +125,7 @@ export function ForCreatorsContent() {
             const creators = topByCategory[cat] || [];
             return (
               <Link key={cat} href={`/browse?category=${encodeURIComponent(cat)}`}>
-                <div className="bg-white rounded-2xl border border-neutral-200 p-5 hover:border-neutral-300 hover:shadow-sm transition-all duration-200 group cursor-pointer h-full">
+                <div className="bg-white rounded-2xl border border-neutral-200 p-5 hover:border-neutral-300 shadow-md shadow-blue-500/5 transition-all duration-200 group cursor-pointer h-full">
                   <div className="text-2xl mb-3">{CATEGORY_ICONS[cat] || "🎯"}</div>
                   <h3 className="font-display font-bold text-neutral-900 text-sm mb-2 group-hover:text-neutral-700">{cat}</h3>
                   {creators.length > 0 ? (
@@ -155,7 +156,7 @@ export function ForCreatorsContent() {
       <AnimateOnScroll as="section" className="bg-neutral-950 text-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
           <div className="max-w-2xl mb-14">
-            <h2 className="font-display text-3xl sm:text-4xl font-bold leading-tight mb-4">
+            <h2 style={{ fontFamily: "var(--font-serif)" }} className="text-3xl sm:text-4xl font-bold leading-tight mb-4">
               Everything you need. Nothing you don&apos;t.
             </h2>
           </div>
@@ -200,7 +201,7 @@ export function ForCreatorsContent() {
       <AnimateOnScroll as="section" className="bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
           <div className="text-center mb-14">
-            <h2 className="font-display text-3xl font-bold text-neutral-900 mb-4">
+            <h2 style={{ fontFamily: "var(--font-serif)" }} className="text-3xl font-bold text-neutral-900 mb-4">
               Linktree shows links. This books clients.
             </h2>
           </div>
@@ -224,7 +225,7 @@ export function ForCreatorsContent() {
                 ))}
               </ul>
             </div>
-            <div className="border-2 border-neutral-900 rounded-2xl p-8 bg-neutral-50">
+            <div className="border-2 border-blue-500 rounded-2xl p-8 bg-blue-50 shadow-md shadow-blue-500/5">
               <div className="font-display font-bold text-neutral-900 text-lg mb-4">HireACreator</div>
               <ul className="space-y-3">
                 {[
@@ -247,9 +248,9 @@ export function ForCreatorsContent() {
       </AnimateOnScroll>
 
       {/* CTA */}
-      <AnimateOnScroll as="section" className="bg-neutral-50 border-t border-neutral-100">
+      <AnimateOnScroll as="section" className="bg-blue-50 border-t border-blue-100">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center">
-          <h2 className="font-display text-3xl sm:text-4xl font-bold text-neutral-900 mb-4">
+          <h2 style={{ fontFamily: "var(--font-serif)" }} className="text-3xl sm:text-4xl font-bold text-neutral-900 mb-4">
             Ready to get booked?
           </h2>
           <p className="text-neutral-500 text-lg mb-10 max-w-xl mx-auto">
@@ -258,7 +259,7 @@ export function ForCreatorsContent() {
           </p>
           <button
             onClick={() => openSignup("creator")}
-            className="px-8 py-3.5 text-base font-medium text-white bg-neutral-900 rounded-full hover:bg-neutral-800 transition-colors shadow-lg shadow-neutral-900/20"
+            className="px-8 py-3.5 text-base font-medium text-white bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-colors shadow-md shadow-blue-500/5"
           >
             Claim Your Profile
           </button>

@@ -19,18 +19,27 @@ export default function ContactPage() {
   return (
     <div className="min-h-screen bg-white">
       <Header />
-      <main className="max-w-3xl mx-auto px-4 sm:px-6 pt-32 pb-20">
-        <h1 className="font-display text-4xl sm:text-5xl font-bold text-neutral-900 tracking-tight">
-          Get in touch
-        </h1>
-        <p className="mt-4 text-lg text-neutral-600">
-          Have a question, partnership idea, or need support? We'd love to hear from you.
-        </p>
+      
+      {/* Hero */}
+      <section className="relative pt-32 sm:pt-40 pb-16 sm:pb-20 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-blue-50/30" />
+        <div className="absolute inset-0 opacity-[0.02] bg-[radial-gradient(circle_at_1px_1px,rgb(0,0,0)_1px,transparent_0)] bg-[length:32px_32px]" />
+        <div className="relative max-w-3xl mx-auto px-4 sm:px-6 text-center">
+          <h1 style={{ fontFamily: "var(--font-serif)" }} className="text-4xl sm:text-5xl font-bold text-neutral-900 tracking-tight mb-6">
+            Get in touch
+          </h1>
+          <p className="text-lg text-neutral-600">
+            Have a question, partnership idea, or need support? We'd love to hear from you.
+          </p>
+        </div>
+      </section>
+      
+      <main className="max-w-3xl mx-auto px-4 sm:px-6 pb-20">
 
         <div className="mt-12 grid sm:grid-cols-2 gap-6">
           {/* General */}
-          <div className="p-6 rounded-2xl bg-neutral-50 border border-neutral-100">
-            <div className="w-10 h-10 rounded-xl bg-neutral-900 flex items-center justify-center mb-4">
+          <div className="p-6 rounded-2xl bg-blue-50 border border-blue-100 shadow-md shadow-blue-500/5">
+            <div className="w-10 h-10 rounded-xl bg-blue-500 flex items-center justify-center mb-4">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" strokeLinecap="round" strokeLinejoin="round" /><polyline points="22,6 12,13 2,6" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </div>
             <h2 className="font-semibold text-neutral-900">General Support</h2>
@@ -41,8 +50,8 @@ export default function ContactPage() {
           </div>
 
           {/* Brands/Enterprise */}
-          <div className="p-6 rounded-2xl bg-neutral-50 border border-neutral-100">
-            <div className="w-10 h-10 rounded-xl bg-neutral-900 flex items-center justify-center mb-4">
+          <div className="p-6 rounded-2xl bg-blue-50 border border-blue-100 shadow-md shadow-blue-500/5">
+            <div className="w-10 h-10 rounded-xl bg-blue-500 flex items-center justify-center mb-4">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z" strokeLinecap="round" /><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16" strokeLinecap="round" /></svg>
             </div>
             <h2 className="font-semibold text-neutral-900">Brands &amp; Enterprise</h2>
@@ -53,8 +62,8 @@ export default function ContactPage() {
           </div>
 
           {/* Press */}
-          <div className="p-6 rounded-2xl bg-neutral-50 border border-neutral-100">
-            <div className="w-10 h-10 rounded-xl bg-neutral-900 flex items-center justify-center mb-4">
+          <div className="p-6 rounded-2xl bg-blue-50 border border-blue-100 shadow-md shadow-blue-500/5">
+            <div className="w-10 h-10 rounded-xl bg-blue-500 flex items-center justify-center mb-4">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" strokeLinecap="round" /><polyline points="14 2 14 8 20 8" strokeLinecap="round" /></svg>
             </div>
             <h2 className="font-semibold text-neutral-900">Press &amp; Media</h2>
@@ -65,8 +74,8 @@ export default function ContactPage() {
           </div>
 
           {/* Socials */}
-          <div className="p-6 rounded-2xl bg-neutral-50 border border-neutral-100">
-            <div className="w-10 h-10 rounded-xl bg-neutral-900 flex items-center justify-center mb-4">
+          <div className="p-6 rounded-2xl bg-blue-50 border border-blue-100 shadow-md shadow-blue-500/5">
+            <div className="w-10 h-10 rounded-xl bg-blue-500 flex items-center justify-center mb-4">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
             </div>
             <h2 className="font-semibold text-neutral-900">Follow Us</h2>
@@ -86,7 +95,7 @@ export default function ContactPage() {
 
         {/* FAQ quick links */}
         <div className="mt-12">
-          <h2 className="font-display text-xl font-bold text-neutral-900 mb-4">Common questions</h2>
+          <h2 style={{ fontFamily: "var(--font-serif)" }} className="text-xl font-bold text-neutral-900 mb-4">Common questions</h2>
           <div className="space-y-3">
             {[
               { q: "How much does HireACreator cost for creators?", a: "Nothing. Creators pay 0% commission. Brands pay a small service fee on bookings." },

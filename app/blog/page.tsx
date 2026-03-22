@@ -93,9 +93,10 @@ export default function BlogPage() {
   return (
     <div className="min-h-screen bg-white">
       <Header />
-      <section className="pt-40 sm:pt-48 pb-20">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="font-display text-4xl sm:text-5xl font-bold text-neutral-900 tracking-tight mb-4">
+      <section className="pt-40 sm:pt-48 pb-20 bg-gradient-to-br from-blue-50 via-white to-blue-50/30 relative">
+        <div className="absolute inset-0 opacity-[0.02] bg-[radial-gradient(circle_at_1px_1px,rgb(0,0,0)_1px,transparent_0)] bg-[length:32px_32px]"></div>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+          <h1 style={{ fontFamily: "var(--font-serif)" }} className="text-4xl sm:text-5xl font-bold text-neutral-900 tracking-tight mb-4">
             Blog
           </h1>
           <p className="text-lg text-neutral-500 mb-14">

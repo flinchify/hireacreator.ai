@@ -19,18 +19,27 @@ export default function AboutPage() {
   return (
     <div className="min-h-screen bg-white">
       <Header />
-      <main className="max-w-3xl mx-auto px-4 sm:px-6 pt-32 pb-20">
-        <h1 className="font-display text-4xl sm:text-5xl font-bold text-neutral-900 tracking-tight">
-          The creator marketplace that puts creators first
-        </h1>
-        <p className="mt-6 text-lg text-neutral-600 leading-relaxed">
-          HireACreator is a marketplace where brands discover, book, and pay creators directly — and creators keep 100% of what they earn. No commission. No hidden fees. No middlemen taking a cut of your work.
-        </p>
+      
+      {/* Hero */}
+      <section className="relative pt-32 sm:pt-40 pb-16 sm:pb-20 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-blue-50/30" />
+        <div className="absolute inset-0 opacity-[0.02] bg-[radial-gradient(circle_at_1px_1px,rgb(0,0,0)_1px,transparent_0)] bg-[length:32px_32px]" />
+        <div className="relative max-w-3xl mx-auto px-4 sm:px-6 text-center">
+          <h1 style={{ fontFamily: "var(--font-serif)" }} className="text-4xl sm:text-5xl font-bold text-neutral-900 tracking-tight mb-6">
+            The creator marketplace that puts creators first
+          </h1>
+          <p className="text-lg text-neutral-600 leading-relaxed">
+            HireACreator is a marketplace where brands discover, book, and pay creators directly — and creators keep 100% of what they earn. No commission. No hidden fees. No middlemen taking a cut of your work.
+          </p>
+        </div>
+      </section>
+      
+      <main className="max-w-3xl mx-auto px-4 sm:px-6 pb-20">
 
         <div className="mt-16 space-y-14">
           {/* Mission */}
           <section>
-            <h2 className="font-display text-2xl font-bold text-neutral-900">Why we built this</h2>
+            <h2 style={{ fontFamily: "var(--font-serif)" }} className="text-2xl font-bold text-neutral-900">Why we built this</h2>
             <p className="mt-4 text-neutral-600 leading-relaxed">
               Every major creator platform takes a cut. Fiverr takes 20%. Upwork takes 10-20%. Even "creator-friendly" platforms quietly skim 10-15% of every transaction. We thought that was wrong.
             </p>
@@ -41,9 +50,9 @@ export default function AboutPage() {
 
           {/* Who it's for */}
           <section>
-            <h2 className="font-display text-2xl font-bold text-neutral-900">Who it's for</h2>
+            <h2 style={{ fontFamily: "var(--font-serif)" }} className="text-2xl font-bold text-neutral-900">Who it's for</h2>
             <div className="mt-6 grid sm:grid-cols-2 gap-6">
-              <div className="p-5 rounded-2xl bg-neutral-50 border border-neutral-100">
+              <div className="p-5 rounded-2xl bg-blue-50 border border-blue-100 shadow-md shadow-blue-500/5">
                 <h3 className="font-semibold text-neutral-900">For Creators</h3>
                 <ul className="mt-3 space-y-2 text-sm text-neutral-600">
                   <li>UGC creators, videographers, photographers</li>
@@ -52,7 +61,7 @@ export default function AboutPage() {
                   <li>Anyone selling creative services online</li>
                 </ul>
               </div>
-              <div className="p-5 rounded-2xl bg-neutral-50 border border-neutral-100">
+              <div className="p-5 rounded-2xl bg-blue-50 border border-blue-100 shadow-md shadow-blue-500/5">
                 <h3 className="font-semibold text-neutral-900">For Brands</h3>
                 <ul className="mt-3 space-y-2 text-sm text-neutral-600">
                   <li>DTC brands needing UGC content</li>
@@ -66,7 +75,7 @@ export default function AboutPage() {
 
           {/* Built in Australia */}
           <section>
-            <h2 className="font-display text-2xl font-bold text-neutral-900">Built in Australia</h2>
+            <h2 style={{ fontFamily: "var(--font-serif)" }} className="text-2xl font-bold text-neutral-900">Built in Australia</h2>
             <p className="mt-4 text-neutral-600 leading-relaxed">
               HireACreator is an Australian-built platform serving creators and brands globally. We comply with Australian consumer law and ASIC regulations for payment processing.
             </p>
@@ -74,14 +83,14 @@ export default function AboutPage() {
 
           {/* CTA */}
           <section className="pt-4">
-            <div className="p-8 rounded-2xl bg-neutral-900 text-center">
-              <h2 className="font-display text-2xl font-bold text-white">Ready to get started?</h2>
+            <div className="p-8 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 text-center shadow-md shadow-blue-500/5">
+              <h2 style={{ fontFamily: "var(--font-serif)" }} className="text-2xl font-bold text-white">Ready to get started?</h2>
               <p className="mt-2 text-neutral-400">Join HireACreator — it takes less than 60 seconds.</p>
               <div className="mt-6 flex items-center justify-center gap-3">
-                <Link href="/" className="px-6 py-3 bg-white text-neutral-900 font-semibold text-sm rounded-full hover:bg-neutral-100 transition-colors">
+                <Link href="/" className="px-6 py-3 bg-white text-neutral-900 font-semibold text-sm rounded-lg hover:bg-neutral-100 transition-colors">
                   Sign Up Free
                 </Link>
-                <Link href="/contact" className="px-6 py-3 border border-neutral-700 text-white font-semibold text-sm rounded-full hover:border-neutral-500 transition-colors">
+                <Link href="/contact" className="px-6 py-3 border border-white/20 text-white font-semibold text-sm rounded-lg hover:border-white/30 transition-colors">
                   Contact Us
                 </Link>
               </div>

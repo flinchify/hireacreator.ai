@@ -32,17 +32,24 @@ export default async function BrowsePage() {
   return (
     <div className="min-h-screen bg-white">
       <Header />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-10">
-        <div className="mb-8">
-          <h1 className="font-display text-3xl font-bold text-neutral-900">
+      
+      {/* Hero */}
+      <section className="relative pt-32 sm:pt-40 pb-16 sm:pb-20 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-blue-50/30" />
+        <div className="absolute inset-0 opacity-[0.02] bg-[radial-gradient(circle_at_1px_1px,rgb(0,0,0)_1px,transparent_0)] bg-[length:32px_32px]" />
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h1 style={{ fontFamily: "var(--font-serif)" }} className="text-3xl sm:text-5xl font-bold text-neutral-900 mb-6">
             Browse Creators
           </h1>
-          <p className="mt-2 text-neutral-600">
+          <p className="text-lg text-neutral-600 max-w-2xl mx-auto">
             {creators.length > 0
               ? "Discover and book creative talent for your next project."
               : "Creators are joining soon. Check back shortly."}
           </p>
         </div>
+      </section>
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-10">
 
         {!marketplaceOpen ? (
           <BrowseEmptyState />
