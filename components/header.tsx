@@ -136,6 +136,9 @@ export function Header({ theme = "light" }: { theme?: HeaderTheme }) {
           <Link href="/pricing" className={`flex items-center gap-1 px-4 py-2 text-[13px] font-medium transition-all ${t.link}`}>
             Pricing <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="opacity-40"><path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" /></svg>
           </Link>
+          <Link href="/how-it-works" className={`flex items-center gap-1 px-4 py-2 text-[13px] font-medium transition-all ${t.link}`}>
+            How It Works <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="opacity-40"><path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          </Link>
         </div>
 
         <Link href="/" className={`lg:absolute lg:left-1/2 lg:-translate-x-1/2 flex items-center ${t.logo}`}>
@@ -187,6 +190,7 @@ export function Header({ theme = "light" }: { theme?: HeaderTheme }) {
             {!user && <Link href="/for-brands" className={`px-4 py-3 text-sm font-medium rounded-xl min-h-[44px] flex items-center ${t.mobileLink}`} onClick={() => setMobileOpen(false)}>For Brands</Link>}
             <Link href="/leaderboard" className={`px-4 py-3 text-sm font-medium rounded-xl min-h-[44px] flex items-center ${t.mobileLink}`} onClick={() => setMobileOpen(false)}>Leaderboard</Link>
             <Link href="/pricing" className={`px-4 py-3 text-sm font-medium rounded-xl min-h-[44px] flex items-center ${t.mobileLink}`} onClick={() => setMobileOpen(false)}>Pricing</Link>
+            <Link href="/how-it-works" className={`px-4 py-3 text-sm font-medium rounded-xl min-h-[44px] flex items-center ${t.mobileLink}`} onClick={() => setMobileOpen(false)}>How It Works</Link>
             <div className={`border-t my-2 ${t.mobileDivider}`} />
             {user ? (
               <>
