@@ -39,7 +39,7 @@ function UserMenu() {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-2 w-56 bg-white border border-neutral-200 rounded-xl shadow-lg py-1 z-50">
+        <div className="absolute right-0 top-full mt-2 w-56 bg-white border border-neutral-200 rounded-xl shadow-lg py-1 z-[100]">
           <div className="px-4 py-3 border-b border-neutral-100">
             <div className="font-medium text-neutral-900 text-sm truncate">{user.name}</div>
             <div className="text-xs text-neutral-400 truncate">{user.email}</div>
