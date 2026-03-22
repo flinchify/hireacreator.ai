@@ -134,49 +134,86 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
   return (
     <>
       {/* ═══ Section 1: Hero ═══ */}
-      <section className="relative pt-32 sm:pt-40 pb-16 sm:pb-20 px-5 overflow-hidden">
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: "radial-gradient(ellipse 80% 50% at 50% 0%, rgba(219,234,254,0.5) 0%, transparent 70%)",
-          }}
-        />
+      <section className="relative pt-28 sm:pt-36 pb-16 sm:pb-24 px-5 overflow-hidden min-h-[90vh] flex flex-col justify-center">
+        {/* Ocean gradient mesh background */}
+        <div className="absolute inset-0 pointer-events-none" style={{
+          background: `
+            radial-gradient(ellipse 120% 80% at 20% 10%, rgba(56,189,248,0.15) 0%, transparent 50%),
+            radial-gradient(ellipse 100% 60% at 80% 20%, rgba(59,130,246,0.12) 0%, transparent 50%),
+            radial-gradient(ellipse 80% 100% at 50% 80%, rgba(14,165,233,0.08) 0%, transparent 50%),
+            radial-gradient(ellipse 60% 40% at 90% 70%, rgba(99,102,241,0.06) 0%, transparent 50%),
+            linear-gradient(180deg, rgba(240,249,255,0.8) 0%, rgba(255,255,255,1) 100%)
+          `,
+        }} />
+        {/* Subtle animated dots/grid pattern */}
+        <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{
+          backgroundImage: "radial-gradient(circle, #3b82f6 1px, transparent 1px)",
+          backgroundSize: "32px 32px",
+        }} />
 
-        <div className="relative z-10 max-w-3xl mx-auto text-center animate-hero-fade-in">
-          <span className="inline-block bg-blue-50 text-blue-600 rounded-full text-xs font-medium px-3 py-1 mb-6">
-            The creator marketplace
-          </span>
-
+        <div className="relative z-10 max-w-4xl mx-auto text-center animate-hero-fade-in">
           <h1
-            className="text-3xl sm:text-4xl lg:text-6xl text-neutral-800 leading-tight mb-4 font-serif"
+            className="text-3xl sm:text-5xl lg:text-7xl text-neutral-800 leading-[1.1] mb-6"
             style={{ fontFamily: "var(--font-serif)" }}
           >
-            Find and hire creators, instantly.
+            Find and hire{" "}
+            <span className="bg-gradient-to-r from-blue-500 via-sky-500 to-cyan-500 bg-clip-text text-transparent">
+              creators
+            </span>
+            , instantly.
           </h1>
 
-          <p className="text-neutral-500 text-base max-w-lg mx-auto mt-4">
+          <p className="text-neutral-500 text-base sm:text-lg max-w-xl mx-auto">
             Tag us on Instagram. We build your profile, score your potential, and connect you with brand deals.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center mt-8">
             <a
               href="/claim"
-              className="inline-flex items-center justify-center bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-full px-6 py-3 font-semibold shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30 transition-all min-h-[48px]"
+              className="inline-flex items-center justify-center bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-full px-7 py-3.5 font-semibold shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30 hover:scale-[1.02] transition-all min-h-[48px] text-sm"
             >
               Get Your Score
             </a>
             <a
               href="/for-brands"
-              className="inline-flex items-center justify-center bg-white border border-neutral-200 text-neutral-700 rounded-full px-6 py-3 font-medium hover:bg-neutral-50 transition-colors min-h-[48px]"
+              className="inline-flex items-center justify-center bg-white/80 backdrop-blur-sm border border-neutral-200 text-neutral-700 rounded-full px-7 py-3.5 font-medium hover:bg-white hover:border-neutral-300 transition-all min-h-[48px] text-sm"
             >
               For Brands
             </a>
           </div>
 
-          <div className="mt-10 flex justify-center px-0 sm:px-0">
+          <div className="mt-10 flex justify-center">
             <ScoreChecker variant="light" />
           </div>
           <p className="text-xs text-neutral-400 mt-3">No signup required</p>
+        </div>
+
+        {/* Hero visual: floating creator profile mockups */}
+        <div className="relative z-10 mt-12 sm:mt-16 max-w-5xl mx-auto">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+            {[
+              { name: "Add Creator", role: "Your photo here", score: "—", color: "from-blue-100 to-sky-100" },
+              { name: "Add Creator", role: "Your photo here", score: "—", color: "from-cyan-100 to-blue-100" },
+              { name: "Add Creator", role: "Your photo here", score: "—", color: "from-sky-100 to-indigo-100" },
+              { name: "Add Creator", role: "Your photo here", score: "—", color: "from-blue-100 to-cyan-100" },
+            ].map((creator, i) => (
+              <div
+                key={i}
+                className="bg-white/70 backdrop-blur-sm border border-neutral-200/60 rounded-2xl p-4 shadow-md shadow-blue-500/5 hover:-translate-y-1 hover:shadow-lg transition-all duration-300 text-center"
+                style={{ animationDelay: `${i * 150}ms` }}
+              >
+                <div className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br ${creator.color} mx-auto mb-3 flex items-center justify-center`}>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-blue-400">
+                    <circle cx="12" cy="8" r="4" /><path d="M4 21v-1a6 6 0 0112 0v1" strokeLinecap="round" />
+                    <path d="M16 11h6M19 8v6" strokeLinecap="round" />
+                  </svg>
+                </div>
+                <div className="text-xs font-medium text-neutral-400">{creator.name}</div>
+                <div className="text-[10px] text-neutral-300 mt-0.5">{creator.role}</div>
+              </div>
+            ))}
+          </div>
+          <p className="text-center text-xs text-neutral-300 mt-4">Replace with your featured creators</p>
         </div>
       </section>
 
