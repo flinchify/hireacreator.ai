@@ -106,28 +106,34 @@ export function Header() {
           maskComposite: "exclude",
           animation: "header-sweep 6s linear infinite",
         }} />
-        <div className="hidden lg:flex items-center gap-0.5">
+        <div className="hidden lg:flex items-center gap-0">
           {user?.role === "brand" ? (
-            <Link href="/browse" className="px-4 py-2 text-[13px] font-medium transition-colors text-neutral-600 hover:text-neutral-900">
+            <Link href="/browse" className="px-3 py-2 text-[13px] font-medium transition-colors text-neutral-600 hover:text-neutral-900" style={{ fontFamily: "var(--font-display)" }}>
               Explore
             </Link>
           ) : (
-            <Link href="/browse" className="px-4 py-2 text-[13px] font-medium transition-colors text-neutral-600 hover:text-neutral-900">
-              Creators
+            <Link href="/browse" className="px-3 py-2 text-[13px] font-medium transition-colors text-neutral-600 hover:text-neutral-900" style={{ fontFamily: "var(--font-display)" }}>
+              Discover
             </Link>
           )}
+          <span className="text-neutral-300 text-[10px] select-none">/</span>
           {!user && (
-            <Link href="/for-brands" className="px-4 py-2 text-[13px] font-medium transition-colors text-neutral-600 hover:text-neutral-900">
-              For Brands
-            </Link>
+            <>
+              <Link href="/for-brands" className="px-3 py-2 text-[13px] font-medium transition-colors text-neutral-600 hover:text-neutral-900" style={{ fontFamily: "var(--font-display)" }}>
+                Brands
+              </Link>
+              <span className="text-neutral-300 text-[10px] select-none">/</span>
+            </>
           )}
-          <Link href="/leaderboard" className="px-4 py-2 text-[13px] font-medium transition-colors text-neutral-600 hover:text-neutral-900">
-            Leaderboard
+          <Link href="/leaderboard" className="px-3 py-2 text-[13px] font-medium transition-colors text-neutral-600 hover:text-neutral-900" style={{ fontFamily: "var(--font-display)" }}>
+            Rankings
           </Link>
-          <Link href="/pricing" className="px-4 py-2 text-[13px] font-medium transition-colors text-neutral-600 hover:text-neutral-900">
-            Pricing
+          <span className="text-neutral-300 text-[10px] select-none">/</span>
+          <Link href="/pricing" className="px-3 py-2 text-[13px] font-medium transition-colors text-neutral-600 hover:text-neutral-900" style={{ fontFamily: "var(--font-display)" }}>
+            Plans
           </Link>
-          <Link href="/how-it-works" className="px-4 py-2 text-[13px] font-medium transition-colors text-neutral-600 hover:text-neutral-900">
+          <span className="text-neutral-300 text-[10px] select-none">/</span>
+          <Link href="/how-it-works" className="px-3 py-2 text-[13px] font-medium transition-colors text-neutral-600 hover:text-neutral-900" style={{ fontFamily: "var(--font-display)" }}>
             How It Works
           </Link>
         </div>
@@ -141,20 +147,20 @@ export function Header() {
             <div className="w-20 h-8" />
           ) : user ? (
             <>
-              <Link href={user.slug ? `/u/${user.slug}` : "/dashboard"} className="px-4 py-2 text-[13px] font-medium transition-colors text-neutral-600 hover:text-neutral-900">
+              <Link href={user.slug ? `/u/${user.slug}` : "/dashboard"} className="px-3 py-2 text-[13px] font-medium transition-colors text-neutral-600 hover:text-neutral-900" style={{ fontFamily: "var(--font-display)" }}>
                 Link in Bio
               </Link>
-              <Link href="/dashboard" className="px-4 py-2 text-[13px] font-medium transition-colors text-neutral-600 hover:text-neutral-900">
+              <Link href="/dashboard" className="px-3 py-2 text-[13px] font-medium transition-colors text-neutral-600 hover:text-neutral-900" style={{ fontFamily: "var(--font-display)" }}>
                 Dashboard
               </Link>
               <UserMenu />
             </>
           ) : (
             <>
-              <button onClick={openLogin} className="px-4 py-2 text-[13px] font-medium text-neutral-500 hover:text-neutral-900 transition-colors">
-                Log in
+              <button onClick={openLogin} className="px-4 py-2 text-[13px] font-medium text-neutral-500 hover:text-neutral-900 transition-colors" style={{ fontFamily: "var(--font-display)" }}>
+                Sign In
               </button>
-              <button onClick={() => openSignup()} className="px-4 py-1.5 text-[13px] font-semibold rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/30 transition-all active:scale-[0.98]">
+              <button onClick={() => openSignup()} className="px-4 py-1.5 text-[13px] font-semibold rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/30 transition-all active:scale-[0.98]" style={{ fontFamily: "var(--font-display)" }}>
                 Get Started
               </button>
             </>
@@ -172,13 +178,13 @@ export function Header() {
       {/* Mobile menu */}
       {mobileOpen && (
         <div className="lg:hidden mt-2 rounded-2xl border border-neutral-100 p-4 shadow-xl bg-white">
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-1" style={{ fontFamily: "var(--font-display)" }}>
             <Link href="/browse" className="px-4 py-3 text-sm font-medium rounded-xl min-h-[48px] flex items-center text-neutral-800 hover:bg-neutral-50" onClick={() => setMobileOpen(false)}>
-              {user?.role === "brand" ? "Explore" : "Creators"}
+              {user?.role === "brand" ? "Explore" : "Discover"}
             </Link>
-            {!user && <Link href="/for-brands" className="px-4 py-3 text-sm font-medium rounded-xl min-h-[48px] flex items-center text-neutral-800 hover:bg-neutral-50" onClick={() => setMobileOpen(false)}>For Brands</Link>}
-            <Link href="/leaderboard" className="px-4 py-3 text-sm font-medium rounded-xl min-h-[48px] flex items-center text-neutral-800 hover:bg-neutral-50" onClick={() => setMobileOpen(false)}>Leaderboard</Link>
-            <Link href="/pricing" className="px-4 py-3 text-sm font-medium rounded-xl min-h-[48px] flex items-center text-neutral-800 hover:bg-neutral-50" onClick={() => setMobileOpen(false)}>Pricing</Link>
+            {!user && <Link href="/for-brands" className="px-4 py-3 text-sm font-medium rounded-xl min-h-[48px] flex items-center text-neutral-800 hover:bg-neutral-50" onClick={() => setMobileOpen(false)}>Brands</Link>}
+            <Link href="/leaderboard" className="px-4 py-3 text-sm font-medium rounded-xl min-h-[48px] flex items-center text-neutral-800 hover:bg-neutral-50" onClick={() => setMobileOpen(false)}>Rankings</Link>
+            <Link href="/pricing" className="px-4 py-3 text-sm font-medium rounded-xl min-h-[48px] flex items-center text-neutral-800 hover:bg-neutral-50" onClick={() => setMobileOpen(false)}>Plans</Link>
             <Link href="/how-it-works" className="px-4 py-3 text-sm font-medium rounded-xl min-h-[48px] flex items-center text-neutral-800 hover:bg-neutral-50" onClick={() => setMobileOpen(false)}>How It Works</Link>
             <div className="border-t border-neutral-100 my-2" />
             {user ? (
@@ -188,8 +194,8 @@ export function Header() {
               </>
             ) : (
               <>
-                <button onClick={() => { setMobileOpen(false); openLogin(); }} className="px-4 py-3 text-sm font-medium rounded-xl text-left min-h-[48px] flex items-center text-neutral-800 hover:bg-neutral-50">Log in</button>
-                <button onClick={() => { setMobileOpen(false); openSignup(); }} className="px-4 py-3 text-sm font-semibold text-center rounded-full min-h-[48px] flex items-center justify-center active:scale-[0.98] transition-transform bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md shadow-blue-500/20">Get Started</button>
+                <button onClick={() => { setMobileOpen(false); openLogin(); }} className="px-4 py-3 text-sm font-medium rounded-xl text-left min-h-[48px] flex items-center text-neutral-800 hover:bg-neutral-50">Sign In</button>
+                <button onClick={() => { setMobileOpen(false); openSignup(); }} className="px-4 py-3 text-sm font-semibold text-center rounded-lg min-h-[48px] flex items-center justify-center active:scale-[0.98] transition-transform bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md shadow-blue-500/20">Get Started</button>
               </>
             )}
           </div>
