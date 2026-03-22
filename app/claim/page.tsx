@@ -128,10 +128,10 @@ function ClaimPageInner() {
               className="text-3xl sm:text-4xl lg:text-6xl text-neutral-800 leading-tight mb-6 font-serif"
               style={{ fontFamily: "var(--font-serif)" }}
             >
-              Discover what you are worth to brands
+              Claim your creator profile
             </h1>
             <p className="text-base text-neutral-500 max-w-xl mx-auto mb-10">
-              Enter your social handle. We build your creator profile and match you with brand deals — instantly.
+              Enter your social handle. We build your profile, show you what brands will pay, and list you in our marketplace.
             </p>
             <div className="flex justify-center px-0 sm:px-0">
               <ScoreChecker variant="light" onResult={handleResult} />
@@ -157,7 +157,7 @@ function ClaimPageInner() {
           <div className="max-w-lg mx-auto">
             <div className="bg-white border border-neutral-100 rounded-2xl p-8 shadow-md shadow-neutral-900/5">
               <h3 className="font-semibold text-lg text-neutral-800 mb-2">We could not auto-detect your profile</h3>
-              <p className="text-sm text-neutral-500 mb-6">Enter your details manually for an accurate score.</p>
+              <p className="text-sm text-neutral-500 mb-6">Enter your details manually so we can build your profile.</p>
               <form onSubmit={handleManualSubmit} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-neutral-700 mb-1">Follower count</label>
@@ -177,7 +177,7 @@ function ClaimPageInner() {
                   </select>
                 </div>
                 <button type="submit" className="w-full min-h-[48px] bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg font-semibold text-sm hover:from-blue-600 hover:to-blue-700 shadow-lg shadow-blue-500/25 transition-all">
-                  Calculate My Score
+                  Build My Profile
                 </button>
               </form>
             </div>
@@ -261,7 +261,7 @@ function ClaimPageInner() {
                   onClick={copyShareUrl}
                   className="w-full py-3 border border-neutral-200 text-neutral-700 rounded-lg font-medium text-sm hover:bg-neutral-50 transition-colors"
                 >
-                  {copied ? "Link copied!" : "Share Your Score"}
+                  {copied ? "Link copied!" : "Share Your Profile"}
                 </button>
               </div>
             </div>
@@ -281,9 +281,9 @@ function ClaimPageInner() {
             </h2>
             <div className="grid md:grid-cols-3 gap-6">
               {[
-                { step: "1", title: "Tag", desc: "Tag @hireacreator on any platform, or enter your handle above." },
-                { step: "2", title: "Score", desc: "Our AI analyzes your profile, scores your brand deal potential, and builds your page." },
-                { step: "3", title: "Earn", desc: "Brands find your profile and send deals. You get paid." },
+                { step: "1", title: "Claim", desc: "Enter your handle above or tag @hireacreator on any platform." },
+                { step: "2", title: "Profile", desc: "We build your page with your content, stats, and estimated brand deal rate." },
+                { step: "3", title: "Earn", desc: "Brands discover you in our marketplace and send deals. You get paid." },
               ].map((s) => (
                 <div key={s.step} className="bg-white rounded-2xl p-6 sm:p-8 shadow-md shadow-neutral-900/5 text-center hover:-translate-y-1 hover:shadow-lg transition-all duration-300">
                   <div className="w-10 h-10 rounded-lg bg-blue-500 text-white flex items-center justify-center text-sm font-bold mx-auto mb-4">{s.step}</div>
@@ -307,11 +307,11 @@ function ClaimPageInner() {
           </h2>
           <div className="space-y-3">
             {[
-              { q: "What is a creator score?", a: "A 0-100 rating based on your profile quality, reach, engagement, niche demand, and content consistency. Brands use it to find the right creators." },
-              { q: "How do brand deals work?", a: "Brands post campaigns with budgets and requirements. If your score and niche match, you can apply. Deals are managed and paid through the platform." },
-              { q: "Is it free?", a: "Checking your score and claiming your profile is completely free. We take a small percentage of brand deals completed through the platform." },
+              { q: "What happens when I claim my profile?", a: "We build a professional creator page with your content, audience stats, niche, and estimated brand deal rate. You go live in our marketplace for brands to discover." },
+              { q: "How do brand deals work?", a: "Brands browse creators by niche and audience. If you match their campaign, they send you an offer. Deals are managed and paid through the platform." },
+              { q: "Is it free?", a: "Completely free to join. We only take a small percentage when you complete a paid brand deal through the platform." },
               { q: "How do I get paid?", a: "Through Stripe. Once you complete a brand deal, payment is released from escrow directly to your bank account." },
-              { q: "Can I claim a profile someone else tagged?", a: "Only the real account owner can claim a profile. We verify ownership through email or social login." },
+              { q: "Can someone else claim my profile?", a: "No. Only the real account owner can claim a profile. We verify ownership through email or social login." },
             ].map((faq) => (
               <details key={faq.q} className="group border border-neutral-100 rounded-xl">
                 <summary className="px-5 py-4 cursor-pointer font-medium text-neutral-800 text-sm flex justify-between items-center hover:bg-neutral-50 rounded-xl transition-colors">
