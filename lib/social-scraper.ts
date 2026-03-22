@@ -216,8 +216,95 @@ async function fetchInstagramProfile(
       isBusinessAccount: user.is_business_account || user.is_professional_account || false,
     };
   } catch {
+    // Fall through to public page scraping
+  }
+
+  // Fallback 2: scrape public Instagram profile page (works for ALL accounts including personal)
+  try {
+    const res = await fetch(`https://www.instagram.com/${encodeURIComponent(clean)}/`, {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml",
+        "Accept-Language": "en-US,en;q=0.9",
+      },
+      signal: AbortSignal.timeout(10000),
+      redirect: "follow",
+    });
+    if (!res.ok) return null;
+    const html = await res.text();
+
+    // Extract follower count from og:description: "600 Followers, 400 Following, 50 Posts"
+    let followerCount = 0;
+    let followingCount = 0;
+    let postCount = 0;
+    const ogMatch = html.match(/<meta[^>]*property="og:description"[^>]*content="([^"]+)"/i);
+    if (ogMatch) {
+      const desc = ogMatch[1];
+      const fMatch = desc.match(/([\d,.\w]+)\s*Followers/i);
+      const flMatch = desc.match(/([\d,.\w]+)\s*Following/i);
+      const pMatch = desc.match(/([\d,.\w]+)\s*Posts/i);
+      if (fMatch) followerCount = parseIGCount(fMatch[1]);
+      if (flMatch) followingCount = parseIGCount(flMatch[1]);
+      if (pMatch) postCount = parseIGCount(pMatch[1]);
+    }
+
+    // Extract name from og:title: "Name (@handle)"
+    let displayName = clean;
+    const titleMatch = html.match(/<meta[^>]*property="og:title"[^>]*content="([^"]+)"/i);
+    if (titleMatch) {
+      const nameOnly = titleMatch[1].replace(/\s*\(@[^)]+\).*$/, "").trim();
+      if (nameOnly) displayName = nameOnly;
+    }
+
+    // Extract avatar from og:image
+    let avatarUrl: string | null = null;
+    const imgMatch = html.match(/<meta[^>]*property="og:image"[^>]*content="([^"]+)"/i);
+    if (imgMatch) avatarUrl = imgMatch[1];
+
+    // Extract bio from description or JSON
+    let bio: string | null = null;
+    const bioMatch = html.match(/"biography"\s*:\s*"([^"]+)"/);
+    if (bioMatch) bio = bioMatch[1].replace(/\\n/g, "\n").replace(/\\u[\da-fA-F]{4}/g, "");
+    if (!bio && ogMatch) {
+      const parts = ogMatch[1].split(" - ");
+      if (parts.length > 1) bio = parts.slice(1).join(" - ").trim();
+    }
+
+    const category = detectCategoryFromBio(bio) || null;
+    const otherSocials = extractSocialLinks(bio, "instagram");
+    const websites = extractWebsites(null, bio);
+
+    return {
+      platform: "instagram",
+      handle: clean,
+      displayName,
+      avatarUrl,
+      bio,
+      followerCount,
+      followingCount,
+      postCount,
+      isVerified: html.includes('"is_verified":true'),
+      category,
+      externalUrl: null,
+      websites,
+      otherSocials,
+      profileUrl: `https://www.instagram.com/${clean}/`,
+      isBusinessAccount: html.includes('"is_business_account":true') || html.includes('"is_professional_account":true'),
+    };
+  } catch {
     return null;
   }
+}
+
+/** Parse Instagram count strings like "600", "1,234", "12.5K", "1.2M" */
+function parseIGCount(str: string): number {
+  if (!str) return 0;
+  const cleaned = str.replace(/,/g, "").trim();
+  const match = cleaned.match(/^([\d.]+)([KMB])?$/i);
+  if (!match) return parseInt(cleaned, 10) || 0;
+  const num = parseFloat(match[1]);
+  const mult: Record<string, number> = { K: 1000, M: 1000000, B: 1000000000 };
+  return Math.round(num * (match[2] ? mult[match[2].toUpperCase()] || 1 : 1));
 }
 
 async function fetchXProfile(
