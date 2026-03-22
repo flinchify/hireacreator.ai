@@ -220,9 +220,46 @@ async function fetchInstagramProfile(
     // Fall through to public page scraping
   }
 
-  // Fallback 2: scrape public Instagram profile page (works for ALL accounts including personal)
+  // Fallback 2: try multiple proxy/scraping approaches
+  // Approach A: Use a public proxy endpoint that renders Instagram pages
   try {
-    console.log(`[IG Scraper] Trying public page scrape for @${clean}`);
+    console.log(`[IG Scraper] Trying proxy scrape for @${clean}`);
+    // Use Google's web cache or similar to get Instagram meta tags
+    const cacheRes = await fetch(`https://webcache.googleusercontent.com/search?q=cache:instagram.com/${encodeURIComponent(clean)}/`, {
+      headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" },
+      signal: AbortSignal.timeout(8000),
+      redirect: "follow",
+    });
+    if (cacheRes.ok) {
+      const cacheHtml = await cacheRes.text();
+      if (cacheHtml.includes("Followers")) {
+        console.log(`[IG Scraper] Google cache hit for @${clean}`);
+        const fMatch = cacheHtml.match(/([\d,.KMB]+)\s*Followers/i);
+        if (fMatch) {
+          const followerCount = parseIGCount(fMatch[1]);
+          const titleMatch = cacheHtml.match(/<meta[^>]*property="og:title"[^>]*content="([^"]+)"/i);
+          const imgMatch = cacheHtml.match(/<meta[^>]*property="og:image"[^>]*content="([^"]+)"/i);
+          const ogMatch = cacheHtml.match(/<meta[^>]*property="og:description"[^>]*content="([^"]+)"/i);
+          let displayName = clean;
+          if (titleMatch) displayName = titleMatch[1].replace(/\s*\(@[^)]+\).*$/, "").trim() || clean;
+          let avatarUrl = imgMatch ? imgMatch[1].replace(/&amp;/g, "&") : null;
+          let bio: string | null = null;
+          if (ogMatch) { const parts = ogMatch[1].split(" - "); if (parts.length > 1) bio = parts.slice(1).join(" - ").trim(); }
+
+          return {
+            platform: "instagram", handle: clean, displayName, avatarUrl, bio,
+            followerCount, followingCount: 0, postCount: 0, isVerified: false,
+            category: detectCategoryFromBio(bio), externalUrl: null, websites: [],
+            otherSocials: [], profileUrl: `https://www.instagram.com/${clean}/`, isBusinessAccount: false,
+          };
+        }
+      }
+    }
+  } catch { /* continue */ }
+
+  // Approach B: Direct scrape with Googlebot UA (works from residential IPs, may fail from cloud)
+  try {
+    console.log(`[IG Scraper] Trying direct Googlebot scrape for @${clean}`);
     const res = await fetch(`https://www.instagram.com/${encodeURIComponent(clean)}/`, {
       headers: {
         "User-Agent": "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
@@ -231,7 +268,7 @@ async function fetchInstagramProfile(
       signal: AbortSignal.timeout(10000),
       redirect: "follow",
     });
-    console.log(`[IG Scraper] Public page status: ${res.status}`);
+    console.log(`[IG Scraper] Direct scrape status: ${res.status}`);
     if (!res.ok) return null;
     const html = await res.text();
     console.log(`[IG Scraper] HTML length: ${html.length}, has og:description: ${html.includes('og:description')}, has Followers: ${html.includes('Followers')}`);
