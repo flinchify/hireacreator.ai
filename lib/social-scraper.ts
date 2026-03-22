@@ -132,16 +132,49 @@ async function fetchInstagramProfile(
   const igAccountId = process.env.INSTAGRAM_BUSINESS_ACCOUNT_ID;
   if (igToken && igAccountId) {
     try {
-      // Use Business Discovery to look up ANY public business/creator account
-      const fields = "username,name,biography,followers_count,follows_count,media_count,profile_picture_url,website";
-      const bdUrl = `https://graph.instagram.com/v21.0/me?fields=business_discovery.fields(${fields}){username%3D${encodeURIComponent(clean)}}&access_token=${igToken}`;
-      console.log(`[IG Scraper] Trying Business Discovery for @${clean}`);
-      const searchRes = await fetch(bdUrl, { signal: AbortSignal.timeout(8000) });
-      const searchText = await searchRes.text();
-      console.log(`[IG Scraper] Business Discovery status: ${searchRes.status}, body: ${searchText.substring(0, 300)}`);
-      if (searchRes.ok) {
-        const data = JSON.parse(searchText);
-        const user = data?.business_discovery;
+      // Use IGAA token to look up own account
+      console.log(`[IG Scraper] Trying Instagram Graph API for @${clean}`);
+      const meRes = await fetch(
+        `https://graph.instagram.com/v21.0/me?fields=user_id,username,name,biography,followers_count,follows_count,media_count,profile_picture_url,website&access_token=${igToken}`,
+        { signal: AbortSignal.timeout(8000) }
+      );
+      if (meRes.ok) {
+        const meData = await meRes.json();
+        // Only use if this is the connected account
+        if (meData.username?.toLowerCase() === clean) {
+          const bio = meData.biography || null;
+          const otherSocials = extractSocialLinks([bio, meData.website].filter(Boolean).join(" "), "instagram");
+          const websites = extractWebsites(meData.website, bio);
+          const category = detectCategoryFromBio(bio) || null;
+          return {
+            platform: "instagram",
+            handle: clean,
+            displayName: meData.name || clean,
+            avatarUrl: meData.profile_picture_url || null,
+            bio,
+            followerCount: meData.followers_count || 0,
+            followingCount: meData.follows_count || 0,
+            postCount: meData.media_count || 0,
+            isVerified: false,
+            category,
+            externalUrl: meData.website || null,
+            websites,
+            otherSocials,
+            profileUrl: `https://www.instagram.com/${clean}/`,
+            isBusinessAccount: true,
+          };
+        }
+      }
+      
+      // For OTHER accounts, try Facebook Graph API with a page token if available
+      const fbPageToken = process.env.FACEBOOK_PAGE_TOKEN;
+      if (fbPageToken && igAccountId) {
+        const fields = "username,name,biography,followers_count,follows_count,media_count,profile_picture_url,website";
+        const bdUrl = `https://graph.facebook.com/v21.0/${igAccountId}?fields=business_discovery.fields(${fields}){username%3D${encodeURIComponent(clean)}}&access_token=${fbPageToken}`;
+        const searchRes = await fetch(bdUrl, { signal: AbortSignal.timeout(8000) });
+        if (searchRes.ok) {
+          const data = await searchRes.json();
+          const user = data?.business_discovery;
         if (user) {
           const bio = user.biography || null;
           const otherSocials = extractSocialLinks([bio, user.website].filter(Boolean).join(" "), "instagram");
@@ -164,6 +197,7 @@ async function fetchInstagramProfile(
             profileUrl: `https://www.instagram.com/${clean}/`,
             isBusinessAccount: true,
           };
+        }
         }
       }
     } catch {
