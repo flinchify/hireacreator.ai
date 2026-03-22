@@ -19,7 +19,7 @@ const FONT_MAP: Record<string, string> = {
 
 /* ── Size mapping constants ── */
 const TEXT_SIZES: Record<string, { name: string; bio: string; link: string; headline: string }> = {
-  small: { name: 'text-lg', bio: 'text-xs', link: 'text-sm', headline: 'text-xs' },
+  small: { name: 'text-lg', bio: 'text-sm', link: 'text-sm', headline: 'text-sm' },
   medium: { name: 'text-2xl font-bold', bio: 'text-sm', link: 'text-base font-semibold', headline: 'text-sm' },
   large: { name: 'text-3xl sm:text-4xl font-bold', bio: 'text-base', link: 'text-base font-semibold', headline: 'text-base' },
 };
@@ -401,7 +401,7 @@ function Socials({ creator, light, shape = "circle", showFollowers = false }: { 
           </a>
         ) : (
           <a key={s.platform} href={s.url || "#"} target="_blank" rel="noopener noreferrer" aria-label={`Visit ${s.platform}`}
-            className={`w-11 h-11 ${r} flex items-center justify-center hover:scale-110 transition-all ${light ? "bg-white/10 hover:bg-white/20" : "bg-neutral-100 hover:bg-neutral-200"}`} title={s.followers && s.followers !== "0" ? `${s.followers} followers${isFollowerVerified(s) ? " (verified)" : ""}` : s.handle}>
+            className={`w-12 h-12 ${r} flex items-center justify-center hover:scale-110 transition-all ${light ? "bg-white/10 hover:bg-white/20" : "bg-neutral-100 hover:bg-neutral-200"}`} title={s.followers && s.followers !== "0" ? `${s.followers} followers${isFollowerVerified(s) ? " (verified)" : ""}` : s.handle}>
             <PlatformIcon platform={s.platform} size={18} className={light ? "text-white/80" : "text-neutral-600"} />
           </a>
         )
@@ -454,15 +454,16 @@ function CTAButton({ creator, light, accent }: { creator: Creator; light?: boole
    ══════════════════════════════════════════════════════════════ */
 function TemplateMinimal({ creator }: { creator: Creator }) {
   const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
-  const hasCustomBg = creator.linkBioBgType && creator.linkBioBgType !== "gradient";
+  const hasCustomBg = !!creator.linkBioBgType;
   const accent = creator.linkBioAccent || "#171717";
   const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
   const items = CONTENT_ITEMS[creator.linkBioContentPosition || 'top'] || CONTENT_ITEMS.top;
   const align = CONTENT_ALIGN[creator.linkBioContentAlign || 'center'] || CONTENT_ALIGN.center;
+  const defaultBg = "linear-gradient(160deg, #fdf8f4 0%, #f5ede6 40%, #ebe3da 100%)";
 
   return (
-    <div className={`min-h-screen flex ${items} justify-center lg:py-10 lg:px-4`} style={{ background: hasCustomBg ? "transparent" : "linear-gradient(160deg, #fdf8f4 0%, #f5ede6 40%, #ebe3da 100%)" }}>
-      {hasCustomBg && <BgLayer creator={creator} />}
+    <div className={`min-h-screen flex ${items} justify-center lg:py-10 lg:px-4`} style={{ background: hasCustomBg ? "transparent" : defaultBg }}>
+      {hasCustomBg && <BgLayer creator={creator} fallback={<div className="fixed inset-0 z-0" style={{ background: defaultBg }} />} />}
       <div className={`w-full lg:max-w-[460px] lg:rounded-[2.5rem] lg:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.1)] bg-white min-h-screen lg:min-h-0 relative z-10 overflow-hidden ${hasCustomBg ? "lg:bg-white/95 lg:backdrop-blur-sm" : ""}`}>
         {/* Cover */}
         <div className="relative">
@@ -657,7 +658,7 @@ function TemplateBold({ creator }: { creator: Creator }) {
 
   return (
     <div className={`min-h-screen flex ${items} justify-center lg:py-10 lg:px-4`} style={{ background: hasCustomBg ? "transparent" : "#0a0a0a" }}>
-      {hasCustomBg && <BgLayer creator={creator} />}
+      {hasCustomBg && <BgLayer creator={creator} fallback={<div className="fixed inset-0 z-0" style={{ background: "#0a0a0a" }} />} />}
       <div className="w-full lg:max-w-[460px] lg:rounded-[2.5rem] bg-neutral-950 min-h-screen lg:min-h-0 relative z-10 overflow-hidden" style={{ boxShadow: `0 0 0 1px rgba(255,255,255,0.06), 0 25px 60px -12px ${accent}20` }}>
         {/* Accent stripe at top */}
         <div className="h-[2px] w-full" style={{ background: `linear-gradient(90deg, transparent, ${accent}, transparent)` }} />
@@ -751,7 +752,7 @@ function TemplateShowcase({ creator }: { creator: Creator }) {
 
   return (
     <div className={`min-h-screen flex ${items} justify-center lg:py-10 lg:px-4`} style={{ background: hasCustomBg ? "transparent" : "linear-gradient(160deg, #f8f9fa 0%, #e9ecef 100%)" }}>
-      {hasCustomBg && <BgLayer creator={creator} />}
+      {hasCustomBg && <BgLayer creator={creator} fallback={<div className="fixed inset-0 z-0" style={{ background: "linear-gradient(160deg, #f8f9fa 0%, #e9ecef 100%)" }} />} />}
       <div className="w-full lg:max-w-[480px] lg:rounded-[2rem] lg:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] bg-white min-h-screen lg:min-h-0 relative z-10 overflow-hidden">
         {/* Prominent cover */}
         <div className="relative">
@@ -850,7 +851,7 @@ function TemplateNeon({ creator }: { creator: Creator }) {
 
   return (
     <div className={`min-h-screen flex ${items} justify-center lg:py-10 lg:px-4`} style={{ background: hasCustomBg ? "transparent" : "#000000" }}>
-      {hasCustomBg && <BgLayer creator={creator} />}
+      {hasCustomBg && <BgLayer creator={creator} fallback={<div className="fixed inset-0 z-0" style={{ background: "#000000" }} />} />}
 
       <div className="w-full lg:max-w-[460px] lg:rounded-[2rem] bg-[#0a0a0a] min-h-screen lg:min-h-0 relative z-10 overflow-hidden" style={{ boxShadow: `0 0 80px -20px ${accent}50, inset 0 1px 0 rgba(255,255,255,0.05)` }}>
         {/* Neon scanline at top */}
@@ -895,9 +896,9 @@ function TemplateNeon({ creator }: { creator: Creator }) {
             <div className="flex items-center justify-center gap-2.5 my-6 flex-wrap">
               {creator.socials.map(s => (
                 <a key={s.platform} href={s.url || "#"} target="_blank" rel="noopener noreferrer" aria-label={`Visit ${s.platform}`}
-                  className="w-10 h-10 rounded-full flex items-center justify-center hover:scale-110 transition-all duration-200"
+                  className="w-12 h-12 rounded-full flex items-center justify-center hover:scale-110 transition-all duration-200"
                   style={{ border: `1px solid ${accent}20`, background: `${accent}0a`, boxShadow: `0 0 15px ${accent}08` }}>
-                  <PlatformIcon platform={s.platform} size={16} className="text-neutral-400" />
+                  <PlatformIcon platform={s.platform} size={18} className="text-neutral-400" />
                 </a>
               ))}
             </div>
@@ -1056,7 +1057,7 @@ function TemplateBento({ creator }: { creator: Creator }) {
 
   return (
     <div className={`min-h-screen p-3 sm:p-5 flex flex-col ${justify}`} style={{ background: hasCustomBg ? "transparent" : "#0a0a0a" }}>
-      {hasCustomBg && <BgLayer creator={creator} />}
+      {hasCustomBg && <BgLayer creator={creator} fallback={<div className="fixed inset-0 z-0" style={{ background: "#0a0a0a" }} />} />}
       <div className="absolute top-4 right-4 z-20"><ShareBtn slug={creator.slug} light /></div>
       <div className={`w-full lg:max-w-[520px] mx-auto relative z-10 ${align}`}>
         <div className="grid grid-cols-4 gap-2.5 sm:gap-3 auto-rows-[95px]">
@@ -1096,7 +1097,7 @@ function TemplateBento({ creator }: { creator: Creator }) {
             <div className="col-span-2 row-span-1 rounded-2xl bg-neutral-900 border border-neutral-800 flex items-center justify-center gap-3 px-4 min-h-[80px]">
               {creator.socials.slice(0, 5).map(s => (
                 <a key={s.platform} href={s.url || "#"} target="_blank" rel="noopener noreferrer" aria-label={`Visit ${s.platform}`}
-                  className="w-10 h-10 rounded-lg bg-neutral-800 flex items-center justify-center hover:bg-neutral-700 hover:scale-110 transition-all duration-200">
+                  className="w-12 h-12 rounded-lg bg-neutral-800 flex items-center justify-center hover:bg-neutral-700 hover:scale-110 transition-all duration-200">
                   <PlatformIcon platform={s.platform} size={18} className="text-neutral-400" />
                 </a>
               ))}
@@ -1415,7 +1416,7 @@ function TemplateFounder({ creator }: { creator: Creator }) {
 
   return (
     <div className="min-h-screen" style={{ background: hasCustomBg ? "transparent" : "linear-gradient(160deg, #111827 0%, #1f2937 100%)" }}>
-      {hasCustomBg && <BgLayer creator={creator} />}
+      {hasCustomBg && <BgLayer creator={creator} fallback={<div className="fixed inset-0 z-0" style={{ background: "linear-gradient(160deg, #111827 0%, #1f2937 100%)" }} />} />}
       <div className={`relative z-10 w-full lg:max-w-[520px] mx-auto px-5 lg:px-6 pt-12 pb-10 min-h-screen flex flex-col ${justify}`}>
         <div className="absolute top-4 right-4 z-20"><ShareBtn slug={creator.slug} light /></div>
 
@@ -1480,8 +1481,8 @@ function TemplateFounder({ creator }: { creator: Creator }) {
           <div className="flex items-center gap-2 mb-6 flex-wrap">
             {creator.socials.map(s => (
               <a key={s.platform} href={s.url || "#"} target="_blank" rel="noopener noreferrer" aria-label={`Visit ${s.platform}`}
-                className="w-9 h-9 rounded-lg bg-white/[0.06] border border-white/[0.08] flex items-center justify-center hover:bg-white/[0.12] hover:scale-110 transition-all">
-                <PlatformIcon platform={s.platform} size={15} className="text-white/50" />
+                className="w-12 h-12 rounded-lg bg-white/[0.06] border border-white/[0.08] flex items-center justify-center hover:bg-white/[0.12] hover:scale-110 transition-all">
+                <PlatformIcon platform={s.platform} size={18} className="text-white/50" />
               </a>
             ))}
           </div>
@@ -1651,7 +1652,7 @@ function TemplateBrutalist({ creator }: { creator: Creator }) {
           <div className="flex items-center gap-3 my-6 flex-wrap">
             {creator.socials.map(s => (
               <a key={s.platform} href={s.url || "#"} target="_blank" rel="noopener noreferrer"
-                className="w-10 h-10 border-[2px] border-white flex items-center justify-center hover:bg-white hover:text-black transition-colors"
+                className="w-12 h-12 border-[2px] border-white flex items-center justify-center hover:bg-white hover:text-black transition-colors"
                 aria-label={`Visit ${s.platform}`}>
                 <PlatformIcon platform={s.platform} size={16} className="text-white" />
               </a>
@@ -1934,9 +1935,9 @@ function TemplateTerminal({ creator }: { creator: Creator }) {
           <div className="flex items-center gap-3 my-5 flex-wrap">
             {creator.socials.map(s => (
               <a key={s.platform} href={s.url || "#"} target="_blank" rel="noopener noreferrer"
-                className="w-9 h-9 border border-[#00ff00]/20 flex items-center justify-center hover:bg-[#00ff00]/10 transition-colors"
+                className="w-12 h-12 border border-[#00ff00]/20 flex items-center justify-center hover:bg-[#00ff00]/10 transition-colors"
                 aria-label={`Visit ${s.platform}`}>
-                <PlatformIcon platform={s.platform} size={14} className="text-[#00ff00]/60" />
+                <PlatformIcon platform={s.platform} size={18} className="text-[#00ff00]/60" />
               </a>
             ))}
           </div>
@@ -2027,7 +2028,7 @@ function TemplatePastel({ creator }: { creator: Creator }) {
           <div className="flex items-center justify-center gap-2.5 my-5 flex-wrap">
             {creator.socials.map(s => (
               <a key={s.platform} href={s.url || "#"} target="_blank" rel="noopener noreferrer"
-                className="w-11 h-11 rounded-full bg-white shadow-sm flex items-center justify-center hover:scale-110 hover:shadow-md transition-all"
+                className="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center hover:scale-110 hover:shadow-md transition-all"
                 aria-label={`Visit ${s.platform}`}>
                 <PlatformIcon platform={s.platform} size={18} className="text-neutral-400" />
               </a>
@@ -2207,7 +2208,7 @@ function TemplateRetro({ creator }: { creator: Creator }) {
           <div className="flex items-center justify-center gap-2.5 my-5 flex-wrap">
             {creator.socials.map(s => (
               <a key={s.platform} href={s.url || "#"} target="_blank" rel="noopener noreferrer"
-                className="w-11 h-11 rounded-lg bg-white border-3 border-black flex items-center justify-center hover:scale-110 transition-all"
+                className="w-12 h-12 rounded-lg bg-white border-3 border-black flex items-center justify-center hover:scale-110 transition-all"
                 style={{ boxShadow: "3px 3px 0 #000", borderWidth: "3px" }}
                 aria-label={`Visit ${s.platform}`}>
                 <PlatformIcon platform={s.platform} size={18} className="text-black" />
@@ -2395,7 +2396,7 @@ function TemplateClay({ creator }: { creator: Creator }) {
           <div className="flex items-center justify-center gap-3 my-5 flex-wrap">
             {creator.socials.map(s => (
               <a key={s.platform} href={s.url || "#"} target="_blank" rel="noopener noreferrer"
-                className="w-11 h-11 rounded-xl flex items-center justify-center hover:scale-105 transition-all"
+                className="w-12 h-12 rounded-xl flex items-center justify-center hover:scale-105 transition-all"
                 style={{ background: bg, boxShadow: "5px 5px 10px #bebebe, -5px -5px 10px #ffffff" }}
                 aria-label={`Visit ${s.platform}`}>
                 <PlatformIcon platform={s.platform} size={18} className="text-neutral-500" />

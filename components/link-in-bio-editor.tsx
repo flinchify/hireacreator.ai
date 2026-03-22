@@ -710,7 +710,7 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
     template: user.link_bio_template || "minimal",
     accent: user.link_bio_accent || "#6366f1",
     bgType: user.link_bio_bg_type || "gradient",
-    bgValue: (user.link_bio_bg_value?.startsWith("http") || user.link_bio_bg_value?.startsWith("linear")) ? user.link_bio_bg_value : "",
+    bgValue: user.link_bio_bg_value || "",
     bgVideo: user.link_bio_bg_video || "",
     bgImages: parseBgImages(user.link_bio_bg_images),
     buttonShape: user.link_bio_button_shape || "rounded",
