@@ -223,9 +223,8 @@ async function fetchInstagramProfile(
   try {
     const res = await fetch(`https://www.instagram.com/${encodeURIComponent(clean)}/`, {
       headers: {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        "Accept": "text/html,application/xhtml+xml",
-        "Accept-Language": "en-US,en;q=0.9",
+        "User-Agent": "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
+        "Accept": "text/html",
       },
       signal: AbortSignal.timeout(10000),
       redirect: "follow",
@@ -248,18 +247,23 @@ async function fetchInstagramProfile(
       if (pMatch) postCount = parseIGCount(pMatch[1]);
     }
 
-    // Extract name from og:title: "Name (@handle)"
+    // Extract name from og:title: "Name (@handle)" or og:description: "... from Name (@handle)"
     let displayName = clean;
     const titleMatch = html.match(/<meta[^>]*property="og:title"[^>]*content="([^"]+)"/i);
     if (titleMatch) {
-      const nameOnly = titleMatch[1].replace(/\s*\(@[^)]+\).*$/, "").trim();
+      const nameOnly = titleMatch[1].replace(/\s*\(@[^)]+\).*$/, "").replace(/&#064;/g, "@").trim();
       if (nameOnly) displayName = nameOnly;
+    }
+    // Fallback: extract from og:description "... from Name (@handle)"
+    if (displayName === clean && ogMatch) {
+      const fromMatch = ogMatch[1].match(/from\s+(.+?)\s*\(&#064;/);
+      if (fromMatch) displayName = fromMatch[1].trim();
     }
 
     // Extract avatar from og:image
     let avatarUrl: string | null = null;
     const imgMatch = html.match(/<meta[^>]*property="og:image"[^>]*content="([^"]+)"/i);
-    if (imgMatch) avatarUrl = imgMatch[1];
+    if (imgMatch) avatarUrl = imgMatch[1].replace(/&amp;/g, "&");
 
     // Extract bio from description or JSON
     let bio: string | null = null;
