@@ -126,6 +126,49 @@ async function fetchInstagramProfile(
   handle: string
 ): Promise<SocialProfile | null> {
   const clean = handle.replace(/^@/, "").trim().toLowerCase();
+
+  // Try Instagram Graph API first (if we have a token)
+  const igToken = process.env.INSTAGRAM_ACCESS_TOKEN;
+  if (igToken) {
+    try {
+      // Search for the user via Graph API
+      const searchRes = await fetch(
+        `https://graph.instagram.com/v21.0/me?fields=user_id,username,name,biography,followers_count,follows_count,media_count,profile_picture_url,website&access_token=${igToken}`,
+        { signal: AbortSignal.timeout(8000) }
+      );
+      if (searchRes.ok) {
+        const me = await searchRes.json();
+        // Graph API only returns data for the connected account, but we can use it
+        if (me.username?.toLowerCase() === clean) {
+          const bio = me.biography || null;
+          const otherSocials = extractSocialLinks([bio, me.website].filter(Boolean).join(" "), "instagram");
+          const websites = extractWebsites(me.website, bio);
+          const category = detectCategoryFromBio(bio) || null;
+          return {
+            platform: "instagram",
+            handle: clean,
+            displayName: me.name || clean,
+            avatarUrl: me.profile_picture_url || null,
+            bio,
+            followerCount: me.followers_count || 0,
+            followingCount: me.follows_count || 0,
+            postCount: me.media_count || 0,
+            isVerified: false,
+            category,
+            externalUrl: me.website || null,
+            websites,
+            otherSocials,
+            profileUrl: `https://www.instagram.com/${clean}/`,
+            isBusinessAccount: true,
+          };
+        }
+      }
+    } catch {
+      // Fall through to scraping
+    }
+  }
+
+  // Fallback: scrape from private API
   try {
     const res = await fetch(
       `https://i.instagram.com/api/v1/users/web_profile_info/?username=${encodeURIComponent(clean)}`,

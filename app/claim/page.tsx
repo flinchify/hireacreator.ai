@@ -152,7 +152,7 @@ function ClaimPageInner() {
       )}
 
       {/* Manual Input Fallback */}
-      {showManual && (
+      {showManual && !scoreData?.score && (
         <section className="pb-16 px-5">
           <div className="max-w-lg mx-auto">
             <div className="bg-white border border-neutral-100 rounded-2xl p-8 shadow-md shadow-neutral-900/5">
