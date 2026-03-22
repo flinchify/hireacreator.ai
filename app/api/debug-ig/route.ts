@@ -71,6 +71,34 @@ export async function GET() {
     }
   }
   
+  // Test 4: ScrapingBee proxy test
+  const sbKey = process.env.SCRAPINGBEE_API_KEY;
+  if (sbKey) {
+    try {
+      const params = new URLSearchParams({
+        api_key: sbKey,
+        url: "https://www.instagram.com/cristiano/",
+        render_js: "false",
+        premium_proxy: "true",
+      });
+      const sbRes = await fetch(`https://app.scrapingbee.com/api/v1/?${params}`, { signal: AbortSignal.timeout(15000) });
+      const sbHtml = await sbRes.text();
+      const hasFollowers = sbHtml.includes("Followers");
+      const ogDesc = sbHtml.match(/<meta[^>]*property="og:description"[^>]*content="([^"]{0,200})"/i);
+      results.scrapingBeeTest = {
+        status: sbRes.status,
+        htmlLength: sbHtml.length,
+        hasFollowers,
+        ogDescription: ogDesc ? ogDesc[1] : "NOT FOUND",
+        first200: sbHtml.substring(0, 200),
+      };
+    } catch (e: any) {
+      results.scrapingBeeTest = { error: e.message };
+    }
+  } else {
+    results.scrapingBeeTest = { note: "No SCRAPINGBEE_API_KEY" };
+  }
+
   results.summary = "Business Discovery requires instagram_business_basic permission to be approved by Meta. App Review is pending.";
 
   return NextResponse.json(results);
