@@ -515,7 +515,7 @@ export function ForBrandsContent() {
                 Browse Creators
               </button>
             </Link>
-            <Link href="#contact">
+            <Link href="/contact">
               <button className="px-8 py-3.5 text-base font-medium text-white bg-transparent rounded-lg border border-neutral-300 hover:border-neutral-200 transition-all w-full sm:w-auto">
                 Contact Sales
               </button>
