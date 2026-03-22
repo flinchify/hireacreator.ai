@@ -33,7 +33,7 @@ export default function ApiPage() {
 
   return (
     <div className="min-h-screen bg-neutral-950 text-white">
-      <Header theme="dark" />
+      <Header />
 
       {/* Hero */}
       <section className="relative pt-32 sm:pt-40 pb-20 sm:pb-28 overflow-hidden">

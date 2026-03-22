@@ -11,10 +11,10 @@ const PLATFORMS = [
 ];
 
 export function ScoreChecker({
-  variant = "default",
+  variant = "light",
   onResult,
 }: {
-  variant?: "default" | "hero" | "dark" | "compact";
+  variant?: "light" | "onBlue" | "default" | "hero" | "dark" | "compact";
   onResult?: (data: Record<string, unknown>) => void;
 }) {
   const [platform, setPlatform] = useState("instagram");
@@ -45,7 +45,7 @@ export function ScoreChecker({
     }
   }
 
-  const isDark = variant === "dark";
+  const isOnBlue = variant === "onBlue" || variant === "dark";
   const isCompact = variant === "compact";
 
   return (
@@ -54,11 +54,11 @@ export function ScoreChecker({
         <select
           value={platform}
           onChange={(e) => setPlatform(e.target.value)}
-          className={`w-full h-12 px-4 rounded-xl border appearance-none text-sm font-medium transition-all cursor-pointer ${
-            isDark
-              ? "bg-white/10 border-white/20 text-white"
+          className={`w-full min-h-[48px] px-4 rounded-xl border appearance-none text-sm font-medium transition-all cursor-pointer ${
+            isOnBlue
+              ? "bg-white/15 border-white/20 text-white backdrop-blur-sm"
               : "bg-white border-neutral-200 text-neutral-900 hover:border-neutral-400"
-          } focus:outline-none focus:ring-2 focus:ring-neutral-900/20`}
+          } focus:outline-none focus:ring-2 ${isOnBlue ? "focus:ring-white/30" : "focus:ring-blue-500/20"}`}
         >
           {PLATFORMS.map((p) => (
             <option key={p.value} value={p.value} className="text-neutral-900">
@@ -66,33 +66,33 @@ export function ScoreChecker({
             </option>
           ))}
         </select>
-        <div className={`absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none ${isDark ? "text-white/60" : "text-neutral-400"}`}>
+        <div className={`absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none ${isOnBlue ? "text-white/60" : "text-neutral-400"}`}>
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
         </div>
       </div>
 
       <div className="relative flex-1">
-        <span className={`absolute left-4 top-1/2 -translate-y-1/2 text-sm ${isDark ? "text-white/40" : "text-neutral-400"}`}>@</span>
+        <span className={`absolute left-4 top-1/2 -translate-y-1/2 text-sm ${isOnBlue ? "text-white/40" : "text-neutral-400"}`}>@</span>
         <input
           type="text"
           value={handle}
           onChange={(e) => setHandle(e.target.value)}
           placeholder="username"
-          className={`w-full h-12 pl-8 pr-4 rounded-xl border text-sm transition-all ${
-            isDark
-              ? "bg-white/10 border-white/20 text-white placeholder:text-white/40"
+          className={`w-full min-h-[48px] pl-8 pr-4 rounded-xl border text-sm transition-all ${
+            isOnBlue
+              ? "bg-white/15 border-white/20 text-white placeholder:text-white/40 backdrop-blur-sm"
               : "bg-white border-neutral-200 text-neutral-900 placeholder:text-neutral-400 hover:border-neutral-400"
-          } focus:outline-none focus:ring-2 focus:ring-neutral-900/20`}
+          } focus:outline-none focus:ring-2 ${isOnBlue ? "focus:ring-white/30" : "focus:ring-blue-500/20"}`}
         />
       </div>
 
       <button
         type="submit"
         disabled={loading || !handle.trim()}
-        className={`h-12 px-8 rounded-xl font-semibold text-sm transition-all whitespace-nowrap ${
-          isDark
-            ? "bg-white text-neutral-900 hover:bg-neutral-100 disabled:bg-white/20 disabled:text-white/40"
-            : "bg-neutral-900 text-white hover:bg-neutral-800 disabled:bg-neutral-300 disabled:text-neutral-500"
+        className={`min-h-[48px] px-8 rounded-full font-semibold text-sm transition-all whitespace-nowrap ${
+          isOnBlue
+            ? "bg-white text-blue-600 hover:bg-blue-50 shadow-lg shadow-white/10 disabled:bg-white/20 disabled:text-white/40"
+            : "bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 shadow-lg shadow-blue-500/25 disabled:from-neutral-300 disabled:to-neutral-300 disabled:text-neutral-500 disabled:shadow-none"
         } ${loading ? "animate-pulse" : ""}`}
       >
         {loading ? (

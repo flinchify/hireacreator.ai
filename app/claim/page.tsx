@@ -127,11 +127,11 @@ function ClaimPageInner() {
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-neutral-900 mb-6" style={{ fontFamily: "var(--font-outfit)" }}>
               Discover What You Are Worth to Brands
             </h1>
-            <p className="text-lg text-neutral-600 max-w-xl mx-auto mb-10">
+            <p className="text-lg text-neutral-500 max-w-xl mx-auto mb-10">
               Enter your social handle. We build your creator profile and match you with brand deals — instantly.
             </p>
-            <div className="flex justify-center">
-              <ScoreChecker onResult={handleResult} />
+            <div className="flex justify-center px-4 sm:px-0">
+              <ScoreChecker variant="light" onResult={handleResult} />
             </div>
             {loading && (
               <div className="mt-8 flex items-center justify-center gap-3 text-neutral-500">
@@ -152,28 +152,28 @@ function ClaimPageInner() {
       {showManual && (
         <section className="pb-16 px-6">
           <div className="max-w-lg mx-auto">
-            <div className="bg-neutral-50 border border-neutral-200 rounded-2xl p-8">
+            <div className="bg-white border border-neutral-200/60 rounded-2xl p-8 shadow-lg">
               <h3 className="font-bold text-lg text-neutral-900 mb-2">We could not auto-detect your profile</h3>
-              <p className="text-sm text-neutral-600 mb-6">Enter your details manually for an accurate score.</p>
+              <p className="text-sm text-neutral-500 mb-6">Enter your details manually for an accurate score.</p>
               <form onSubmit={handleManualSubmit} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-neutral-700 mb-1">Follower count</label>
-                  <input type="number" value={manual.followerCount} onChange={(e) => setManual({ ...manual, followerCount: e.target.value })} placeholder="e.g. 15000" className="w-full h-11 px-4 rounded-xl border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900/20" />
+                  <input type="number" value={manual.followerCount} onChange={(e) => setManual({ ...manual, followerCount: e.target.value })} placeholder="e.g. 15000" className="w-full min-h-[48px] px-4 rounded-xl border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 hover:border-neutral-400 transition-colors" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-neutral-700 mb-1">Bio</label>
-                  <textarea value={manual.bio} onChange={(e) => setManual({ ...manual, bio: e.target.value })} placeholder="What do you create?" rows={3} className="w-full px-4 py-3 rounded-xl border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900/20 resize-none" />
+                  <textarea value={manual.bio} onChange={(e) => setManual({ ...manual, bio: e.target.value })} placeholder="What do you create?" rows={3} className="w-full px-4 py-3 rounded-xl border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 hover:border-neutral-400 transition-colors resize-none" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-neutral-700 mb-1">Niche</label>
-                  <select value={manual.niche} onChange={(e) => setManual({ ...manual, niche: e.target.value })} className="w-full h-11 px-4 rounded-xl border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900/20">
+                  <select value={manual.niche} onChange={(e) => setManual({ ...manual, niche: e.target.value })} className="w-full min-h-[48px] px-4 rounded-xl border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 hover:border-neutral-400 transition-colors">
                     <option value="">Select your niche</option>
                     {["fitness","beauty","tech","fashion","food","travel","finance","gaming","music","art","education","lifestyle","automotive"].map((n) => (
                       <option key={n} value={n}>{n.charAt(0).toUpperCase() + n.slice(1)}</option>
                     ))}
                   </select>
                 </div>
-                <button type="submit" className="w-full h-11 bg-neutral-900 text-white rounded-xl font-semibold text-sm hover:bg-neutral-800 transition-colors">
+                <button type="submit" className="w-full min-h-[48px] bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-full font-semibold text-sm hover:from-blue-600 hover:to-blue-700 shadow-lg shadow-blue-500/25 transition-all">
                   Calculate My Score
                 </button>
               </form>
@@ -188,7 +188,7 @@ function ClaimPageInner() {
           <div className="max-w-4xl mx-auto">
             <div className="grid lg:grid-cols-2 gap-12">
               {/* Left: Score Gauge */}
-              <div className="flex flex-col items-center">
+              <div className="flex flex-col items-center bg-gradient-to-br from-blue-50 to-white rounded-2xl p-8">
                 <ScoreGauge score={scoreData.score} size={220} />
                 <div className="mt-8 w-full max-w-sm">
                   <BreakdownBars breakdown={scoreData.breakdown} />
@@ -197,12 +197,12 @@ function ClaimPageInner() {
 
               {/* Right: Profile Preview + Actions */}
               <div>
-                <div className="backdrop-blur-xl bg-white border border-neutral-200 rounded-2xl p-8 shadow-lg mb-6">
+                <div className="bg-white border border-neutral-200/60 rounded-2xl p-8 shadow-lg mb-6">
                   <div className="flex items-center gap-4 mb-6">
                     {scoreData.profile.avatarUrl ? (
                       <img src={scoreData.profile.avatarUrl} alt="" className="w-16 h-16 rounded-full object-cover" />
                     ) : (
-                      <div className="w-16 h-16 rounded-full bg-gradient-to-br from-violet-100 to-pink-100 flex items-center justify-center text-2xl font-bold text-neutral-600">
+                      <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-100 to-sky-100 flex items-center justify-center text-2xl font-bold text-blue-600">
                         {scoreData.profile.displayName[0]?.toUpperCase() || "?"}
                       </div>
                     )}
@@ -217,28 +217,28 @@ function ClaimPageInner() {
                   )}
 
                   <div className="grid grid-cols-2 gap-4 mb-6">
-                    <div className="bg-neutral-50 rounded-xl p-4">
+                    <div className="bg-blue-50/50 rounded-xl p-4">
                       <div className="text-xs text-neutral-500 mb-1">Followers</div>
                       <div className="text-lg font-bold text-neutral-900">{formatFollowers(scoreData.profile.followerCount)}</div>
                     </div>
-                    <div className="bg-neutral-50 rounded-xl p-4">
+                    <div className="bg-blue-50/50 rounded-xl p-4">
                       <div className="text-xs text-neutral-500 mb-1">Niche</div>
                       <div className="text-lg font-bold text-neutral-900 capitalize">{scoreData.detectedNiche}</div>
                     </div>
-                    <div className="bg-neutral-50 rounded-xl p-4">
+                    <div className="bg-blue-50/50 rounded-xl p-4">
                       <div className="text-xs text-neutral-500 mb-1">Estimated Rate</div>
                       <div className="text-lg font-bold text-neutral-900">
                         {formatCents(scoreData.estimatedPostRange[0])} - {formatCents(scoreData.estimatedPostRange[1])}
                       </div>
                     </div>
-                    <div className="bg-neutral-50 rounded-xl p-4">
+                    <div className="bg-blue-50/50 rounded-xl p-4">
                       <div className="text-xs text-neutral-500 mb-1">Matching Campaigns</div>
                       <div className="text-lg font-bold text-neutral-900">{scoreData.matchingCampaigns}</div>
                     </div>
                   </div>
 
-                  <div className="text-center p-4 bg-neutral-900 rounded-xl mb-3">
-                    <div className="text-xs text-neutral-400 mb-1">Your posts are worth approximately</div>
+                  <div className="text-center p-4 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl mb-3">
+                    <div className="text-xs text-white/70 mb-1">Your posts are worth approximately</div>
                     <div className="text-2xl font-bold text-white">
                       {formatCents(scoreData.estimatedPostRange[0])} - {formatCents(scoreData.estimatedPostRange[1])}/post
                     </div>
@@ -248,7 +248,7 @@ function ClaimPageInner() {
                 {!scoreData.isClaimed && (
                   <a
                     href={scoreData.profileUrl.replace("https://hireacreator.ai", "")}
-                    className="block w-full py-4 bg-neutral-900 text-white rounded-xl font-semibold text-center text-sm hover:bg-neutral-800 transition-colors mb-3"
+                    className="block w-full py-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-full font-semibold text-center text-sm hover:from-blue-600 hover:to-blue-700 shadow-lg shadow-blue-500/25 transition-all mb-3"
                   >
                     Claim Your Profile — Get Matched With Brands
                   </a>
@@ -256,7 +256,7 @@ function ClaimPageInner() {
 
                 <button
                   onClick={copyShareUrl}
-                  className="w-full py-3 border border-neutral-200 text-neutral-700 rounded-xl font-medium text-sm hover:bg-neutral-50 transition-colors"
+                  className="w-full py-3 border border-neutral-200 text-neutral-700 rounded-full font-medium text-sm hover:bg-neutral-50 transition-colors"
                 >
                   {copied ? "Link copied!" : "Share Your Score"}
                 </button>
@@ -267,7 +267,7 @@ function ClaimPageInner() {
       )}
 
       {/* How It Works */}
-      <section className="py-24 px-6 bg-neutral-50">
+      <section className="py-24 px-6 bg-slate-50/80">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl font-bold text-neutral-900 text-center mb-12" style={{ fontFamily: "var(--font-outfit)" }}>
             How It Works
@@ -279,9 +279,9 @@ function ClaimPageInner() {
               { step: "3", title: "Earn", desc: "Brands find your profile and send deals. You get paid." },
             ].map((s) => (
               <div key={s.step} className="text-center">
-                <div className="w-12 h-12 rounded-full bg-neutral-900 text-white flex items-center justify-center text-lg font-bold mx-auto mb-4">{s.step}</div>
+                <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 text-white flex items-center justify-center text-lg font-bold mx-auto mb-4">{s.step}</div>
                 <h3 className="font-bold text-lg text-neutral-900 mb-2">{s.title}</h3>
-                <p className="text-sm text-neutral-600">{s.desc}</p>
+                <p className="text-sm text-neutral-500">{s.desc}</p>
               </div>
             ))}
           </div>
@@ -307,7 +307,7 @@ function ClaimPageInner() {
                   {faq.q}
                   <svg className="w-5 h-5 text-neutral-400 group-open:rotate-180 transition-transform" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd"/></svg>
                 </summary>
-                <div className="px-6 pb-4 text-sm text-neutral-600 leading-relaxed">{faq.a}</div>
+                <div className="px-6 pb-4 text-sm text-neutral-500 leading-relaxed">{faq.a}</div>
               </details>
             ))}
           </div>
