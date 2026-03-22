@@ -127,35 +127,37 @@ async function fetchInstagramProfile(
 ): Promise<SocialProfile | null> {
   const clean = handle.replace(/^@/, "").trim().toLowerCase();
 
-  // Try Instagram Graph API first (if we have a token)
+  // Try Instagram Graph API first (if we have a token + business account ID)
   const igToken = process.env.INSTAGRAM_ACCESS_TOKEN;
-  if (igToken) {
+  const igAccountId = process.env.INSTAGRAM_BUSINESS_ACCOUNT_ID;
+  if (igToken && igAccountId) {
     try {
-      // Search for the user via Graph API
+      // Use Business Discovery to look up ANY public business/creator account
+      const fields = "username,name,biography,followers_count,follows_count,media_count,profile_picture_url,website";
       const searchRes = await fetch(
-        `https://graph.instagram.com/v21.0/me?fields=user_id,username,name,biography,followers_count,follows_count,media_count,profile_picture_url,website&access_token=${igToken}`,
+        `https://graph.instagram.com/v21.0/${igAccountId}?fields=business_discovery.fields(${fields}){username=${encodeURIComponent(clean)}}&access_token=${igToken}`,
         { signal: AbortSignal.timeout(8000) }
       );
       if (searchRes.ok) {
-        const me = await searchRes.json();
-        // Graph API only returns data for the connected account, but we can use it
-        if (me.username?.toLowerCase() === clean) {
-          const bio = me.biography || null;
-          const otherSocials = extractSocialLinks([bio, me.website].filter(Boolean).join(" "), "instagram");
-          const websites = extractWebsites(me.website, bio);
+        const data = await searchRes.json();
+        const user = data?.business_discovery;
+        if (user) {
+          const bio = user.biography || null;
+          const otherSocials = extractSocialLinks([bio, user.website].filter(Boolean).join(" "), "instagram");
+          const websites = extractWebsites(user.website, bio);
           const category = detectCategoryFromBio(bio) || null;
           return {
             platform: "instagram",
             handle: clean,
-            displayName: me.name || clean,
-            avatarUrl: me.profile_picture_url || null,
+            displayName: user.name || clean,
+            avatarUrl: user.profile_picture_url || null,
             bio,
-            followerCount: me.followers_count || 0,
-            followingCount: me.follows_count || 0,
-            postCount: me.media_count || 0,
+            followerCount: user.followers_count || 0,
+            followingCount: user.follows_count || 0,
+            postCount: user.media_count || 0,
             isVerified: false,
             category,
-            externalUrl: me.website || null,
+            externalUrl: user.website || null,
             websites,
             otherSocials,
             profileUrl: `https://www.instagram.com/${clean}/`,
