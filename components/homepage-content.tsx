@@ -170,13 +170,13 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
           <div className="flex flex-col sm:flex-row gap-3 justify-center mt-8">
             <a
               href="/claim"
-              className="inline-flex items-center justify-center bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-full px-7 py-3.5 font-semibold shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30 hover:scale-[1.02] transition-all min-h-[48px] text-sm"
+              className="inline-flex items-center justify-center bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg px-7 py-3.5 font-semibold shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30 hover:scale-[1.02] transition-all min-h-[48px] text-sm"
             >
               Get Your Score
             </a>
             <a
               href="/for-brands"
-              className="inline-flex items-center justify-center bg-white/80 backdrop-blur-sm border border-neutral-200 text-neutral-700 rounded-full px-7 py-3.5 font-medium hover:bg-white hover:border-neutral-300 transition-all min-h-[48px] text-sm"
+              className="inline-flex items-center justify-center bg-white/80 backdrop-blur-sm border border-neutral-200 text-neutral-700 rounded-lg px-7 py-3.5 font-medium hover:bg-white hover:border-neutral-300 transition-all min-h-[48px] text-sm"
             >
               For Brands
             </a>
@@ -343,7 +343,7 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
 
             <a
               href="/claim"
-              className="inline-flex items-center gap-2 bg-white text-blue-600 rounded-full px-6 py-3 font-semibold text-sm hover:bg-blue-50 transition-colors shadow-lg shadow-blue-900/20 mt-8"
+              className="inline-flex items-center gap-2 bg-white text-blue-600 rounded-lg px-6 py-3 font-semibold text-sm hover:bg-blue-50 transition-colors shadow-lg shadow-blue-900/20 mt-8"
             >
               Check your real score
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>

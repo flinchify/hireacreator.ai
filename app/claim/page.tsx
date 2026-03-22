@@ -176,7 +176,7 @@ function ClaimPageInner() {
                     ))}
                   </select>
                 </div>
-                <button type="submit" className="w-full min-h-[48px] bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-full font-semibold text-sm hover:from-blue-600 hover:to-blue-700 shadow-lg shadow-blue-500/25 transition-all">
+                <button type="submit" className="w-full min-h-[48px] bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg font-semibold text-sm hover:from-blue-600 hover:to-blue-700 shadow-lg shadow-blue-500/25 transition-all">
                   Calculate My Score
                 </button>
               </form>
@@ -203,9 +203,9 @@ function ClaimPageInner() {
                 <div className="bg-white border border-neutral-100 rounded-2xl p-8 shadow-md shadow-neutral-900/5 mb-6">
                   <div className="flex items-center gap-4 mb-6">
                     {scoreData.profile.avatarUrl ? (
-                      <img src={scoreData.profile.avatarUrl} alt="" className="w-16 h-16 rounded-full object-cover" />
+                      <img src={scoreData.profile.avatarUrl} alt="" className="w-16 h-16 rounded-lg object-cover" />
                     ) : (
-                      <div className="w-16 h-16 rounded-full bg-blue-50 flex items-center justify-center text-2xl font-bold text-blue-600">
+                      <div className="w-16 h-16 rounded-lg bg-blue-50 flex items-center justify-center text-2xl font-bold text-blue-600">
                         {scoreData.profile.displayName[0]?.toUpperCase() || "?"}
                       </div>
                     )}
@@ -251,7 +251,7 @@ function ClaimPageInner() {
                 {!scoreData.isClaimed && (
                   <a
                     href={scoreData.profileUrl.replace("https://hireacreator.ai", "")}
-                    className="block w-full py-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-full font-semibold text-center text-sm hover:from-blue-600 hover:to-blue-700 shadow-lg shadow-blue-500/25 transition-all mb-3"
+                    className="block w-full py-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg font-semibold text-center text-sm hover:from-blue-600 hover:to-blue-700 shadow-lg shadow-blue-500/25 transition-all mb-3"
                   >
                     Claim Your Profile — Get Matched With Brands
                   </a>
@@ -259,7 +259,7 @@ function ClaimPageInner() {
 
                 <button
                   onClick={copyShareUrl}
-                  className="w-full py-3 border border-neutral-200 text-neutral-700 rounded-full font-medium text-sm hover:bg-neutral-50 transition-colors"
+                  className="w-full py-3 border border-neutral-200 text-neutral-700 rounded-lg font-medium text-sm hover:bg-neutral-50 transition-colors"
                 >
                   {copied ? "Link copied!" : "Share Your Score"}
                 </button>
@@ -286,7 +286,7 @@ function ClaimPageInner() {
                 { step: "3", title: "Earn", desc: "Brands find your profile and send deals. You get paid." },
               ].map((s) => (
                 <div key={s.step} className="bg-white rounded-2xl p-6 sm:p-8 shadow-md shadow-neutral-900/5 text-center hover:-translate-y-1 hover:shadow-lg transition-all duration-300">
-                  <div className="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center text-sm font-bold mx-auto mb-4">{s.step}</div>
+                  <div className="w-10 h-10 rounded-lg bg-blue-500 text-white flex items-center justify-center text-sm font-bold mx-auto mb-4">{s.step}</div>
                   <h3 className="font-semibold text-neutral-800 text-base mb-2">{s.title}</h3>
                   <p className="text-sm text-neutral-500">{s.desc}</p>
                 </div>

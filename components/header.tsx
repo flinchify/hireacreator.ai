@@ -93,11 +93,19 @@ export function Header() {
 
   return (
     <header className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-1rem)] sm:w-[calc(100%-2rem)] max-w-5xl">
-      <nav className={`flex items-center justify-between px-5 sm:px-6 py-3 rounded-2xl border transition-all duration-300 ${
+      <nav className={`relative flex items-center justify-between px-5 sm:px-6 py-3 rounded-2xl border transition-all duration-300 overflow-hidden ${
         scrolled
-          ? "bg-white/80 backdrop-blur-xl border-neutral-200/50 shadow-sm"
-          : "bg-white/80 backdrop-blur-xl border-neutral-200/50"
+          ? "bg-white/80 backdrop-blur-xl border-white/40 shadow-lg shadow-blue-500/5"
+          : "bg-white/70 backdrop-blur-xl border-white/40"
       }`}>
+        {/* Animated gradient border */}
+        <div className="absolute inset-0 rounded-2xl p-[1px] pointer-events-none" style={{
+          background: "conic-gradient(from var(--header-angle, 0deg), transparent 30%, rgba(59,130,246,0.3) 45%, rgba(14,165,233,0.2) 55%, transparent 70%)",
+          WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+          WebkitMaskComposite: "xor",
+          maskComposite: "exclude",
+          animation: "header-sweep 6s linear infinite",
+        }} />
         <div className="hidden lg:flex items-center gap-0.5">
           {user?.role === "brand" ? (
             <Link href="/browse" className="px-4 py-2 text-[13px] font-medium transition-colors text-neutral-600 hover:text-neutral-900">
@@ -146,7 +154,7 @@ export function Header() {
               <button onClick={openLogin} className="px-4 py-2 text-[13px] font-medium text-neutral-500 hover:text-neutral-900 transition-colors">
                 Log in
               </button>
-              <button onClick={() => openSignup()} className="px-4 py-1.5 text-[13px] font-semibold rounded-full bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/30 transition-all active:scale-[0.98]">
+              <button onClick={() => openSignup()} className="px-4 py-1.5 text-[13px] font-semibold rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/30 transition-all active:scale-[0.98]">
                 Get Started
               </button>
             </>
