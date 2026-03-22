@@ -55,6 +55,18 @@
   transition: opacity 400ms ease-out, transform 400ms ease-out;
 }
 
+/* Hero typing cursor blink */
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+.animate-blink {
+  animation: blink 0.8s step-end infinite;
+  font-weight: 300;
+  margin-left: 2px;
+}
+
 /* Floating social media icon animations */
 @keyframes float-icon {
   0%, 100% { transform: translateY(0) translateX(0) rotate(0deg); }

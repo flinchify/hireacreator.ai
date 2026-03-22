@@ -7,6 +7,58 @@ import { PlatformTicker } from "./platform-ticker";
 import { CreatorCard } from "./creator-card";
 import type { Creator } from "@/lib/types";
 
+/* ─── Typing rotation for hero ─── */
+const heroWords = [
+  "starts here",
+  "gets discovered",
+  "lands brand deals",
+  "goes global",
+  "levels up",
+  "gets paid",
+];
+
+function TypingRotation() {
+  const [wordIndex, setWordIndex] = useState(0);
+  const [text, setText] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    const word = heroWords[wordIndex];
+
+    if (!isDeleting) {
+      if (text.length < word.length) {
+        timeoutRef.current = setTimeout(() => {
+          setText(word.slice(0, text.length + 1));
+        }, 80);
+      } else {
+        // Pause at full word
+        timeoutRef.current = setTimeout(() => setIsDeleting(true), 2200);
+      }
+    } else {
+      if (text.length > 0) {
+        timeoutRef.current = setTimeout(() => {
+          setText(text.slice(0, -1));
+        }, 40);
+      } else {
+        setIsDeleting(false);
+        setWordIndex((prev) => (prev + 1) % heroWords.length);
+      }
+    }
+
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, [text, isDeleting, wordIndex]);
+
+  return (
+    <span className="bg-gradient-to-r from-blue-500 via-sky-500 to-cyan-500 bg-clip-text text-transparent">
+      {text}
+      <span className="animate-blink text-blue-500">|</span>
+    </span>
+  );
+}
+
 /* ─── Animated score gauge for demo ─── */
 function DemoGauge({ score }: { score: number }) {
   const [animated, setAnimated] = useState(0);
@@ -183,10 +235,9 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
             className="text-3xl sm:text-5xl lg:text-7xl text-neutral-800 leading-[1.1] mb-6"
             style={{ fontFamily: "var(--font-serif)" }}
           >
-            Your creator career{" "}
-            <span className="bg-gradient-to-r from-blue-500 via-sky-500 to-cyan-500 bg-clip-text text-transparent">
-              starts here
-            </span>
+            Where every creator{" "}
+            <br className="hidden sm:block" />
+            <TypingRotation />
           </h1>
 
           <p className="text-neutral-500 text-base sm:text-lg max-w-xl mx-auto">
