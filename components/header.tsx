@@ -93,7 +93,7 @@ export function Header() {
 
   return (
     <header className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-1rem)] sm:w-[calc(100%-2rem)] max-w-5xl">
-      <nav className={`relative flex items-center justify-between px-5 sm:px-6 py-3 rounded-2xl border transition-all duration-300 overflow-hidden ${
+      <nav className={`relative flex items-center justify-between px-5 sm:px-6 py-3 rounded-2xl border transition-all duration-300 ${
         scrolled
           ? "bg-white/80 backdrop-blur-xl border-white/40 shadow-lg shadow-blue-500/5"
           : "bg-white/70 backdrop-blur-xl border-white/40"
