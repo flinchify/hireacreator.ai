@@ -4,10 +4,15 @@ export async function GET() {
   const token = process.env.INSTAGRAM_ACCESS_TOKEN;
   const accountId = process.env.INSTAGRAM_BUSINESS_ACCOUNT_ID;
   
+  const fbToken = process.env.FACEBOOK_PAGE_TOKEN;
+
   const results: Record<string, unknown> = {
     hasToken: !!token,
     tokenPrefix: token ? token.substring(0, 10) + "..." : "MISSING",
     accountId: accountId || "MISSING",
+    hasFbToken: !!fbToken,
+    fbTokenPrefix: fbToken ? fbToken.substring(0, 10) + "..." : "MISSING",
+    allEnvKeys: Object.keys(process.env).filter(k => k.includes("FACEBOOK") || k.includes("INSTAGRAM") || k.includes("FB")).sort(),
   };
 
   // Test 1: Check own account via Instagram Graph API (IGAA tokens use graph.instagram.com)
