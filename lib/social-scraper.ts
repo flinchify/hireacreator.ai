@@ -283,78 +283,78 @@ async function fetchInstagramProfile(
   try {
     console.log(`[IG Scraper] Trying ScrapingBee proxy for @${clean}`);
     const html = await fetchViaProxy(`https://www.instagram.com/${clean}/`);
-    if (!html || !html.includes("Followers")) {
-      console.log(`[IG Scraper] ScrapingBee returned no follower data`);
-    }
     if (html && html.includes("Followers")) {
       console.log(`[IG Scraper] ScrapingBee success for @${clean}`);
 
-    // Extract follower count from og:description: "600 Followers, 400 Following, 50 Posts"
-    let followerCount = 0;
-    let followingCount = 0;
-    let postCount = 0;
-    const ogMatch = html.match(/<meta[^>]*property="og:description"[^>]*content="([^"]+)"/i);
-    if (ogMatch) {
-      const desc = ogMatch[1];
-      const fMatch = desc.match(/([\d,.\w]+)\s*Followers/i);
-      const flMatch = desc.match(/([\d,.\w]+)\s*Following/i);
-      const pMatch = desc.match(/([\d,.\w]+)\s*Posts/i);
-      if (fMatch) followerCount = parseIGCount(fMatch[1]);
-      if (flMatch) followingCount = parseIGCount(flMatch[1]);
-      if (pMatch) postCount = parseIGCount(pMatch[1]);
-    }
+      let followerCount = 0;
+      let followingCount = 0;
+      let postCount = 0;
+      const ogMatch = html.match(/<meta[^>]*property="og:description"[^>]*content="([^"]+)"/i);
+      if (ogMatch) {
+        const desc = ogMatch[1];
+        const fMatch = desc.match(/([\d,.]+[KMB]?)\s*Followers/i);
+        const flMatch = desc.match(/([\d,.]+[KMB]?)\s*Following/i);
+        const pMatch = desc.match(/([\d,.]+[KMB]?)\s*Posts/i);
+        if (fMatch) followerCount = parseIGCount(fMatch[1]);
+        if (flMatch) followingCount = parseIGCount(flMatch[1]);
+        if (pMatch) postCount = parseIGCount(pMatch[1]);
+      }
 
-    // Extract name from og:title: "Name (@handle)" or og:description: "... from Name (@handle)"
-    let displayName = clean;
-    const titleMatch = html.match(/<meta[^>]*property="og:title"[^>]*content="([^"]+)"/i);
-    if (titleMatch) {
-      const nameOnly = titleMatch[1].replace(/\s*\(@[^)]+\).*$/, "").replace(/&#064;/g, "@").trim();
-      if (nameOnly) displayName = nameOnly;
-    }
-    // Fallback: extract from og:description "... from Name (@handle)"
-    if (displayName === clean && ogMatch) {
-      const fromMatch = ogMatch[1].match(/from\s+(.+?)\s*\(&#064;/);
-      if (fromMatch) displayName = fromMatch[1].trim();
-    }
+      // Extract name — clean off " (@handle) • Instagram photos and videos"
+      let displayName = clean;
+      const ogDescName = ogMatch?.[1]?.match(/from\s+(.+?)\s*\(&#064;/);
+      if (ogDescName) {
+        displayName = ogDescName[1].trim();
+      } else {
+        const titleMatch = html.match(/<meta[^>]*property="og:title"[^>]*content="([^"]+)"/i);
+        if (titleMatch) {
+          const n = titleMatch[1]
+            .replace(/\s*\(@[^)]+\).*$/, "")
+            .replace(/&#x2022;.*$/, "")
+            .replace(/&#064;/g, "@")
+            .trim();
+          if (n && n !== clean) displayName = n;
+        }
+      }
 
-    // Extract avatar from og:image
-    let avatarUrl: string | null = null;
-    const imgMatch = html.match(/<meta[^>]*property="og:image"[^>]*content="([^"]+)"/i);
-    if (imgMatch) avatarUrl = imgMatch[1].replace(/&amp;/g, "&");
+      let avatarUrl: string | null = null;
+      const imgMatch = html.match(/<meta[^>]*property="og:image"[^>]*content="([^"]+)"/i);
+      if (imgMatch) avatarUrl = imgMatch[1].replace(/&amp;/g, "&");
 
-    // Extract bio from description or JSON
-    let bio: string | null = null;
-    const bioMatch = html.match(/"biography"\s*:\s*"([^"]+)"/);
-    if (bioMatch) bio = bioMatch[1].replace(/\\n/g, "\n").replace(/\\u[\da-fA-F]{4}/g, "");
-    if (!bio && ogMatch) {
-      const parts = ogMatch[1].split(" - ");
-      if (parts.length > 1) bio = parts.slice(1).join(" - ").trim();
+      let bio: string | null = null;
+      const bioMatch = html.match(/"biography"\s*:\s*"([^"]+)"/);
+      if (bioMatch) bio = bioMatch[1].replace(/\\n/g, "\n").replace(/\\u[\da-fA-F]{4}/g, "");
+      if (!bio && ogMatch) {
+        const parts = ogMatch[1].split(" - ");
+        if (parts.length > 1) bio = parts.slice(1).join(" - ").trim();
+      }
+
+      const category = detectCategoryFromBio(bio) || null;
+      const otherSocials = extractSocialLinks(bio, "instagram");
+      const websites = extractWebsites(null, bio);
+
+      return {
+        platform: "instagram",
+        handle: clean,
+        displayName,
+        avatarUrl,
+        bio,
+        followerCount,
+        followingCount,
+        postCount,
+        isVerified: html.includes('"is_verified":true'),
+        category,
+        externalUrl: null,
+        websites,
+        otherSocials,
+        profileUrl: `https://www.instagram.com/${clean}/`,
+        isBusinessAccount: html.includes('"is_business_account":true') || html.includes('"is_professional_account":true'),
+      };
+    } else {
+      console.log(`[IG Scraper] ScrapingBee returned no follower data for @${clean}`);
     }
-
-    const category = detectCategoryFromBio(bio) || null;
-    const otherSocials = extractSocialLinks(bio, "instagram");
-    const websites = extractWebsites(null, bio);
-
-    return {
-      platform: "instagram",
-      handle: clean,
-      displayName,
-      avatarUrl,
-      bio,
-      followerCount,
-      followingCount,
-      postCount,
-      isVerified: html.includes('"is_verified":true'),
-      category,
-      externalUrl: null,
-      websites,
-      otherSocials,
-      profileUrl: `https://www.instagram.com/${clean}/`,
-      isBusinessAccount: html.includes('"is_business_account":true') || html.includes('"is_professional_account":true'),
-    };
-    }
-  } catch {
-    // continue
+  } catch (e) {
+    console.log(`[IG Scraper] ScrapingBee error for @${clean}:`, e);
   }
 
   return null;
