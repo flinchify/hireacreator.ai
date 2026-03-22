@@ -122,15 +122,18 @@ function ClaimPageInner() {
 
       {/* Hero / Input */}
       {!scoreData?.score && (
-        <section className="pt-32 pb-24 px-6">
+        <section className="pt-32 pb-20 px-5">
           <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-neutral-900 mb-6" style={{ fontFamily: "var(--font-outfit)" }}>
-              Discover What You Are Worth to Brands
+            <h1
+              className="text-3xl sm:text-4xl lg:text-6xl text-neutral-800 leading-tight mb-6 font-serif"
+              style={{ fontFamily: "var(--font-serif)" }}
+            >
+              Discover what you are worth to brands
             </h1>
-            <p className="text-lg text-neutral-500 max-w-xl mx-auto mb-10">
+            <p className="text-base text-neutral-500 max-w-xl mx-auto mb-10">
               Enter your social handle. We build your creator profile and match you with brand deals — instantly.
             </p>
-            <div className="flex justify-center px-4 sm:px-0">
+            <div className="flex justify-center px-0 sm:px-0">
               <ScoreChecker variant="light" onResult={handleResult} />
             </div>
             {loading && (
@@ -150,10 +153,10 @@ function ClaimPageInner() {
 
       {/* Manual Input Fallback */}
       {showManual && (
-        <section className="pb-16 px-6">
+        <section className="pb-16 px-5">
           <div className="max-w-lg mx-auto">
-            <div className="bg-white border border-neutral-200/60 rounded-2xl p-8 shadow-lg">
-              <h3 className="font-bold text-lg text-neutral-900 mb-2">We could not auto-detect your profile</h3>
+            <div className="bg-white border border-neutral-100 rounded-2xl p-8 shadow-md shadow-neutral-900/5">
+              <h3 className="font-semibold text-lg text-neutral-800 mb-2">We could not auto-detect your profile</h3>
               <p className="text-sm text-neutral-500 mb-6">Enter your details manually for an accurate score.</p>
               <form onSubmit={handleManualSubmit} className="space-y-4">
                 <div>
@@ -184,11 +187,11 @@ function ClaimPageInner() {
 
       {/* Score Results */}
       {scoreData?.score && !scoreData.error && (
-        <section className="pt-24 pb-16 px-6">
+        <section className="pt-24 pb-16 px-5">
           <div className="max-w-4xl mx-auto">
             <div className="grid lg:grid-cols-2 gap-12">
               {/* Left: Score Gauge */}
-              <div className="flex flex-col items-center bg-gradient-to-br from-blue-50 to-white rounded-2xl p-8">
+              <div className="flex flex-col items-center bg-blue-50 rounded-2xl p-8">
                 <ScoreGauge score={scoreData.score} size={220} />
                 <div className="mt-8 w-full max-w-sm">
                   <BreakdownBars breakdown={scoreData.breakdown} />
@@ -197,17 +200,17 @@ function ClaimPageInner() {
 
               {/* Right: Profile Preview + Actions */}
               <div>
-                <div className="bg-white border border-neutral-200/60 rounded-2xl p-8 shadow-lg mb-6">
+                <div className="bg-white border border-neutral-100 rounded-2xl p-8 shadow-md shadow-neutral-900/5 mb-6">
                   <div className="flex items-center gap-4 mb-6">
                     {scoreData.profile.avatarUrl ? (
                       <img src={scoreData.profile.avatarUrl} alt="" className="w-16 h-16 rounded-full object-cover" />
                     ) : (
-                      <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-100 to-sky-100 flex items-center justify-center text-2xl font-bold text-blue-600">
+                      <div className="w-16 h-16 rounded-full bg-blue-50 flex items-center justify-center text-2xl font-bold text-blue-600">
                         {scoreData.profile.displayName[0]?.toUpperCase() || "?"}
                       </div>
                     )}
                     <div>
-                      <div className="font-bold text-lg text-neutral-900">{scoreData.profile.displayName}</div>
+                      <div className="font-semibold text-lg text-neutral-800">{scoreData.profile.displayName}</div>
                       <div className="text-sm text-neutral-500">@{scoreData.profile.handle} on {scoreData.profile.platform}</div>
                     </div>
                   </div>
@@ -217,23 +220,23 @@ function ClaimPageInner() {
                   )}
 
                   <div className="grid grid-cols-2 gap-4 mb-6">
-                    <div className="bg-blue-50/50 rounded-xl p-4">
+                    <div className="bg-blue-50 rounded-xl p-4">
                       <div className="text-xs text-neutral-500 mb-1">Followers</div>
-                      <div className="text-lg font-bold text-neutral-900">{formatFollowers(scoreData.profile.followerCount)}</div>
+                      <div className="text-lg font-bold text-neutral-800">{formatFollowers(scoreData.profile.followerCount)}</div>
                     </div>
-                    <div className="bg-blue-50/50 rounded-xl p-4">
+                    <div className="bg-blue-50 rounded-xl p-4">
                       <div className="text-xs text-neutral-500 mb-1">Niche</div>
-                      <div className="text-lg font-bold text-neutral-900 capitalize">{scoreData.detectedNiche}</div>
+                      <div className="text-lg font-bold text-neutral-800 capitalize">{scoreData.detectedNiche}</div>
                     </div>
-                    <div className="bg-blue-50/50 rounded-xl p-4">
+                    <div className="bg-blue-50 rounded-xl p-4">
                       <div className="text-xs text-neutral-500 mb-1">Estimated Rate</div>
-                      <div className="text-lg font-bold text-neutral-900">
+                      <div className="text-lg font-bold text-neutral-800">
                         {formatCents(scoreData.estimatedPostRange[0])} - {formatCents(scoreData.estimatedPostRange[1])}
                       </div>
                     </div>
-                    <div className="bg-blue-50/50 rounded-xl p-4">
+                    <div className="bg-blue-50 rounded-xl p-4">
                       <div className="text-xs text-neutral-500 mb-1">Matching Campaigns</div>
-                      <div className="text-lg font-bold text-neutral-900">{scoreData.matchingCampaigns}</div>
+                      <div className="text-lg font-bold text-neutral-800">{scoreData.matchingCampaigns}</div>
                     </div>
                   </div>
 
@@ -267,34 +270,42 @@ function ClaimPageInner() {
       )}
 
       {/* How It Works */}
-      <section className="py-24 px-6 bg-slate-50/80">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold text-neutral-900 text-center mb-12" style={{ fontFamily: "var(--font-outfit)" }}>
-            How It Works
-          </h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              { step: "1", title: "Tag", desc: "Tag @hireacreator on any platform, or enter your handle above." },
-              { step: "2", title: "Score", desc: "Our AI analyzes your profile, scores your brand deal potential, and builds your page." },
-              { step: "3", title: "Earn", desc: "Brands find your profile and send deals. You get paid." },
-            ].map((s) => (
-              <div key={s.step} className="text-center">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 text-white flex items-center justify-center text-lg font-bold mx-auto mb-4">{s.step}</div>
-                <h3 className="font-bold text-lg text-neutral-900 mb-2">{s.title}</h3>
-                <p className="text-sm text-neutral-500">{s.desc}</p>
-              </div>
-            ))}
+      <section className="my-4">
+        <div className="bg-blue-50 py-16 sm:py-24 rounded-3xl mx-4 sm:mx-6">
+          <div className="max-w-4xl mx-auto px-5">
+            <h2
+              className="text-2xl sm:text-3xl text-neutral-800 text-center mb-12 font-serif"
+              style={{ fontFamily: "var(--font-serif)" }}
+            >
+              How it works
+            </h2>
+            <div className="grid md:grid-cols-3 gap-6">
+              {[
+                { step: "1", title: "Tag", desc: "Tag @hireacreator on any platform, or enter your handle above." },
+                { step: "2", title: "Score", desc: "Our AI analyzes your profile, scores your brand deal potential, and builds your page." },
+                { step: "3", title: "Earn", desc: "Brands find your profile and send deals. You get paid." },
+              ].map((s) => (
+                <div key={s.step} className="bg-white rounded-2xl p-6 sm:p-8 shadow-md shadow-neutral-900/5 text-center hover:-translate-y-1 hover:shadow-lg transition-all duration-300">
+                  <div className="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center text-sm font-bold mx-auto mb-4">{s.step}</div>
+                  <h3 className="font-semibold text-neutral-800 text-base mb-2">{s.title}</h3>
+                  <p className="text-sm text-neutral-500">{s.desc}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
       {/* FAQ */}
-      <section className="py-24 px-6">
+      <section className="py-16 sm:py-24 px-5">
         <div className="max-w-2xl mx-auto">
-          <h2 className="text-3xl font-bold text-neutral-900 text-center mb-12" style={{ fontFamily: "var(--font-outfit)" }}>
-            Frequently Asked Questions
+          <h2
+            className="text-2xl sm:text-3xl text-neutral-800 text-center mb-12 font-serif"
+            style={{ fontFamily: "var(--font-serif)" }}
+          >
+            Frequently asked questions
           </h2>
-          <div className="space-y-4">
+          <div className="space-y-3">
             {[
               { q: "What is a creator score?", a: "A 0-100 rating based on your profile quality, reach, engagement, niche demand, and content consistency. Brands use it to find the right creators." },
               { q: "How do brand deals work?", a: "Brands post campaigns with budgets and requirements. If your score and niche match, you can apply. Deals are managed and paid through the platform." },
@@ -302,12 +313,12 @@ function ClaimPageInner() {
               { q: "How do I get paid?", a: "Through Stripe. Once you complete a brand deal, payment is released from escrow directly to your bank account." },
               { q: "Can I claim a profile someone else tagged?", a: "Only the real account owner can claim a profile. We verify ownership through email or social login." },
             ].map((faq) => (
-              <details key={faq.q} className="group border border-neutral-200 rounded-xl">
-                <summary className="px-6 py-4 cursor-pointer font-medium text-neutral-900 flex justify-between items-center hover:bg-neutral-50 rounded-xl transition-colors">
+              <details key={faq.q} className="group border border-neutral-100 rounded-xl">
+                <summary className="px-5 py-4 cursor-pointer font-medium text-neutral-800 text-sm flex justify-between items-center hover:bg-neutral-50 rounded-xl transition-colors">
                   {faq.q}
-                  <svg className="w-5 h-5 text-neutral-400 group-open:rotate-180 transition-transform" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd"/></svg>
+                  <svg className="w-5 h-5 text-neutral-400 group-open:rotate-180 transition-transform shrink-0 ml-2" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd"/></svg>
                 </summary>
-                <div className="px-6 pb-4 text-sm text-neutral-500 leading-relaxed">{faq.a}</div>
+                <div className="faq-content px-5 pb-4 text-sm text-neutral-500 leading-relaxed">{faq.a}</div>
               </details>
             ))}
           </div>

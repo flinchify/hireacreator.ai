@@ -93,34 +93,34 @@ export function Header() {
 
   return (
     <header className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-1rem)] sm:w-[calc(100%-2rem)] max-w-5xl">
-      <nav className={`flex items-center justify-between px-6 py-3 rounded-2xl border transition-all duration-300 ${
+      <nav className={`flex items-center justify-between px-5 sm:px-6 py-3 rounded-2xl border transition-all duration-300 ${
         scrolled
-          ? "bg-white/90 backdrop-blur-xl border-neutral-200/50 shadow-sm"
-          : "bg-white/70 backdrop-blur-xl border-neutral-200/50 shadow-sm"
+          ? "bg-white/80 backdrop-blur-xl border-neutral-200/50 shadow-sm"
+          : "bg-white/80 backdrop-blur-xl border-neutral-200/50"
       }`}>
         <div className="hidden lg:flex items-center gap-0.5">
           {user?.role === "brand" ? (
-            <Link href="/browse" className="flex items-center gap-1 px-4 py-2 text-[13px] font-medium transition-colors text-neutral-600 hover:text-neutral-900">
-              Explore <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="opacity-40"><path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            <Link href="/browse" className="px-4 py-2 text-[13px] font-medium transition-colors text-neutral-600 hover:text-neutral-900">
+              Explore
             </Link>
           ) : (
-            <Link href="/browse" className="flex items-center gap-1 px-4 py-2 text-[13px] font-medium transition-colors text-neutral-600 hover:text-neutral-900">
-              Creators <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="opacity-40"><path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            <Link href="/browse" className="px-4 py-2 text-[13px] font-medium transition-colors text-neutral-600 hover:text-neutral-900">
+              Creators
             </Link>
           )}
           {!user && (
-            <Link href="/for-brands" className="flex items-center gap-1 px-4 py-2 text-[13px] font-medium transition-colors text-neutral-600 hover:text-neutral-900">
-              For Brands <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="opacity-40"><path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            <Link href="/for-brands" className="px-4 py-2 text-[13px] font-medium transition-colors text-neutral-600 hover:text-neutral-900">
+              For Brands
             </Link>
           )}
-          <Link href="/leaderboard" className="flex items-center gap-1 px-4 py-2 text-[13px] font-medium transition-colors text-neutral-600 hover:text-neutral-900">
-            Leaderboard <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="opacity-40"><path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          <Link href="/leaderboard" className="px-4 py-2 text-[13px] font-medium transition-colors text-neutral-600 hover:text-neutral-900">
+            Leaderboard
           </Link>
-          <Link href="/pricing" className="flex items-center gap-1 px-4 py-2 text-[13px] font-medium transition-colors text-neutral-600 hover:text-neutral-900">
-            Pricing <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="opacity-40"><path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          <Link href="/pricing" className="px-4 py-2 text-[13px] font-medium transition-colors text-neutral-600 hover:text-neutral-900">
+            Pricing
           </Link>
-          <Link href="/how-it-works" className="flex items-center gap-1 px-4 py-2 text-[13px] font-medium transition-colors text-neutral-600 hover:text-neutral-900">
-            How It Works <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="opacity-40"><path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          <Link href="/how-it-works" className="px-4 py-2 text-[13px] font-medium transition-colors text-neutral-600 hover:text-neutral-900">
+            How It Works
           </Link>
         </div>
 
@@ -133,20 +133,20 @@ export function Header() {
             <div className="w-20 h-8" />
           ) : user ? (
             <>
-              <Link href={user.slug ? `/u/${user.slug}` : "/dashboard"} className="flex items-center gap-1 px-4 py-2 text-[13px] font-medium transition-colors text-neutral-600 hover:text-neutral-900">
+              <Link href={user.slug ? `/u/${user.slug}` : "/dashboard"} className="px-4 py-2 text-[13px] font-medium transition-colors text-neutral-600 hover:text-neutral-900">
                 Link in Bio
               </Link>
-              <Link href="/dashboard" className="flex items-center gap-1 px-4 py-2 text-[13px] font-medium transition-colors text-neutral-600 hover:text-neutral-900">
+              <Link href="/dashboard" className="px-4 py-2 text-[13px] font-medium transition-colors text-neutral-600 hover:text-neutral-900">
                 Dashboard
               </Link>
               <UserMenu />
             </>
           ) : (
             <>
-              <button onClick={openLogin} className="px-4 py-2 text-[13px] font-medium rounded-xl active:scale-[0.98] transition-all text-neutral-600 hover:text-neutral-900">
+              <button onClick={openLogin} className="px-4 py-2 text-[13px] font-medium text-neutral-500 hover:text-neutral-900 transition-colors">
                 Log in
               </button>
-              <button onClick={() => openSignup()} className="px-5 py-2 text-[13px] font-medium rounded-full active:scale-[0.98] transition-all bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/30">
+              <button onClick={() => openSignup()} className="px-4 py-1.5 text-[13px] font-semibold rounded-full bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/30 transition-all active:scale-[0.98]">
                 Get Started
               </button>
             </>
@@ -163,25 +163,25 @@ export function Header() {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="lg:hidden mt-2 rounded-2xl border border-neutral-200/50 p-4 shadow-lg bg-white/95 backdrop-blur-xl">
+        <div className="lg:hidden mt-2 rounded-2xl border border-neutral-100 p-4 shadow-xl bg-white">
           <div className="flex flex-col gap-1">
-            <Link href="/browse" className="px-4 py-3 text-sm font-medium rounded-xl min-h-[44px] flex items-center text-neutral-800 hover:bg-neutral-100" onClick={() => setMobileOpen(false)}>
+            <Link href="/browse" className="px-4 py-3 text-sm font-medium rounded-xl min-h-[48px] flex items-center text-neutral-800 hover:bg-neutral-50" onClick={() => setMobileOpen(false)}>
               {user?.role === "brand" ? "Explore" : "Creators"}
             </Link>
-            {!user && <Link href="/for-brands" className="px-4 py-3 text-sm font-medium rounded-xl min-h-[44px] flex items-center text-neutral-800 hover:bg-neutral-100" onClick={() => setMobileOpen(false)}>For Brands</Link>}
-            <Link href="/leaderboard" className="px-4 py-3 text-sm font-medium rounded-xl min-h-[44px] flex items-center text-neutral-800 hover:bg-neutral-100" onClick={() => setMobileOpen(false)}>Leaderboard</Link>
-            <Link href="/pricing" className="px-4 py-3 text-sm font-medium rounded-xl min-h-[44px] flex items-center text-neutral-800 hover:bg-neutral-100" onClick={() => setMobileOpen(false)}>Pricing</Link>
-            <Link href="/how-it-works" className="px-4 py-3 text-sm font-medium rounded-xl min-h-[44px] flex items-center text-neutral-800 hover:bg-neutral-100" onClick={() => setMobileOpen(false)}>How It Works</Link>
-            <div className="border-t border-neutral-200 my-2" />
+            {!user && <Link href="/for-brands" className="px-4 py-3 text-sm font-medium rounded-xl min-h-[48px] flex items-center text-neutral-800 hover:bg-neutral-50" onClick={() => setMobileOpen(false)}>For Brands</Link>}
+            <Link href="/leaderboard" className="px-4 py-3 text-sm font-medium rounded-xl min-h-[48px] flex items-center text-neutral-800 hover:bg-neutral-50" onClick={() => setMobileOpen(false)}>Leaderboard</Link>
+            <Link href="/pricing" className="px-4 py-3 text-sm font-medium rounded-xl min-h-[48px] flex items-center text-neutral-800 hover:bg-neutral-50" onClick={() => setMobileOpen(false)}>Pricing</Link>
+            <Link href="/how-it-works" className="px-4 py-3 text-sm font-medium rounded-xl min-h-[48px] flex items-center text-neutral-800 hover:bg-neutral-50" onClick={() => setMobileOpen(false)}>How It Works</Link>
+            <div className="border-t border-neutral-100 my-2" />
             {user ? (
               <>
-                <Link href="/dashboard" className="px-4 py-3 text-sm font-medium rounded-xl min-h-[44px] flex items-center text-neutral-800 hover:bg-neutral-100" onClick={() => setMobileOpen(false)}>Dashboard</Link>
-                {user.role !== "brand" && <Link href={user.slug ? `/u/${user.slug}` : "/dashboard"} className="px-4 py-3 text-sm font-medium rounded-xl min-h-[44px] flex items-center text-neutral-800 hover:bg-neutral-100" onClick={() => setMobileOpen(false)}>My Link in Bio</Link>}
+                <Link href="/dashboard" className="px-4 py-3 text-sm font-medium rounded-xl min-h-[48px] flex items-center text-neutral-800 hover:bg-neutral-50" onClick={() => setMobileOpen(false)}>Dashboard</Link>
+                {user.role !== "brand" && <Link href={user.slug ? `/u/${user.slug}` : "/dashboard"} className="px-4 py-3 text-sm font-medium rounded-xl min-h-[48px] flex items-center text-neutral-800 hover:bg-neutral-50" onClick={() => setMobileOpen(false)}>My Link in Bio</Link>}
               </>
             ) : (
               <>
-                <button onClick={() => { setMobileOpen(false); openLogin(); }} className="px-4 py-3 text-sm font-medium rounded-xl text-left min-h-[44px] flex items-center text-neutral-800 hover:bg-neutral-100">Log in</button>
-                <button onClick={() => { setMobileOpen(false); openSignup(); }} className="px-4 py-3 text-sm font-medium text-center rounded-full min-h-[44px] flex items-center justify-center active:scale-[0.98] transition-transform bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md shadow-blue-500/20">Get Started</button>
+                <button onClick={() => { setMobileOpen(false); openLogin(); }} className="px-4 py-3 text-sm font-medium rounded-xl text-left min-h-[48px] flex items-center text-neutral-800 hover:bg-neutral-50">Log in</button>
+                <button onClick={() => { setMobileOpen(false); openSignup(); }} className="px-4 py-3 text-sm font-semibold text-center rounded-full min-h-[48px] flex items-center justify-center active:scale-[0.98] transition-transform bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md shadow-blue-500/20">Get Started</button>
               </>
             )}
           </div>

@@ -11,6 +11,7 @@ const config: Config = {
       fontFamily: {
         sans: ["Plus Jakarta Sans", "system-ui", "sans-serif"],
         display: ["Outfit", "Plus Jakarta Sans", "system-ui", "sans-serif"],
+        serif: ["DM Serif Display", "Georgia", "serif"],
       },
       colors: {
         brand: {
