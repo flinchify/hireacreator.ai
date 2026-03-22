@@ -10,11 +10,11 @@ export async function GET() {
     accountId: accountId || "MISSING",
   };
 
-  // Test 1: Check own account via Graph API
+  // Test 1: Check own account via Instagram Graph API (IGAA tokens use graph.instagram.com)
   if (token) {
     try {
       const res = await fetch(
-        `https://graph.facebook.com/v21.0/me?fields=id,name&access_token=${token}`,
+        `https://graph.instagram.com/v21.0/me?fields=user_id,username,name,biography,followers_count,follows_count,media_count,profile_picture_url&access_token=${token}`,
         { signal: AbortSignal.timeout(8000) }
       );
       const data = await res.json();
@@ -24,11 +24,11 @@ export async function GET() {
     }
   }
 
-  // Test 2: Check Instagram account
+  // Test 2: Check Instagram account directly
   if (token && accountId) {
     try {
       const res = await fetch(
-        `https://graph.facebook.com/v21.0/${accountId}?fields=id,username,followers_count,name&access_token=${token}`,
+        `https://graph.instagram.com/v21.0/${accountId}?fields=user_id,username,name,followers_count,biography,profile_picture_url&access_token=${token}`,
         { signal: AbortSignal.timeout(8000) }
       );
       const data = await res.json();
@@ -41,7 +41,7 @@ export async function GET() {
   // Test 3: Business Discovery for milescass_
   if (token && accountId) {
     try {
-      const url = `https://graph.facebook.com/v21.0/${accountId}?fields=business_discovery.fields(username,name,followers_count,biography,profile_picture_url){username%3Dmilescass_}&access_token=${token}`;
+      const url = `https://graph.instagram.com/v21.0/me?fields=business_discovery.fields(username,name,followers_count,biography,profile_picture_url){username%3Dmilescass_}&access_token=${token}`;
       const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
       const data = await res.json();
       results.businessDiscovery = { status: res.status, url: url.replace(token, "TOKEN"), data };

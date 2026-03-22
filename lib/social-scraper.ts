@@ -134,7 +134,7 @@ async function fetchInstagramProfile(
     try {
       // Use Business Discovery to look up ANY public business/creator account
       const fields = "username,name,biography,followers_count,follows_count,media_count,profile_picture_url,website";
-      const bdUrl = `https://graph.facebook.com/v21.0/${igAccountId}?fields=business_discovery.fields(${fields}){username%3D${encodeURIComponent(clean)}}&access_token=${igToken}`;
+      const bdUrl = `https://graph.instagram.com/v21.0/me?fields=business_discovery.fields(${fields}){username%3D${encodeURIComponent(clean)}}&access_token=${igToken}`;
       console.log(`[IG Scraper] Trying Business Discovery for @${clean}`);
       const searchRes = await fetch(bdUrl, { signal: AbortSignal.timeout(8000) });
       const searchText = await searchRes.text();
