@@ -12,7 +12,7 @@ export async function GET() {
     accountId: accountId || "MISSING",
     hasFbToken: !!fbToken,
     fbTokenPrefix: fbToken ? fbToken.substring(0, 10) + "..." : "MISSING",
-    allEnvKeys: Object.keys(process.env).filter(k => k.includes("FACEBOOK") || k.includes("INSTAGRAM") || k.includes("FB")).sort(),
+    allEnvKeys: Object.keys(process.env).filter(k => k.includes("FACEBOOK") || k.includes("INSTAGRAM") || k.includes("FB") || k.includes("SCRAPING")).sort(),
   };
 
   // Test 1: Check own account via Instagram Graph API (IGAA tokens use graph.instagram.com)
