@@ -228,7 +228,7 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
       </AnimateOnScroll>
 
       {/* ═══ How It Works ═══ */}
-      <AnimateOnScroll as="section" className="py-20 lg:py-28 px-6 bg-white">
+      <section className="py-20 lg:py-28 px-6 bg-white">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-neutral-900 mb-4" style={{ fontFamily: "var(--font-outfit)" }}>
@@ -269,10 +269,10 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
             ))}
           </StaggerChildren>
         </div>
-      </AnimateOnScroll>
+      </section>
 
       {/* ═══ For Creators ═══ */}
-      <AnimateOnScroll as="section" className="py-20 lg:py-28 px-6 bg-slate-50/80">
+      <section className="py-20 lg:py-28 px-6 bg-slate-50/80">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-neutral-900" style={{ fontFamily: "var(--font-outfit)" }}>
@@ -301,7 +301,7 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
             ))}
           </StaggerChildren>
         </div>
-      </AnimateOnScroll>
+      </section>
 
       {/* ═══ Interactive Score Demo ═══ */}
       <AnimateOnScroll className="mx-4 sm:mx-8 my-8">
@@ -343,7 +343,7 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
       </AnimateOnScroll>
 
       {/* ═══ For Brands ═══ */}
-      <AnimateOnScroll as="section" className="py-20 lg:py-28 px-6 bg-white">
+      <section className="py-20 lg:py-28 px-6 bg-white">
         <div className="max-w-6xl mx-auto text-center">
           <h2 className="text-3xl sm:text-4xl font-bold text-neutral-900 mb-12" style={{ fontFamily: "var(--font-outfit)" }}>
             Find creators that move the needle
@@ -366,7 +366,7 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
             ))}
           </StaggerChildren>
         </div>
-      </AnimateOnScroll>
+      </section>
 
       {/* ═══ Featured Creators ═══ */}
       {featured.length > 0 && (
