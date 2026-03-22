@@ -39,10 +39,6 @@ export default function ApiPage() {
       <section className="relative pt-32 sm:pt-40 pb-20 sm:pb-28 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-neutral-900 to-neutral-950" />
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-neutral-900 border border-neutral-800 text-sm text-neutral-400 mb-8">
-            <span className="w-2 h-2 rounded-full bg-emerald-400" />
-            API v1 Available
-          </div>
           <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.1]">
             The first creator marketplace<br className="hidden sm:block" /> your agent can use
           </h1>

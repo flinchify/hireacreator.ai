@@ -359,11 +359,8 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
       <section className="py-16 sm:py-24 px-5">
         <div className="max-w-5xl mx-auto">
           <div className="text-center">
-            <span className="inline-block bg-blue-50 text-blue-600 rounded-full text-xs px-3 py-1 font-medium">
-              For Creators
-            </span>
             <h2
-              className="text-2xl sm:text-3xl text-neutral-800 text-center mt-4 mb-12 font-serif"
+              className="text-2xl sm:text-3xl text-neutral-800 text-center mb-12 font-serif"
               style={{ fontFamily: "var(--font-serif)" }}
             >
               Everything you need to grow
@@ -434,11 +431,8 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
       {/* ═══ Section 7: For Brands ═══ */}
       <section className="py-16 sm:py-24 px-5">
         <div className="max-w-5xl mx-auto text-center">
-          <span className="inline-block bg-blue-50 text-blue-600 rounded-full text-xs px-3 py-1 font-medium">
-            For Brands
-          </span>
           <h2
-            className="text-2xl sm:text-3xl text-neutral-800 mt-4 mb-12 font-serif"
+            className="text-2xl sm:text-3xl text-neutral-800 mb-12 font-serif"
             style={{ fontFamily: "var(--font-serif)" }}
           >
             Find creators that move the needle

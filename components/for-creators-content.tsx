@@ -41,10 +41,6 @@ export function ForCreatorsContent() {
         <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-blue-50/30" />
         <div className="absolute inset-0 opacity-[0.02] bg-[radial-gradient(circle_at_1px_1px,rgb(0,0,0)_1px,transparent_0)] bg-[length:32px_32px]" />
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-sm font-medium mb-8">
-            For Creators
-          </div>
-
           <h1 style={{ fontFamily: "var(--font-serif)" }} className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-neutral-900 leading-[1.1]">
             Anyone can be a creator
           </h1>

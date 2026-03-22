@@ -42,10 +42,6 @@ export function ForAgentsContent() {
       <section className="relative pt-32 sm:pt-40 pb-20 sm:pb-28 overflow-hidden">
         <div className="absolute inset-0 bg-white" />
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-neutral-100 rounded-full text-sm font-medium text-neutral-600 mb-8">
-            For AI Agents
-          </div>
-
           <h1 className="font-display text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-neutral-900 leading-[1.1]">
             Your AI Agent&apos;s<br className="hidden sm:block" /> Creator Marketplace
           </h1>

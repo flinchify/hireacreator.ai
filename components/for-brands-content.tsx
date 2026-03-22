@@ -128,10 +128,6 @@ export function ForBrandsContent() {
         <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-blue-50/30" />
         <div className="absolute inset-0 opacity-[0.02] bg-[radial-gradient(circle_at_1px_1px,rgb(0,0,0)_1px,transparent_0)] bg-[length:32px_32px]" />
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-sm font-medium mb-8">
-            For Brands &amp; Agencies
-          </div>
-
           <h1 style={{ fontFamily: "var(--font-serif)" }} className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-neutral-900 leading-[1.1]">
             Stop scrolling Instagram<br className="hidden sm:block" /> for creators
           </h1>
@@ -228,9 +224,6 @@ export function ForBrandsContent() {
       <AnimateOnScroll as="section" className="bg-neutral-950 text-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-32">
           <div className="max-w-3xl mb-16">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 rounded-full text-sm font-medium text-neutral-300 mb-6">
-              Industry First
-            </div>
             <h2 className="font-display text-3xl sm:text-4xl font-bold leading-tight mb-4">
               Your AI agent can hire creators too
             </h2>
@@ -299,9 +292,6 @@ export function ForBrandsContent() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-28 border-t border-neutral-100">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div>
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-sm font-medium mb-6">
-                For Agencies
-              </div>
               <h2 style={{ fontFamily: "var(--font-serif)" }} className="text-3xl sm:text-4xl font-bold text-neutral-900 leading-tight mb-4">
                 Manage campaigns at scale
               </h2>
