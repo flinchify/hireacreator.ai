@@ -5,6 +5,7 @@ import { ScoreChecker } from "./score-checker";
 import { AnimateOnScroll, StaggerChildren } from "./animate-on-scroll";
 import { PlatformTicker } from "./platform-ticker";
 import { CreatorCard } from "./creator-card";
+import { StripeLogo } from "./stripe-logo";
 import type { Creator } from "@/lib/types";
 
 /* ─── Typing rotation for hero ─── */
@@ -337,6 +338,7 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
                   step: "3",
                   title: "Land brand deals",
                   desc: "Receive offers directly, negotiate on your terms. Funds are held in Stripe escrow and released to you only after the brand approves your deliverables.",
+                  hasStripe: true,
                 },
               ].map((item) => (
                 <div
@@ -348,6 +350,7 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
                   </div>
                   <h3 className="font-semibold text-neutral-800 text-base mt-4">{item.title}</h3>
                   <p className="text-neutral-500 text-sm mt-2 leading-relaxed">{item.desc}</p>
+                  {"hasStripe" in item && item.hasStripe && <StripeLogo className="mt-2" />}
                 </div>
               ))}
             </StaggerChildren>
@@ -389,6 +392,7 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
                 step: "3",
                 title: "Brand sends offer, escrow protects both sides",
                 desc: "The brand sends an offer with a budget and brief. On acceptance, funds go into Stripe escrow. Creator delivers, brand reviews and approves, then funds are released.",
+                hasStripe: true,
                 icon: (
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-blue-500"><line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" /></svg>
                 ),
@@ -406,6 +410,7 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
                 </div>
                 <h3 className="font-semibold text-neutral-800 text-base">{item.title}</h3>
                 <p className="text-neutral-500 text-sm mt-2 leading-relaxed">{item.desc}</p>
+                {"hasStripe" in item && item.hasStripe && <StripeLogo className="mt-2" />}
               </div>
             ))}
           </StaggerChildren>
@@ -439,7 +444,7 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
               { icon: featureIcons.matching, title: "Brand Deal Matching", desc: "Get matched with campaigns that fit your niche and audience." },
               { icon: featureIcons.link, title: "Link-in-Bio", desc: "One link for all your platforms, content, and brand deal rates." },
               { icon: featureIcons.cross, title: "Cross-Platform Profile", desc: "Combine stats from 15+ platforms into one unified creator profile." },
-              { icon: featureIcons.payments, title: "Direct Payments", desc: "Get paid securely through Stripe. No invoicing headaches." },
+              { icon: featureIcons.payments, title: "Direct Payments", desc: "Get paid securely through Stripe. No invoicing headaches.", hasStripe: true },
             ].map((feature) => (
               <div
                 key={feature.title}
@@ -448,6 +453,7 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
                 <div className="mb-3">{feature.icon}</div>
                 <h3 className="font-semibold text-neutral-800 text-sm sm:text-base mt-3">{feature.title}</h3>
                 <p className="text-neutral-500 text-sm mt-1">{feature.desc}</p>
+                {"hasStripe" in feature && feature.hasStripe && <StripeLogo className="mt-2" />}
               </div>
             ))}
           </StaggerChildren>
@@ -508,7 +514,7 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
               { icon: brandIcons.matched, title: "AI-Matched Creators", desc: "Our algorithm finds creators that fit your brand, niche, and budget." },
               { icon: brandIcons.verified, title: "Rated & Verified", desc: "Every creator has a transparency rating. Know exactly what you are paying for." },
               { icon: brandIcons.campaign, title: "Campaign Management", desc: "Post briefs, review applications, and manage deals in one dashboard." },
-              { icon: brandIcons.secure, title: "Secure Payments", desc: "Funds held in Stripe escrow. Released only when you approve the deliverables. Request revisions or dispute if not satisfied." },
+              { icon: brandIcons.secure, title: "Secure Payments", desc: "Funds held in Stripe escrow. Released only when you approve the deliverables. Request revisions or dispute if not satisfied.", hasStripe: true },
             ].map((card) => (
               <div
                 key={card.title}
@@ -517,6 +523,7 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
                 <div className="flex justify-center mb-3">{card.icon}</div>
                 <h3 className="font-semibold text-neutral-800 mb-2 text-sm sm:text-base">{card.title}</h3>
                 <p className="text-xs sm:text-sm text-neutral-500 leading-relaxed">{card.desc}</p>
+                {"hasStripe" in card && card.hasStripe && <div className="mt-2"><StripeLogo /></div>}
               </div>
             ))}
           </StaggerChildren>

@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/components/auth-context";
 import { AnimateOnScroll, StaggerChildren } from "@/components/animate-on-scroll";
+import { StripeLogo } from "@/components/stripe-logo";
 
 function CheckIcon() {
   return (
@@ -136,6 +137,7 @@ export function ForBrandsContent() {
             Search by niche, audience size, engagement rate, and budget. Book in minutes, not weeks.
             Funds held in Stripe escrow and only released after you review and approve the deliverables.
           </p>
+          <div className="mt-3 flex justify-center"><StripeLogo /></div>
 
           <p className="mt-4 text-sm font-medium text-neutral-400 tracking-wide">
             Creators ready to work &middot; Dozens of niches &middot; Multiple countries
@@ -196,7 +198,7 @@ export function ForBrandsContent() {
             <h3 className="font-display text-xl font-bold text-neutral-900 mb-4">Book &amp; Pay</h3>
             <ul className="space-y-2.5 text-sm text-neutral-600 leading-relaxed">
               <li className="flex items-start gap-2"><CheckIcon /><span>Select a service and submit your creative brief</span></li>
-              <li className="flex items-start gap-2"><CheckIcon /><span>Pay securely via Stripe — no invoices to chase</span></li>
+              <li className="flex items-start gap-2"><CheckIcon /><span className="flex items-center gap-1.5">Pay securely via Stripe — no invoices to chase <StripeLogo /></span></li>
               <li className="flex items-start gap-2"><CheckIcon /><span>Funds held securely until you approve deliverables</span></li>
               <li className="flex items-start gap-2"><CheckIcon /><span>Contract generated automatically with usage rights</span></li>
               <li className="flex items-start gap-2"><CheckIcon /><span>Same workflow works via API for autonomous agent campaigns</span></li>
@@ -347,7 +349,7 @@ export function ForBrandsContent() {
                 <li className="flex items-center gap-2"><CheckIcon />Unlimited creator search</li>
                 <li className="flex items-center gap-2"><CheckIcon />Audience analytics &amp; vetting</li>
                 <li className="flex items-center gap-2"><CheckIcon />Campaign tracking dashboard</li>
-                <li className="flex items-center gap-2"><CheckIcon />Secure payment protection via Stripe</li>
+                <li className="flex items-center gap-2"><CheckIcon /><span className="flex items-center gap-1.5">Secure payment protection via Stripe <StripeLogo /></span></li>
                 <li className="flex items-center gap-2"><CheckIcon />Priority support</li>
               </ul>
             </div>
@@ -392,7 +394,7 @@ export function ForBrandsContent() {
 
           <StaggerChildren className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4" staggerMs={80}>
             {[
-              { title: "Secure payment protection via Stripe", desc: "Funds are held in escrow and only released after you review and approve the deliverables. Not satisfied? Request revisions or open a dispute before releasing payment." },
+              { title: "Secure payment protection via Stripe", desc: "Funds are held in escrow and only released after you review and approve the deliverables. Not satisfied? Request revisions or open a dispute before releasing payment.", hasStripe: true },
               { title: "Verified creator profiles", desc: "Every creator connects their social accounts. Follower counts, engagement rates, and audience demographics are verified." },
               { title: "Real brand reviews", desc: "Only brands that completed a booking can leave reviews. No fake testimonials — just honest feedback." },
               { title: "Contract management", desc: "Contracts are generated automatically with clear terms, usage rights, and deliverable specs." },
@@ -404,6 +406,7 @@ export function ForBrandsContent() {
                 <div>
                   <h3 className="font-display font-bold text-neutral-900 mb-1">{item.title}</h3>
                   <p className="text-sm text-neutral-500 leading-relaxed">{item.desc}</p>
+                  {"hasStripe" in item && item.hasStripe && <StripeLogo className="mt-1" />}
                 </div>
               </div>
             ))}

@@ -1,5 +1,6 @@
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
+import { StripeLogo } from "@/components/stripe-logo";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -11,7 +12,7 @@ export const metadata: Metadata = {
   },
 };
 
-function Step({ number, title, description, commands }: { number: string; title: string; description: string; commands?: { cmd: string; result: string }[] }) {
+function Step({ number, title, description, commands, badge }: { number: string; title: string; description: string; commands?: { cmd: string; result: string }[]; badge?: React.ReactNode }) {
   return (
     <div className="border border-neutral-200 rounded-2xl p-8 hover:shadow-lg transition-shadow">
       <div className="flex items-start gap-5">
@@ -21,6 +22,7 @@ function Step({ number, title, description, commands }: { number: string; title:
         <div className="flex-1">
           <h3 className="text-xl font-bold text-neutral-900 mb-2">{title}</h3>
           <p className="text-neutral-600 leading-relaxed mb-4">{description}</p>
+          {badge}
           {commands && (
             <div className="space-y-3">
               {commands.map((c) => (
@@ -177,6 +179,7 @@ export default function HowItWorksPage() {
               number="4"
               title="Pay securely through the platform"
               description="All payments go through Stripe escrow. Funds are held securely until you review and approve the deliverables. Not satisfied? Request revisions or open a dispute before releasing payment. Creators receive their payout directly to their bank only after your approval."
+              badge={<StripeLogo className="mb-2" />}
             />
           </div>
         </div>
@@ -266,6 +269,7 @@ export default function HowItWorksPage() {
                   num: "5",
                   title: "Deal Accepted",
                   desc: "Creator reviews the offer and accepts. Brand pays into Stripe escrow (10% service fee). Funds are held securely — not released to the creator yet.",
+                  hasStripe: true,
                   icon: (
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
                   ),
@@ -290,6 +294,7 @@ export default function HowItWorksPage() {
                     <span className="inline-block text-xs font-semibold text-blue-500 bg-blue-50 px-2 py-0.5 rounded-full mb-2">Step {step.num}</span>
                     <h3 className="text-lg font-bold text-neutral-900">{step.title}</h3>
                     <p className="text-sm text-neutral-600 mt-1 leading-relaxed max-w-xs mx-auto">{step.desc}</p>
+                    {"hasStripe" in step && step.hasStripe && <div className="mt-2"><StripeLogo /></div>}
                   </div>
                 </div>
               ))}

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useAuth } from "@/components/auth-context";
 import { AnimateOnScroll, StaggerChildren } from "@/components/animate-on-scroll";
+import { StripeLogo } from "@/components/stripe-logo";
 
 type Tab = "creators" | "brands" | "api";
 
@@ -195,7 +196,7 @@ export function PricingContent() {
                   </div>
                   <div className="text-sm text-neutral-500 mb-6">No credit card required</div>
                   <p className="text-sm text-neutral-500 mb-6">
-                    Everything you need to launch your creator page and start getting booked.
+                    Launch your creator page, receive brand offers, and start earning. Everything you need to get discovered.
                   </p>
                   <ul className="space-y-3 mb-8 flex-1">
                     {[
@@ -247,7 +248,7 @@ export function PricingContent() {
                     <div className="text-sm text-neutral-500 mb-6">Billed monthly</div>
                   )}
                   <p className="text-sm text-neutral-500 mb-6">
-                    For creators ready to scale, stand out, and take control of their brand.
+                    Stand out in the marketplace. Get found faster, convert more brand deals, and grow your audience with pro tools.
                   </p>
                   <ul className="space-y-3 mb-8 flex-1">
                     {[
@@ -301,7 +302,7 @@ export function PricingContent() {
                     <div className="text-sm text-neutral-500 mb-6">Billed monthly</div>
                   )}
                   <p className="text-sm text-neutral-500 mb-6">
-                    For agencies and creator teams who need collaboration and white-label tools.
+                    For serious creators monetizing across multiple channels. Paid calendar, product store, and full earnings visibility.
                   </p>
                   <ul className="space-y-3 mb-8 flex-1">
                     {[
@@ -401,22 +402,26 @@ export function PricingContent() {
                     <div className="text-sm text-neutral-500 mb-6">Billed monthly</div>
                   )}
                   <p className="text-sm text-neutral-500 mb-6">
-                    Data-driven creator marketing for brands ready to scale their campaigns.
+                    Find the right creators for your campaigns. Send offers, browse by niche, and pay securely through Stripe.
                   </p>
                   <ul className="space-y-3 mb-8 flex-1">
                     {[
                       "Search and discover creators",
                       "Send offers to any creator",
                       "Creator profiles with real follower data",
-                      "Secure payment via Stripe escrow",
+                      { text: "Secure payment via Stripe escrow", stripe: true },
                       "Browse marketplace by niche and platform",
                       "10% service fee on deals",
-                    ].map((f) => (
-                      <li key={f} className="flex items-start gap-2.5 text-sm text-neutral-600">
-                        <span className="mt-0.5"><CheckIcon /></span>
-                        {f}
-                      </li>
-                    ))}
+                    ].map((f) => {
+                      const text = typeof f === "string" ? f : f.text;
+                      const hasStripe = typeof f !== "string" && f.stripe;
+                      return (
+                        <li key={text} className="flex items-start gap-2.5 text-sm text-neutral-600">
+                          <span className="mt-0.5"><CheckIcon /></span>
+                          <span className="flex items-center gap-1.5">{text}{hasStripe && <StripeLogo className="ml-1" />}</span>
+                        </li>
+                      );
+                    })}
                   </ul>
                   {annual && (
                     <p className="text-xs text-neutral-400 text-center mb-3">
@@ -449,7 +454,7 @@ export function PricingContent() {
                     <div className="text-sm text-neutral-500 mb-6">Billed monthly</div>
                   )}
                   <p className="text-sm text-neutral-500 mb-6">
-                    For brands spending $20K+ per month on creators. Halved service fees pay for themselves.
+                    For brands running large-scale creator campaigns. Lower fees, unlimited offers, and priority support.
                   </p>
                   <ul className="space-y-3 mb-8 flex-1">
                     {[
