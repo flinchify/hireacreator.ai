@@ -6,7 +6,7 @@ import { getStripe, PRICES } from "@/lib/stripe";
 const VALID_PLANS: Record<string, string> = {
   creator_pro: PRICES.CREATOR_PRO,
   creator_biz: PRICES.CREATOR_BIZ,
-  brand_analytics: PRICES.BRAND_ANALYTICS,
+  brand_pro: PRICES.BRAND_PRO,
   brand_enterprise: PRICES.BRAND_ENTERPRISE,
   api_pro: PRICES.API_PRO,
   boosted: PRICES.BOOSTED,

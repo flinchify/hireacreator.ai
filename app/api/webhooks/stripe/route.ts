@@ -62,7 +62,7 @@ export async function POST(request: Request) {
           const tierMap: Record<string, { field: string; value: string }> = {
             creator_pro: { field: "subscription_tier", value: "pro" },
             creator_biz: { field: "subscription_tier", value: "business" },
-            brand_analytics: { field: "subscription_tier", value: "analytics" },
+            brand_pro: { field: "subscription_tier", value: "pro" },
             brand_enterprise: { field: "subscription_tier", value: "enterprise" },
             api_pro: { field: "subscription_tier", value: "api_pro" },
           };

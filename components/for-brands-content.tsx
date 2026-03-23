@@ -333,41 +333,55 @@ export function ForBrandsContent() {
               Simple pricing for brands
             </h2>
             <p className="text-neutral-500 text-lg">
-              No per-booking fees. No hidden charges. Cancel anytime.
+              Free to find and hire creators. Subscriptions unlock lower fees and pro tools.
             </p>
           </div>
 
-          <StaggerChildren className="grid sm:grid-cols-2 gap-6 max-w-3xl mx-auto" staggerMs={150}>
-            {/* Brand Analytics */}
+          <StaggerChildren className="grid sm:grid-cols-3 gap-6 max-w-4xl mx-auto" staggerMs={150}>
+            {/* Brand Free */}
             <div className="aos-stagger-item group border border-neutral-200 rounded-2xl p-8 hover:border-neutral-300 shadow-md shadow-blue-500/5 transition-all duration-200">
-              <h3 className="font-display text-lg font-bold text-neutral-900 mb-1">Brand Analytics</h3>
+              <h3 className="font-display text-lg font-bold text-neutral-900 mb-1">Free</h3>
               <div className="flex items-baseline gap-1 mb-6">
-                <span className="font-display text-4xl font-bold text-neutral-900">$199</span>
-                <span className="text-neutral-500 text-sm">/mo</span>
+                <span className="font-display text-4xl font-bold text-neutral-900">$0</span>
               </div>
               <ul className="space-y-2.5 text-sm text-neutral-600">
                 <li className="flex items-center gap-2"><CheckIcon />Unlimited creator search</li>
-                <li className="flex items-center gap-2"><CheckIcon />Audience analytics &amp; vetting</li>
-                <li className="flex items-center gap-2"><CheckIcon />Campaign tracking dashboard</li>
-                <li className="flex items-center gap-2"><CheckIcon /><span className="flex items-center gap-1.5">Secure payment protection via Stripe <StripeLogo /></span></li>
+                <li className="flex items-center gap-2"><CheckIcon />Send unlimited offers</li>
+                <li className="flex items-center gap-2"><CheckIcon /><span className="flex items-center gap-1.5">Secure Stripe escrow <StripeLogo /></span></li>
+                <li className="flex items-center gap-2"><CheckIcon />Creator profiles with follower data</li>
+                <li className="flex items-center gap-2"><CheckIcon />10% service fee on deals</li>
+              </ul>
+            </div>
+
+            {/* Brand Pro */}
+            <div className="aos-stagger-item group border-2 border-blue-500 rounded-2xl p-8 shadow-md shadow-blue-500/5 transition-all duration-200">
+              <h3 className="font-display text-lg font-bold text-neutral-900 mb-1">Brand Pro</h3>
+              <div className="flex items-baseline gap-1 mb-6">
+                <span className="font-display text-4xl font-bold text-neutral-900">$99</span>
+                <span className="text-neutral-500 text-sm">/mo</span>
+              </div>
+              <ul className="space-y-2.5 text-sm text-neutral-600">
+                <li className="flex items-center gap-2"><CheckIcon />Everything in Free</li>
+                <li className="flex items-center gap-2"><CheckIcon />Reduced 7% service fee (save 30%)</li>
+                <li className="flex items-center gap-2"><CheckIcon />Priority offer delivery</li>
+                <li className="flex items-center gap-2"><CheckIcon />Offer analytics</li>
                 <li className="flex items-center gap-2"><CheckIcon />Priority support</li>
               </ul>
             </div>
 
             {/* Enterprise */}
-            <div className="aos-stagger-item group border-2 border-blue-500 rounded-2xl p-8 shadow-md shadow-blue-500/5 transition-all duration-200">
+            <div className="aos-stagger-item group border border-neutral-200 rounded-2xl p-8 hover:border-neutral-300 shadow-md shadow-blue-500/5 transition-all duration-200">
               <h3 className="font-display text-lg font-bold text-neutral-900 mb-1">Enterprise</h3>
               <div className="flex items-baseline gap-1 mb-6">
-                <span className="font-display text-4xl font-bold text-neutral-900">$999</span>
+                <span className="font-display text-4xl font-bold text-neutral-900">$499</span>
                 <span className="text-neutral-500 text-sm">/mo</span>
               </div>
               <ul className="space-y-2.5 text-sm text-neutral-600">
-                <li className="flex items-center gap-2"><CheckIcon />Everything in Brand Analytics</li>
-                <li className="flex items-center gap-2"><CheckIcon />API access (1,000 req/min)</li>
-                <li className="flex items-center gap-2"><CheckIcon />MCP server integration</li>
-                <li className="flex items-center gap-2"><CheckIcon />Team roles &amp; permissions</li>
-                <li className="flex items-center gap-2"><CheckIcon />White-label option</li>
-                <li className="flex items-center gap-2"><CheckIcon />Dedicated account manager</li>
+                <li className="flex items-center gap-2"><CheckIcon />Everything in Brand Pro</li>
+                <li className="flex items-center gap-2"><CheckIcon />Reduced 5% service fee (save 50%)</li>
+                <li className="flex items-center gap-2"><CheckIcon />Priority in all creator inboxes</li>
+                <li className="flex items-center gap-2"><CheckIcon />Dedicated support</li>
+                <li className="flex items-center gap-2"><CheckIcon />Custom invoicing</li>
               </ul>
             </div>
           </StaggerChildren>

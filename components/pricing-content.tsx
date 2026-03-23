@@ -46,53 +46,62 @@ const tabLabels: Record<Tab, string> = {
 const creatorComparisonFeatures = [
   { label: "AI-customized profile", free: true, pro: true, biz: true },
   { label: "Premium templates", free: "18 templates", pro: "18 + custom builder", biz: "18 + custom builder" },
-  { label: "Services listed", free: "Up to 3", pro: "Unlimited", biz: "Unlimited" },
-  { label: "Receive brand offers", free: true, pro: true, biz: true },
-  { label: "Intro animations", free: "2 included", pro: "All included", biz: "All included" },
+  { label: "Receive brand offers", free: "Unlimited", pro: "Unlimited", biz: "Unlimited" },
+  { label: "Services in marketplace", free: "Up to 3", pro: "Unlimited", biz: "Unlimited" },
+  { label: "Intro animations", free: "2 included", pro: "All unlocked", biz: "All unlocked" },
   { label: "AI bio writer", free: false, pro: true, biz: true },
   { label: "Reply templates", free: false, pro: true, biz: true },
   { label: "Analytics", free: "Basic", pro: "Advanced", biz: "Advanced" },
-  { label: "Remove branding", free: false, pro: true, biz: true },
-  { label: "Priority search", free: false, pro: true, biz: true },
   { label: "Boosted listing", free: false, pro: true, biz: true },
   { label: "Verified badge priority", free: false, pro: true, biz: true },
-  { label: "Earnings dashboard", free: false, pro: false, biz: true },
+  { label: "Remove branding", free: false, pro: true, biz: true },
   { label: "Calendar paid sessions", free: false, pro: false, biz: true },
   { label: "Link products and courses", free: false, pro: false, biz: true },
+  { label: "Earnings dashboard", free: false, pro: false, biz: true },
+  { label: "Creator spotlights", free: false, pro: false, biz: true },
   { label: "Priority support", free: false, pro: true, biz: "Dedicated" },
   { label: "Commission on earnings", free: "0%", pro: "0%", biz: "0%" },
 ];
 
 const brandComparisonFeatures = [
-  { label: "Search and discover creators", analytics: true, enterprise: true },
-  { label: "Send offers to creators", analytics: true, enterprise: "Unlimited" },
-  { label: "Creator profiles with follower data", analytics: true, enterprise: true },
-  { label: "Browse by niche and platform", analytics: true, enterprise: true },
-  { label: "Secure Stripe escrow payments", analytics: true, enterprise: true },
-  { label: "Service fee on deals", analytics: "10%", enterprise: "5%" },
-  { label: "Priority support", analytics: false, enterprise: true },
+  { label: "Search and discover creators", free: true, pro: true, enterprise: true },
+  { label: "Send unlimited offers", free: true, pro: true, enterprise: true },
+  { label: "Browse by niche and platform", free: true, pro: true, enterprise: true },
+  { label: "Secure Stripe escrow payments", free: true, pro: true, enterprise: true },
+  { label: "Creator profiles with follower data", free: true, pro: true, enterprise: true },
+  { label: "Service fee on deals", free: "10%", pro: "7%", enterprise: "5%" },
+  { label: "Priority offer delivery", free: false, pro: true, enterprise: true },
+  { label: "Offer analytics", free: false, pro: true, enterprise: true },
+  { label: "Save favorite creators", free: false, pro: true, enterprise: true },
+  { label: "Priority in creator inboxes", free: false, pro: false, enterprise: true },
+  { label: "Custom invoicing", free: false, pro: false, enterprise: true },
+  { label: "Priority support", free: false, pro: true, enterprise: "Dedicated" },
 ];
 
 const faqItems = [
+  {
+    q: "Do brands need a subscription to send offers?",
+    a: "No. Brands can search creators, send unlimited offers, and pay securely — all for free. The only cost is a 10% service fee on completed deals. Subscriptions reduce that fee and unlock extras like offer analytics and priority delivery.",
+  },
   {
     q: "Do creators really pay 0% fees?",
     a: "Yes, always. Creators keep 100% of what they charge. We make money from brand service fees, subscriptions, and optional add-ons. We will never take a cut from creator earnings.",
   },
   {
     q: "What does the 10% service fee cover?",
-    a: "The 10% is added on top of the creator's price and paid by the brand. It covers payment processing, payment protection, dispute resolution, and platform maintenance.",
+    a: "The 10% is added on top of the creator's price and paid by the brand. It covers payment processing, payment protection, dispute resolution, and platform maintenance. Brand Pro reduces this to 7%, and Enterprise to 5%.",
   },
   {
     q: "Can I cancel anytime?",
     a: "Yes. All subscriptions are month-to-month with no contracts. Cancel anytime from your dashboard. You keep access until the end of your billing period.",
   },
   {
-    q: "How do Enterprise brands save money?",
-    a: "Enterprise brands pay a 5% service fee instead of 10%. If you're spending $20K+ per month on creators, the $999 subscription pays for itself and then some.",
+    q: "What's included in the free creator plan?",
+    a: "Everything you need to get discovered: an AI-customized link-in-bio page with 18 premium templates, up to 3 services, unlimited brand offers, 2 intro animations, social links, bio links with click tracking, calendar booking, basic analytics, a QR code, and 0% commission on all earnings.",
   },
   {
-    q: "What's included in the free plan?",
-    a: "Everything you need to launch: a full link-in-bio page with 8 premium templates, up to 3 services, 2 intro animations, social links, bio links with click tracking, calendar booking for free sessions, basic analytics, a QR code, and 0% commission on all earnings.",
+    q: "What's included in the free brand plan?",
+    a: "Everything you need to find and hire creators: search and discovery, unlimited offers, marketplace browsing by niche and platform, secure Stripe escrow payments, and creator profiles with real follower data. The only cost is a 10% service fee on completed deals.",
   },
   {
     q: "Do you offer annual billing?",
@@ -133,7 +142,7 @@ export function PricingContent() {
               Simple, transparent pricing
             </h1>
             <p className="text-base sm:text-lg text-neutral-500 max-w-2xl mx-auto">
-              Free for creators. Always. Brands and agents pay only for premium features.
+              Free to send and receive offers. Subscriptions unlock growth tools.
             </p>
           </div>
 
@@ -196,22 +205,21 @@ export function PricingContent() {
                   </div>
                   <div className="text-sm text-neutral-500 mb-6">No credit card required</div>
                   <p className="text-sm text-neutral-500 mb-6">
-                    Launch your creator page, receive brand offers, and start earning. Everything you need to get discovered.
+                    Get discovered by brands, receive offers, and start earning. No limits on opportunities.
                   </p>
                   <ul className="space-y-3 mb-8 flex-1">
                     {[
                       "AI-customized link-in-bio page",
                       "18 premium templates",
-                      "Up to 3 services listed",
-                      "Custom fonts, colors, button shapes",
-                      "2 intro animations included",
+                      "Unlimited brand offers (receive)",
+                      "Up to 3 services in marketplace",
                       "Social links (15+ platforms)",
                       "Bio links with click tracking",
                       "Calendar booking (free sessions)",
-                      "Receive brand offers",
-                      "0% commission on all earnings",
+                      "2 intro animations",
                       "Basic analytics",
                       "QR code for your page",
+                      "0% commission — keep everything you earn",
                     ].map((f) => (
                       <li key={f} className="flex items-start gap-2.5 text-sm text-neutral-600">
                         <span className="mt-0.5"><CheckIcon /></span>
@@ -248,21 +256,20 @@ export function PricingContent() {
                     <div className="text-sm text-neutral-500 mb-6">Billed monthly</div>
                   )}
                   <p className="text-sm text-neutral-500 mb-6">
-                    Stand out in the marketplace. Get found faster, convert more brand deals, and grow your audience with pro tools.
+                    Grow faster with pro tools. Get found first, look more professional, and convert more deals.
                   </p>
                   <ul className="space-y-3 mb-8 flex-1">
                     {[
                       "Everything in Free",
-                      "Unlimited services",
+                      "Unlimited services in marketplace",
                       "All 18 templates + custom builder",
-                      "All intro animations included",
-                      "Priority in marketplace search",
-                      "Boosted listing in browse",
-                      "Advanced analytics",
+                      "All intro animations unlocked",
                       "AI bio writer",
-                      "Reply templates",
-                      "Remove HireACreator branding",
+                      "Reply templates (save time on responses)",
+                      "Boosted listing — appear higher in search",
+                      "Advanced analytics (views, clicks, sources)",
                       "Verified badge priority",
+                      "Remove HireACreator branding",
                       "Priority support",
                     ].map((f) => (
                       <li key={f} className="flex items-start gap-2.5 text-sm text-neutral-600">
@@ -302,15 +309,16 @@ export function PricingContent() {
                     <div className="text-sm text-neutral-500 mb-6">Billed monthly</div>
                   )}
                   <p className="text-sm text-neutral-500 mb-6">
-                    For serious creators monetizing across multiple channels. Paid calendar, product store, and full earnings visibility.
+                    For creators building a real business. Sell time, products, and services all from one page.
                   </p>
                   <ul className="space-y-3 mb-8 flex-1">
                     {[
                       "Everything in Pro",
-                      "Earnings dashboard",
-                      "Calendar paid sessions",
+                      "Calendar paid sessions (charge for calls/meetings)",
                       "Link your own products and courses",
+                      "Earnings dashboard with payout tracking",
                       "Verification manager",
+                      "Featured in weekly creator spotlights",
                       "Priority in all search results",
                       "Dedicated support",
                     ].map((f) => (
@@ -380,38 +388,25 @@ export function PricingContent() {
           {/* Brand Plans */}
           {tab === "brands" && (
             <>
-              <StaggerChildren className="grid sm:grid-cols-2 gap-6 max-w-3xl mx-auto" staggerMs={100}>
-                {/* Brand Analytics */}
-                <div className="aos-stagger-item border-2 border-neutral-900 rounded-2xl p-8 relative flex flex-col">
-                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 bg-neutral-900 text-white text-xs font-medium rounded-full">
-                    Popular
-                  </div>
-                  <div className="text-sm font-medium text-neutral-900 uppercase tracking-wider mb-2">Brand Analytics</div>
+              <StaggerChildren className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto" staggerMs={100}>
+                {/* Brand Free */}
+                <div className="aos-stagger-item border border-neutral-200 rounded-2xl p-8 flex flex-col">
+                  <div className="text-sm font-medium text-neutral-400 uppercase tracking-wider mb-2">Free</div>
                   <div className="flex items-baseline gap-1 mb-1">
-                    <span className="font-display text-4xl font-bold text-neutral-900">
-                      {formatPrice(199, annual)}
-                    </span>
-                    <span className="text-sm text-neutral-500">/mo</span>
+                    <span className="font-display text-4xl font-bold text-neutral-900">$0</span>
                   </div>
-                  {annual ? (
-                    <div className="text-sm text-neutral-500 mb-6">
-                      <span className="line-through text-neutral-400">$199/mo</span>
-                      <span className="ml-1.5 text-green-700 font-medium">billed annually</span>
-                    </div>
-                  ) : (
-                    <div className="text-sm text-neutral-500 mb-6">Billed monthly</div>
-                  )}
+                  <div className="text-sm text-neutral-500 mb-6">No credit card required</div>
                   <p className="text-sm text-neutral-500 mb-6">
-                    Find the right creators for your campaigns. Send offers, browse by niche, and pay securely through Stripe.
+                    Find creators, send offers, and pay securely. No subscription needed.
                   </p>
                   <ul className="space-y-3 mb-8 flex-1">
                     {[
                       "Search and discover creators",
-                      "Send offers to any creator",
-                      "Creator profiles with real follower data",
-                      { text: "Secure payment via Stripe escrow", stripe: true },
+                      "Send unlimited offers to any creator",
                       "Browse marketplace by niche and platform",
-                      "10% service fee on deals",
+                      { text: "Secure payment via Stripe escrow", stripe: true },
+                      "Creator profiles with real follower data",
+                      "10% service fee on completed deals",
                     ].map((f) => {
                       const text = typeof f === "string" ? f : f.text;
                       const hasStripe = typeof f !== "string" && f.stripe;
@@ -423,16 +418,62 @@ export function PricingContent() {
                       );
                     })}
                   </ul>
+                  <button
+                    onClick={() => openSignup("brand")}
+                    className="w-full py-3 text-sm font-medium rounded-lg border border-neutral-300 text-neutral-700 hover:bg-neutral-50 active:scale-[0.98] transition-all"
+                  >
+                    Get Started Free
+                  </button>
+                </div>
+
+                {/* Brand Pro */}
+                <div className="aos-stagger-item relative rounded-2xl p-8 flex flex-col bg-gradient-to-r from-blue-50 via-white to-blue-50 border-2 border-blue-200">
+                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 bg-neutral-900 text-white text-xs font-medium rounded-full">
+                    Popular
+                  </div>
+                  <div className="text-sm font-medium text-neutral-900 uppercase tracking-wider mb-2">Brand Pro</div>
+                  <div className="flex items-baseline gap-1 mb-1">
+                    <span className="font-display text-4xl font-bold text-neutral-900">
+                      {formatPrice(99, annual)}
+                    </span>
+                    <span className="text-sm text-neutral-500">/mo</span>
+                  </div>
+                  {annual ? (
+                    <div className="text-sm text-neutral-500 mb-6">
+                      <span className="line-through text-neutral-400">$99/mo</span>
+                      <span className="ml-1.5 text-green-700 font-medium">billed annually</span>
+                    </div>
+                  ) : (
+                    <div className="text-sm text-neutral-500 mb-6">Billed monthly</div>
+                  )}
+                  <p className="text-sm text-neutral-500 mb-6">
+                    For brands running regular creator campaigns. Save on fees and get priority access.
+                  </p>
+                  <ul className="space-y-3 mb-8 flex-1">
+                    {[
+                      "Everything in Free",
+                      "Reduced 7% service fee on deals (save 30%)",
+                      "Priority offer delivery (creators see your offers first)",
+                      "Offer analytics (view rate, acceptance rate)",
+                      "Save favorite creators",
+                      "Priority support",
+                    ].map((f) => (
+                      <li key={f} className="flex items-start gap-2.5 text-sm text-neutral-600">
+                        <span className="mt-0.5"><CheckIcon /></span>
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
                   {annual && (
                     <p className="text-xs text-neutral-400 text-center mb-3">
                       Annual billing coming soon — you will not be charged annually. You will be billed monthly for now.
                     </p>
                   )}
                   <button
-                    onClick={() => handleCheckout("brand_analytics")}
+                    onClick={() => handleCheckout("brand_pro")}
                     className="w-full py-3 text-sm font-medium rounded-lg bg-neutral-900 text-white hover:bg-neutral-800 active:scale-[0.98] transition-all"
                   >
-                    Get Started
+                    Upgrade to Pro
                   </button>
                 </div>
 
@@ -441,27 +482,29 @@ export function PricingContent() {
                   <div className="text-sm font-medium text-neutral-400 uppercase tracking-wider mb-2">Brand Enterprise</div>
                   <div className="flex items-baseline gap-1 mb-1">
                     <span className="font-display text-4xl font-bold text-neutral-900">
-                      {formatPrice(999, annual)}
+                      {formatPrice(499, annual)}
                     </span>
                     <span className="text-sm text-neutral-500">/mo</span>
                   </div>
                   {annual ? (
                     <div className="text-sm text-neutral-500 mb-6">
-                      <span className="line-through text-neutral-400">$999/mo</span>
+                      <span className="line-through text-neutral-400">$499/mo</span>
                       <span className="ml-1.5 text-green-700 font-medium">billed annually</span>
                     </div>
                   ) : (
                     <div className="text-sm text-neutral-500 mb-6">Billed monthly</div>
                   )}
                   <p className="text-sm text-neutral-500 mb-6">
-                    For brands running large-scale creator campaigns. Lower fees, unlimited offers, and priority support.
+                    For brands spending big on creators. Lowest fees, unlimited everything.
                   </p>
                   <ul className="space-y-3 mb-8 flex-1">
                     {[
-                      "Everything in Brand Analytics",
-                      "Reduced 5% service fee",
-                      "Priority support",
-                      "Unlimited offers to creators",
+                      "Everything in Brand Pro",
+                      "Reduced 5% service fee on deals (save 50%)",
+                      "Unlimited offers",
+                      "Priority in all creator inboxes",
+                      "Dedicated support",
+                      "Custom invoicing",
                     ].map((f) => (
                       <li key={f} className="flex items-start gap-2.5 text-sm text-neutral-600">
                         <span className="mt-0.5"><CheckIcon /></span>
@@ -469,12 +512,17 @@ export function PricingContent() {
                       </li>
                     ))}
                   </ul>
-                  <a
-                    href="mailto:hello@hireacreator.ai"
-                    className="block w-full py-3 text-sm font-medium rounded-lg border border-neutral-300 text-neutral-700 hover:bg-neutral-50 active:scale-[0.98] transition-colors text-center"
+                  {annual && (
+                    <p className="text-xs text-neutral-400 text-center mb-3">
+                      Annual billing coming soon — you will not be charged annually. You will be billed monthly for now.
+                    </p>
+                  )}
+                  <button
+                    onClick={() => handleCheckout("brand_enterprise")}
+                    className="w-full py-3 text-sm font-medium rounded-lg border border-neutral-300 text-neutral-700 hover:bg-neutral-50 active:scale-[0.98] transition-all"
                   >
-                    Contact Sales
-                  </a>
+                    Upgrade to Enterprise
+                  </button>
                 </div>
               </StaggerChildren>
 
@@ -484,11 +532,12 @@ export function PricingContent() {
                   Compare Brand plans
                 </h2>
                 <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
-                  <table className="w-full max-w-3xl mx-auto text-sm min-w-[400px] sm:min-w-0">
+                  <table className="w-full max-w-4xl mx-auto text-sm min-w-[500px] sm:min-w-0">
                     <thead>
                       <tr className="border-b border-neutral-200">
-                        <th className="text-left py-3 pr-4 font-medium text-neutral-500 w-1/2 sticky left-0 bg-white z-10 text-xs sm:text-sm">Feature</th>
-                        <th className="text-center py-3 px-3 sm:px-4 font-medium text-neutral-900 text-xs sm:text-sm">Analytics</th>
+                        <th className="text-left py-3 pr-4 font-medium text-neutral-500 w-1/3 sticky left-0 bg-white z-10 text-xs sm:text-sm">Feature</th>
+                        <th className="text-center py-3 px-3 sm:px-4 font-medium text-neutral-500 text-xs sm:text-sm">Free</th>
+                        <th className="text-center py-3 px-3 sm:px-4 font-medium text-neutral-900 text-xs sm:text-sm">Pro</th>
                         <th className="text-center py-3 px-3 sm:px-4 font-medium text-neutral-500 text-xs sm:text-sm">Enterprise</th>
                       </tr>
                     </thead>
@@ -496,9 +545,14 @@ export function PricingContent() {
                       {brandComparisonFeatures.map((row) => (
                         <tr key={row.label} className="border-b border-neutral-100">
                           <td className="py-3 pr-4 text-neutral-700 text-xs sm:text-sm sticky left-0 bg-white z-10">{row.label}</td>
+                          <td className="py-3 px-4 text-center">
+                            <span className="inline-flex justify-center">
+                              <ComparisonCell value={row.free} />
+                            </span>
+                          </td>
                           <td className="py-3 px-4 text-center bg-neutral-50/50">
                             <span className="inline-flex justify-center">
-                              <ComparisonCell value={row.analytics} />
+                              <ComparisonCell value={row.pro} />
                             </span>
                           </td>
                           <td className="py-3 px-4 text-center">
