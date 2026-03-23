@@ -52,12 +52,13 @@ const creatorComparisonFeatures = [
   { label: "AI bio writer", free: false, pro: true, biz: true },
   { label: "Reply templates", free: false, pro: true, biz: true },
   { label: "Analytics", free: "Basic", pro: "Advanced", biz: "Advanced" },
-  { label: "Boosted listing", free: false, pro: true, biz: true },
-  { label: "Verified badge priority", free: false, pro: true, biz: true },
+  { label: "Boosted listing in search", free: false, pro: true, biz: true },
+  { label: "Pro badge on profile", free: false, pro: true, biz: true },
   { label: "Remove branding", free: false, pro: true, biz: true },
   { label: "Calendar paid sessions", free: false, pro: false, biz: true },
   { label: "Link products and courses", free: false, pro: false, biz: true },
   { label: "Earnings dashboard", free: false, pro: false, biz: true },
+  { label: "Verification manager", free: false, pro: false, biz: true },
   { label: "Creator spotlights", free: false, pro: false, biz: true },
   { label: "Priority support", free: false, pro: true, biz: "Dedicated" },
   { label: "Commission on earnings", free: "0%", pro: "0%", biz: "0%" },
@@ -65,15 +66,18 @@ const creatorComparisonFeatures = [
 
 const brandComparisonFeatures = [
   { label: "Search and discover creators", free: true, pro: true, enterprise: true },
-  { label: "Send unlimited offers", free: true, pro: true, enterprise: true },
+  { label: "Send offers to any creator", free: true, pro: true, enterprise: true },
   { label: "Browse by niche and platform", free: true, pro: true, enterprise: true },
   { label: "Secure Stripe escrow payments", free: true, pro: true, enterprise: true },
   { label: "Creator profiles with follower data", free: true, pro: true, enterprise: true },
-  { label: "Service fee on deals", free: "10%", pro: "7%", enterprise: "5%" },
-  { label: "Priority offer delivery", free: false, pro: true, enterprise: true },
+  { label: "Service fee on deals", free: "15%", pro: "10%", enterprise: "5%" },
+  { label: "Creator shortlists", free: false, pro: true, enterprise: true },
+  { label: "Offer templates", free: false, pro: true, enterprise: true },
+  { label: "Brand profile page", free: false, pro: true, enterprise: true },
   { label: "Offer analytics", free: false, pro: true, enterprise: true },
-  { label: "Save favorite creators", free: false, pro: true, enterprise: true },
+  { label: "Verified Brand badge", free: false, pro: true, enterprise: true },
   { label: "Priority in creator inboxes", free: false, pro: false, enterprise: true },
+  { label: "Bulk offer sends", free: false, pro: false, enterprise: true },
   { label: "Custom invoicing", free: false, pro: false, enterprise: true },
   { label: "Priority support", free: false, pro: true, enterprise: "Dedicated" },
 ];
@@ -81,15 +85,15 @@ const brandComparisonFeatures = [
 const faqItems = [
   {
     q: "Do brands need a subscription to send offers?",
-    a: "No. Brands can search creators, send unlimited offers, and pay securely — all for free. The only cost is a 10% service fee on completed deals. Subscriptions reduce that fee and unlock extras like offer analytics and priority delivery.",
+    a: "No. Brands can search creators, send offers, and pay securely — all for free. The only cost is a 15% service fee on completed deals. Subscriptions reduce that fee and unlock extras like offer analytics, creator shortlists, and verified badges.",
   },
   {
     q: "Do creators really pay 0% fees?",
     a: "Yes, always. Creators keep 100% of what they charge. We make money from brand service fees, subscriptions, and optional add-ons. We will never take a cut from creator earnings.",
   },
   {
-    q: "What does the 10% service fee cover?",
-    a: "The 10% is added on top of the creator's price and paid by the brand. It covers payment processing, payment protection, dispute resolution, and platform maintenance. Brand Pro reduces this to 7%, and Enterprise to 5%.",
+    q: "What does the 15% service fee cover?",
+    a: "The 15% is added on top of the creator's price and paid by the brand. It covers payment processing, payment protection, dispute resolution, and platform maintenance. Brand Pro reduces this to 10%, and Enterprise to 5%.",
   },
   {
     q: "Can I cancel anytime?",
@@ -101,7 +105,7 @@ const faqItems = [
   },
   {
     q: "What's included in the free brand plan?",
-    a: "Everything you need to find and hire creators: search and discovery, unlimited offers, marketplace browsing by niche and platform, secure Stripe escrow payments, and creator profiles with real follower data. The only cost is a 10% service fee on completed deals.",
+    a: "Everything you need to find and hire creators: search and discovery, offers to any creator, marketplace browsing by niche and platform, secure Stripe escrow payments, and creator profiles with real follower data. The only cost is a 15% service fee on completed deals.",
   },
   {
     q: "Do you offer annual billing?",
@@ -211,14 +215,14 @@ export function PricingContent() {
                     {[
                       "AI-customized link-in-bio page",
                       "18 premium templates",
-                      "Unlimited brand offers (receive)",
+                      "Receive unlimited brand offers",
                       "Up to 3 services in marketplace",
                       "Social links (15+ platforms)",
                       "Bio links with click tracking",
                       "Calendar booking (free sessions)",
                       "2 intro animations",
                       "Basic analytics",
-                      "QR code for your page",
+                      "QR code",
                       "0% commission — keep everything you earn",
                     ].map((f) => (
                       <li key={f} className="flex items-start gap-2.5 text-sm text-neutral-600">
@@ -256,7 +260,7 @@ export function PricingContent() {
                     <div className="text-sm text-neutral-500 mb-6">Billed monthly</div>
                   )}
                   <p className="text-sm text-neutral-500 mb-6">
-                    Grow faster with pro tools. Get found first, look more professional, and convert more deals.
+                    Grow faster. Get found first, look more professional, and convert more deals.
                   </p>
                   <ul className="space-y-3 mb-8 flex-1">
                     {[
@@ -265,10 +269,10 @@ export function PricingContent() {
                       "All 18 templates + custom builder",
                       "All intro animations unlocked",
                       "AI bio writer",
-                      "Reply templates (save time on responses)",
-                      "Boosted listing — appear higher in search",
-                      "Advanced analytics (views, clicks, sources)",
-                      "Verified badge priority",
+                      "Reply templates",
+                      "Boosted listing in search",
+                      "Advanced analytics",
+                      "Pro badge on profile",
                       "Remove HireACreator branding",
                       "Priority support",
                     ].map((f) => (
@@ -309,12 +313,12 @@ export function PricingContent() {
                     <div className="text-sm text-neutral-500 mb-6">Billed monthly</div>
                   )}
                   <p className="text-sm text-neutral-500 mb-6">
-                    For creators building a real business. Sell time, products, and services all from one page.
+                    For creators building a real business. Sell time, products, and services from one page.
                   </p>
                   <ul className="space-y-3 mb-8 flex-1">
                     {[
                       "Everything in Pro",
-                      "Calendar paid sessions (charge for calls/meetings)",
+                      "Calendar paid sessions",
                       "Link your own products and courses",
                       "Earnings dashboard with payout tracking",
                       "Verification manager",
@@ -402,11 +406,11 @@ export function PricingContent() {
                   <ul className="space-y-3 mb-8 flex-1">
                     {[
                       "Search and discover creators",
-                      "Send unlimited offers to any creator",
+                      "Send offers to any creator",
                       "Browse marketplace by niche and platform",
                       { text: "Secure payment via Stripe escrow", stripe: true },
                       "Creator profiles with real follower data",
-                      "10% service fee on completed deals",
+                      "15% service fee on completed deals",
                     ].map((f) => {
                       const text = typeof f === "string" ? f : f.text;
                       const hasStripe = typeof f !== "string" && f.stripe;
@@ -447,15 +451,17 @@ export function PricingContent() {
                     <div className="text-sm text-neutral-500 mb-6">Billed monthly</div>
                   )}
                   <p className="text-sm text-neutral-500 mb-6">
-                    For brands running regular creator campaigns. Save on fees and get priority access.
+                    For brands running regular creator campaigns. Lower fees and better tools.
                   </p>
                   <ul className="space-y-3 mb-8 flex-1">
                     {[
                       "Everything in Free",
-                      "Reduced 7% service fee on deals (save 30%)",
-                      "Priority offer delivery (creators see your offers first)",
-                      "Offer analytics (view rate, acceptance rate)",
-                      "Save favorite creators",
+                      "Reduced 10% service fee (save 33%)",
+                      "Creator shortlists (save favorites)",
+                      "Offer templates (reusable briefs)",
+                      "Brand profile page",
+                      "Offer analytics (views, response rate)",
+                      "Verified Brand badge on offers",
                       "Priority support",
                     ].map((f) => (
                       <li key={f} className="flex items-start gap-2.5 text-sm text-neutral-600">
@@ -482,27 +488,27 @@ export function PricingContent() {
                   <div className="text-sm font-medium text-neutral-400 uppercase tracking-wider mb-2">Brand Enterprise</div>
                   <div className="flex items-baseline gap-1 mb-1">
                     <span className="font-display text-4xl font-bold text-neutral-900">
-                      {formatPrice(499, annual)}
+                      {formatPrice(999, annual)}
                     </span>
                     <span className="text-sm text-neutral-500">/mo</span>
                   </div>
                   {annual ? (
                     <div className="text-sm text-neutral-500 mb-6">
-                      <span className="line-through text-neutral-400">$499/mo</span>
+                      <span className="line-through text-neutral-400">$999/mo</span>
                       <span className="ml-1.5 text-green-700 font-medium">billed annually</span>
                     </div>
                   ) : (
                     <div className="text-sm text-neutral-500 mb-6">Billed monthly</div>
                   )}
                   <p className="text-sm text-neutral-500 mb-6">
-                    For brands spending big on creators. Lowest fees, unlimited everything.
+                    For brands spending big on creators. Lowest fees, maximum reach.
                   </p>
                   <ul className="space-y-3 mb-8 flex-1">
                     {[
                       "Everything in Brand Pro",
-                      "Reduced 5% service fee on deals (save 50%)",
-                      "Unlimited offers",
-                      "Priority in all creator inboxes",
+                      "Reduced 5% service fee (save 67%)",
+                      "Priority in creator inboxes",
+                      "Bulk offer sends",
                       "Dedicated support",
                       "Custom invoicing",
                     ].map((f) => (

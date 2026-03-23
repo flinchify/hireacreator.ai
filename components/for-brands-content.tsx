@@ -349,7 +349,7 @@ export function ForBrandsContent() {
                 <li className="flex items-center gap-2"><CheckIcon />Send unlimited offers</li>
                 <li className="flex items-center gap-2"><CheckIcon /><span className="flex items-center gap-1.5">Secure Stripe escrow <StripeLogo /></span></li>
                 <li className="flex items-center gap-2"><CheckIcon />Creator profiles with follower data</li>
-                <li className="flex items-center gap-2"><CheckIcon />10% service fee on deals</li>
+                <li className="flex items-center gap-2"><CheckIcon />15% service fee on deals</li>
               </ul>
             </div>
 
@@ -362,9 +362,9 @@ export function ForBrandsContent() {
               </div>
               <ul className="space-y-2.5 text-sm text-neutral-600">
                 <li className="flex items-center gap-2"><CheckIcon />Everything in Free</li>
-                <li className="flex items-center gap-2"><CheckIcon />Reduced 7% service fee (save 30%)</li>
-                <li className="flex items-center gap-2"><CheckIcon />Priority offer delivery</li>
-                <li className="flex items-center gap-2"><CheckIcon />Offer analytics</li>
+                <li className="flex items-center gap-2"><CheckIcon />Reduced 10% service fee (save 33%)</li>
+                <li className="flex items-center gap-2"><CheckIcon />Offer templates &amp; shortlists</li>
+                <li className="flex items-center gap-2"><CheckIcon />Verified Brand badge</li>
                 <li className="flex items-center gap-2"><CheckIcon />Priority support</li>
               </ul>
             </div>
@@ -373,15 +373,15 @@ export function ForBrandsContent() {
             <div className="aos-stagger-item group border border-neutral-200 rounded-2xl p-8 hover:border-neutral-300 shadow-md shadow-blue-500/5 transition-all duration-200">
               <h3 className="font-display text-lg font-bold text-neutral-900 mb-1">Enterprise</h3>
               <div className="flex items-baseline gap-1 mb-6">
-                <span className="font-display text-4xl font-bold text-neutral-900">$499</span>
+                <span className="font-display text-4xl font-bold text-neutral-900">$999</span>
                 <span className="text-neutral-500 text-sm">/mo</span>
               </div>
               <ul className="space-y-2.5 text-sm text-neutral-600">
                 <li className="flex items-center gap-2"><CheckIcon />Everything in Brand Pro</li>
-                <li className="flex items-center gap-2"><CheckIcon />Reduced 5% service fee (save 50%)</li>
-                <li className="flex items-center gap-2"><CheckIcon />Priority in all creator inboxes</li>
+                <li className="flex items-center gap-2"><CheckIcon />Reduced 5% service fee (save 67%)</li>
+                <li className="flex items-center gap-2"><CheckIcon />Priority in creator inboxes</li>
+                <li className="flex items-center gap-2"><CheckIcon />Bulk offer sends</li>
                 <li className="flex items-center gap-2"><CheckIcon />Dedicated support</li>
-                <li className="flex items-center gap-2"><CheckIcon />Custom invoicing</li>
               </ul>
             </div>
           </StaggerChildren>

@@ -22,7 +22,7 @@ const DATA: Record<string, ComparisonData> = {
     subLine: "Fiverr takes 20% of every gig. HireACreator takes 0%. Here's the full comparison.",
     rows: [
       { feature: "Creator commission", us: "0% — always free", them: "20% on every order" },
-      { feature: "Buyer service fee", us: "10% brand fee", them: "5.5% + $2.50 processing" },
+      { feature: "Buyer service fee", us: "15% brand fee", them: "5.5% + $2.50 processing" },
       { feature: "Link-in-bio page", us: "8 templates, free", them: "Not available" },
       { feature: "Video portfolio", us: "Auto-play on hover", them: "Basic gig gallery" },
       { feature: "Custom domain", us: "Pro plan ($19/mo)", them: "Not available" },
@@ -33,7 +33,7 @@ const DATA: Record<string, ComparisonData> = {
       { feature: "Analytics", us: "Free (basic), Pro (advanced)", them: "Seller Plus $29/mo" },
     ],
     sections: [
-      { heading: "Fiverr's 20% commission adds up fast", body: "If you earn $5,000/month on Fiverr, you lose $1,000 to platform fees. That's $12,000/year gone. On HireACreator, you keep every dollar. We charge brands a 10% service fee instead — creators never pay." },
+      { heading: "Fiverr's 20% commission adds up fast", body: "If you earn $5,000/month on Fiverr, you lose $1,000 to platform fees. That's $12,000/year gone. On HireACreator, you keep every dollar. We charge brands a 15% service fee instead — creators never pay." },
       { heading: "A portfolio that actually shows your work", body: "Fiverr limits you to a gig page with 3 images and a description. HireACreator gives you a full profile with video portfolio, link-in-bio page, service menu, social connections, and portfolio showcase — all customizable with 8 templates." },
       { heading: "Get paid faster", body: "Fiverr holds your money for 14 days after delivery. HireACreator uses Stripe Connect for instant payouts with no minimum threshold. Your money, when you want it." },
       { heading: "Built for the AI era", body: "HireACreator's API lets AI agents search, filter, and book creators programmatically. No other creator marketplace offers MCP and REST API access for automated workflows." },
@@ -59,7 +59,7 @@ const DATA: Record<string, ComparisonData> = {
       { feature: "Payout", us: "Instant via Stripe", them: "5-7 days minimum" },
       { feature: "Target audience", us: "Creators + brands", them: "All freelancers + all clients" },
       { feature: "AI agent API", us: "MCP + REST", them: "Not available" },
-      { feature: "Platform fee model", us: "Brands pay 10%", them: "Freelancer pays 10-20%" },
+      { feature: "Platform fee model", us: "Brands pay 15%", them: "Freelancer pays 10-20%" },
     ],
     sections: [
       { heading: "Upwork wasn't built for creators", body: "Upwork is a generic freelance marketplace. Your UGC portfolio sits next to data entry gigs and virtual assistant listings. HireACreator is purpose-built for creative professionals — every feature is designed for showcasing visual work and getting booked by brands." },

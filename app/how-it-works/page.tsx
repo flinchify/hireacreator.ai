@@ -268,7 +268,7 @@ export default function HowItWorksPage() {
                 {
                   num: "5",
                   title: "Deal Accepted",
-                  desc: "Creator reviews the offer and accepts. Brand pays into Stripe escrow (10% service fee). Funds are held securely — not released to the creator yet.",
+                  desc: "Creator reviews the offer and accepts. Brand pays into Stripe escrow (15% service fee). Funds are held securely — not released to the creator yet.",
                   hasStripe: true,
                   icon: (
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>

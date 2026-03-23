@@ -39,7 +39,7 @@ We've spoken to hundreds of creators. They want three things:
 
 HireACreator was built for this. Creators keep 100% of their earnings. Profiles are full storefronts — portfolio, services with clear pricing, verified reviews, and instant booking.
 
-Brands pay a 10% service fee on top of the creator's price. The creator never loses a cent.
+Brands pay a 15% service fee on top of the creator's price. The creator never loses a cent.
 
 If you're still on Fiverr, do the maths on what you're paying them every year. Then ask yourself if it's worth it.
 
@@ -462,7 +462,7 @@ HireACreator combines three things: a creator marketplace where brands discover 
 - Newer platform, still building marketplace liquidity
 - Focused on service-based creators, not digital product sellers
 
-**Pricing:** Free for creators. Brands pay a 10% service fee on top of the creator's price.
+**Pricing:** Free for creators. Brands pay a 15% service fee on top of the creator's price.
 
 ## Side-by-side comparison
 
