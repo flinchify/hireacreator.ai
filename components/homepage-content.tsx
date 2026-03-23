@@ -355,6 +355,72 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
         </div>
       </section>
 
+      {/* ═══ Section 4b: From Comment to Payment ═══ */}
+      <section className="py-16 sm:py-24 px-5">
+        <div className="max-w-5xl mx-auto">
+          <h2
+            className="text-2xl sm:text-3xl text-neutral-800 text-center mb-4 font-serif"
+            style={{ fontFamily: "var(--font-serif)" }}
+          >
+            From Comment to Payment
+          </h2>
+          <p className="text-neutral-500 text-sm text-center max-w-xl mx-auto mb-12">
+            Brands discover creators on Instagram, our AI does the rest.
+          </p>
+          <StaggerChildren className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              {
+                step: "1",
+                title: "Brand tags @hireacreatorai",
+                desc: "A brand comments on Instagram tagging a creator they want to work with. Our bot picks it up instantly.",
+                icon: (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-blue-500"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" /></svg>
+                ),
+              },
+              {
+                step: "2",
+                title: "Profile is auto-built with AI",
+                desc: "We scrape public data and build a professional creator profile — avatar, stats, niche, and rating — in seconds.",
+                icon: (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-blue-500"><circle cx="12" cy="8" r="4" /><path d="M4 21v-1a6 6 0 0112 0v1" /><path d="M16 3l2 2 4-4" /></svg>
+                ),
+              },
+              {
+                step: "3",
+                title: "Brand sends offer, creator gets paid",
+                desc: "The brand sends an offer with a budget and brief. Creator accepts, delivers, and gets paid through Stripe.",
+                icon: (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-blue-500"><line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" /></svg>
+                ),
+              },
+            ].map((item) => (
+              <div
+                key={item.step}
+                className="aos-stagger-item bg-white border border-neutral-100 rounded-2xl p-6 sm:p-8 hover:shadow-md hover:-translate-y-1 transition-all duration-300"
+              >
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
+                    {item.icon}
+                  </div>
+                  <span className="text-xs font-semibold text-blue-500">Step {item.step}</span>
+                </div>
+                <h3 className="font-semibold text-neutral-800 text-base">{item.title}</h3>
+                <p className="text-neutral-500 text-sm mt-2 leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
+          </StaggerChildren>
+          <div className="text-center mt-8">
+            <a
+              href="/how-it-works"
+              className="inline-flex items-center gap-2 text-blue-500 font-semibold text-sm hover:text-blue-600 transition-colors"
+            >
+              See how it works
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* ═══ Section 5: For Creators ═══ */}
       <section className="py-16 sm:py-24 px-5">
         <div className="max-w-5xl mx-auto">

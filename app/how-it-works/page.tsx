@@ -213,6 +213,159 @@ export default function HowItWorksPage() {
         </div>
       </section>
 
+      {/* Comment-to-Payment Flow */}
+      <section className="py-24 px-6">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl font-bold text-neutral-900 mb-4 text-center" style={{ fontFamily: "var(--font-serif)" }}>
+            The Comment-to-Payment Flow
+          </h2>
+          <p className="text-neutral-600 text-center max-w-2xl mx-auto mb-16">
+            From a single Instagram comment to a completed brand deal. Here is the full journey.
+          </p>
+
+          {/* Timeline */}
+          <div className="relative">
+            {/* Desktop horizontal connector */}
+            <div className="hidden lg:block absolute top-10 left-[8%] right-[8%] h-0.5 bg-blue-200" />
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-6">
+              {[
+                {
+                  num: "1",
+                  title: "Tag",
+                  desc: "A brand comments '@hireacreatorai' on a creator's Instagram post, or tags a creator they want to work with.",
+                  icon: (
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" /></svg>
+                  ),
+                },
+                {
+                  num: "2",
+                  title: "Profile Built",
+                  desc: "Our AI instantly scrapes the creator's data and builds a professional profile with their avatar, followers, bio, and niche.",
+                  icon: (
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4" /><path d="M4 21v-1a6 6 0 0112 0v1" /><path d="M16 3l2 2 4-4" /></svg>
+                  ),
+                },
+                {
+                  num: "3",
+                  title: "Offer Sent",
+                  desc: "The brand sends an offer through HireACreator with a budget, brief, and deliverables.",
+                  icon: (
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 2L11 13" /><path d="M22 2L15 22l-4-9-9-4z" /></svg>
+                  ),
+                },
+                {
+                  num: "4",
+                  title: "Creator Claims",
+                  desc: "The creator gets notified, claims their profile, and verifies they own the account.",
+                  icon: (
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 12l2 2 4-4" /><rect x="3" y="3" width="18" height="18" rx="2" /></svg>
+                  ),
+                },
+                {
+                  num: "5",
+                  title: "Deal Accepted",
+                  desc: "Creator reviews the offer and accepts. Brand pays through Stripe with a 10% service fee.",
+                  icon: (
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
+                  ),
+                },
+                {
+                  num: "6",
+                  title: "Get Paid",
+                  desc: "Creator delivers the work, brand approves, funds are released. Creator keeps 100%.",
+                  icon: (
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" /></svg>
+                  ),
+                },
+              ].map((step) => (
+                <div key={step.num} className="relative text-center">
+                  {/* Step circle */}
+                  <div className="relative z-10 w-20 h-20 rounded-full bg-blue-500 text-white flex flex-col items-center justify-center mx-auto shadow-lg shadow-blue-500/20">
+                    <div className="text-white/90">{step.icon}</div>
+                  </div>
+                  {/* Mobile vertical connector */}
+                  <div className="sm:hidden w-0.5 h-6 bg-blue-200 mx-auto my-1" />
+                  <div className="mt-4">
+                    <span className="inline-block text-xs font-semibold text-blue-500 bg-blue-50 px-2 py-0.5 rounded-full mb-2">Step {step.num}</span>
+                    <h3 className="text-lg font-bold text-neutral-900">{step.title}</h3>
+                    <p className="text-sm text-neutral-600 mt-1 leading-relaxed max-w-xs mx-auto">{step.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Interactive Example */}
+          <div className="mt-20 rounded-2xl bg-gradient-to-br from-blue-50 via-blue-50/80 to-sky-50 border border-blue-100 p-6 sm:p-10 overflow-hidden">
+            <h3 className="text-lg font-bold text-neutral-900 mb-8 text-center" style={{ fontFamily: "var(--font-serif)" }}>
+              See it in action
+            </h3>
+
+            <div className="flex flex-col lg:flex-row items-center gap-4 lg:gap-0">
+              {/* Mock Instagram Comment */}
+              <div className="flex-1 w-full max-w-xs">
+                <div className="bg-white rounded-xl border border-neutral-200 p-4 shadow-sm">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-xs font-bold">B</div>
+                    <div>
+                      <div className="text-sm font-semibold text-neutral-900">brandco</div>
+                      <div className="text-[10px] text-neutral-400">Just now</div>
+                    </div>
+                  </div>
+                  <p className="text-sm text-neutral-700">
+                    <span className="text-blue-500 font-medium">@hireacreatorai</span> check out <span className="text-blue-500 font-medium">@jessicafitness</span> for our campaign
+                  </p>
+                </div>
+                <p className="text-[10px] text-neutral-400 text-center mt-2">Instagram Comment</p>
+              </div>
+
+              {/* Arrow */}
+              <div className="flex-shrink-0 text-blue-300 lg:px-3">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="rotate-90 lg:rotate-0"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+              </div>
+
+              {/* Mock Profile Card */}
+              <div className="flex-1 w-full max-w-xs">
+                <div className="bg-white rounded-xl border border-neutral-200 p-4 shadow-sm text-center">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-400 to-rose-500 mx-auto mb-2 flex items-center justify-center text-white text-sm font-bold">JF</div>
+                  <div className="text-sm font-semibold text-neutral-900">Jessica Fitness</div>
+                  <div className="text-xs text-neutral-500 mt-0.5">@jessicafitness</div>
+                  <div className="flex justify-center gap-4 mt-3 text-[11px] text-neutral-500">
+                    <span><strong className="text-neutral-800">124K</strong> followers</span>
+                    <span><strong className="text-neutral-800">Fitness</strong> niche</span>
+                  </div>
+                  <div className="mt-3 inline-block bg-blue-50 text-blue-600 text-xs font-semibold px-3 py-1 rounded-full">Score: 82/100</div>
+                </div>
+                <p className="text-[10px] text-neutral-400 text-center mt-2">Profile Auto-Built</p>
+              </div>
+
+              {/* Arrow */}
+              <div className="flex-shrink-0 text-blue-300 lg:px-3">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="rotate-90 lg:rotate-0"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+              </div>
+
+              {/* Mock Offer */}
+              <div className="flex-1 w-full max-w-xs">
+                <div className="bg-white rounded-xl border border-neutral-200 p-4 shadow-sm">
+                  <div className="flex items-center gap-2 mb-2">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="text-blue-500"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z" /></svg>
+                    <span className="text-sm font-semibold text-neutral-900">New Offer</span>
+                  </div>
+                  <div className="text-xs text-neutral-500 space-y-1">
+                    <div>Brand: <span className="text-neutral-800 font-medium">BrandCo</span></div>
+                    <div>Budget: <span className="text-neutral-800 font-medium">$2,500</span></div>
+                    <div>Deliverables: <span className="text-neutral-800 font-medium">2 Reels + 1 Story</span></div>
+                  </div>
+                  <div className="mt-3 bg-green-50 text-green-700 text-xs font-semibold px-3 py-1.5 rounded-lg text-center">Payment Confirmed</div>
+                </div>
+                <p className="text-[10px] text-neutral-400 text-center mt-2">Offer to Payment</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* FAQ */}
       <section className="py-24 px-6">
         <div className="max-w-3xl mx-auto">
