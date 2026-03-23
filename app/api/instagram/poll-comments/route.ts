@@ -9,7 +9,15 @@ export const maxDuration = 30;
  * and auto-replies. Works in dev mode without webhooks.
  * Tracks replied comments in DB to avoid double-replies.
  */
-export async function GET() {
+export async function GET(request: Request) {
+  // Verify cron secret to prevent abuse
+  const cronSecret = process.env.CRON_SECRET || process.env.INSTAGRAM_WEBHOOK_VERIFY_TOKEN;
+  const url = new URL(request.url);
+  const secret = url.searchParams.get("secret");
+  if (cronSecret && secret !== cronSecret) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const accessToken = process.env.INSTAGRAM_ACCESS_TOKEN;
   if (!accessToken) {
     return NextResponse.json({ error: "No Instagram token" }, { status: 500 });
