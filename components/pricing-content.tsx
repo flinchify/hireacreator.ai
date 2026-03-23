@@ -43,38 +43,33 @@ const tabLabels: Record<Tab, string> = {
 };
 
 const creatorComparisonFeatures = [
+  { label: "AI-customized profile", free: true, pro: true, biz: true },
+  { label: "Premium templates", free: "18 templates", pro: "18 + custom builder", biz: "18 + custom builder" },
   { label: "Services listed", free: "Up to 3", pro: "Unlimited", biz: "Unlimited" },
-  { label: "Premium templates", free: "8 templates", pro: "8 + custom builder", biz: "8 + custom builder" },
-  { label: "Intro animations", free: "2 free", pro: "All 11 included", biz: "All 11 included" },
-  { label: "Custom domain", free: false, pro: true, biz: true },
-  { label: "Analytics", free: "Basic", pro: "Advanced", biz: "Advanced + revenue" },
+  { label: "Receive brand offers", free: true, pro: true, biz: true },
+  { label: "Intro animations", free: "2 included", pro: "All included", biz: "All included" },
+  { label: "AI bio writer", free: false, pro: true, biz: true },
+  { label: "Reply templates", free: false, pro: true, biz: true },
+  { label: "Analytics", free: "Basic", pro: "Advanced", biz: "Advanced" },
   { label: "Remove branding", free: false, pro: true, biz: true },
   { label: "Priority search", free: false, pro: true, biz: true },
+  { label: "Boosted listing", free: false, pro: true, biz: true },
   { label: "Verified badge priority", free: false, pro: true, biz: true },
-  { label: "SEO tools", free: false, pro: true, biz: true },
-  { label: "Multi-page sites", free: false, pro: false, biz: "Up to 5 pages" },
-  { label: "Team collaboration", free: false, pro: false, biz: true },
-  { label: "White-label solution", free: false, pro: false, biz: true },
-  { label: "API access", free: false, pro: false, biz: "1000 req/min" },
-  { label: "Lead capture forms", free: false, pro: false, biz: true },
-  { label: "Email marketing integration", free: false, pro: false, biz: true },
-  { label: "Priority support", free: false, pro: true, biz: "Dedicated CSM" },
+  { label: "Earnings dashboard", free: false, pro: false, biz: true },
+  { label: "Calendar paid sessions", free: false, pro: false, biz: true },
+  { label: "Link products and courses", free: false, pro: false, biz: true },
+  { label: "Priority support", free: false, pro: true, biz: "Dedicated" },
   { label: "Commission on earnings", free: "0%", pro: "0%", biz: "0%" },
 ];
 
 const brandComparisonFeatures = [
   { label: "Search and discover creators", analytics: true, enterprise: true },
-  { label: "Campaign management", analytics: true, enterprise: "Unlimited campaigns" },
-  { label: "Creator analytics", analytics: true, enterprise: true },
-  { label: "Bulk outreach tools", analytics: true, enterprise: true },
-  { label: "ROI tracking", analytics: true, enterprise: true },
-  { label: "Contract management", analytics: true, enterprise: true },
-  { label: "Service fee on bookings", analytics: "10%", enterprise: "5%" },
-  { label: "Dedicated account manager", analytics: false, enterprise: true },
-  { label: "Custom integrations", analytics: false, enterprise: true },
-  { label: "Priority support with response time commitments", analytics: false, enterprise: true },
-  { label: "API access", analytics: false, enterprise: "5000 req/min" },
-  { label: "White-label marketplace", analytics: false, enterprise: true },
+  { label: "Send offers to creators", analytics: true, enterprise: "Unlimited" },
+  { label: "Creator profiles with follower data", analytics: true, enterprise: true },
+  { label: "Browse by niche and platform", analytics: true, enterprise: true },
+  { label: "Secure Stripe escrow payments", analytics: true, enterprise: true },
+  { label: "Service fee on deals", analytics: "10%", enterprise: "5%" },
+  { label: "Priority support", analytics: false, enterprise: true },
 ];
 
 const faqItems = [
@@ -204,13 +199,15 @@ export function PricingContent() {
                   </p>
                   <ul className="space-y-3 mb-8 flex-1">
                     {[
-                      "Link-in-bio page with 8 premium templates",
+                      "AI-customized link-in-bio page",
+                      "18 premium templates",
                       "Up to 3 services listed",
                       "Custom fonts, colors, button shapes",
-                      "2 free intro animations (Fade Up, Scale In)",
-                      "Social links integration (15+ platforms)",
+                      "2 intro animations included",
+                      "Social links (15+ platforms)",
                       "Bio links with click tracking",
-                      "Calendar booking (free sessions only)",
+                      "Calendar booking (free sessions)",
+                      "Receive brand offers",
                       "0% commission on all earnings",
                       "Basic analytics",
                       "QR code for your page",
@@ -256,16 +253,16 @@ export function PricingContent() {
                     {[
                       "Everything in Free",
                       "Unlimited services",
-                      "All 8 premium templates + custom template builder",
+                      "All 18 templates + custom builder",
+                      "All intro animations included",
                       "Priority in marketplace search",
-                      "Advanced analytics (traffic, heatmaps, demographics)",
-                      "Custom domain support (yourname.com)",
-                      "Verified badge priority",
-                      "9 premium intro animations included",
-                      "Boosted visibility in browse",
+                      "Boosted listing in browse",
+                      "Advanced analytics",
+                      "AI bio writer",
+                      "Reply templates",
                       "Remove HireACreator branding",
+                      "Verified badge priority",
                       "Priority support",
-                      "SEO optimization tools",
                     ].map((f) => (
                       <li key={f} className="flex items-start gap-2.5 text-sm text-neutral-600">
                         <span className="mt-0.5"><CheckIcon /></span>
@@ -309,15 +306,12 @@ export function PricingContent() {
                   <ul className="space-y-3 mb-8 flex-1">
                     {[
                       "Everything in Pro",
-                      "Multi-page sites (up to 5 pages)",
-                      "Team collaboration (invite editors)",
-                      "White-label solution",
-                      "API access (1000 req/min)",
-                      "Custom embed widgets",
-                      "Lead capture forms",
-                      "Email marketing integration",
-                      "Revenue dashboard",
-                      "Priority customer success manager",
+                      "Earnings dashboard",
+                      "Calendar paid sessions",
+                      "Link your own products and courses",
+                      "Verification manager",
+                      "Priority in all search results",
+                      "Dedicated support",
                     ].map((f) => (
                       <li key={f} className="flex items-start gap-2.5 text-sm text-neutral-600">
                         <span className="mt-0.5"><CheckIcon /></span>
@@ -412,12 +406,11 @@ export function PricingContent() {
                   <ul className="space-y-3 mb-8 flex-1">
                     {[
                       "Search and discover creators",
-                      "Campaign management dashboard",
-                      "Creator analytics and audience data",
-                      "Bulk outreach tools",
-                      "ROI tracking",
-                      "Contract management",
-                      "10% service fee on bookings",
+                      "Send offers to any creator",
+                      "Creator profiles with real follower data",
+                      "Secure payment via Stripe escrow",
+                      "Browse marketplace by niche and platform",
+                      "10% service fee on deals",
                     ].map((f) => (
                       <li key={f} className="flex items-start gap-2.5 text-sm text-neutral-600">
                         <span className="mt-0.5"><CheckIcon /></span>
@@ -461,13 +454,9 @@ export function PricingContent() {
                   <ul className="space-y-3 mb-8 flex-1">
                     {[
                       "Everything in Brand Analytics",
-                      "Dedicated account manager",
-                      "Custom integrations",
-                      "Priority support with response time commitments",
                       "Reduced 5% service fee",
-                      "Unlimited campaigns",
-                      "API access (5000 req/min)",
-                      "White-label marketplace",
+                      "Priority support",
+                      "Unlimited offers to creators",
                     ].map((f) => (
                       <li key={f} className="flex items-start gap-2.5 text-sm text-neutral-600">
                         <span className="mt-0.5"><CheckIcon /></span>
