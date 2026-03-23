@@ -373,6 +373,53 @@ async function fetchXProfile(
 ): Promise<SocialProfile | null> {
   const clean = handle.replace(/^@/, "").trim().toLowerCase();
 
+  // Try X API v2 first (most reliable if we have a bearer token)
+  const xBearerToken = process.env.X_BEARER_TOKEN;
+  if (xBearerToken) {
+    try {
+      console.log(`[X Scraper] Trying X API v2 for @${clean}`);
+      const apiRes = await fetch(
+        `https://api.x.com/2/users/by/username/${encodeURIComponent(clean)}?user.fields=name,description,profile_image_url,public_metrics,verified`,
+        {
+          headers: { Authorization: `Bearer ${xBearerToken}` },
+          signal: AbortSignal.timeout(8000),
+        }
+      );
+      if (apiRes.ok) {
+        const apiData = await apiRes.json();
+        const user = apiData.data;
+        if (user) {
+          const bio = user.description || null;
+          const metrics = user.public_metrics || {};
+          const otherSocials = extractSocialLinks(bio, "x");
+          const websites = extractWebsites(null, bio);
+          console.log(`[X Scraper] X API success: @${clean} = ${metrics.followers_count || 0} followers`);
+          return {
+            platform: "x",
+            handle: clean,
+            displayName: user.name || clean,
+            avatarUrl: user.profile_image_url?.replace("_normal", "_400x400") || null,
+            bio,
+            followerCount: metrics.followers_count || 0,
+            followingCount: metrics.following_count || 0,
+            postCount: metrics.tweet_count || 0,
+            isVerified: user.verified || false,
+            category: detectCategoryFromBio(bio),
+            externalUrl: null,
+            websites,
+            otherSocials,
+            profileUrl: `https://x.com/${clean}`,
+            isBusinessAccount: false,
+          };
+        }
+      } else {
+        console.log(`[X Scraper] X API failed for @${clean}: ${apiRes.status}`);
+      }
+    } catch (e) {
+      console.log(`[X Scraper] X API error for @${clean}:`, e);
+    }
+  }
+
   // Try ScrapingBee proxy first
   try {
     console.log(`[X Scraper] Trying ScrapingBee proxy for @${clean}`);

@@ -60,20 +60,34 @@ export async function POST(request: Request) {
           // If someone tagged @hireacreatorai, auto-build their profile
           if (text.toLowerCase().includes("@hireacreator") && from?.username) {
             console.log(`[Instagram Webhook] Mention detected from @${from.username}`);
-            
-            // Queue profile creation (fire and forget)
+
+            // Extract @mentions from comment text (excluding @hireacreator variants)
+            const mentionMatches = text.match(/@([\w.]+)/g) || [];
+            const otherMentions = mentionMatches
+              .map((m: string) => m.slice(1).toLowerCase())
+              .filter((h: string) => !h.startsWith("hireacreator"));
+
+            // If another @username is found, they're the creator being recommended
+            // The commenter is the brand/recommender, the tagged person is the creator
+            const creatorHandle = otherMentions.length > 0 ? otherMentions[0] : from.username;
+
+            console.log(`[Instagram Webhook] Building profile for creator: @${creatorHandle} (commenter: @${from.username})`);
+
+            // Queue profile creation for the creator (fire and forget)
             fetch(`${process.env.NEXT_PUBLIC_APP_URL || "https://hireacreator.ai"}/api/score`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ platform: "instagram", handle: from.username }),
+              body: JSON.stringify({ platform: "instagram", handle: creatorHandle }),
             }).catch(() => {});
 
-            // Auto-reply to the comment
+            // Auto-reply to the comment mentioning the creator
             if (commentId) {
               const accessToken = process.env.INSTAGRAM_ACCESS_TOKEN;
               if (accessToken) {
-                const replyText = `Hey @${from.username}! We just built your creator profile on HireACreator. Claim it free: hireacreator.ai/claim?platform=instagram&handle=${from.username}`;
-                
+                const replyText = otherMentions.length > 0
+                  ? `Hey @${creatorHandle}! Someone thinks you should be on HireACreator. Claim your profile free: hireacreator.ai/claim?platform=instagram&handle=${creatorHandle}`
+                  : `Hey @${creatorHandle}! We just built your creator profile on HireACreator. Claim it free: hireacreator.ai/claim?platform=instagram&handle=${creatorHandle}`;
+
                 fetch(`https://graph.instagram.com/v21.0/${commentId}/replies`, {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
