@@ -11,6 +11,7 @@ import { EarningsContent } from "./earnings-content";
 import { ReplyTemplatesManager } from "./reply-templates-manager";
 import { VerificationManager } from "./verification-manager";
 import { BioWriterModal } from "./bio-writer-modal";
+import { SendOfferModal } from "./send-offer-modal";
 import Link from "next/link";
 
 /* ═══ Icons ═══ */
@@ -28,6 +29,7 @@ const icons = {
   camera: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" /><circle cx="12" cy="13" r="4" /></svg>,
   sparkle: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83" strokeLinecap="round"/></svg>,
   close: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" /></svg>,
+  offers: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>,
 };
 
 /* ═══ Bottom Sheet ═══ */
@@ -822,13 +824,14 @@ function AdminFeaturedCreators() {
 }
 
 /* ═══ Sidebar nav items ═══ */
-type Section = "overview" | "links" | "services" | "calendar" | "analytics" | "earn" | "settings";
+type Section = "overview" | "links" | "services" | "calendar" | "offers" | "analytics" | "earn" | "settings";
 
 const NAV_MAIN = [
   { id: "overview" as Section, label: "Overview", icon: icons.overview },
   { id: "links" as Section, label: "My Bio Link", icon: icons.link },
   { id: "services" as Section, label: "Services", icon: icons.services },
   { id: "calendar" as Section, label: "Calendar", icon: icons.calendar },
+  { id: "offers" as Section, label: "Offers", icon: icons.offers },
   { id: "analytics" as Section, label: "Analytics", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M18 20V10M12 20V4M6 20v-6" strokeLinecap="round" strokeLinejoin="round"/></svg> },
   { id: "earn" as Section, label: "Earn", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" strokeLinecap="round" strokeLinejoin="round"/></svg> },
 ];
@@ -836,6 +839,241 @@ const NAV_MAIN = [
 const NAV_BOTTOM = [
   { id: "settings" as Section, label: "Settings", icon: icons.settings },
 ];
+
+/* ═══ Offers Manager ═══ */
+function OffersManager({ user }: { user: User }) {
+  const [offers, setOffers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showSendModal, setShowSendModal] = useState(false);
+
+  const loadOffers = useCallback(async () => {
+    try {
+      const res = await fetch("/api/offers");
+      if (res.ok) {
+        const data = await res.json();
+        setOffers(data.offers || []);
+      }
+    } catch (err) {
+      console.error("Failed to load offers:", err);
+    }
+    setLoading(false);
+  }, []);
+
+  useEffect(() => { loadOffers(); }, [loadOffers]);
+
+
+
+  const handleOfferAction = async (offerId: string, action: string, counterBudget?: string, counterMessage?: string) => {
+    try {
+      const res = await fetch("/api/offers", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          offer_id: offerId,
+          action,
+          counter_budget: counterBudget,
+          counter_message: counterMessage,
+        }),
+      });
+
+      if (res.ok) {
+        loadOffers();
+      } else {
+        const data = await res.json();
+        alert(data.error || "Failed to update offer");
+      }
+    } catch (err) {
+      console.error("Offer action error:", err);
+      alert("Failed to update offer");
+    }
+  };
+
+  function statusBadge(status: string) {
+    const styles: Record<string, string> = {
+      pending: "bg-amber-100 text-amber-700",
+      viewed: "bg-blue-100 text-blue-700",
+      accepted: "bg-emerald-100 text-emerald-700",
+      declined: "bg-red-100 text-red-700",
+      countered: "bg-violet-100 text-violet-700",
+      expired: "bg-gray-100 text-gray-700",
+    };
+    return (
+      <span className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded-full ${styles[status] || "bg-neutral-100 text-neutral-500"}`}>
+        {status}
+      </span>
+    );
+  }
+
+  function formatDate(dateStr: string) {
+    return new Date(dateStr).toLocaleDateString("en-AU", { 
+      day: "numeric", 
+      month: "short",
+      year: "numeric"
+    });
+  }
+
+  const isBrand = user.role === "brand" || user.role === "admin";
+
+  return (
+    <div className="max-w-2xl">
+      <div className="flex items-center justify-between mb-5">
+        <div>
+          <h2 className="text-lg font-bold text-neutral-900">
+            {isBrand ? "Offers Sent" : "Offers Received"}
+          </h2>
+          <p className="text-xs text-neutral-400 mt-0.5">
+            {isBrand ? "Brand deals you've sent to creators" : "Brand deal offers sent to you"}
+          </p>
+        </div>
+        {isBrand && (
+          <button
+            onClick={() => setShowSendModal(true)}
+            className="px-4 py-2 text-xs font-semibold text-white bg-neutral-900 rounded-xl hover:bg-neutral-800 active:scale-[0.98] transition-all"
+          >
+            + Send Offer
+          </button>
+        )}
+      </div>
+
+      {loading ? (
+        <div className="space-y-3">
+          {[...Array(3)].map((_, i) => (
+            <div key={i} className="animate-pulse bg-neutral-100 rounded-2xl h-32" />
+          ))}
+        </div>
+      ) : offers.length > 0 ? (
+        <div className="space-y-3">
+          {offers.map((offer: any) => (
+            <div key={offer.id} className="bg-white rounded-2xl border border-neutral-200/60 p-5 hover:border-neutral-300 transition-colors">
+              <div className="flex items-start gap-4">
+                {/* Creator/Brand avatar and info */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between gap-2 mb-2">
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-3 flex-wrap">
+                        <div className="flex items-center gap-2">
+                          <PlatformIcon platform={offer.creator_platform} size={16} />
+                          <span className="text-sm font-semibold text-neutral-900">
+                            @{offer.creator_handle}
+                          </span>
+                        </div>
+                        {isBrand && offer.creator_name && (
+                          <span className="text-xs text-neutral-500">
+                            {offer.creator_name}
+                          </span>
+                        )}
+                        {!isBrand && offer.brand_name && (
+                          <span className="text-xs text-neutral-500">
+                            from {offer.brand_name}
+                          </span>
+                        )}
+                        {statusBadge(offer.status)}
+                      </div>
+                      <div className="flex items-center gap-4 mt-1 text-xs text-neutral-400">
+                        <span>${(offer.budget_cents / 100).toFixed(2)}</span>
+                        <span>{offer.timeline_days} days</span>
+                        <span>{formatDate(offer.created_at)}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <div>
+                      <h4 className="text-xs font-semibold text-neutral-600 mb-1">Brief</h4>
+                      <p className="text-xs text-neutral-500 leading-relaxed">{offer.brief}</p>
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-semibold text-neutral-600 mb-1">Deliverables</h4>
+                      <p className="text-xs text-neutral-500 leading-relaxed">{offer.deliverables}</p>
+                    </div>
+
+                    {offer.counter_budget_cents && offer.counter_message && (
+                      <div className="bg-violet-50 border border-violet-200 rounded-lg p-3 mt-3">
+                        <h4 className="text-xs font-semibold text-violet-700 mb-1">Counter Offer: ${(offer.counter_budget_cents / 100).toFixed(2)}</h4>
+                        <p className="text-xs text-violet-600 leading-relaxed">{offer.counter_message}</p>
+                      </div>
+                    )}
+
+                    {/* Action buttons for creators */}
+                    {!isBrand && offer.verified_at && (
+                      <div className="flex gap-2 mt-4 pt-3 border-t border-neutral-100">
+                        {offer.status === "pending" && (
+                          <button
+                            onClick={() => handleOfferAction(offer.id, "view")}
+                            className="px-3 py-1.5 text-xs font-medium bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"
+                          >
+                            Mark Viewed
+                          </button>
+                        )}
+                        {["viewed", "countered"].includes(offer.status) && (
+                          <>
+                            <button
+                              onClick={() => handleOfferAction(offer.id, "accept")}
+                              className="px-3 py-1.5 text-xs font-medium bg-emerald-100 text-emerald-700 rounded-lg hover:bg-emerald-200 transition-colors"
+                            >
+                              Accept
+                            </button>
+                            <button
+                              onClick={() => {
+                                const counterBudget = prompt("Counter budget ($):");
+                                const counterMessage = prompt("Counter message:");
+                                if (counterBudget && counterMessage) {
+                                  handleOfferAction(offer.id, "counter", counterBudget, counterMessage);
+                                }
+                              }}
+                              className="px-3 py-1.5 text-xs font-medium bg-violet-100 text-violet-700 rounded-lg hover:bg-violet-200 transition-colors"
+                            >
+                              Counter
+                            </button>
+                          </>
+                        )}
+                        {!["accepted", "declined"].includes(offer.status) && (
+                          <button
+                            onClick={() => handleOfferAction(offer.id, "decline")}
+                            className="px-3 py-1.5 text-xs font-medium bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors"
+                          >
+                            Decline
+                          </button>
+                        )}
+                      </div>
+                    )}
+
+                    {!isBrand && !offer.verified_at && (
+                      <div className="mt-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                        <p className="text-xs text-amber-700">Verify your {offer.creator_platform} account to view offer details and take action.</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="bg-white rounded-2xl border border-neutral-200/60 p-10 text-center">
+          <div className="w-12 h-12 rounded-2xl bg-neutral-100 flex items-center justify-center mx-auto mb-3">
+            {icons.offers}
+          </div>
+          <p className="text-sm text-neutral-400 mb-1">
+            {isBrand ? "No offers sent yet" : "No offers received yet"}
+          </p>
+          <p className="text-xs text-neutral-300">
+            {isBrand 
+              ? "Send your first offer to start collaborating with creators."
+              : "When brands send you offers, they'll appear here."}
+          </p>
+        </div>
+      )}
+
+      {/* Send Offer Modal */}
+      <SendOfferModal
+        isOpen={showSendModal}
+        onClose={() => setShowSendModal(false)}
+        onSuccess={() => loadOffers()}
+      />
+    </div>
+  );
+}
 
 /* ═══ My Bookings (sessions I've booked with creators) ═══ */
 function MyBookings() {
@@ -1542,6 +1780,11 @@ export function DashboardContent() {
               </div>
             )}
 
+            {/* OFFERS */}
+            {section === "offers" && (
+              <OffersManager user={user} />
+            )}
+
             {/* EARN */}
             {section === "earn" && (
               <div className="max-w-2xl">
@@ -1671,7 +1914,7 @@ export function DashboardContent() {
             { id: "links" as Section, label: "Bio Link", icon: icons.link },
             { id: "services" as Section, label: "Services", icon: icons.services },
             { id: "calendar" as Section, label: "Calendar", icon: icons.calendar },
-            { id: "earn" as Section, label: "Earn", icon: NAV_MAIN.find(n => n.id === "earn")!.icon },
+            { id: "offers" as Section, label: "Offers", icon: icons.offers },
             { id: "settings" as Section, label: "Settings", icon: icons.settings },
           ]).map(n => (
             <button key={n.id} onClick={() => setSection(n.id)}

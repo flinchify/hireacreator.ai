@@ -6,6 +6,7 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { ScoreChecker } from "@/components/score-checker";
 import { ScoreGauge, BreakdownBars } from "@/components/score-gauge";
+import { OfferCountBanner } from "@/components/offer-count-banner";
 
 interface ScoreData {
   score: number;
@@ -247,6 +248,12 @@ function ClaimPageInner() {
                     </div>
                   </div>
                 </div>
+
+                {/* Offer count banner */}
+                <OfferCountBanner 
+                  platform={scoreData.profile.platform} 
+                  handle={scoreData.profile.handle} 
+                />
 
                 {!scoreData.isClaimed && (
                   <a
