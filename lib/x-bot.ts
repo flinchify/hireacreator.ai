@@ -272,12 +272,18 @@ export function generateSmartReply(
     (m) => m.toLowerCase() !== `@${authorUsername.toLowerCase()}` && m.toLowerCase() !== "@hireacreatorai"
   );
 
+  // Brand tagging a creator — offer flow
   if (otherMentions.length > 0) {
     const creator = otherMentions[0].replace("@", "");
-    return `Hey @${creator}! A brand wants to work with you on HireACreator. Claim your profile: hireacreator.ai/claim?platform=x&handle=${creator}`;
+    const offerReplies = [
+      `yo @${creator} someone wants to work with you. we built your profile, go claim it and check offers hireacreator.ai/claim?platform=x&handle=${creator}`,
+      `@${creator} looks like a brand is interested in you. we made your creator page, claim it and see what they want hireacreator.ai/claim?platform=x&handle=${creator}`,
+      `heads up @${creator} you just got tagged for a collab. your profile is ready to claim hireacreator.ai/claim?platform=x&handle=${creator}`,
+    ];
+    return offerReplies[Math.floor(Math.random() * offerReplies.length)];
   }
 
-  // Self-promo patterns
+  // Self-promo — creator wants to be discovered
   if (
     text.includes("check me out") ||
     text.includes("check out my") ||
@@ -287,25 +293,61 @@ export function generateSmartReply(
     text.includes("i create") ||
     text.includes("i make") ||
     text.includes("my channel") ||
-    text.includes("my page")
+    text.includes("my page") ||
+    text.includes("hire me") ||
+    text.includes("collab")
   ) {
-    return `Hey @${authorUsername}! We just built your creator profile on HireACreator. Claim it free: hireacreator.ai/claim?platform=x&handle=${authorUsername}`;
+    const selfReplies = [
+      `just made your creator page @${authorUsername}. brands can now find you and send offers directly hireacreator.ai/claim?platform=x&handle=${authorUsername}`,
+      `your profile is live @${authorUsername}. claim it and start getting brand deals hireacreator.ai/claim?platform=x&handle=${authorUsername}`,
+      `done @${authorUsername}. your page is up, brands can send you offers now hireacreator.ai/claim?platform=x&handle=${authorUsername}`,
+    ];
+    return selfReplies[Math.floor(Math.random() * selfReplies.length)];
   }
 
-  // Question patterns
+  // Questions about hireacreator
   if (
     text.includes("what is hireacreator") ||
     text.includes("what does hireacreator") ||
     text.includes("how does hireacreator") ||
     text.includes("how do i") ||
     text.includes("what's hireacreator") ||
-    text.includes("?")
+    text.includes("how it work")
   ) {
-    return `HireACreator connects creators with brand deals. Get your free profile: hireacreator.ai/claim`;
+    const questionReplies = [
+      `we connect creators with brand deals. tag us with any creator and we build their profile instantly. brands can send offers directly. zero fees for creators hireacreator.ai`,
+      `basically brands find creators through us, send offers, pay through the platform. creators keep 100%. tag us with anyones @ and we make their page hireacreator.ai`,
+      `creators get a free profile page, brands send offers and pay through stripe. creators keep everything. tag any @ with us and we set them up hireacreator.ai`,
+    ];
+    return questionReplies[Math.floor(Math.random() * questionReplies.length)];
   }
 
-  // Default
-  return `@${authorUsername} Thanks for the mention! Claim your free creator profile: hireacreator.ai/claim?platform=x&handle=${authorUsername}`;
+  // Has a question mark — try to be helpful
+  if (text.includes("?")) {
+    return `we build creator profiles and connect them with brand deals. tag us with anyones @ and we make their page. brands can send offers directly hireacreator.ai/claim?platform=x&handle=${authorUsername}`;
+  }
+
+  // Offer-related — brand wants to send an offer via X
+  if (
+    text.includes("offer") ||
+    text.includes("hire") ||
+    text.includes("book") ||
+    text.includes("campaign") ||
+    text.includes("sponsor") ||
+    text.includes("budget") ||
+    text.includes("deal")
+  ) {
+    const target = otherMentions.length > 0 ? otherMentions[0].replace("@", "") : authorUsername;
+    return `you can send an offer to @${target} directly on our platform. their profile is ready, just claim and send hireacreator.ai/claim?platform=x&handle=${target}`;
+  }
+
+  // Default — chill acknowledgment
+  const defaultReplies = [
+    `made your page @${authorUsername}. claim it whenever, brands can find you now hireacreator.ai/claim?platform=x&handle=${authorUsername}`,
+    `your creator profile is up @${authorUsername}. free to claim, zero fees on anything you earn hireacreator.ai/claim?platform=x&handle=${authorUsername}`,
+    `set you up @${authorUsername}. your page is live hireacreator.ai/claim?platform=x&handle=${authorUsername}`,
+  ];
+  return defaultReplies[Math.floor(Math.random() * defaultReplies.length)];
 }
 
 
