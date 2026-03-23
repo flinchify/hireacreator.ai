@@ -130,9 +130,26 @@ function scorePlatformBonus(platform: string): number {
 
 function calculatePostValue(followers: number, niche: string): number {
   const nicheMultiplier = HIGH_VALUE_NICHES.includes(niche) ? 1.5 : MEDIUM_VALUE_NICHES.includes(niche) ? 1.0 : 0.7;
-  // Base formula: ~$10 per 1K followers, adjusted by niche
-  const base = Math.round(followers * 0.01 * nicheMultiplier);
-  return Math.max(500, Math.min(base, 5_000_000)); // $5 min, $50K max
+  
+  // Industry standard CPM-based pricing (cost per 1K followers)
+  // Nano (1K-10K): $10-100/post → ~$10/1K
+  // Micro (10K-100K): $100-1K/post → ~$8/1K  
+  // Mid (100K-500K): $1K-5K/post → ~$7/1K
+  // Macro (500K-1M): $5K-15K/post → ~$12/1K
+  // Mega (1M-10M): $10K-100K/post → ~$15/1K
+  // Celebrity (10M+): $100K-2M+/post → ~$20/1K
+  let cpmRate: number;
+  if (followers < 10_000) cpmRate = 10;
+  else if (followers < 100_000) cpmRate = 8;
+  else if (followers < 500_000) cpmRate = 7;
+  else if (followers < 1_000_000) cpmRate = 12;
+  else if (followers < 10_000_000) cpmRate = 15;
+  else if (followers < 50_000_000) cpmRate = 20;
+  else cpmRate = 25; // Celebrity tier
+
+  const base = Math.round((followers / 1000) * cpmRate * nicheMultiplier);
+  // In cents: $5 minimum, no maximum cap
+  return Math.max(500, base * 100);
 }
 
 export function calculateCreatorScore(profile: SocialProfile): ScoreResult {
