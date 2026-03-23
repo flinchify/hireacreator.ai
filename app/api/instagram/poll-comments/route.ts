@@ -75,6 +75,14 @@ export async function GET(request: Request) {
           
           if (existing && existing.length > 0) continue; // Already replied
 
+          // Rate limit: max 3 replies per user per 24 hours (anti-spam)
+          const recentReplies = await sql`
+            SELECT COUNT(*) as cnt FROM ig_replied_comments 
+            WHERE username = ${comment.username} AND replied_at > NOW() - INTERVAL '24 hours'
+          `.catch(() => [{ cnt: 0 }]);
+          const replyCount = Number(recentReplies[0]?.cnt || 0);
+          if (replyCount >= 3) continue;
+
           const username = comment.username;
           const replyText = `Hey @${username}! We just built your creator profile on HireACreator. Claim it free: hireacreator.ai/claim?platform=instagram&handle=${username}`;
           

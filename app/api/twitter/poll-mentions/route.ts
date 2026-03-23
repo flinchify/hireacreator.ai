@@ -137,11 +137,25 @@ export async function GET(request: Request) {
       // Skip our own tweets
       if (username.toLowerCase() === "hireacreatorai") continue;
 
-      // Check if we already replied
+      // Check if we already replied to this exact tweet
       const existing = await sql`
         SELECT tweet_id FROM x_replied_tweets WHERE tweet_id = ${tweet.id}
       `.catch(() => []);
       if (existing && existing.length > 0) continue;
+
+      // Rate limit: max 3 replies per user per 24 hours (anti-spam)
+      if (username) {
+        const recentReplies = await sql`
+          SELECT COUNT(*) as cnt FROM x_replied_tweets 
+          WHERE username = ${username} AND replied_at > NOW() - INTERVAL '24 hours'
+        `.catch(() => [{ cnt: 0 }]);
+        const count = Number(recentReplies[0]?.cnt || 0);
+        if (count >= 3) {
+          debug.rate_limited = debug.rate_limited || [];
+          (debug.rate_limited as any[]).push({ tweet_id: tweet.id, from: username });
+          continue;
+        }
+      }
 
       // Generate smart reply
       const replyText = generateSmartReply(tweet.text, username);
