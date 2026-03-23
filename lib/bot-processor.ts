@@ -70,7 +70,8 @@ export async function processIncomingMention(params: {
     }
   } else if (params.platform === "x") {
     if (X_CONFIGURED) {
-      posted = await replyToTweet(params.postId, response.replyText);
+      const tweetResult = await replyToTweet(params.postId, response.replyText);
+      posted = tweetResult.ok;
     }
   }
 

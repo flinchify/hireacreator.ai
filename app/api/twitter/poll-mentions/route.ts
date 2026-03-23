@@ -1,68 +1,21 @@
 import { NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
-import crypto from "crypto";
+import {
+  searchRecentTweets,
+  getUserByUsername,
+  getUserMentions,
+  replyToTweet,
+  generateSmartReply,
+  scrapeXProfile,
+} from "@/lib/x-bot";
 
 export const maxDuration = 30;
 
-/** Generate OAuth 1.0a Authorization header for X API */
-function generateOAuthHeader(
-  method: string,
-  url: string,
-  bodyParams: Record<string, string> = {}
-): string {
-  const consumerKey = process.env.X_API_KEY!;
-  const consumerSecret = process.env.X_API_SECRET!;
-  const token = process.env.X_ACCESS_TOKEN!;
-  const tokenSecret = process.env.X_ACCESS_SECRET!;
-
-  const timestamp = Math.floor(Date.now() / 1000).toString();
-  const nonce = crypto.randomBytes(16).toString("hex");
-
-  const oauthParams: Record<string, string> = {
-    oauth_consumer_key: consumerKey,
-    oauth_nonce: nonce,
-    oauth_signature_method: "HMAC-SHA1",
-    oauth_timestamp: timestamp,
-    oauth_token: token,
-    oauth_version: "1.0",
-  };
-
-  // Combine oauth params + body params for signature base
-  const allParams = { ...oauthParams, ...bodyParams };
-  const paramString = Object.keys(allParams)
-    .sort()
-    .map((k) => `${encodeRFC3986(k)}=${encodeRFC3986(allParams[k])}`)
-    .join("&");
-
-  const baseString = `${method.toUpperCase()}&${encodeRFC3986(url)}&${encodeRFC3986(paramString)}`;
-  const signingKey = `${encodeRFC3986(consumerSecret)}&${encodeRFC3986(tokenSecret)}`;
-  const signature = crypto
-    .createHmac("sha1", signingKey)
-    .update(baseString)
-    .digest("base64");
-
-  oauthParams["oauth_signature"] = signature;
-
-  const header = Object.keys(oauthParams)
-    .sort()
-    .map((k) => `${encodeRFC3986(k)}="${encodeRFC3986(oauthParams[k])}"`)
-    .join(", ");
-
-  return `OAuth ${header}`;
-}
-
-/** RFC 3986 percent-encoding */
-function encodeRFC3986(str: string): string {
-  return encodeURIComponent(str).replace(
-    /[!'()*]/g,
-    (c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`
-  );
-}
-
 /**
  * GET /api/twitter/poll-mentions
- * Polls for recent tweets mentioning @hireacreatorAI and auto-replies.
- * Tracks replied tweets in DB to avoid double-replies.
+ * Polls for recent tweets mentioning @hireacreatorAI using multiple query
+ * strategies, auto-replies with smart context-aware messages, and scrapes
+ * the mentioning user's X profile to build a creator profile.
  */
 export async function GET(request: Request) {
   // Verify secret
@@ -80,7 +33,6 @@ export async function GET(request: Request) {
   if (!bearerToken) {
     return NextResponse.json({ error: "No X_BEARER_TOKEN" }, { status: 500 });
   }
-
   if (
     !process.env.X_API_KEY ||
     !process.env.X_API_SECRET ||
@@ -88,13 +40,14 @@ export async function GET(request: Request) {
     !process.env.X_ACCESS_SECRET
   ) {
     return NextResponse.json(
-      { error: "Missing X OAuth credentials (X_API_KEY, X_API_SECRET, X_ACCESS_TOKEN, X_ACCESS_SECRET)" },
+      { error: "Missing X OAuth credentials" },
       { status: 500 }
     );
   }
 
   const sql = getDb();
-  const results: any[] = [];
+  const replies: any[] = [];
+  const debug: any = { queries_tried: [], mentions_source: null };
 
   try {
     // Ensure tracking table exists
@@ -106,25 +59,69 @@ export async function GET(request: Request) {
       )
     `.catch(() => {});
 
-    // 1. Search recent tweets mentioning @hireacreatorAI
-    const searchUrl =
-      "https://api.x.com/2/tweets/search/recent?query=%40hireacreatorAI&tweet.fields=author_id,created_at,text&user.fields=username,name,profile_image_url,public_metrics&expansions=author_id&max_results=20";
+    // --- Strategy 1: Try multiple search queries ---
+    const queries = [
+      "@hireacreatorAI",
+      "to:hireacreatorAI",
+      "hireacreatorAI",
+    ];
 
-    const searchRes = await fetch(searchUrl, {
-      headers: { Authorization: `Bearer ${bearerToken}` },
-      signal: AbortSignal.timeout(10000),
-    });
-    const searchData = await searchRes.json();
+    let tweets: any[] = [];
+    let users: any[] = [];
+    let winningQuery: string | null = null;
 
-    if (!searchRes.ok) {
-      return NextResponse.json(
-        { error: "X API search failed", details: searchData },
-        { status: searchRes.status }
-      );
+    for (const q of queries) {
+      const result = await searchRecentTweets(q);
+      debug.queries_tried.push({
+        query: q,
+        url: result.url,
+        result_count: result.data.length,
+        meta: result.meta,
+        error: result.raw?.errors || result.raw?.error || null,
+      });
+
+      if (result.data.length > 0 && !winningQuery) {
+        tweets = result.data;
+        users = result.includes?.users || [];
+        winningQuery = q;
+      }
     }
 
-    const tweets = searchData.data || [];
-    const users = searchData.includes?.users || [];
+    // --- Strategy 2: Try /2/users/:id/mentions endpoint ---
+    const botUser = await getUserByUsername("hireacreatorAI");
+    if (botUser) {
+      const mentionsResult = await getUserMentions(botUser.id);
+      debug.queries_tried.push({
+        query: `mentions_endpoint (user_id: ${botUser.id})`,
+        url: `https://api.x.com/2/users/${botUser.id}/mentions`,
+        result_count: mentionsResult?.data.length || 0,
+        meta: mentionsResult?.meta,
+        error: mentionsResult?.raw?.errors || null,
+      });
+
+      if (mentionsResult && mentionsResult.data.length > 0 && tweets.length === 0) {
+        tweets = mentionsResult.data;
+        users = mentionsResult.includes?.users || [];
+        winningQuery = "mentions_endpoint";
+      }
+    } else {
+      debug.queries_tried.push({
+        query: "mentions_endpoint",
+        error: "Could not resolve user ID for @hireacreatorAI",
+      });
+    }
+
+    debug.mentions_source = winningQuery;
+    debug.total_tweets_found = tweets.length;
+
+    if (tweets.length === 0) {
+      return NextResponse.json({
+        tweets_checked: 0,
+        replies: [],
+        debug,
+        message: "No recent mentions found across all query strategies.",
+      });
+    }
 
     // Build author_id -> user map
     const userMap = new Map<string, any>();
@@ -132,15 +129,7 @@ export async function GET(request: Request) {
       userMap.set(u.id, u);
     }
 
-    if (tweets.length === 0) {
-      return NextResponse.json({
-        tweets_checked: 0,
-        replies: [],
-        message: "No recent mentions of @hireacreatorAI found.",
-      });
-    }
-
-    // 2. Process each mention
+    // Process ALL mentions
     for (const tweet of tweets) {
       const author = userMap.get(tweet.author_id);
       const username = author?.username || "";
@@ -152,79 +141,65 @@ export async function GET(request: Request) {
       const existing = await sql`
         SELECT tweet_id FROM x_replied_tweets WHERE tweet_id = ${tweet.id}
       `.catch(() => []);
-
       if (existing && existing.length > 0) continue;
 
-      // 3. Reply to the tweet
-      const replyText = `Hey @${username}! We just built your creator profile on HireACreator. Claim it free: hireacreator.ai/claim?platform=x&handle=${username}`;
+      // Generate smart reply
+      const replyText = generateSmartReply(tweet.text, username);
 
-      try {
-        const postUrl = "https://api.x.com/2/tweets";
-        const body = JSON.stringify({
-          text: replyText,
-          reply: { in_reply_to_tweet_id: tweet.id },
-        });
+      // Reply to the tweet
+      const replyResult = await replyToTweet(tweet.id, replyText);
 
-        const oauthHeader = generateOAuthHeader("POST", postUrl);
-
-        const replyRes = await fetch(postUrl, {
-          method: "POST",
-          headers: {
-            Authorization: oauthHeader,
-            "Content-Type": "application/json",
-          },
-          body,
-          signal: AbortSignal.timeout(10000),
-        });
-        const replyData = await replyRes.json();
-
-        // Track the reply
-        if (replyRes.ok) {
-          await sql`
-            INSERT INTO x_replied_tweets (tweet_id, username) VALUES (${tweet.id}, ${username})
-          `.catch(() => {});
-        }
-
-        // Fire and forget: auto-build their profile
-        if (replyRes.ok) {
-          fetch(
-            `${process.env.NEXT_PUBLIC_APP_URL || "https://hireacreator.ai"}/api/score`,
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ platform: "x", handle: username }),
-            }
-          ).catch(() => {});
-        }
-
-        results.push({
-          tweet_id: tweet.id,
-          from: username,
-          text: tweet.text,
-          reply_status: replyRes.ok ? "replied" : "failed",
-          reply_data: replyData,
-        });
-      } catch (e: any) {
-        results.push({
-          tweet_id: tweet.id,
-          from: username,
-          text: tweet.text,
-          reply_status: "error",
-          error: e.message,
-        });
+      // Track the reply
+      if (replyResult.ok) {
+        await sql`
+          INSERT INTO x_replied_tweets (tweet_id, username) VALUES (${tweet.id}, ${username})
+        `.catch(() => {});
       }
+
+      // Scrape profile and build creator profile (fire and forget)
+      if (replyResult.ok && username) {
+        (async () => {
+          try {
+            const profile = await scrapeXProfile(username);
+            await fetch(
+              `${process.env.NEXT_PUBLIC_APP_URL || "https://hireacreator.ai"}/api/score`,
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  platform: "x",
+                  handle: username,
+                  xProfile: profile.user,
+                  pinnedTweet: profile.pinnedTweet,
+                  links: profile.links,
+                }),
+              }
+            ).catch(() => {});
+          } catch {}
+        })();
+      }
+
+      replies.push({
+        tweet_id: tweet.id,
+        from: username,
+        text: tweet.text,
+        reply_text: replyText,
+        reply_status: replyResult.ok ? "replied" : "failed",
+        reply_data: replyResult.data || replyResult.error,
+      });
     }
 
     return NextResponse.json({
       tweets_checked: tweets.length,
-      replies: results,
+      replies,
+      debug,
       message:
-        results.length === 0
+        replies.length === 0
           ? "No new mentions to reply to."
-          : `Replied to ${results.length} mention(s).`,
+          : `Replied to ${replies.length} mention(s).`,
     });
   } catch (e: any) {
     console.error("[X Poll Mentions] Error:", e);
-    return NextResponse.json({ error: e.message }, { status: 500 });
+    return NextResponse.json({ error: e.message, debug }, { status: 500 });
   }
 }
