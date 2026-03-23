@@ -175,6 +175,16 @@ export async function GET() {
     }
     results.steps.push({ step: "check_oauth", status: "ok" });
 
+    // --- Step 4b: Check if already replied ---
+    const { getDb } = await import("@/lib/db");
+    const sql = getDb();
+    await sql`CREATE TABLE IF NOT EXISTS x_replied_tweets (tweet_id TEXT PRIMARY KEY, username TEXT, replied_at TIMESTAMPTZ DEFAULT NOW())`.catch(() => {});
+    const existing = await sql`SELECT tweet_id FROM x_replied_tweets WHERE tweet_id = ${mention.id}`.catch(() => []);
+    if (existing && existing.length > 0) {
+      results.steps.push({ step: "already_replied", tweet_id: mention.id, note: "Already replied to this tweet" });
+      return NextResponse.json(results);
+    }
+
     // --- Step 5: Generate smart reply ---
     const replyText = generateSmartReply(mention.text, username);
     results.steps.push({
@@ -212,6 +222,11 @@ export async function GET() {
       error: replyResult.error,
       reply_text: replyText,
     });
+
+    // Track reply to prevent duplicates
+    if (replyResult.ok) {
+      await sql`INSERT INTO x_replied_tweets (tweet_id, username) VALUES (${mention.id}, ${username})`.catch(() => {});
+    }
 
     return NextResponse.json(results);
   } catch (e: any) {
