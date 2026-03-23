@@ -48,8 +48,18 @@ export async function GET() {
 
       for (const comment of commentsData.data) {
         const text = (comment.text || "").toLowerCase();
+        const commentUsername = (comment.username || "").toLowerCase();
         
-        if (text.includes("@hireacreator") || text.includes("hireacreator")) {
+        // Skip our own comments
+        if (commentUsername === "hireacreatorai") continue;
+        
+        // Skip comments that don't mention us
+        if (!text.includes("@hireacreator") && !text.includes("hireacreator")) continue;
+        
+        // Skip if no username (can't build a profile without it)
+        if (!comment.username) continue;
+
+        {
           // Check if we already replied
           const existing = await sql`
             SELECT comment_id FROM ig_replied_comments WHERE comment_id = ${comment.id}
