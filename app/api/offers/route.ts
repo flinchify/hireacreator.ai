@@ -94,15 +94,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Budget must be between $0.01 and $99,999.99" }, { status: 400 });
     }
 
-    // Calculate service fee: 10% standard, 5% for enterprise brands
+    // Calculate service fee: 15% default, 10% for Pro brands, 5% for Enterprise brands
     const sql = getDb();
 
-    // Check if brand has enterprise subscription
+    // Check brand subscription tier
     const subscriptionRows = await sql`
       SELECT subscription_plan FROM users WHERE id = ${user.id} LIMIT 1
     `;
-    const isEnterprise = subscriptionRows.length > 0 && subscriptionRows[0].subscription_plan === 'brand_enterprise';
-    const feeRate = isEnterprise ? 0.05 : 0.10;
+    const plan = subscriptionRows.length > 0 ? subscriptionRows[0].subscription_plan : null;
+    const isEnterprise = plan === 'brand_enterprise';
+    const isPro = plan === 'brand_pro';
+    const feeRate = isEnterprise ? 0.05 : isPro ? 0.10 : 0.15;
     const feeCents = Math.round(budgetCents * feeRate);
     const totalCents = budgetCents + feeCents;
 
