@@ -368,16 +368,19 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
             From Comment to Payment
           </h2>
           <p className="text-neutral-500 text-sm text-center max-w-xl mx-auto mb-12">
-            Brands discover creators on Instagram, our AI does the rest.
+            Brands discover creators on Instagram or X, our AI does the rest.
           </p>
           <StaggerChildren className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
               {
                 step: "1",
-                title: "Brand tags @hireacreatorai",
-                desc: "A brand comments on Instagram tagging a creator they want to work with. Our bot picks it up instantly.",
+                title: "Brand tags @hireacreatorai on Instagram or X",
+                desc: "A brand comments on Instagram or tweets on X tagging a creator they want to work with. Our bot picks it up instantly on both platforms.",
                 icon: (
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-blue-500"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" /></svg>
+                  <div className="flex items-center gap-1">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-blue-500"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" /></svg>
+                      <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" className="text-blue-500"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                    </div>
                 ),
               },
               {
