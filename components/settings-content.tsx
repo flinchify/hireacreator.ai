@@ -784,6 +784,7 @@ function AdminUsersSection() {
   const [selected, setSelected] = useState<any | null>(null);
   const [actionLoading, setActionLoading] = useState("");
   const [marketplaceOpen, setMarketplaceOpen] = useState(true);
+  const [rankingsOpen, setRankingsOpen] = useState(true);
   const [toggleLoading, setToggleLoading] = useState(false);
 
   function loadUsers(p: number = page, q: string = search) {
@@ -807,6 +808,7 @@ function AdminUsersSection() {
   useEffect(() => {
     fetch("/api/admin/settings").then(r => r.json()).then(d => {
       if (d.marketplace_open !== undefined) setMarketplaceOpen(d.marketplace_open === "true");
+      if (d.rankings_open !== undefined) setRankingsOpen(d.rankings_open === "true");
     }).catch(() => {});
   }, []);
 
@@ -819,6 +821,18 @@ function AdminUsersSection() {
       body: JSON.stringify({ marketplace_open: newVal ? "true" : "false" }),
     });
     setMarketplaceOpen(newVal);
+    setToggleLoading(false);
+  }
+
+  async function toggleRankings() {
+    setToggleLoading(true);
+    const newVal = !rankingsOpen;
+    await fetch("/api/admin/settings", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ rankings_open: newVal ? "true" : "false" }),
+    });
+    setRankingsOpen(newVal);
     setToggleLoading(false);
   }
 
@@ -866,6 +880,25 @@ function AdminUsersSection() {
             className={`relative w-14 h-7 rounded-full transition-colors ${marketplaceOpen ? "bg-emerald-500" : "bg-neutral-300"}`}
           >
             <div className={`absolute top-0.5 w-6 h-6 bg-white rounded-full shadow transition-transform ${marketplaceOpen ? "translate-x-7" : "translate-x-0.5"}`} />
+          </button>
+        </div>
+      </Card>
+
+      {/* Rankings Toggle */}
+      <Card className="p-4 sm:p-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="font-semibold text-neutral-900 text-sm">Creator Rankings</h3>
+            <p className="text-xs text-neutral-500 mt-0.5">
+              {rankingsOpen ? "Rankings page is live — creators are ranked publicly." : "Rankings page shows coming soon."}
+            </p>
+          </div>
+          <button
+            onClick={toggleRankings}
+            disabled={toggleLoading}
+            className={`relative w-14 h-7 rounded-full transition-colors ${rankingsOpen ? "bg-emerald-500" : "bg-neutral-300"}`}
+          >
+            <div className={`absolute top-0.5 w-6 h-6 bg-white rounded-full shadow transition-transform ${rankingsOpen ? "translate-x-7" : "translate-x-0.5"}`} />
           </button>
         </div>
       </Card>
