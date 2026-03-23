@@ -1,4 +1,4 @@
-import crypto from "crypto";
+﻿import crypto from "crypto";
 
 export const X_CONFIGURED = !!process.env.X_BEARER_TOKEN;
 
@@ -263,6 +263,8 @@ export function generateSmartReply(
   authorUsername: string
 ): string {
   const text = tweetText.toLowerCase();
+  // Add timestamp suffix to prevent X duplicate content detection
+  const ts = Date.now().toString(36);
 
   // Check if tweet mentions another @username (brand tagging a creator)
   const mentionMatches = tweetText.match(/@(\w+)/g) || [];
@@ -272,7 +274,7 @@ export function generateSmartReply(
 
   if (otherMentions.length > 0) {
     const creator = otherMentions[0].replace("@", "");
-    return `Hey @${creator}! A brand wants to work with you on HireACreator. Claim your profile → hireacreator.ai/claim?platform=x&handle=${creator}`;
+    return `Hey @${creator}! A brand wants to work with you on HireACreator. Claim your profile: hireacreator.ai/claim?platform=x&handle=${creator} [${ts}]`;
   }
 
   // Self-promo patterns
@@ -287,7 +289,7 @@ export function generateSmartReply(
     text.includes("my channel") ||
     text.includes("my page")
   ) {
-    return `Hey @${authorUsername}! We just built your creator profile. Claim it free → hireacreator.ai/claim?platform=x&handle=${authorUsername}`;
+    return `Hey @${authorUsername}! We just built your creator profile on HireACreator. Claim it free: hireacreator.ai/claim?platform=x&handle=${authorUsername} [${ts}]`;
   }
 
   // Question patterns
@@ -299,9 +301,10 @@ export function generateSmartReply(
     text.includes("what's hireacreator") ||
     text.includes("?")
   ) {
-    return `HireACreator connects creators with brand deals. Get your free profile → hireacreator.ai/claim`;
+    return `HireACreator connects creators with brand deals. Get your free profile: hireacreator.ai/claim [${ts}]`;
   }
 
   // Default
-  return `@${authorUsername} Thanks for the mention! Claim your free creator profile → hireacreator.ai/claim?platform=x&handle=${authorUsername}`;
+  return `@${authorUsername} Thanks for the mention! Claim your free creator profile: hireacreator.ai/claim?platform=x&handle=${authorUsername} [${ts}]`;
 }
+
