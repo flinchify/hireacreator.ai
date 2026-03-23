@@ -42,7 +42,7 @@ export default function TermsPage() {
           <h2>5. Brand Terms</h2>
           <ul>
             <li>Brands agree to pay the listed price plus applicable service fees at the time of booking.</li>
-            <li>Payments are held in escrow via Stripe until the creator delivers the agreed work.</li>
+            <li>Payments are held in escrow via Stripe. Funds are only released to the creator after the brand reviews and approves the deliverables.</li>
             <li>Brands must not request work outside the scope of the original booking without a new agreement.</li>
             <li>Brands are responsible for providing clear briefs and timely feedback.</li>
           </ul>

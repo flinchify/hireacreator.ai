@@ -45,14 +45,6 @@ export async function POST() {
       missing.push("Write a bio (minimum 50 characters)");
     }
 
-    // 5. At least 1 service
-    const services = await sql`
-      SELECT id FROM services WHERE user_id = ${user.id} AND is_active = TRUE LIMIT 1
-    `;
-    if (services.length === 0) {
-      missing.push("Add at least 1 service");
-    }
-
     if (missing.length > 0) {
       return NextResponse.json({ verified: false, missing });
     }

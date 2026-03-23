@@ -164,6 +164,7 @@ export async function getCreators(): Promise<Creator[]> {
       AND u.email_verified = TRUE
       AND (u.avatar_url IS NOT NULL OR u.role = 'brand')
       AND (EXISTS (SELECT 1 FROM social_connections sc WHERE sc.user_id = u.id) OR u.role = 'brand')
+      AND (EXISTS (SELECT 1 FROM services s WHERE s.user_id = u.id AND s.is_active = TRUE) OR u.role = 'brand')
     ORDER BY u.is_featured DESC, u.rating DESC
   `;
 

@@ -347,7 +347,7 @@ function ClaimPageInner() {
               { q: "What happens when I claim my profile?", a: "We build a professional creator page with your content, audience stats, niche, and estimated brand deal rate. You go live in our marketplace for brands to discover." },
               { q: "How do brand deals work?", a: "Brands browse creators by niche and audience. If you match their campaign, they send you an offer. Deals are managed and paid through the platform." },
               { q: "Is it free?", a: "Completely free to join. We only take a small percentage when you complete a paid brand deal through the platform." },
-              { q: "How do I get paid?", a: "Through Stripe. Once you complete a brand deal, payment is released from escrow directly to your bank account." },
+              { q: "How do I get paid?", a: "Through Stripe. When a deal is accepted, funds go into escrow. After you deliver the work and the brand reviews and approves it, payment is released directly to your bank account. Funds are never released automatically." },
               { q: "Can someone else claim my profile?", a: "No. Only the real account owner can claim a profile. We verify ownership through email or social login." },
             ].map((faq) => (
               <details key={faq.q} className="group border border-neutral-100 rounded-xl">

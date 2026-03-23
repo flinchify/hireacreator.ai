@@ -176,7 +176,7 @@ export default function HowItWorksPage() {
             <Step
               number="4"
               title="Pay securely through the platform"
-              description="All payments go through Stripe escrow. Pay only when you are satisfied with the deliverables. Creators receive their payout directly to their bank."
+              description="All payments go through Stripe escrow. Funds are held securely until you review and approve the deliverables. Not satisfied? Request revisions or open a dispute before releasing payment. Creators receive their payout directly to their bank only after your approval."
             />
           </div>
         </div>
@@ -265,7 +265,7 @@ export default function HowItWorksPage() {
                 {
                   num: "5",
                   title: "Deal Accepted",
-                  desc: "Creator reviews the offer and accepts. Brand pays through Stripe with a 10% service fee.",
+                  desc: "Creator reviews the offer and accepts. Brand pays into Stripe escrow (10% service fee). Funds are held securely — not released to the creator yet.",
                   icon: (
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
                   ),
@@ -273,7 +273,7 @@ export default function HowItWorksPage() {
                 {
                   num: "6",
                   title: "Get Paid",
-                  desc: "Creator delivers the work, brand approves, funds are released. Creator keeps 100%.",
+                  desc: "Creator delivers the work. Brand reviews and approves the deliverables. Only then are funds released to the creator. Not satisfied? Request revisions or open a dispute. Creator keeps 100% — no commission.",
                   icon: (
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" /></svg>
                   ),
@@ -357,7 +357,7 @@ export default function HowItWorksPage() {
                     <div>Budget: <span className="text-neutral-800 font-medium">$2,500</span></div>
                     <div>Deliverables: <span className="text-neutral-800 font-medium">2 Reels + 1 Story</span></div>
                   </div>
-                  <div className="mt-3 bg-green-50 text-green-700 text-xs font-semibold px-3 py-1.5 rounded-lg text-center">Payment Confirmed</div>
+                  <div className="mt-3 bg-amber-50 text-amber-700 text-xs font-semibold px-3 py-1.5 rounded-lg text-center">Funds in Escrow — Released on Approval</div>
                 </div>
                 <p className="text-[10px] text-neutral-400 text-center mt-2">Offer to Payment</p>
               </div>

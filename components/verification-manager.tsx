@@ -27,7 +27,7 @@ export function VerificationManager() {
     <div className="max-w-2xl">
       <div className="mb-5">
         <h2 className="text-lg font-bold text-neutral-900">Creator Verification</h2>
-        <p className="text-xs text-neutral-400 mt-0.5">Get a verified badge on your profile to build trust with brands</p>
+        <p className="text-xs text-neutral-400 mt-0.5">Prove you own your social accounts and get a verified badge. Listing services is separate — you do not need services to be verified.</p>
       </div>
 
       {isVerified ? (
@@ -47,7 +47,6 @@ export function VerificationManager() {
               { label: "Social account with 100+ followers", met: result ? !result.missing.some(m => m.includes("social")) : null },
               { label: "Profile photo uploaded", met: !!user.avatar },
               { label: "Bio written (50+ characters)", met: !!user.bio && user.bio.length >= 50 },
-              { label: "At least 1 service listed", met: result ? !result.missing.some(m => m.includes("service")) : null },
             ].map((req, i) => (
               <div key={i} className="flex items-center gap-3">
                 {req.met === null ? (

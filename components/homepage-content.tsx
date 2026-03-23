@@ -176,7 +176,7 @@ const brandIcons = {
 const faqs = [
   { q: "How does HireACreator work?", a: "Enter your social handle and we instantly build your creator profile. Customize it, go live in our marketplace, and start getting discovered by brands looking for creators like you." },
   { q: "Is it free?", a: "Completely free to join and build your profile. We only take a small percentage when you complete a paid brand deal through the platform." },
-  { q: "How do I get paid?", a: "Through Stripe. Once you complete a brand deal, payment is released from escrow directly to your bank account. No invoicing headaches." },
+  { q: "How do I get paid?", a: "Through Stripe. When a brand accepts a deal, funds are held in escrow. After you deliver the work and the brand approves it, payment is released directly to your bank account. Funds are never released automatically — only when the brand approves your deliverables." },
   { q: "Which platforms are supported?", a: "Instagram, TikTok, YouTube, X (Twitter), LinkedIn, Twitch, Spotify, Pinterest, Facebook, Snapchat, Discord, GitHub, Reddit, and more being added regularly." },
   { q: "What do brands see on my profile?", a: "Your content, audience stats, niche, engagement metrics, and a transparency rating. Everything they need to decide if you are the right fit for their campaign." },
   { q: "Can someone else claim my profile?", a: "No. Only the real account owner can claim a profile. We verify ownership through email or social login to prevent impersonation." },
@@ -336,7 +336,7 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
                 {
                   step: "3",
                   title: "Land brand deals",
-                  desc: "Receive offers directly, negotiate on your terms, and get paid securely through Stripe.",
+                  desc: "Receive offers directly, negotiate on your terms. Funds are held in Stripe escrow and released to you only after the brand approves your deliverables.",
                 },
               ].map((item) => (
                 <div
@@ -387,8 +387,8 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
               },
               {
                 step: "3",
-                title: "Brand sends offer, creator gets paid",
-                desc: "The brand sends an offer with a budget and brief. Creator accepts, delivers, and gets paid through Stripe.",
+                title: "Brand sends offer, escrow protects both sides",
+                desc: "The brand sends an offer with a budget and brief. On acceptance, funds go into Stripe escrow. Creator delivers, brand reviews and approves, then funds are released.",
                 icon: (
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-blue-500"><line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" /></svg>
                 ),
@@ -508,7 +508,7 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
               { icon: brandIcons.matched, title: "AI-Matched Creators", desc: "Our algorithm finds creators that fit your brand, niche, and budget." },
               { icon: brandIcons.verified, title: "Rated & Verified", desc: "Every creator has a transparency rating. Know exactly what you are paying for." },
               { icon: brandIcons.campaign, title: "Campaign Management", desc: "Post briefs, review applications, and manage deals in one dashboard." },
-              { icon: brandIcons.secure, title: "Secure Payments", desc: "Escrow-based payments through Stripe. Pay only when satisfied." },
+              { icon: brandIcons.secure, title: "Secure Payments", desc: "Funds held in Stripe escrow. Released only when you approve the deliverables. Request revisions or dispute if not satisfied." },
             ].map((card) => (
               <div
                 key={card.title}

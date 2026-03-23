@@ -134,7 +134,7 @@ export function ForBrandsContent() {
 
           <p className="mt-6 text-lg sm:text-xl text-neutral-500 max-w-2xl mx-auto leading-relaxed">
             Search by niche, audience size, engagement rate, and budget. Book in minutes, not weeks.
-            Funds held securely via Stripe and released when you approve the deliverables.
+            Funds held in Stripe escrow and only released after you review and approve the deliverables.
           </p>
 
           <p className="mt-4 text-sm font-medium text-neutral-400 tracking-wide">
@@ -392,11 +392,11 @@ export function ForBrandsContent() {
 
           <StaggerChildren className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4" staggerMs={80}>
             {[
-              { title: "Secure payment protection via Stripe", desc: "Funds are held securely until you approve the deliverables. No risk of paying for work you don't receive." },
+              { title: "Secure payment protection via Stripe", desc: "Funds are held in escrow and only released after you review and approve the deliverables. Not satisfied? Request revisions or open a dispute before releasing payment." },
               { title: "Verified creator profiles", desc: "Every creator connects their social accounts. Follower counts, engagement rates, and audience demographics are verified." },
               { title: "Real brand reviews", desc: "Only brands that completed a booking can leave reviews. No fake testimonials — just honest feedback." },
               { title: "Contract management", desc: "Contracts are generated automatically with clear terms, usage rights, and deliverable specs." },
-              { title: "Dispute resolution", desc: "If something goes wrong, our team steps in. Funds stay held securely until the issue is resolved." },
+              { title: "Dispute resolution", desc: "If something goes wrong, our team steps in. Funds remain in escrow until the dispute is resolved — money is never released without your approval." },
               { title: "Data privacy", desc: "SOC 2 compliant infrastructure. Your data and creator communications are encrypted at rest and in transit." },
             ].map((item) => (
               <div key={item.title} className="aos-stagger-item flex items-start gap-3 bg-white border border-neutral-200 rounded-2xl p-5 sm:p-6 hover:border-neutral-300 shadow-md shadow-blue-500/5 transition-all duration-200">
