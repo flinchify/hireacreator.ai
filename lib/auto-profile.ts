@@ -1,6 +1,7 @@
 import { getDb } from "./db";
 import { fetchSocialProfile, buildManualProfile, type SocialProfile } from "./social-scraper";
 import { calculateCreatorScore, generateSlug, type ScoreResult } from "./claim-scoring";
+import { designProfile, type AIProfileDesign } from "./ai-profile-designer";
 
 export interface AutoProfileResult {
   profile: SocialProfile;
@@ -9,6 +10,7 @@ export interface AutoProfileResult {
   profileUrl: string;
   isExisting: boolean;
   isClaimed: boolean;
+  design: AIProfileDesign;
 }
 
 export async function generateAutoProfile(
@@ -67,6 +69,7 @@ export async function generateAutoProfile(
           profileUrl: `https://hireacreator.ai/u/${row.auto_profile_slug}`,
           isExisting: true,
           isClaimed: !!row.claimed_by,
+          design: designProfile(freshProfile),
         };
       }
     }
@@ -101,6 +104,23 @@ export async function generateAutoProfile(
       profileUrl: `https://hireacreator.ai/u/${row.auto_profile_slug}`,
       isExisting: true,
       isClaimed: !!row.claimed_by,
+      design: designProfile({
+        platform,
+        handle: cleanHandle,
+        displayName: (row.display_name as string) || cleanHandle,
+        avatarUrl: cachedAvatar,
+        bio: row.bio as string | null,
+        followerCount: cachedFollowers,
+        followingCount: (row.following_count as number) || 0,
+        postCount: (row.post_count as number) || 0,
+        isVerified: false,
+        category: row.niche as string | null,
+        externalUrl: null,
+        websites: [],
+        otherSocials: [],
+        profileUrl: `https://www.instagram.com/${cleanHandle}/`,
+        isBusinessAccount: false,
+      }),
     };
   }
 
@@ -175,6 +195,8 @@ export async function generateAutoProfile(
       updated_at = NOW()
   `;
 
+  const design = designProfile(profile);
+
   return {
     profile,
     score,
@@ -182,6 +204,7 @@ export async function generateAutoProfile(
     profileUrl: `https://hireacreator.ai/u/${slug}`,
     isExisting: false,
     isClaimed: false,
+    design,
   };
 }
 
@@ -209,22 +232,48 @@ export async function claimProfile(
     WHERE id = ${claimedProfileId}
   `;
 
-  // 3. Copy data from claimed_profiles into users table
+  // 3. Generate AI design from the claimed profile data
+  const profileForDesign: SocialProfile = {
+    platform: cp.platform as string,
+    handle: cp.platform_handle as string,
+    displayName: (cp.display_name as string) || (cp.platform_handle as string),
+    avatarUrl: cp.avatar_url as string | null,
+    bio: cp.bio as string | null,
+    followerCount: (cp.follower_count as number) || 0,
+    followingCount: (cp.following_count as number) || 0,
+    postCount: (cp.post_count as number) || 0,
+    isVerified: false,
+    category: cp.niche as string | null,
+    externalUrl: null,
+    websites: [],
+    otherSocials: [],
+    profileUrl: profileUrlFor(cp.platform as string, cp.platform_handle as string),
+    isBusinessAccount: false,
+  };
+  const design = designProfile(profileForDesign);
+
+  // 4. Copy data from claimed_profiles into users table with AI design
   await db`
     UPDATE users SET
       avatar_url = COALESCE(${cp.avatar_url as string | null}, users.avatar_url),
       bio = COALESCE(${cp.bio as string | null}, users.bio),
       category = COALESCE(${cp.niche as string | null}, users.category),
       headline = COALESCE(
-        ${cp.niche ? `${cp.niche} creator` : null},
+        ${design.suggestedHeadline},
         users.headline
       ),
+      link_bio_template = COALESCE(${design.template}, users.link_bio_template),
+      link_bio_bg_type = COALESCE(${design.bgType}, users.link_bio_bg_type),
+      link_bio_bg_value = COALESCE(${design.bgValue}, users.link_bio_bg_value),
+      link_bio_text_color = COALESCE(${design.textColor}, users.link_bio_text_color),
+      link_bio_font = COALESCE(${design.font}, users.link_bio_font),
+      link_bio_button_shape = COALESCE(${design.buttonShape}, users.link_bio_button_shape),
       visible_in_marketplace = true,
       updated_at = NOW()
     WHERE id = ${userId}
   `;
 
-  // 4. Create social_connections entry from the scraped platform
+  // 5. Create social_connections entry from the scraped platform
   const existingConn = await db`
     SELECT 1 FROM social_connections
     WHERE user_id = ${userId} AND platform = ${cp.platform as string} AND handle = ${cp.platform_handle as string}

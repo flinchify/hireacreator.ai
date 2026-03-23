@@ -66,6 +66,11 @@ export async function POST(req: NextRequest) {
       isExisting: result.isExisting,
       isClaimed: result.isClaimed,
       manualInputRequired: !result.profile.avatarUrl && !result.profile.bio && result.profile.followerCount === 0,
+      design: {
+        template: result.design.template,
+        suggestedHeadline: result.design.suggestedHeadline,
+        suggestedServices: result.design.suggestedServices,
+      },
     });
   } catch (err) {
     console.error("Score API error:", err);
