@@ -162,6 +162,24 @@ export function SendOfferModal({
             </div>
           </div>
 
+          {/* Fee Preview */}
+          {form.budget && Number(form.budget) > 0 && (
+            <div className="bg-neutral-50 border border-neutral-200 rounded-xl p-3 text-xs text-neutral-600 space-y-1">
+              <div className="flex justify-between">
+                <span>Budget</span>
+                <span>${Number(form.budget).toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Service fee (10%)</span>
+                <span>${(Number(form.budget) * 0.10).toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between font-semibold text-neutral-900 border-t border-neutral-200 pt-1">
+                <span>Total</span>
+                <span>${(Number(form.budget) * 1.10).toFixed(2)}</span>
+              </div>
+            </div>
+          )}
+
           {/* Brief */}
           <div>
             <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider mb-1 block">

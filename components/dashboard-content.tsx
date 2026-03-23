@@ -970,7 +970,16 @@ function OffersManager({ user }: { user: User }) {
                         {statusBadge(offer.status)}
                       </div>
                       <div className="flex items-center gap-4 mt-1 text-xs text-neutral-400">
-                        <span>${(offer.budget_cents / 100).toFixed(2)}</span>
+                        {isBrand ? (
+                          <span>
+                            Budget: ${(offer.budget_cents / 100).toFixed(2)}
+                            {offer.fee_cents > 0 && (
+                              <> + ${(offer.fee_cents / 100).toFixed(2)} service fee = ${((offer.budget_cents + offer.fee_cents) / 100).toFixed(2)} total</>
+                            )}
+                          </span>
+                        ) : (
+                          <span>You will receive: ${(offer.budget_cents / 100).toFixed(2)}</span>
+                        )}
                         <span>{offer.timeline_days} days</span>
                         <span>{formatDate(offer.created_at)}</span>
                       </div>

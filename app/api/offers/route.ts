@@ -94,13 +94,26 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Budget must be between $0.01 and $99,999.99" }, { status: 400 });
     }
 
+    // Calculate service fee: 10% standard, 5% for enterprise brands
+    const sql = getDb();
+
+    // Check if brand has enterprise subscription
+    const subscriptionRows = await sql`
+      SELECT subscription_plan FROM users WHERE id = ${user.id} LIMIT 1
+    `;
+    const isEnterprise = subscriptionRows.length > 0 && subscriptionRows[0].subscription_plan === 'brand_enterprise';
+    const feeRate = isEnterprise ? 0.05 : 0.10;
+    const feeCents = Math.round(budgetCents * feeRate);
+    const totalCents = budgetCents + feeCents;
+
     // Validate timeline
     const timelineDays = Number(timeline_days) || 14;
     if (timelineDays < 1 || timelineDays > 365) {
       return NextResponse.json({ error: "Timeline must be between 1 and 365 days" }, { status: 400 });
     }
 
-    const sql = getDb();
+    // Ensure fee_cents column exists
+    await sql`ALTER TABLE offers ADD COLUMN IF NOT EXISTS fee_cents INTEGER NOT NULL DEFAULT 0`.catch(() => {});
 
     // Check rate limits
     const rateCheck = await checkRateLimits(sql, user.id, normalizedHandle, creator_platform);
@@ -125,11 +138,11 @@ export async function POST(req: NextRequest) {
     const offerResult = await sql`
       INSERT INTO offers (
         brand_user_id, creator_handle, creator_platform, creator_user_id,
-        budget_cents, brief, deliverables, timeline_days
+        budget_cents, fee_cents, brief, deliverables, timeline_days
       )
       VALUES (
         ${user.id}, ${normalizedHandle}, ${creator_platform}, ${creatorUserId},
-        ${budgetCents}, ${brief}, ${deliverables}, ${timelineDays}
+        ${budgetCents}, ${feeCents}, ${brief}, ${deliverables}, ${timelineDays}
       )
       RETURNING *
     `;
@@ -153,6 +166,8 @@ export async function POST(req: NextRequest) {
       creator_handle: offer.creator_handle,
       creator_platform: offer.creator_platform,
       budget_cents: offer.budget_cents,
+      fee_cents: feeCents,
+      total_cents: totalCents,
       brief: offer.brief,
       deliverables: offer.deliverables,
       timeline_days: offer.timeline_days,
@@ -196,6 +211,7 @@ export async function GET(req: NextRequest) {
           creator_slug: offer.creator_slug,
           creator_avatar: offer.creator_avatar,
           budget_cents: offer.budget_cents,
+          fee_cents: offer.fee_cents || 0,
           brief: offer.brief,
           deliverables: offer.deliverables,
           timeline_days: offer.timeline_days,
@@ -257,6 +273,7 @@ export async function GET(req: NextRequest) {
           brand_name: offer.brand_name,
           brand_avatar: offer.brand_avatar,
           budget_cents: offer.budget_cents,
+          fee_cents: offer.fee_cents || 0,
           brief: offer.brief,
           deliverables: offer.deliverables,
           timeline_days: offer.timeline_days,

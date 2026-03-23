@@ -60,42 +60,52 @@ function detectNiche(bio: string | null, category: string | null): string {
   return "lifestyle";
 }
 
+// Profile completeness (15pts): avatar (+5), bio (+3), headline (+2), location (+2), website (+2), category (+1)
 function scoreProfile(profile: SocialProfile): number {
   let score = 0;
   if (profile.avatarUrl) score += 5;
-  if (profile.bio && profile.bio.length > 10) score += 5;
-  if (profile.externalUrl) score += 5;
-  return score; // 0-15
+  if (profile.bio && profile.bio.length > 10) score += 3;
+  if (profile.displayName && profile.displayName.length > 0) score += 2; // headline proxy
+  if (profile.bio && /📍|located|based in|from /i.test(profile.bio)) score += 2; // location proxy
+  if (profile.externalUrl || profile.websites.length > 0) score += 2;
+  if (profile.category) score += 1;
+  return Math.min(score, 15); // 0-15
 }
 
+// Social reach (25pts): logarithmic scale
 function scoreReach(followers: number): number {
-  if (followers >= 100_000) return 25;
-  if (followers >= 50_000) return 20;
-  if (followers >= 10_000) return 15;
-  if (followers >= 1_000) return 10;
-  return 5; // 0-25
+  if (followers >= 1_000_000) return 25;
+  if (followers >= 500_000) return 21;
+  if (followers >= 100_000) return 18;
+  if (followers >= 50_000) return 15;
+  if (followers >= 10_000) return 10;
+  if (followers >= 1_000) return 5;
+  // Below 1K: scale linearly 0-4
+  return Math.min(4, Math.round((followers / 1_000) * 4));
 }
 
+// Engagement quality (20pts): follower/following ratio + post count relative to account activity
 function scoreEngagement(profile: SocialProfile): number {
   const { followerCount, followingCount, postCount } = profile;
   let score = 0;
 
-  // Followers/following ratio (higher = more organic authority)
+  // Follower/following ratio (>2 ratio = good) — up to 12pts
   if (followingCount > 0) {
     const ratio = followerCount / followingCount;
     if (ratio > 10) score += 12;
-    else if (ratio > 5) score += 9;
-    else if (ratio > 2) score += 6;
-    else if (ratio > 1) score += 3;
+    else if (ratio > 5) score += 10;
+    else if (ratio > 2) score += 8;
+    else if (ratio > 1) score += 5;
+    else if (ratio > 0.5) score += 2;
     else score += 1;
   } else if (followerCount > 0) {
-    score += 10; // follows nobody = probably high quality
+    score += 10; // follows nobody = likely high quality
   }
 
-  // Post engagement proxy (posts per follower — active creator)
+  // Post count relative to follower count (activity proxy) — up to 8pts
   if (followerCount > 0 && postCount > 0) {
     const postsPerK = (postCount / followerCount) * 1000;
-    if (postsPerK > 50) score += 8; // very active
+    if (postsPerK > 50) score += 8;
     else if (postsPerK > 20) score += 6;
     else if (postsPerK > 5) score += 4;
     else score += 2;
@@ -104,81 +114,73 @@ function scoreEngagement(profile: SocialProfile): number {
   return Math.min(score, 20); // 0-20
 }
 
-function scoreNicheValue(niche: string): number {
-  if (HIGH_VALUE_NICHES.includes(niche)) return 15;
-  if (MEDIUM_VALUE_NICHES.includes(niche)) return 10;
-  return 5; // 0-15
+// Platform diversity (10pts): based on otherSocials array
+// 1 platform=3pts, 2=6pts, 3=8pts, 4+=10pts
+function scorePlatformDiversity(profile: SocialProfile): number {
+  // Count: the primary platform + unique platforms in otherSocials
+  const platforms = new Set<string>([profile.platform]);
+  if (profile.otherSocials) {
+    for (const s of profile.otherSocials) {
+      if (s.platform) platforms.add(s.platform.toLowerCase());
+    }
+  }
+  const count = platforms.size;
+  if (count >= 4) return 10;
+  if (count === 3) return 8;
+  if (count === 2) return 6;
+  return 3; // 1 platform
 }
 
+// Content consistency (15pts): based on post count
 function scoreConsistency(postCount: number): number {
-  if (postCount >= 1000) return 15;
-  if (postCount >= 500) return 12;
-  if (postCount >= 100) return 8;
-  if (postCount >= 50) return 5;
-  return 2; // 0-15
+  if (postCount > 100) return 15;
+  if (postCount > 50) return 10;
+  if (postCount > 20) return 7;
+  if (postCount > 5) return 3;
+  return 1;
 }
 
-function scorePlatformBonus(platform: string): number {
-  switch (platform) {
-    case "instagram": return 10;
-    case "youtube": return 10;
-    case "tiktok": return 8;
-    case "x": return 6;
-    default: return 4;
-  } // 0-10
+// Verification bonus (15pts): isVerified=10pts, isBusinessAccount=5pts
+function scoreVerificationBonus(profile: SocialProfile): number {
+  let score = 0;
+  if (profile.isVerified) score += 10;
+  if (profile.isBusinessAccount) score += 5;
+  return score; // 0-15
 }
 
-function calculatePostValue(followers: number, niche: string): number {
-  const nicheMultiplier = HIGH_VALUE_NICHES.includes(niche) ? 1.5 : MEDIUM_VALUE_NICHES.includes(niche) ? 1.0 : 0.7;
-  
-  // Industry standard CPM-based pricing (cost per 1K followers)
-  // Nano (1K-10K): $10-100/post → ~$10/1K
-  // Micro (10K-100K): $100-1K/post → ~$8/1K  
-  // Mid (100K-500K): $1K-5K/post → ~$7/1K
-  // Macro (500K-1M): $5K-15K/post → ~$12/1K
-  // Mega (1M-10M): $10K-100K/post → ~$15/1K
-  // Celebrity (10M+): $100K-2M+/post → ~$20/1K
-  let cpmRate: number;
-  if (followers < 10_000) cpmRate = 10;
-  else if (followers < 100_000) cpmRate = 8;
-  else if (followers < 500_000) cpmRate = 7;
-  else if (followers < 1_000_000) cpmRate = 12;
-  else if (followers < 10_000_000) cpmRate = 15;
-  else if (followers < 50_000_000) cpmRate = 20;
-  else cpmRate = 25; // Celebrity tier
-
-  const base = Math.round((followers / 1000) * cpmRate * nicheMultiplier);
-  // In cents: $5 minimum, no maximum cap
-  return Math.max(500, base * 100);
-}
-
+// Rates are only shown for creators with completed transactions on HireACreator
 export function calculateCreatorScore(profile: SocialProfile): ScoreResult {
   const niche = detectNiche(profile.bio, profile.category);
 
+  const profileScore = scoreProfile(profile);
+  const reachScore = scoreReach(profile.followerCount);
+  const engagementScore = scoreEngagement(profile);
+  const platformDiversityScore = scorePlatformDiversity(profile);
+  const consistencyScore = scoreConsistency(profile.postCount);
+  const verificationScore = scoreVerificationBonus(profile);
+
   const breakdown: ScoreBreakdown = {
-    profile: scoreProfile(profile),
-    reach: scoreReach(profile.followerCount),
-    engagement: scoreEngagement(profile),
-    nicheValue: scoreNicheValue(niche),
-    consistency: scoreConsistency(profile.postCount),
-    platformBonus: scorePlatformBonus(profile.platform),
+    profile: profileScore,
+    reach: reachScore,
+    engagement: engagementScore,
+    nicheValue: platformDiversityScore,       // repurposed: platform diversity
+    consistency: consistencyScore,
+    platformBonus: verificationScore,          // repurposed: verification bonus
   };
 
   const score = Math.min(
     100,
-    breakdown.profile + breakdown.reach + breakdown.engagement +
-    breakdown.nicheValue + breakdown.consistency + breakdown.platformBonus
+    profileScore + reachScore + engagementScore +
+    platformDiversityScore + consistencyScore + verificationScore
   );
 
-  const postValue = calculatePostValue(profile.followerCount, niche);
-  const lowRange = Math.round(postValue * 0.7);
-  const highRange = Math.round(postValue * 1.4);
-
+  // Rates are only shown for creators with completed transactions on HireACreator
+  // Set to 0 for all profiles — real rates come from transaction history
   return {
     score,
     breakdown,
-    estimatedPostValue: postValue,
-    estimatedPostRange: [lowRange, highRange],
+    estimatedPostValue: 0,
+    estimatedPostRange: [0, 0],
     detectedNiche: niche,
     matchingCampaigns: 0, // filled in by API after DB query
   };

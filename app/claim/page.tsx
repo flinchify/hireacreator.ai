@@ -234,24 +234,30 @@ function ClaimPageInner() {
                       <div className="text-xs text-neutral-500 mb-1">Niche</div>
                       <div className="text-lg font-bold text-neutral-800 capitalize">{scoreData.detectedNiche}</div>
                     </div>
-                    <div className="bg-blue-50 rounded-xl p-4">
-                      <div className="text-xs text-neutral-500 mb-1">Estimated Rate</div>
-                      <div className="text-lg font-bold text-neutral-800">
-                        {formatCents(scoreData.estimatedPostRange[0])} - {formatCents(scoreData.estimatedPostRange[1])}
+                    {/* Only show estimated rate if creator has completed transactions */}
+                    {scoreData.estimatedPostRange[0] > 0 && scoreData.estimatedPostRange[1] > 0 && (
+                      <div className="bg-blue-50 rounded-xl p-4">
+                        <div className="text-xs text-neutral-500 mb-1">Estimated Rate</div>
+                        <div className="text-lg font-bold text-neutral-800">
+                          {formatCents(scoreData.estimatedPostRange[0])} - {formatCents(scoreData.estimatedPostRange[1])}
+                        </div>
                       </div>
-                    </div>
+                    )}
                     <div className="bg-blue-50 rounded-xl p-4">
                       <div className="text-xs text-neutral-500 mb-1">Matching Campaigns</div>
                       <div className="text-lg font-bold text-neutral-800">{scoreData.matchingCampaigns}</div>
                     </div>
                   </div>
 
-                  <div className="text-center p-4 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl mb-3">
-                    <div className="text-xs text-white/70 mb-1">Your posts are worth approximately</div>
-                    <div className="text-2xl font-bold text-white">
-                      {formatCents(scoreData.estimatedPostRange[0])} - {formatCents(scoreData.estimatedPostRange[1])}/post
+                  {/* Only show estimated earning per post if creator has completed transactions */}
+                  {scoreData.estimatedPostRange[0] > 0 && scoreData.estimatedPostRange[1] > 0 && (
+                    <div className="text-center p-4 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl mb-3">
+                      <div className="text-xs text-white/70 mb-1">Your posts are worth approximately</div>
+                      <div className="text-2xl font-bold text-white">
+                        {formatCents(scoreData.estimatedPostRange[0])} - {formatCents(scoreData.estimatedPostRange[1])}/post
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
 
                 {/* AI Design customization info */}
