@@ -274,7 +274,7 @@ export function generateSmartReply(
 
   if (otherMentions.length > 0) {
     const creator = otherMentions[0].replace("@", "");
-    return `Hey @${creator}! A brand wants to work with you on HireACreator. Claim your profile: hireacreator.ai/claim?platform=x&handle=${creator} [${ts}]`;
+    return `Hey @${creator}! A brand wants to work with you on HireACreator. Claim your profile: hireacreator.ai/claim?platform=x&handle=${creator}`;
   }
 
   // Self-promo patterns
@@ -289,7 +289,7 @@ export function generateSmartReply(
     text.includes("my channel") ||
     text.includes("my page")
   ) {
-    return `Hey @${authorUsername}! We just built your creator profile on HireACreator. Claim it free: hireacreator.ai/claim?platform=x&handle=${authorUsername} [${ts}]`;
+    return `Hey @${authorUsername}! We just built your creator profile on HireACreator. Claim it free: hireacreator.ai/claim?platform=x&handle=${authorUsername}`;
   }
 
   // Question patterns
@@ -301,10 +301,11 @@ export function generateSmartReply(
     text.includes("what's hireacreator") ||
     text.includes("?")
   ) {
-    return `HireACreator connects creators with brand deals. Get your free profile: hireacreator.ai/claim [${ts}]`;
+    return `HireACreator connects creators with brand deals. Get your free profile: hireacreator.ai/claim`;
   }
 
   // Default
-  return `@${authorUsername} Thanks for the mention! Claim your free creator profile: hireacreator.ai/claim?platform=x&handle=${authorUsername} [${ts}]`;
+  return `@${authorUsername} Thanks for the mention! Claim your free creator profile: hireacreator.ai/claim?platform=x&handle=${authorUsername}`;
 }
+
 
