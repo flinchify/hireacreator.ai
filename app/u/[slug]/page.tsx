@@ -63,18 +63,24 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     const score = autoProfile.creator_score || 0;
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://hireacreator.ai";
     return {
-      title: `${name} - Rating ${score}/100 | HireACreator.ai`,
-      description: `${name} rated ${score}/100 on HireACreator. Claim this profile to start receiving brand deals.`,
+      title: `${name} | HireACreator.ai`,
+      description: `${name} on HireACreator. Claim this profile to start receiving brand deals.`,
       openGraph: {
-        title: `${name} - Creator Rating ${score}/100`,
-        description: `${name} rated ${score}/100 on HireACreator.`,
+        title: `${name} on HireACreator`,
+        description: `${name} on HireACreator. Claim this profile to start receiving brand deals.`,
         images: [
           {
-            url: `${baseUrl}/api/og/score?platform=${autoProfile.platform}&handle=${autoProfile.platform_handle}&score=${score}`,
+            url: `${baseUrl}/og-profile.jpg`,
             width: 1200,
             height: 630,
           },
         ],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: `${name} on HireACreator`,
+        description: `Claim this profile to start receiving brand deals.`,
+        images: [`${baseUrl}/og-profile.jpg`],
       },
     };
   }

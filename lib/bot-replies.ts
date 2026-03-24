@@ -46,7 +46,7 @@ function pick<T>(arr: T[]): T {
 }
 
 function claimUrl(platform: BotPlatform, handle: string): string {
-  return `hireacreator.ai/claim?platform=${platform}&handle=${handle}`;
+  return `hireacreator.ai/u/${handle.toLowerCase()}`;
 }
 
 /* ─── Offer parsing from tweet/comment text ─── */
