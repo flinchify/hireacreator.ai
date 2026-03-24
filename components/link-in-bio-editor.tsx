@@ -52,6 +52,31 @@ const TEMPLATES = [
   { id: "executive", name: "Executive", dark: false },
 ];
 
+const TEMPLATE_DEFAULTS: Record<string, { bgType: string; bgValue: string; textColor: string }> = {
+  minimal: { bgType: 'solid', bgValue: '#ffffff', textColor: '#171717' },
+  glass: { bgType: 'gradient', bgValue: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', textColor: '#ffffff' },
+  bold: { bgType: 'gradient', bgValue: 'linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%)', textColor: '#ffffff' },
+  showcase: { bgType: 'solid', bgValue: '#fafafa', textColor: '#171717' },
+  neon: { bgType: 'solid', bgValue: '#0a0a0a', textColor: '#00ff88' },
+  collage: { bgType: 'gradient', bgValue: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)', textColor: '#ffffff' },
+  bento: { bgType: 'solid', bgValue: '#111111', textColor: '#ffffff' },
+  split: { bgType: 'solid', bgValue: '#ffffff', textColor: '#171717' },
+  aurora: { bgType: 'gradient', bgValue: 'linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #0f3460 100%)', textColor: '#ffffff' },
+  brutalist: { bgType: 'solid', bgValue: '#f5f0e8', textColor: '#1a1a1a' },
+  sunset: { bgType: 'gradient', bgValue: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)', textColor: '#ffffff' },
+  terminal: { bgType: 'solid', bgValue: '#0a0a0a', textColor: '#00ff00' },
+  pastel: { bgType: 'gradient', bgValue: 'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)', textColor: '#4a4a4a' },
+  magazine: { bgType: 'solid', bgValue: '#ffffff', textColor: '#171717' },
+  retro: { bgType: 'gradient', bgValue: 'linear-gradient(135deg, #232526 0%, #414345 100%)', textColor: '#f5deb3' },
+  midnight: { bgType: 'gradient', bgValue: 'linear-gradient(180deg, #0c0c0c 0%, #1a1a2e 100%)', textColor: '#ffffff' },
+  clay: { bgType: 'solid', bgValue: '#f2ebe3', textColor: '#3d3229' },
+  'gradient-mesh': { bgType: 'gradient', bgValue: 'linear-gradient(135deg, #6c5ce7 0%, #a29bfe 50%, #fd79a8 100%)', textColor: '#ffffff' },
+  trader: { bgType: 'solid', bgValue: '#0b0e11', textColor: '#00c087' },
+  educator: { bgType: 'gradient', bgValue: 'linear-gradient(135deg, #fef3c7 0%, #fffbeb 50%, #ffffff 100%)', textColor: '#78350f' },
+  developer: { bgType: 'solid', bgValue: '#1a1b26', textColor: '#c0caf5' },
+  executive: { bgType: 'solid', bgValue: '#ffffff', textColor: '#1e3a5f' },
+};
+
 const FONTS = [
   { id: "jakarta", name: "Jakarta", css: "'Plus Jakarta Sans', sans-serif" },
   { id: "outfit", name: "Outfit", css: "'Outfit', sans-serif" },
@@ -986,7 +1011,7 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
                 <h2 className="text-sm font-bold text-neutral-900 mb-4">Choose Template</h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 max-h-[70vh] overflow-y-auto pr-1">
                   {TEMPLATES.map(t => (
-                    <button key={t.id} onClick={() => save({ template: t.id })} className={`relative rounded-2xl overflow-hidden transition-all active:scale-95 ${settings.template === t.id ? "ring-2 ring-neutral-900 ring-offset-2" : "hover:ring-1 hover:ring-neutral-300"}`}>
+                    <button key={t.id} onClick={() => { const defaults = TEMPLATE_DEFAULTS[t.id]; save({ template: t.id, ...(defaults ? { bgType: defaults.bgType, bgValue: defaults.bgValue, textColor: defaults.textColor } : {}) }); }} className={`relative rounded-2xl overflow-hidden transition-all active:scale-95 ${settings.template === t.id ? "ring-2 ring-neutral-900 ring-offset-2" : "hover:ring-1 hover:ring-neutral-300"}`}>
                       <EditorTemplateMini id={t.id} />
                       <div className="p-2 bg-white text-center">
                         <div className="text-[10px] font-bold text-neutral-900">{t.name}</div>
