@@ -15,6 +15,8 @@ async function ensureDesignColumns(db: ReturnType<typeof getDb>) {
     await db`ALTER TABLE claimed_profiles ADD COLUMN IF NOT EXISTS link_bio_font VARCHAR(50)`;
     await db`ALTER TABLE claimed_profiles ADD COLUMN IF NOT EXISTS link_bio_button_shape VARCHAR(20)`;
     await db`ALTER TABLE claimed_profiles ADD COLUMN IF NOT EXISTS link_bio_headline TEXT`;
+    await db`ALTER TABLE claimed_profiles ADD COLUMN IF NOT EXISTS auto_socials JSONB DEFAULT '[]'`;
+    await db`ALTER TABLE claimed_profiles ADD COLUMN IF NOT EXISTS auto_bio_links JSONB DEFAULT '[]'`;
     _migrated = true;
   } catch { _migrated = true; }
 }
@@ -192,10 +194,26 @@ export async function generateAutoProfile(
 
   const design = designProfile(profile);
 
+  // Build auto_socials: primary platform + any other socials found in bio
+  const autoSocials: { platform: string; handle: string; url: string }[] = [
+    { platform, handle: cleanHandle, url: profileUrlFor(platform, cleanHandle) },
+  ];
+  for (const s of profile.otherSocials) {
+    if (!autoSocials.some((a) => a.platform === s.platform && a.handle === s.handle)) {
+      autoSocials.push({ platform: s.platform, handle: s.handle, url: s.url });
+    }
+  }
+
+  // Build auto_bio_links from websites found in bio
+  const autoBioLinks: { title: string; url: string }[] = profile.websites.map((url) => ({
+    title: new URL(url).hostname.replace(/^www\./, ""),
+    url,
+  }));
+
   // Ensure design columns exist
   await ensureDesignColumns(db);
 
-  // Insert into claimed_profiles (with AI design fields)
+  // Insert into claimed_profiles (with AI design fields + auto socials)
   await db`
     INSERT INTO claimed_profiles (
       platform, platform_handle, platform_id, display_name, avatar_url, bio,
@@ -203,7 +221,8 @@ export async function generateAutoProfile(
       creator_score, score_breakdown, estimated_post_value, auto_profile_slug,
       referrer_handle, source_post_url,
       link_bio_template, link_bio_bg_type, link_bio_bg_value, link_bio_text_color,
-      link_bio_font, link_bio_button_shape, link_bio_headline
+      link_bio_font, link_bio_button_shape, link_bio_headline,
+      auto_socials, auto_bio_links
     ) VALUES (
       ${platform}, ${cleanHandle}, ${profile.handle}, ${profile.displayName},
       ${profile.avatarUrl}, ${profile.bio}, ${profile.followerCount},
@@ -212,7 +231,8 @@ export async function generateAutoProfile(
       ${score.estimatedPostValue}, ${slug}, ${options?.referrerHandle || null},
       ${options?.sourcePostUrl || null},
       ${design.template}, ${design.bgType}, ${design.bgValue}, ${design.textColor},
-      ${design.font}, ${design.buttonShape}, ${design.suggestedHeadline}
+      ${design.font}, ${design.buttonShape}, ${design.suggestedHeadline},
+      ${JSON.stringify(autoSocials)}, ${JSON.stringify(autoBioLinks)}
     )
     ON CONFLICT (platform, platform_handle) DO UPDATE SET
       display_name = EXCLUDED.display_name,
@@ -232,6 +252,8 @@ export async function generateAutoProfile(
       link_bio_font = EXCLUDED.link_bio_font,
       link_bio_button_shape = EXCLUDED.link_bio_button_shape,
       link_bio_headline = EXCLUDED.link_bio_headline,
+      auto_socials = EXCLUDED.auto_socials,
+      auto_bio_links = EXCLUDED.auto_bio_links,
       updated_at = NOW()
   `;
 

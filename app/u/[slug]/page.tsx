@@ -185,8 +185,12 @@ export default async function LinkInBioPage({ params }: { params: { slug: string
       scoreBreakdown: typeof autoProfile.score_breakdown === "string"
         ? JSON.parse(autoProfile.score_breakdown)
         : autoProfile.score_breakdown || {},
-      bioLinks: [],
-      socials: [],
+      bioLinks: (Array.isArray(autoProfile.auto_bio_links) ? autoProfile.auto_bio_links : []).map((l: any, i: number) => ({
+        id: `auto-bl-${i}`, title: l.title || "", url: l.url || "", thumbnailUrl: null, isVisible: true, isPinned: false, clickCount: 0, sectionName: null, displayStyle: "default",
+      })),
+      socials: (Array.isArray(autoProfile.auto_socials) ? autoProfile.auto_socials : []).map((s: any) => ({
+        platform: s.platform || "", handle: s.handle || "", followers: "", url: s.url || "",
+      })),
       services: [],
       portfolio: [],
       reviews: [],
