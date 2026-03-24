@@ -862,6 +862,32 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
   settingsRef.current = settings;
 
   const [saveError, setSaveError] = useState("");
+  const [aiDesigning, setAiDesigning] = useState(false);
+  const [aiDone, setAiDone] = useState(false);
+
+  async function aiDesign() {
+    setAiDesigning(true);
+    setAiDone(false);
+    try {
+      const res = await fetch("/api/profile/ai-design");
+      if (!res.ok) throw new Error("AI design failed");
+      const data = await res.json();
+      await save({
+        template: data.template,
+        bgType: data.bgType,
+        bgValue: data.bgValue,
+        textColor: data.textColor,
+        buttonShape: data.buttonShape,
+        font: data.font,
+      });
+      setAiDone(true);
+      setTimeout(() => setAiDone(false), 3000);
+    } catch (e) {
+      console.error("AI design error:", e);
+      setSaveError("AI design failed — try again");
+    }
+    setAiDesigning(false);
+  }
 
   async function save(updates: Partial<Settings>) {
     const next = { ...settingsRef.current, ...updates };
@@ -969,7 +995,21 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
           <div className="flex items-center gap-2">
             {saving && <div className="w-4 h-4 border-2 border-neutral-300 border-t-neutral-900 rounded-full animate-spin" />}
             {saved && <span className="text-xs text-emerald-600 font-medium flex items-center gap-1 px-3 py-1.5 bg-emerald-50 rounded-full"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 13l4 4L19 7" strokeLinecap="round" /></svg>Saved</span>}
+            {aiDone && <span className="text-xs text-blue-600 font-medium flex items-center gap-1 px-3 py-1.5 bg-blue-50 rounded-full"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 13l4 4L19 7" strokeLinecap="round" /></svg>Page designed by AI</span>}
             {saveError && <span className="text-xs text-red-600 font-medium">{saveError}</span>}
+            <button
+              onClick={aiDesign}
+              disabled={aiDesigning}
+              className="px-4 py-1.5 text-xs font-semibold text-white rounded-full transition-all flex items-center gap-1.5 disabled:opacity-60"
+              style={{ background: "linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)" }}
+            >
+              {aiDesigning ? (
+                <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 16.8l-6.2 4.5 2.4-7.4L2 9.4h7.6z" /></svg>
+              )}
+              {aiDesigning ? "Designing..." : "AI Design My Page"}
+            </button>
             {user.slug && (
               <Link href={`/u/${user.slug}`} target="_blank" className="px-4 py-1.5 text-xs font-semibold bg-neutral-900 text-white rounded-full hover:bg-neutral-800 transition-colors">
                 View Live

@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-type Section = "overview" | "bots" | "offers" | "users" | "profiles" | "import" | "revenue" | "settings";
+type Section = "overview" | "bots" | "offers" | "users" | "profiles" | "revenue" | "settings";
 
 const NAV_ITEMS: { key: Section; label: string; icon: string }[] = [
   { key: "overview", label: "Overview", icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0h4" },
@@ -12,7 +12,6 @@ const NAV_ITEMS: { key: Section; label: string; icon: string }[] = [
   { key: "offers", label: "Offers", icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" },
   { key: "users", label: "Users", icon: "M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" },
   { key: "profiles", label: "Creator Profiles", icon: "M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" },
-  { key: "import", label: "Import Profile", icon: "M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" },
   { key: "revenue", label: "Revenue", icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" },
   { key: "settings", label: "Site Settings", icon: "M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z" },
 ];
@@ -741,120 +740,6 @@ function SettingsSection() {
   );
 }
 
-function ImportProfileSection() {
-  const [url, setUrl] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<any>(null);
-  const [error, setError] = useState("");
-  const [copied, setCopied] = useState(false);
-
-  const doImport = async () => {
-    if (!url.trim()) return;
-    setLoading(true);
-    setError("");
-    setResult(null);
-    try {
-      const res = await fetch("/api/admin/import-profile", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: url.trim() }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.error || "Import failed");
-      } else {
-        setResult(data);
-      }
-    } catch {
-      setError("Network error");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const copyClaimLink = () => {
-    if (result?.claimUrl) {
-      navigator.clipboard.writeText(result.claimUrl);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    }
-  };
-
-  return (
-    <div className="space-y-6">
-      <h2 className="text-lg font-semibold text-white">Import Profile</h2>
-      <p className="text-sm text-neutral-400">Import a creator profile from Linktree, Stan Store, or Hoo.be. The page will be scraped and a new creator profile will be created.</p>
-
-      <div className="bg-neutral-800/50 border border-neutral-700/50 rounded-xl p-5 space-y-4">
-        <div className="flex flex-col sm:flex-row gap-3">
-          <input
-            type="url"
-            placeholder="Enter Linktree, Stan Store, or Hoo.be URL..."
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && !loading && doImport()}
-            className="flex-1 bg-neutral-900 border border-neutral-700 rounded-lg px-4 py-3 min-h-[48px] text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-blue-500"
-          />
-          <button
-            onClick={doImport}
-            disabled={loading || !url.trim()}
-            className="px-6 py-3 min-h-[48px] bg-blue-600 hover:bg-blue-500 disabled:bg-neutral-700 disabled:text-neutral-500 text-white text-sm font-medium rounded-lg transition-colors whitespace-nowrap"
-          >
-            {loading ? "Importing..." : "Import"}
-          </button>
-        </div>
-
-        <div className="text-xs text-neutral-500">
-          Supported: linktr.ee/username, stan.store/username, hoo.be/username
-        </div>
-      </div>
-
-      {error && (
-        <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 text-sm text-red-400">
-          {error}
-        </div>
-      )}
-
-      {result && (
-        <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-5 space-y-4">
-          <div className="flex items-start gap-4">
-            {result.avatar && (
-              <img src={result.avatar} alt="" className="w-14 h-14 rounded-full object-cover border-2 border-emerald-500/30" />
-            )}
-            <div className="flex-1 min-w-0">
-              <div className="text-white font-semibold text-lg">{result.name}</div>
-              {result.bio && <div className="text-neutral-400 text-sm mt-1 line-clamp-2">{result.bio}</div>}
-              <div className="flex gap-4 mt-2 text-xs text-neutral-500">
-                <span>{result.socialsCount} social link{result.socialsCount !== 1 ? "s" : ""}</span>
-                <span>{result.bioLinksCount} bio link{result.bioLinksCount !== 1 ? "s" : ""}</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <div className="text-sm">
-              <span className="text-neutral-400">Profile: </span>
-              <a href={result.profileUrl} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline">
-                {result.profileUrl}
-              </a>
-            </div>
-            <div className="text-sm">
-              <span className="text-neutral-400">Claim link: </span>
-              <span className="text-white font-mono text-xs">{result.claimUrl}</span>
-            </div>
-          </div>
-
-          <button
-            onClick={copyClaimLink}
-            className="px-4 py-2 min-h-[44px] bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium rounded-lg transition-colors"
-          >
-            {copied ? "Copied!" : "Copy Claim Link"}
-          </button>
-        </div>
-      )}
-    </div>
-  );
-}
 
 function Loader() {
   return (
@@ -962,7 +847,6 @@ export default function AdminDashboard() {
           {section === "offers" && <OffersSection />}
           {section === "users" && <UsersSection />}
           {section === "profiles" && <ProfilesSection />}
-          {section === "import" && <ImportProfileSection />}
           {section === "revenue" && <RevenueSection />}
           {section === "settings" && <SettingsSection />}
         </main>
