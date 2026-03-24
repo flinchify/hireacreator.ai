@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useAuth } from "@/components/auth-context";
 import { AnimateOnScroll, StaggerChildren } from "@/components/animate-on-scroll";
-import { StripeLogo } from "@/components/stripe-logo";
+
 
 type Tab = "creators" | "brands" | "api";
 
@@ -408,19 +408,15 @@ export function PricingContent() {
                       "Search and discover creators",
                       "Send offers to any creator",
                       "Browse marketplace by niche and platform",
-                      { text: "Secure payment via Stripe escrow", stripe: true },
+                      "Secure payment escrow",
                       "Creator profiles with real follower data",
                       "15% service fee on completed deals",
-                    ].map((f) => {
-                      const text = typeof f === "string" ? f : f.text;
-                      const hasStripe = typeof f !== "string" && f.stripe;
-                      return (
-                        <li key={text} className="flex items-start gap-2.5 text-sm text-neutral-600">
-                          <span className="mt-0.5"><CheckIcon /></span>
-                          <span className="flex items-center gap-1.5">{text}{hasStripe && <StripeLogo className="ml-1" />}</span>
-                        </li>
-                      );
-                    })}
+                    ].map((f) => (
+                      <li key={f} className="flex items-start gap-2.5 text-sm text-neutral-600">
+                        <span className="mt-0.5"><CheckIcon /></span>
+                        {f}
+                      </li>
+                    ))}
                   </ul>
                   <button
                     onClick={() => openSignup("brand")}

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
+import { generateSmartReply } from "@/lib/bot-replies";
 
 const VERIFY_TOKEN = process.env.INSTAGRAM_WEBHOOK_VERIFY_TOKEN || "hireacreator-ig-verify-2026";
 
@@ -84,9 +85,7 @@ export async function POST(request: Request) {
             if (commentId) {
               const accessToken = process.env.INSTAGRAM_ACCESS_TOKEN;
               if (accessToken) {
-                const replyText = otherMentions.length > 0
-                  ? `Hey @${creatorHandle}! Someone thinks you should be on HireACreator. Claim your profile free: hireacreator.ai/claim?platform=instagram&handle=${creatorHandle}`
-                  : `Hey @${creatorHandle}! We just built your creator profile on HireACreator. Claim it free: hireacreator.ai/claim?platform=instagram&handle=${creatorHandle}`;
+                const replyText = generateSmartReply(text, from.username, "instagram");
 
                 fetch(`https://graph.instagram.com/v21.0/${commentId}/replies`, {
                   method: "POST",

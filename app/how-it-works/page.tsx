@@ -1,6 +1,6 @@
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
-import { StripeLogo } from "@/components/stripe-logo";
+
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -178,8 +178,8 @@ export default function HowItWorksPage() {
             <Step
               number="4"
               title="Pay securely through the platform"
-              description="All payments go through Stripe escrow. Funds are held securely until you review and approve the deliverables. Not satisfied? Request revisions or open a dispute before releasing payment. Creators receive their payout directly to their bank only after your approval."
-              badge={<StripeLogo className="mb-2" />}
+              description="All payments go through secure escrow. Funds are held securely until you review and approve the deliverables. Not satisfied? Request revisions or open a dispute before releasing payment. Creators receive their payout directly to their bank only after your approval."
+
             />
           </div>
         </div>
@@ -229,14 +229,14 @@ export default function HowItWorksPage() {
           {/* Timeline */}
           <div className="relative">
             {/* Desktop horizontal connector */}
-            <div className="hidden lg:block absolute top-10 left-[8%] right-[8%] h-0.5 bg-blue-200" />
+            <div className="hidden lg:block absolute top-10 left-[4%] right-[4%] h-0.5 bg-blue-200" />
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-5">
               {[
                 {
                   num: "1",
                   title: "Tag",
-                  desc: "A brand comments '@hireacreatorai' on a creator's Instagram post or tweets '@hireacreatorAI' on X, tagging a creator they want to work with.",
+                  desc: "Brand tags @hireacreatorai on Instagram or X with a creator they want to work with.",
                   icon: (
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" /></svg>
                   ),
@@ -244,7 +244,7 @@ export default function HowItWorksPage() {
                 {
                   num: "2",
                   title: "Profile Built",
-                  desc: "Our AI instantly scrapes the creator's data and builds a professional profile with their avatar, followers, bio, and niche.",
+                  desc: "AI builds the creator's page instantly — avatar, stats, niche, and rating.",
                   icon: (
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4" /><path d="M4 21v-1a6 6 0 0112 0v1" /><path d="M16 3l2 2 4-4" /></svg>
                   ),
@@ -252,32 +252,47 @@ export default function HowItWorksPage() {
                 {
                   num: "3",
                   title: "Offer Sent",
-                  desc: "The brand sends an offer through HireACreator with a budget, brief, and deliverables.",
+                  desc: "Brand sends an offer with budget and brief through the platform.",
                   icon: (
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 2L11 13" /><path d="M22 2L15 22l-4-9-9-4z" /></svg>
                   ),
                 },
                 {
                   num: "4",
-                  title: "Creator Claims",
-                  desc: "The creator gets notified, claims their profile, and verifies they own the account.",
+                  title: "Creator Accepts",
+                  desc: "Creator claims their profile, verifies their account, and accepts the offer.",
                   icon: (
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 12l2 2 4-4" /><rect x="3" y="3" width="18" height="18" rx="2" /></svg>
                   ),
                 },
                 {
                   num: "5",
-                  title: "Deal Accepted",
-                  desc: "Creator reviews the offer and accepts. Brand pays into Stripe escrow (15% service fee). Funds are held securely — not released to the creator yet.",
-                  hasStripe: true,
+                  title: "Brand Pays",
+                  desc: "Payment held securely in escrow until work is delivered and approved.",
                   icon: (
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
                   ),
                 },
                 {
                   num: "6",
-                  title: "Get Paid",
-                  desc: "Creator delivers the work. Brand reviews and approves the deliverables. Only then are funds released to the creator. Not satisfied? Request revisions or open a dispute. Creator keeps 100% — no commission.",
+                  title: "Creator Delivers",
+                  desc: "Creator submits their work — content, deliverables, everything in the brief.",
+                  icon: (
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" /></svg>
+                  ),
+                },
+                {
+                  num: "7",
+                  title: "Brand Approves",
+                  desc: "Brand reviews the deliverables. Request revisions or approve to release payment.",
+                  icon: (
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14 9V5a3 3 0 00-6 0v4" /><path d="M18.8 22H5.2A2.2 2.2 0 013 19.8v-5.6A2.2 2.2 0 015.2 12h13.6a2.2 2.2 0 012.2 2.2v5.6a2.2 2.2 0 01-2.2 2.2z" /><path d="M12 16v2" /></svg>
+                  ),
+                },
+                {
+                  num: "8",
+                  title: "Creator Gets Paid",
+                  desc: "Money released to creator. They keep 100% — no commission, no hidden fees.",
                   icon: (
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" /></svg>
                   ),
@@ -294,7 +309,7 @@ export default function HowItWorksPage() {
                     <span className="inline-block text-xs font-semibold text-blue-500 bg-blue-50 px-2 py-0.5 rounded-full mb-2">Step {step.num}</span>
                     <h3 className="text-lg font-bold text-neutral-900">{step.title}</h3>
                     <p className="text-sm text-neutral-600 mt-1 leading-relaxed max-w-xs mx-auto">{step.desc}</p>
-                    {"hasStripe" in step && step.hasStripe && <div className="mt-2"><StripeLogo /></div>}
+
                   </div>
                 </div>
               ))}

@@ -186,7 +186,7 @@ export async function GET() {
     }
 
     // --- Step 5: Generate smart reply ---
-    const replyText = generateSmartReply(mention.text, username);
+    const replyText = generateSmartReply(mention.text, username, "x");
     results.steps.push({
       step: "generate_reply",
       tweet_text: mention.text,

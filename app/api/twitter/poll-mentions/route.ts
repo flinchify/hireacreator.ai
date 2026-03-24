@@ -158,7 +158,7 @@ export async function GET(request: Request) {
       }
 
       // Generate smart reply
-      const replyText = generateSmartReply(tweet.text, username);
+      const replyText = generateSmartReply(tweet.text, username, "x");
 
       // Reply to the tweet
       const replyResult = await replyToTweet(tweet.id, replyText);

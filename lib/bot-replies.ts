@@ -38,3 +38,115 @@ export function generateTagReply(
 export function generateClaimNotification(handle: string, slug: string): string {
   return `Your HireACreator profile has been claimed! Customize it at hireacreator.ai/u/${slug}/edit`;
 }
+
+/* ─── Smart contextual replies for X and Instagram bots ─── */
+
+export type BotPlatform = "x" | "instagram";
+
+function pick<T>(arr: T[]): T {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function claimUrl(platform: BotPlatform, handle: string): string {
+  return `hireacreator.ai/claim?platform=${platform}&handle=${handle}`;
+}
+
+/**
+ * Generate a smart, contextual reply based on comment/tweet content.
+ * Casual, lowercase, no caps, no emojis. Randomized per category.
+ */
+export function generateSmartReply(
+  text: string,
+  authorUsername: string,
+  platform: BotPlatform
+): string {
+  const lower = text.toLowerCase();
+
+  // Check if the text mentions another @username (brand tagging a creator)
+  const mentionMatches = text.match(/@([\w.]+)/g) || [];
+  const otherMentions = mentionMatches
+    .map((m) => m.slice(1).toLowerCase())
+    .filter(
+      (h) =>
+        h !== authorUsername.toLowerCase() &&
+        !h.startsWith("hireacreator")
+    );
+
+  // Brand tagging a creator — offer flow
+  if (otherMentions.length > 0) {
+    const creator = otherMentions[0];
+    const url = claimUrl(platform, creator);
+    return pick([
+      `yo @${creator} someone tagged you for a collab. your profile is ready ${url}`,
+      `@${creator} looks like a brand wants to work with you. claim your page and check offers ${url}`,
+      `heads up @${creator} you just got tagged for a deal. your creator page is live ${url}`,
+    ]);
+  }
+
+  // Self-promo — creator wants to be discovered
+  if (
+    lower.includes("check me out") ||
+    lower.includes("check out my") ||
+    lower.includes("follow me") ||
+    lower.includes("subscribe") ||
+    lower.includes("my content") ||
+    lower.includes("i create") ||
+    lower.includes("i make") ||
+    lower.includes("my channel") ||
+    lower.includes("my page") ||
+    lower.includes("hire me") ||
+    lower.includes("collab")
+  ) {
+    const url = claimUrl(platform, authorUsername);
+    return pick([
+      `just made your page @${authorUsername}. brands can find you and send offers now ${url}`,
+      `your profile is live @${authorUsername}. claim it and start getting brand deals ${url}`,
+      `done @${authorUsername}. your page is up, brands can send you offers now ${url}`,
+    ]);
+  }
+
+  // Questions about hireacreator
+  if (
+    lower.includes("what is hireacreator") ||
+    lower.includes("what does hireacreator") ||
+    lower.includes("how does hireacreator") ||
+    lower.includes("how do i") ||
+    lower.includes("what's hireacreator") ||
+    lower.includes("how it work")
+  ) {
+    return pick([
+      `we connect creators with brand deals. tag any @ with us and we build their page instantly. brands can send offers directly hireacreator.ai`,
+      `basically brands find creators through us, send offers, pay through the platform. creators keep 100%. tag us with anyones @ and we make their page hireacreator.ai`,
+      `we connect creators with brands. tag any @ with us and we build their page hireacreator.ai`,
+    ]);
+  }
+
+  // Has a question mark — try to be helpful
+  if (lower.includes("?")) {
+    const url = claimUrl(platform, authorUsername);
+    return `we build creator profiles and connect them with brand deals. tag us with anyones @ and we make their page. brands can send offers directly ${url}`;
+  }
+
+  // Offer-related — brand wants to send an offer
+  if (
+    lower.includes("offer") ||
+    lower.includes("hire") ||
+    lower.includes("book") ||
+    lower.includes("campaign") ||
+    lower.includes("sponsor") ||
+    lower.includes("budget") ||
+    lower.includes("deal")
+  ) {
+    const target = otherMentions.length > 0 ? otherMentions[0] : authorUsername;
+    const url = claimUrl(platform, target);
+    return `you can send an offer to @${target} directly on our platform. their profile is ready ${url}`;
+  }
+
+  // Default — chill acknowledgment
+  const url = claimUrl(platform, authorUsername);
+  return pick([
+    `made your page @${authorUsername}. claim it whenever, brands can find you now ${url}`,
+    `your creator page is up @${authorUsername}. claim it whenever ${url}`,
+    `set you up @${authorUsername}. your page is live ${url}`,
+  ]);
+}

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
+import { generateSmartReply } from "@/lib/bot-replies";
 
 export const maxDuration = 30;
 
@@ -84,7 +85,7 @@ export async function GET(request: Request) {
           if (replyCount >= 3) continue;
 
           const username = comment.username;
-          const replyText = `Hey @${username}! We just built your creator profile on HireACreator. Claim it free: hireacreator.ai/claim?platform=instagram&handle=${username}`;
+          const replyText = generateSmartReply(comment.text, username, "instagram");
           
           try {
             const replyRes = await fetch(
