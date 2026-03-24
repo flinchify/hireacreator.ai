@@ -154,6 +154,12 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
   const textCol = settings.textColor || (dark ? "#ffffff" : "#171717");
   const textMuted = settings.textColor ? `${settings.textColor}99` : (dark ? "rgba(255,255,255,0.5)" : "rgba(23,23,23,0.5)");
 
+  // Positioning
+  const justifyPos = settings.contentPosition === "center" ? "center" : settings.contentPosition === "bottom" ? "flex-end" : "flex-start";
+  const textAlignVal = (settings.contentAlign || "center") as React.CSSProperties["textAlign"];
+  const alignItemsVal = settings.contentAlign === "left" ? "flex-start" : settings.contentAlign === "right" ? "flex-end" : "center";
+  const positioningStyle: React.CSSProperties = { minHeight: '100%', justifyContent: justifyPos, alignItems: alignItemsVal, textAlign: textAlignVal };
+
   const name = creator.full_name || creator.name || "Your Name";
   const headline = creator.headline || "Creator / Content Maker";
   const avatar = creator.avatar_url || creator.avatar;
@@ -272,7 +278,7 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
       <BgLayers />
       <div className="absolute top-10 right-4 w-24 h-24 rounded-full bg-pink-400/20 blur-2xl" />
       <div className="absolute bottom-10 left-2 w-32 h-32 rounded-full bg-blue-400/15 blur-3xl" />
-      <div className="relative z-10 flex flex-col items-center pt-10 px-5 pb-8 max-w-[440px] mx-auto">
+      <div className="relative z-10 flex flex-col items-center pt-10 px-5 pb-8 max-w-[440px] mx-auto" style={positioningStyle}>
         <Avatar size="w-16 h-16" borderCol="rgba(255,255,255,0.25)" />
         <h2 className="mt-3 text-sm font-bold text-white" style={{ color: textCol }}>{name}</h2>
         <p className="text-[10px] text-white/50" style={{ color: textMuted }}>{headline}</p>
@@ -292,7 +298,7 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
     <div className="relative w-full min-h-full bg-neutral-950 overflow-hidden" style={{ fontFamily, ...getBgStyle() }}>
       <BgLayers />
       <div className="absolute top-0 right-0 w-1/3 h-full -skew-x-12 translate-x-8" style={{ background: `${accent}10` }} />
-      <div className="relative z-10 flex flex-col items-center pt-8 px-5 pb-8 max-w-[440px] mx-auto">
+      <div className="relative z-10 flex flex-col items-center pt-8 px-5 pb-8 max-w-[440px] mx-auto" style={positioningStyle}>
         <Avatar size="w-20 h-20" shape="square" borderCol={accent} />
         <h2 className="mt-3 text-base font-black text-white tracking-tight" style={{ color: textCol }}>{name}</h2>
         <p className="text-[10px] mt-0.5" style={{ color: accent }}>@{creator.slug?.split("-")[0] || "creator"}</p>
@@ -316,7 +322,7 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
       <div className="absolute inset-0 opacity-[0.03]" style={{backgroundImage:"repeating-linear-gradient(0deg, " + accent + " 0px, transparent 1px, transparent 4px)"}}/>
       <div className="absolute top-2 left-2 w-4 h-[1px]" style={{background:`${accent}50`}}/><div className="absolute top-2 left-2 w-[1px] h-4" style={{background:`${accent}50`}}/>
       <div className="absolute bottom-2 right-2 w-4 h-[1px]" style={{background:`${accent}50`}}/><div className="absolute bottom-2 right-2 w-[1px] h-4" style={{background:`${accent}50`}}/>
-      <div className="relative z-10 flex flex-col items-center pt-8 px-5 pb-8 max-w-[440px] mx-auto">
+      <div className="relative z-10 flex flex-col items-center pt-8 px-5 pb-8 max-w-[440px] mx-auto" style={positioningStyle}>
         <div className="relative">
           <div className="absolute inset-0 rounded-full scale-[1.35]" style={{ border: `1px solid ${accent}30` }} />
           {avatar
@@ -356,7 +362,7 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
         ? <div className="absolute inset-0" style={{ background: storedBgValue, opacity: 0.5 }} />
         : <div className="absolute inset-0 bg-black/30" />
       }
-      <div className="relative z-10 flex flex-col items-center pt-10 px-5 pb-8 max-w-[440px] mx-auto">
+      <div className="relative z-10 flex flex-col items-center pt-10 px-5 pb-8 max-w-[440px] mx-auto" style={positioningStyle}>
         <div className="w-full bg-black/30 rounded-2xl p-5 border border-white/10 flex flex-col items-center" style={{backdropFilter:"blur(12px)"}}>
           <Avatar size="w-14 h-14" shape="square" borderCol="rgba(255,255,255,0.2)" />
           <h2 className="mt-2 text-sm font-bold text-white" style={{ color: textCol }}>{name}</h2>
@@ -472,7 +478,7 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
       <div className="absolute bottom-10 right-0 w-48 h-48 rounded-full bg-teal-400/15 blur-3xl" />
       <div className="absolute top-1/2 left-0 w-32 h-32 rounded-full bg-pink-500/10 blur-3xl" />
       <BgLayers />
-      <div className="relative z-10 flex flex-col items-center pt-10 px-5 pb-8 max-w-[440px] mx-auto">
+      <div className="relative z-10 flex flex-col items-center pt-10 px-5 pb-8 max-w-[440px] mx-auto" style={positioningStyle}>
         <Avatar size="w-16 h-16" borderCol="rgba(167,139,250,0.4)" />
         <h2 className="mt-3 text-sm font-bold" style={{ color: textCol || "#fff" }}>{name}</h2>
         <p className="text-[10px]" style={{ color: textMuted }}>{headline}</p>
@@ -491,7 +497,7 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
   if (tpl === "brutalist") return (
     <div className="relative w-full min-h-full bg-white" style={{ fontFamily, ...getBgStyle() }}>
       <BgLayers />
-      <div className="relative z-10 flex flex-col items-center pt-8 px-5 pb-8 max-w-[440px] mx-auto">
+      <div className="relative z-10 flex flex-col items-center pt-8 px-5 pb-8 max-w-[440px] mx-auto" style={positioningStyle}>
         <div className="w-20 h-20 border-[3px] border-black overflow-hidden">{avatar ? <img src={avatar} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full bg-neutral-100 flex items-center justify-center text-2xl font-black">{name[0]}</div>}</div>
         <h2 className="mt-3 text-lg font-black uppercase tracking-widest" style={{ color: textCol }}>{name}</h2>
         <p className="text-[10px] uppercase tracking-wider" style={{ color: textMuted }}>{headline}</p>
@@ -512,7 +518,7 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
   if (tpl === "sunset") return (
     <div className="relative w-full min-h-full overflow-hidden" style={{ fontFamily, background: hasStoredColor ? storedBgValue : "linear-gradient(180deg, #ff6b6b 0%, #ee5a24 40%, #f39c12 100%)", ...getBgStyle() }}>
       <BgLayers />
-      <div className="relative z-10 flex flex-col items-center pt-10 px-5 pb-8 max-w-[440px] mx-auto">
+      <div className="relative z-10 flex flex-col items-center pt-10 px-5 pb-8 max-w-[440px] mx-auto" style={positioningStyle}>
         <Avatar size="w-16 h-16" borderCol="rgba(255,255,255,0.4)" />
         <h2 className="mt-3 text-sm font-bold text-white" style={{ color: textCol }}>{name}</h2>
         <p className="text-[10px] text-white/60" style={{ color: textMuted }}>{headline}</p>
@@ -532,7 +538,7 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
     <div className="relative w-full min-h-full bg-[#0a0a0a] overflow-hidden" style={{ fontFamily: "'Space Grotesk', monospace", ...getBgStyle() }}>
       <div className="absolute inset-0 opacity-[0.03]" style={{backgroundImage:"repeating-linear-gradient(0deg, #00ff00 0px, transparent 1px, transparent 3px)"}}/>
       <BgLayers />
-      <div className="relative z-10 flex flex-col items-center pt-8 px-5 pb-8 max-w-[440px] mx-auto">
+      <div className="relative z-10 flex flex-col items-center pt-8 px-5 pb-8 max-w-[440px] mx-auto" style={positioningStyle}>
         <div className="text-[10px] text-green-500/50 self-start mb-3 font-mono">$ cat profile.json</div>
         <Avatar size="w-14 h-14" borderCol="#22c55e" />
         <h2 className="mt-3 text-sm font-bold text-green-400" style={{ color: textCol }}>{name}</h2>
@@ -554,7 +560,7 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
   if (tpl === "pastel") return (
     <div className="relative w-full min-h-full" style={{ fontFamily, background: hasStoredColor ? storedBgValue : "linear-gradient(180deg, #fce4ec 0%, #e8eaf6 50%, #e0f7fa 100%)", ...getBgStyle() }}>
       <BgLayers />
-      <div className="relative z-10 flex flex-col items-center pt-10 px-5 pb-8 max-w-[440px] mx-auto">
+      <div className="relative z-10 flex flex-col items-center pt-10 px-5 pb-8 max-w-[440px] mx-auto" style={positioningStyle}>
         <Avatar size="w-16 h-16" borderCol="#fff" />
         <h2 className="mt-3 text-sm font-bold text-neutral-800" style={{ color: textCol }}>{name}</h2>
         <p className="text-[10px] text-neutral-500" style={{ color: textMuted }}>{headline}</p>
@@ -573,7 +579,7 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
   if (tpl === "magazine") return (
     <div className="relative w-full min-h-full bg-[#fafaf8]" style={{ fontFamily, ...getBgStyle() }}>
       <BgLayers />
-      <div className="relative z-10 max-w-[440px] mx-auto px-6 pt-8 pb-8">
+      <div className="relative z-10 max-w-[440px] mx-auto px-6 pt-8 pb-8 flex flex-col" style={positioningStyle}>
         <div className="flex items-start gap-4 mb-6">
           <Avatar size="w-14 h-14" borderCol="transparent" />
           <div className="text-left">
@@ -601,7 +607,7 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
       {/* Grid floor */}
       <div className="absolute bottom-0 left-0 right-0 h-1/2 opacity-20" style={{backgroundImage:"linear-gradient(rgba(236,72,153,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(236,72,153,0.3) 1px, transparent 1px)", backgroundSize:"30px 30px", transform:"perspective(200px) rotateX(40deg)", transformOrigin:"bottom"}}/>
       <BgLayers />
-      <div className="relative z-10 flex flex-col items-center pt-10 px-5 pb-8 max-w-[440px] mx-auto">
+      <div className="relative z-10 flex flex-col items-center pt-10 px-5 pb-8 max-w-[440px] mx-auto" style={positioningStyle}>
         <Avatar size="w-16 h-16" borderCol="#ec4899" />
         <h2 className="mt-3 text-sm font-bold" style={{ color: textCol || "#f472b6" }}>{name}</h2>
         <p className="text-[10px]" style={{ color: textMuted || "#a78bfa80" }}>{headline}</p>
@@ -622,7 +628,7 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
   if (tpl === "midnight") return (
     <div className="relative w-full min-h-full bg-[#0a1628]" style={{ fontFamily, ...getBgStyle() }}>
       <BgLayers />
-      <div className="relative z-10 flex flex-col items-center pt-10 px-5 pb-8 max-w-[440px] mx-auto">
+      <div className="relative z-10 flex flex-col items-center pt-10 px-5 pb-8 max-w-[440px] mx-auto" style={positioningStyle}>
         <Avatar size="w-16 h-16" borderCol="#d4a574" />
         <h2 className="mt-3 text-sm font-bold" style={{ color: textCol || "#f5f0e8" }}>{name}</h2>
         <p className="text-[10px]" style={{ color: textMuted || "#d4a57480" }}>{headline}</p>
@@ -643,7 +649,7 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
   if (tpl === "clay") return (
     <div className="relative w-full min-h-full bg-[#e8e4df]" style={{ fontFamily, ...getBgStyle() }}>
       <BgLayers />
-      <div className="relative z-10 flex flex-col items-center pt-10 px-5 pb-8 max-w-[440px] mx-auto">
+      <div className="relative z-10 flex flex-col items-center pt-10 px-5 pb-8 max-w-[440px] mx-auto" style={positioningStyle}>
         <div className="w-16 h-16 rounded-2xl overflow-hidden" style={{ boxShadow: "6px 6px 12px #c5c1bc, -6px -6px 12px #fff" }}>
           {avatar ? <img src={avatar} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full bg-[#e8e4df] flex items-center justify-center text-xl font-bold text-neutral-400">{name[0]}</div>}
         </div>
@@ -670,7 +676,7 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
       <div className="absolute bottom-[-10%] left-[20%] w-[50%] h-[40%] rounded-full bg-emerald-500/25 blur-[80px]" />
       <div className="absolute top-[10%] left-[40%] w-[30%] h-[30%] rounded-full bg-pink-500/20 blur-[60px]" />
       <BgLayers />
-      <div className="relative z-10 flex flex-col items-center pt-10 px-5 pb-8 max-w-[440px] mx-auto">
+      <div className="relative z-10 flex flex-col items-center pt-10 px-5 pb-8 max-w-[440px] mx-auto" style={positioningStyle}>
         <Avatar size="w-16 h-16" borderCol="rgba(255,255,255,0.3)" />
         <h2 className="mt-3 text-sm font-bold text-white" style={{ color: textCol }}>{name}</h2>
         <p className="text-[10px] text-white/50" style={{ color: textMuted }}>{headline}</p>
@@ -690,7 +696,7 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
     <div className="relative w-full min-h-full bg-[#0b0e11] overflow-hidden" style={{ fontFamily: "'SF Mono', 'Courier New', monospace", ...getBgStyle() }}>
       <div className="absolute inset-0 opacity-[0.02]" style={{backgroundImage:"repeating-linear-gradient(0deg, #00c087 0px, transparent 1px, transparent 4px)"}}/>
       <BgLayers />
-      <div className="relative z-10 flex flex-col items-center pt-6 px-5 pb-8 max-w-[440px] mx-auto">
+      <div className="relative z-10 flex flex-col items-center pt-6 px-5 pb-8 max-w-[440px] mx-auto" style={positioningStyle}>
         <div className="w-full flex items-center justify-between mb-4 text-[8px] font-mono">
           <span className="text-[#00c087]/50">{name.toUpperCase().replace(/\s/g, '')}.X</span>
           <div className="flex gap-2"><span className="text-[#00c087]">▲ LIVE</span></div>
@@ -715,7 +721,7 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
   if (tpl === "educator") return (
     <div className="relative w-full min-h-full" style={{ fontFamily, background: hasStoredColor ? storedBgValue : "linear-gradient(180deg, #fffbf0 0%, #fff 40%, #fef3e2 100%)", ...getBgStyle() }}>
       <BgLayers />
-      <div className="relative z-10 flex flex-col items-center pt-10 px-5 pb-8 max-w-[440px] mx-auto">
+      <div className="relative z-10 flex flex-col items-center pt-10 px-5 pb-8 max-w-[440px] mx-auto" style={positioningStyle}>
         <Avatar size="w-16 h-16" borderCol="#d97706" />
         <h2 className="mt-3 text-sm font-bold text-neutral-900" style={{ color: textCol, fontFamily: "'Georgia', serif" }}>{name}</h2>
         <p className="text-[10px] text-amber-700/60" style={{ color: textMuted }}>{headline}</p>
@@ -734,7 +740,7 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
   if (tpl === "developer") return (
     <div className="relative w-full min-h-full bg-[#1a1b26] overflow-hidden" style={{ fontFamily: "'JetBrains Mono', 'Courier New', monospace", ...getBgStyle() }}>
       <BgLayers />
-      <div className="relative z-10 flex flex-col items-center pt-8 px-5 pb-8 max-w-[440px] mx-auto">
+      <div className="relative z-10 flex flex-col items-center pt-8 px-5 pb-8 max-w-[440px] mx-auto" style={positioningStyle}>
         <div className="text-[8px] text-[#565f89] self-start mb-3 font-mono">// profile.ts</div>
         <Avatar size="w-14 h-14" shape="square" borderCol="#7dcfff" />
         <h2 className="mt-3 text-sm font-bold text-[#c0caf5]" style={{ color: textCol }}>{name}</h2>
@@ -756,7 +762,7 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
   if (tpl === "executive") return (
     <div className="relative w-full min-h-full bg-white" style={{ fontFamily, ...getBgStyle() }}>
       <BgLayers />
-      <div className="relative z-10 flex flex-col items-center pt-12 px-6 pb-8 max-w-[440px] mx-auto">
+      <div className="relative z-10 flex flex-col items-center pt-12 px-6 pb-8 max-w-[440px] mx-auto" style={positioningStyle}>
         <Avatar size="w-20 h-20" borderCol="transparent" />
         <h2 className="mt-4 text-base font-bold text-[#0f1729]" style={{ color: textCol, fontFamily: "'Georgia', serif" }}>{name}</h2>
         <p className="text-[10px] text-neutral-400 mt-1" style={{ color: textMuted }}>{headline}</p>
@@ -776,7 +782,7 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
   return (
     <div className="relative w-full min-h-full overflow-hidden" style={{ fontFamily, background: dark ? "#0a0a0a" : "#e5e5e5", ...getBgStyle() }}>
       <BgLayers />
-      <div className="relative z-10 flex flex-col items-center pt-10 px-4 pb-8">
+      <div className="relative z-10 flex flex-col items-center pt-10 px-4 pb-8" style={positioningStyle}>
         <Avatar size="w-16 h-16" />
         <h2 className="mt-3 text-sm font-bold" style={{ color: textCol }}>{name}</h2>
         <p className="text-[10px]" style={{ color: textMuted }}>{headline}</p>
@@ -1423,7 +1429,7 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
               {previewMode === "mobile" && (
                 <div className="mx-auto w-[280px] h-[560px] bg-black rounded-[2.5rem] shadow-2xl border-[6px] border-neutral-800 overflow-hidden relative">
                   <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[90px] h-[22px] bg-black rounded-b-2xl z-50" />
-                  <div className="w-full h-full overflow-y-auto rounded-[2rem]"><MiniPreview key={`${settings.template}-${settings.font}-${settings.textColor}-${settings.bgType}-${settings.cardStyle}`} settings={settings} creator={user} /></div>
+                  <div className="w-full h-full overflow-y-auto rounded-[2rem]"><MiniPreview key={`${settings.template}-${settings.font}-${settings.textColor}-${settings.bgType}-${settings.bgValue}-${settings.buttonShape}-${settings.cardStyle}-${settings.contentPosition}-${settings.contentAlign}-${settings.accent}`} settings={settings} creator={user} /></div>
                   <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-[100px] h-[4px] bg-white/30 rounded-full z-50" />
                 </div>
               )}
@@ -1435,7 +1441,7 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
                   </div>
                   <div className="w-full h-[450px] border border-t-0 border-neutral-200 rounded-b-xl overflow-y-auto bg-neutral-100">
                     <div className="flex items-start justify-center py-6 min-h-full">
-                      <div className="w-[400px] bg-white rounded-2xl shadow-lg overflow-hidden"><MiniPreview key={`d-${settings.template}-${settings.font}-${settings.textColor}-${settings.bgType}-${settings.cardStyle}`} settings={settings} creator={user} /></div>
+                      <div className="w-[400px] bg-white rounded-2xl shadow-lg overflow-hidden"><MiniPreview key={`d-${settings.template}-${settings.font}-${settings.textColor}-${settings.bgType}-${settings.bgValue}-${settings.buttonShape}-${settings.cardStyle}-${settings.contentPosition}-${settings.contentAlign}-${settings.accent}`} settings={settings} creator={user} /></div>
                     </div>
                   </div>
                 </div>
@@ -1475,7 +1481,7 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
             <div className="w-[320px] h-[640px] bg-black rounded-[2.5rem] shadow-2xl border-[6px] border-neutral-800 overflow-hidden relative">
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[90px] h-[22px] bg-black rounded-b-2xl z-50" />
               <div className="w-full h-full overflow-y-auto rounded-[2rem]">
-                <MiniPreview key={`m-${settings.template}-${settings.font}-${settings.textColor}-${settings.bgType}-${settings.cardStyle}`} settings={settings} creator={user} />
+                <MiniPreview key={`m-${settings.template}-${settings.font}-${settings.textColor}-${settings.bgType}-${settings.bgValue}-${settings.buttonShape}-${settings.cardStyle}-${settings.contentPosition}-${settings.contentAlign}-${settings.accent}`} settings={settings} creator={user} />
               </div>
               <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-[100px] h-[4px] bg-white/30 rounded-full z-50" />
             </div>
