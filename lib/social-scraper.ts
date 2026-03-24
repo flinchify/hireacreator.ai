@@ -122,111 +122,12 @@ function extractWebsites(
   return urls;
 }
 
-/** Fetch a URL via ScrapingBee proxy (renders JS, uses residential IPs) */
-async function fetchViaProxy(url: string): Promise<string | null> {
-  const apiKey = process.env.SCRAPINGBEE_API_KEY;
-  if (!apiKey) return null;
-  try {
-    const params = new URLSearchParams({
-      api_key: apiKey,
-      url,
-      render_js: "false",
-      premium_proxy: "true",
-    });
-    const res = await fetch(`https://app.scrapingbee.com/api/v1/?${params}`, {
-      signal: AbortSignal.timeout(15000),
-    });
-    if (!res.ok) {
-      console.log(`[ScrapingBee] ${url} failed: ${res.status}`);
-      return null;
-    }
-    return await res.text();
-  } catch (e) {
-    console.log(`[ScrapingBee] ${url} error:`, e);
-    return null;
-  }
-}
-
 async function fetchInstagramProfile(
   handle: string
 ): Promise<SocialProfile | null> {
   const clean = handle.replace(/^@/, "").trim().toLowerCase();
 
-  // If ScrapingBee is available, use it FIRST (most reliable from cloud servers)
-  const sbKey = process.env.SCRAPINGBEE_API_KEY;
-  if (sbKey) {
-    try {
-      console.log(`[IG Scraper] ScrapingBee available, using it directly for @${clean}`);
-      const html = await fetchViaProxy(`https://www.instagram.com/${clean}/`);
-      if (html && html.includes("Followers")) {
-        console.log(`[IG Scraper] ScrapingBee success for @${clean}`);
-
-        let followerCount = 0;
-        let followingCount = 0;
-        let postCount = 0;
-        const ogMatch = html.match(/<meta[^>]*property="og:description"[^>]*content="([^"]+)"/i);
-        if (ogMatch) {
-          const desc = ogMatch[1];
-          const fMatch = desc.match(/([\d,.]+[KMB]?)\s*Followers/i);
-          const flMatch = desc.match(/([\d,.]+[KMB]?)\s*Following/i);
-          const pMatch = desc.match(/([\d,.]+[KMB]?)\s*Posts/i);
-          if (fMatch) followerCount = parseIGCount(fMatch[1]);
-          if (flMatch) followingCount = parseIGCount(flMatch[1]);
-          if (pMatch) postCount = parseIGCount(pMatch[1]);
-        }
-
-        let displayName = clean;
-        const ogDescName = ogMatch?.[1]?.match(/from\s+(.+?)\s*\(&#064;/);
-        if (ogDescName) {
-          displayName = ogDescName[1].trim();
-        } else {
-          const titleMatch = html.match(/<meta[^>]*property="og:title"[^>]*content="([^"]+)"/i);
-          if (titleMatch) {
-            const n = titleMatch[1].replace(/\s*\(@[^)]+\).*$/, "").replace(/&#x2022;.*$/, "").replace(/&#064;/g, "@").trim();
-            if (n && n !== clean) displayName = n;
-          }
-        }
-
-        let avatarUrl: string | null = null;
-        const imgMatch = html.match(/<meta[^>]*property="og:image"[^>]*content="([^"]+)"/i);
-        if (imgMatch) avatarUrl = imgMatch[1].replace(/&amp;/g, "&");
-
-        let bio: string | null = null;
-        const bioMatch = html.match(/"biography"\s*:\s*"([^"]+)"/);
-        if (bioMatch) bio = bioMatch[1].replace(/\\n/g, "\n").replace(/\\u[\da-fA-F]{4}/g, "");
-        if (!bio && ogMatch) {
-          const parts = ogMatch[1].split(" - ");
-          if (parts.length > 1) bio = parts.slice(1).join(" - ").trim();
-        }
-
-        const category = detectCategoryFromBio(bio) || null;
-        const otherSocials = extractSocialLinks(bio, "instagram");
-        const websites = extractWebsites(null, bio);
-
-        return {
-          platform: "instagram",
-          handle: clean,
-          displayName,
-          avatarUrl,
-          bio,
-          followerCount,
-          followingCount,
-          postCount,
-          isVerified: html.includes('"is_verified":true'),
-          category,
-          externalUrl: null,
-          websites,
-          otherSocials,
-          profileUrl: `https://www.instagram.com/${clean}/`,
-          isBusinessAccount: html.includes('"is_business_account":true') || html.includes('"is_professional_account":true'),
-        };
-      }
-    } catch (e) {
-      console.error(`[IG Scraper] ScrapingBee error for @${clean}:`, e);
-    }
-  }
-
-  // Fallback: Try Instagram Graph API (if we have a token + business account ID)
+  // Primary: Try Instagram Graph API (if we have a token + business account ID)
   const igToken = process.env.INSTAGRAM_ACCESS_TOKEN;
   const igAccountId = process.env.INSTAGRAM_BUSINESS_ACCOUNT_ID;
   if (igToken && igAccountId) {
@@ -419,75 +320,6 @@ async function fetchXProfile(
       console.log(`[X Scraper] X API error for @${clean}:`, e);
     }
   }
-
-  // Try ScrapingBee proxy first
-  try {
-    console.log(`[X Scraper] Trying ScrapingBee proxy for @${clean}`);
-    const html = await fetchViaProxy(`https://x.com/${clean}`);
-    if (html && html.length > 1000) {
-      const nameMatch = html.match(/<meta[^>]*property="og:title"[^>]*content="([^"]+)"/i);
-      const descMatch = html.match(/<meta[^>]*property="og:description"[^>]*content="([^"]+)"/i);
-      const imgMatch = html.match(/<meta[^>]*property="og:image"[^>]*content="([^"]+)"/i);
-      
-      // Parse followers from various patterns
-      let followerCount = 0;
-      let followingCount = 0;
-      const followersPatterns = [
-        /"followers_count"\s*:\s*(\d+)/,
-        /"followersCount"\s*:\s*(\d+)/,
-        /([\d,.]+[KMB]?)\s*Followers/i,
-      ];
-      for (const p of followersPatterns) {
-        const m = html.match(p);
-        if (m) { followerCount = parseIGCount(m[1]); break; }
-      }
-      const followingPatterns = [
-        /"friends_count"\s*:\s*(\d+)/,
-        /([\d,.]+[KMB]?)\s*Following/i,
-      ];
-      for (const p of followingPatterns) {
-        const m = html.match(p);
-        if (m) { followingCount = parseIGCount(m[1]); break; }
-      }
-
-      let displayName = clean;
-      if (nameMatch) {
-        const n = nameMatch[1].replace(/\s*\(@[^)]+\).*$/, "").replace(/ on X$/, "").replace(/ \/ X$/, "").trim();
-        if (n) displayName = n;
-      }
-
-      let bio: string | null = null;
-      if (descMatch) bio = descMatch[1].replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").trim();
-      // Strip the Twitter boilerplate from bio
-      if (bio && bio.startsWith("Latest posts from")) bio = null;
-
-      let avatarUrl: string | null = null;
-      if (imgMatch) avatarUrl = imgMatch[1].replace(/&amp;/g, "&");
-
-      if (followerCount > 0 || displayName !== clean) {
-        console.log(`[X Scraper] ScrapingBee success: @${clean} = ${followerCount} followers`);
-        const otherSocials = extractSocialLinks(bio, "x");
-        const websites = extractWebsites(null, bio);
-        return {
-          platform: "x",
-          handle: clean,
-          displayName,
-          avatarUrl,
-          bio,
-          followerCount,
-          followingCount,
-          postCount: 0,
-          isVerified: html.includes('"is_blue_verified":true') || html.includes('"verified":true'),
-          category: detectCategoryFromBio(bio),
-          externalUrl: null,
-          websites,
-          otherSocials,
-          profileUrl: `https://x.com/${clean}`,
-          isBusinessAccount: false,
-        };
-      }
-    }
-  } catch { /* fall through */ }
 
   // Fallback: syndication endpoint (works sometimes)
   try {

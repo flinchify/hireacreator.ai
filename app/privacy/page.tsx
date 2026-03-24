@@ -27,7 +27,7 @@ export default function PrivacyPage() {
           <ul>
             <li><strong>Account information:</strong> Name, email address, and profile photo (provided via Google OAuth sign-in or direct upload).</li>
             <li><strong>Social media handles and public profile URLs:</strong> Instagram, TikTok, YouTube, and Twitter accounts you connect to your profile.</li>
-            <li><strong>Public social media data:</strong> Follower counts, engagement metrics, and audience demographics scraped from your public profiles via ScrapingBee.</li>
+            <li><strong>Public social media data:</strong> Follower counts, engagement metrics, and audience demographics collected from your public profiles via official platform APIs.</li>
             <li><strong>Avatar images:</strong> Profile images retrieved from connected social media platforms.</li>
             <li><strong>Profile content:</strong> Bio, portfolio content, service listings, pricing, and location information you add to your profile.</li>
             <li><strong>Payment information:</strong> Processed and stored by Stripe. We do not store credit card numbers, bank account details, or full payment credentials on our servers.</li>
@@ -57,7 +57,7 @@ export default function PrivacyPage() {
           </ul>
 
           <h2>5. AI and Public Data Usage</h2>
-          <p>Public social media data — including follower counts, bio information, posts, and engagement metrics — is scraped using ScrapingBee to build and update creator profiles on the Platform. This data is used for:</p>
+          <p>Public social media data — including follower counts, bio information, posts, and engagement metrics — is collected via official platform APIs to build and update creator profiles on the Platform. This data is used for:</p>
           <ul>
             <li><strong>Profile creation:</strong> Automatically populating your creator profile with publicly available information.</li>
             <li><strong>Marketplace matching:</strong> Connecting creators with relevant brands based on audience data and content style.</li>
@@ -72,7 +72,7 @@ export default function PrivacyPage() {
           <ul>
             <li><strong>Public profiles:</strong> Creator profiles are visible to other users and search engines unless you disable this in your Privacy settings.</li>
             <li><strong>Stripe:</strong> Payment data is shared with Stripe for processing transactions. Stripe{"'"}s privacy policy applies.</li>
-            <li><strong>ScrapingBee:</strong> Public social profile URLs are shared with ScrapingBee for the purpose of collecting publicly available profile data.</li>
+            <li><strong>Social platform APIs:</strong> We use official APIs (Instagram Graph API, X API) to collect publicly available profile data from your connected accounts.</li>
             <li><strong>Google:</strong> If you sign in with Google OAuth, we receive your name, email, and profile photo from Google.</li>
             <li><strong>Resend:</strong> We use Resend to send transactional emails. Your email address is shared with Resend for delivery purposes only.</li>
             <li><strong>Vercel:</strong> The Platform is hosted on Vercel. Server logs may include IP addresses and request metadata.</li>
