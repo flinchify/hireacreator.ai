@@ -44,6 +44,8 @@ export async function GET() {
         allowMessages: user.privacy_allow_messages !== false,
         searchable: user.privacy_searchable !== false,
         is18Plus: user.is_18_plus_content || false,
+        socialOffersEnabled: user.social_offers_enabled !== false,
+        socialOutreachEnabled: user.social_outreach_enabled !== false,
       },
       createdAt: user.created_at,
     });

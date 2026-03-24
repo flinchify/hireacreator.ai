@@ -26,6 +26,8 @@ interface Settings {
     allowMessages: boolean;
     searchable: boolean;
     is18Plus: boolean;
+    socialOffersEnabled: boolean;
+    socialOutreachEnabled: boolean;
   };
   createdAt: string;
 }
@@ -368,6 +370,8 @@ function PrivacyTab({ settings, refresh }: { settings: Settings; refresh: () => 
         allowMessages: privacy.allowMessages,
         searchable: privacy.searchable,
         is18Plus: privacy.is18Plus,
+        socialOffersEnabled: privacy.socialOffersEnabled,
+        socialOutreachEnabled: privacy.socialOutreachEnabled,
       }),
     });
     if (res.ok) {
@@ -427,6 +431,45 @@ function PrivacyTab({ settings, refresh }: { settings: Settings; refresh: () => 
             label="Show Earnings"
             desc="Show total earnings on your profile. Most creators keep this private."
           />
+        </div>
+      </Card>
+
+      <Card className="p-4 sm:p-6">
+        <h3 className="font-display font-bold text-neutral-900 mb-1">Social Media Deals</h3>
+        <p className="text-xs text-neutral-500 mb-2">Control how you interact with brands and creators through social media tagging</p>
+        <div className="divide-y divide-neutral-100">
+          {settings.role === "creator" && (
+            <Toggle
+              checked={privacy.socialOffersEnabled}
+              onChange={v => setPrivacy({ ...privacy, socialOffersEnabled: v })}
+              label="Allow social media offers"
+              desc="When on, brands can tag you on Instagram or X to send offers. When off, the bot won't build your profile or reply when you're tagged."
+            />
+          )}
+          {settings.role === "brand" && (
+            <Toggle
+              checked={privacy.socialOutreachEnabled}
+              onChange={v => setPrivacy({ ...privacy, socialOutreachEnabled: v })}
+              label="Enable social media outreach"
+              desc="When on, you can tag creators on Instagram or X to send them offers through the platform."
+            />
+          )}
+          {settings.role !== "creator" && settings.role !== "brand" && (
+            <>
+              <Toggle
+                checked={privacy.socialOffersEnabled}
+                onChange={v => setPrivacy({ ...privacy, socialOffersEnabled: v })}
+                label="Allow social media offers"
+                desc="When on, brands can tag you on Instagram or X to send offers. When off, the bot won't build your profile or reply when you're tagged."
+              />
+              <Toggle
+                checked={privacy.socialOutreachEnabled}
+                onChange={v => setPrivacy({ ...privacy, socialOutreachEnabled: v })}
+                label="Enable social media outreach"
+                desc="When on, you can tag creators on Instagram or X to send them offers through the platform."
+              />
+            </>
+          )}
         </div>
       </Card>
 

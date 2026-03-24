@@ -236,7 +236,8 @@ export default function HowItWorksPage() {
                 {
                   num: "1",
                   title: "Tag",
-                  desc: "Brand tags @hireacreatorai on Instagram or X with a creator they want to work with.",
+                  desc: "A brand comments @hireacreatorai @jessicafitness on Instagram — or tweets it on X.",
+                  example: 'e.g. "@hireacreatorai @jessicafitness would be great for our summer campaign"',
                   icon: (
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" /></svg>
                   ),
@@ -244,7 +245,8 @@ export default function HowItWorksPage() {
                 {
                   num: "2",
                   title: "Profile Built",
-                  desc: "AI builds the creator's page instantly — avatar, stats, niche, and rating.",
+                  desc: "Within 60 seconds, jessicafitness has a custom link-in-bio page with her avatar, bio, and 124K followers pulled from Instagram.",
+                  example: "AI picks a fitness template, bold colors, and detects her niche automatically.",
                   icon: (
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4" /><path d="M4 21v-1a6 6 0 0112 0v1" /><path d="M16 3l2 2 4-4" /></svg>
                   ),
@@ -252,7 +254,8 @@ export default function HowItWorksPage() {
                 {
                   num: "3",
                   title: "Offer Sent",
-                  desc: "Brand sends an offer with budget and brief through the platform.",
+                  desc: "The brand sends jessicafitness a $2,500 offer for 2 Instagram Reels through the platform.",
+                  example: "Brief: 2 Reels + 1 Story featuring their protein powder. 7-day deadline.",
                   icon: (
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 2L11 13" /><path d="M22 2L15 22l-4-9-9-4z" /></svg>
                   ),
@@ -260,7 +263,8 @@ export default function HowItWorksPage() {
                 {
                   num: "4",
                   title: "Creator Accepts",
-                  desc: "Creator claims their profile, verifies their account, and accepts the offer.",
+                  desc: "Jessica gets notified, claims her pre-built profile, verifies her Instagram, and accepts the $2,500 offer.",
+                  example: "One click to claim. One click to accept. Profile already looks great.",
                   icon: (
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 12l2 2 4-4" /><rect x="3" y="3" width="18" height="18" rx="2" /></svg>
                   ),
@@ -268,7 +272,8 @@ export default function HowItWorksPage() {
                 {
                   num: "5",
                   title: "Brand Pays",
-                  desc: "Payment held securely in escrow until work is delivered and approved.",
+                  desc: "The brand pays $2,500 via Stripe. Funds are held in secure escrow — Jessica can see the money is locked in.",
+                  example: "No one touches the money until the work is reviewed and approved.",
                   icon: (
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
                   ),
@@ -276,7 +281,8 @@ export default function HowItWorksPage() {
                 {
                   num: "6",
                   title: "Creator Delivers",
-                  desc: "Creator submits their work — content, deliverables, everything in the brief.",
+                  desc: "Jessica films and uploads 2 Reels and 1 Story. She submits the deliverables through the platform.",
+                  example: "All content is tracked. The brand gets notified instantly when it's ready.",
                   icon: (
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" /></svg>
                   ),
@@ -284,7 +290,8 @@ export default function HowItWorksPage() {
                 {
                   num: "7",
                   title: "Brand Approves",
-                  desc: "Brand reviews the deliverables. Request revisions or approve to release payment.",
+                  desc: "The brand watches Jessica's Reels, loves them, and clicks Approve. Or requests one small revision first.",
+                  example: "Revisions are free. Payment only releases after the brand is happy.",
                   icon: (
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14 9V5a3 3 0 00-6 0v4" /><path d="M18.8 22H5.2A2.2 2.2 0 013 19.8v-5.6A2.2 2.2 0 015.2 12h13.6a2.2 2.2 0 012.2 2.2v5.6a2.2 2.2 0 01-2.2 2.2z" /><path d="M12 16v2" /></svg>
                   ),
@@ -292,7 +299,8 @@ export default function HowItWorksPage() {
                 {
                   num: "8",
                   title: "Creator Gets Paid",
-                  desc: "Money released to creator. They keep 100% — no commission, no hidden fees.",
+                  desc: "Jessica receives $2,500 directly to her bank account. No commission, no hidden fees, no waiting.",
+                  example: "From an Instagram comment to $2,500 in her bank. That's the whole flow.",
                   icon: (
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" /></svg>
                   ),
@@ -309,7 +317,9 @@ export default function HowItWorksPage() {
                     <span className="inline-block text-xs font-semibold text-blue-500 bg-blue-50 px-2 py-0.5 rounded-full mb-2">Step {step.num}</span>
                     <h3 className="text-lg font-bold text-neutral-900">{step.title}</h3>
                     <p className="text-sm text-neutral-600 mt-1 leading-relaxed max-w-xs mx-auto">{step.desc}</p>
-
+                    {step.example && (
+                      <p className="text-xs text-neutral-400 mt-2 italic max-w-xs mx-auto">{step.example}</p>
+                    )}
                   </div>
                 </div>
               ))}

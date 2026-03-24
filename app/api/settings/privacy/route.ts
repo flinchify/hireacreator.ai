@@ -31,6 +31,8 @@ export async function PATCH(request: Request) {
       privacy_searchable = COALESCE(${body.searchable ?? null}, privacy_searchable),
       visible_in_marketplace = COALESCE(${body.profilePublic ?? null}, visible_in_marketplace),
       is_18_plus_content = COALESCE(${body.is18Plus ?? null}, is_18_plus_content),
+      social_offers_enabled = COALESCE(${body.socialOffersEnabled ?? null}, social_offers_enabled),
+      social_outreach_enabled = COALESCE(${body.socialOutreachEnabled ?? null}, social_outreach_enabled),
       updated_at = NOW()
     WHERE id = ${user.id}
   `;

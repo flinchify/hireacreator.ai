@@ -68,6 +68,11 @@ export async function POST(req: NextRequest) {
       manualInputRequired: !result.profile.avatarUrl && !result.profile.bio && result.profile.followerCount === 0,
       design: {
         template: result.design.template,
+        bgType: result.design.bgType,
+        bgValue: result.design.bgValue,
+        textColor: result.design.textColor,
+        font: result.design.font,
+        buttonShape: result.design.buttonShape,
         suggestedHeadline: result.design.suggestedHeadline,
         suggestedServices: result.design.suggestedServices,
       },

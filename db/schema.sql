@@ -26,6 +26,8 @@ CREATE TABLE users (
     total_projects INTEGER DEFAULT 0,
     rating NUMERIC(3,2) DEFAULT 0,
     review_count INTEGER DEFAULT 0,
+    social_offers_enabled BOOLEAN DEFAULT TRUE,
+    social_outreach_enabled BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

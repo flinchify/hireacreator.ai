@@ -73,18 +73,26 @@ export async function GET(request: Request) {
           const existing = await sql`
             SELECT comment_id FROM ig_replied_comments WHERE comment_id = ${comment.id}
           `.catch(() => []);
-          
+
           if (existing && existing.length > 0) continue; // Already replied
+
+          // Check if the tagged creator has social offers disabled
+          const username = comment.username;
+          const creatorCheck = await sql`
+            SELECT u.social_offers_enabled FROM users u
+            JOIN social_connections sc ON sc.user_id = u.id
+            WHERE sc.platform = 'instagram' AND LOWER(sc.handle) = LOWER(${username})
+            LIMIT 1
+          `.catch(() => []);
+          if (creatorCheck.length > 0 && creatorCheck[0].social_offers_enabled === false) continue;
 
           // Rate limit: max 3 replies per user per 24 hours (anti-spam)
           const recentReplies = await sql`
-            SELECT COUNT(*) as cnt FROM ig_replied_comments 
-            WHERE username = ${comment.username} AND replied_at > NOW() - INTERVAL '24 hours'
+            SELECT COUNT(*) as cnt FROM ig_replied_comments
+            WHERE username = ${username} AND replied_at > NOW() - INTERVAL '24 hours'
           `.catch(() => [{ cnt: 0 }]);
           const replyCount = Number(recentReplies[0]?.cnt || 0);
           if (replyCount >= 3) continue;
-
-          const username = comment.username;
           const replyText = generateSmartReply(comment.text, username, "instagram");
           
           try {

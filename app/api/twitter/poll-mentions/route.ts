@@ -143,10 +143,21 @@ export async function GET(request: Request) {
       `.catch(() => []);
       if (existing && existing.length > 0) continue;
 
+      // Check if the tagged creator has social offers disabled
+      if (username) {
+        const creatorCheck = await sql`
+          SELECT u.social_offers_enabled FROM users u
+          JOIN social_connections sc ON sc.user_id = u.id
+          WHERE sc.platform = 'x' AND LOWER(sc.handle) = LOWER(${username})
+          LIMIT 1
+        `.catch(() => []);
+        if (creatorCheck.length > 0 && creatorCheck[0].social_offers_enabled === false) continue;
+      }
+
       // Rate limit: max 3 replies per user per 24 hours (anti-spam)
       if (username) {
         const recentReplies = await sql`
-          SELECT COUNT(*) as cnt FROM x_replied_tweets 
+          SELECT COUNT(*) as cnt FROM x_replied_tweets
           WHERE username = ${username} AND replied_at > NOW() - INTERVAL '24 hours'
         `.catch(() => [{ cnt: 0 }]);
         const count = Number(recentReplies[0]?.cnt || 0);
