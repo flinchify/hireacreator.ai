@@ -6,7 +6,7 @@ import { cookies } from "next/headers";
 import { getCreatorBySlug } from "@/lib/queries";
 import { getDb } from "@/lib/db";
 import { LinkInBioContent } from "@/components/link-in-bio-content";
-import { OwnerEditBar } from "@/components/owner-edit-bar";
+// Owner edit bar removed — not needed on live preview
 import { UnclaimedProfile } from "./unclaimed-profile";
 import { ClaimBanner } from "./claim-banner";
 import { designProfile } from "@/lib/ai-profile-designer";
@@ -228,7 +228,6 @@ export default async function LinkInBioPage({ params }: { params: { slug: string
         }
         return (
           <>
-            {isOwner && <OwnerEditBar slug={params.slug} />}
             <LinkInBioContent creator={creator} />
           </>
         );
@@ -250,7 +249,6 @@ export default async function LinkInBioPage({ params }: { params: { slug: string
 
   return (
     <>
-      {isOwner && <OwnerEditBar slug={params.slug} />}
       <LinkInBioContent creator={creator} />
     </>
   );
