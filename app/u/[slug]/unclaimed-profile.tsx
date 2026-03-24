@@ -2,8 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Header } from "@/components/header";
-import { Footer } from "@/components/footer";
 import { useAuth } from "@/components/auth-context";
 
 type ProfileData = {
@@ -129,9 +127,7 @@ export function UnclaimedProfile({
 
   return (
     <div className="min-h-screen bg-white">
-      <Header />
-
-      <main className="pt-28 sm:pt-36 pb-20">
+      <main className="pt-8 sm:pt-12 pb-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
           {/* Claim Banner */}
           <div className="bg-gradient-to-r from-blue-50 to-violet-50 border border-blue-100 rounded-2xl p-5 sm:p-6 mb-8">
@@ -300,8 +296,6 @@ export function UnclaimedProfile({
           </p>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 }

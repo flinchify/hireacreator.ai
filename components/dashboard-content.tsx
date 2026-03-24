@@ -3,11 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useAuth, User } from "./auth-context";
 import { CalendarManager } from "./calendar-manager";
-import { LinkManager } from "./link-manager";
 import { PlatformIcon } from "./icons/platforms";
-import { AnimationsContent } from "./animations-content";
-import { AnalyticsContent } from "./analytics-content";
-import { EarningsContent } from "./earnings-content";
 import { ReplyTemplatesManager } from "./reply-templates-manager";
 import { VerificationManager } from "./verification-manager";
 import { BioWriterModal } from "./bio-writer-modal";
@@ -824,15 +820,13 @@ function AdminFeaturedCreators() {
 }
 
 /* ═══ Sidebar nav items ═══ */
-type Section = "overview" | "offers" | "services" | "links" | "calendar" | "analytics" | "settings";
+type Section = "overview" | "offers" | "services" | "calendar" | "settings";
 
 const NAV_MAIN = [
   { id: "overview" as Section, label: "Overview", icon: icons.overview },
   { id: "offers" as Section, label: "Offers", icon: icons.offers },
   { id: "services" as Section, label: "Services", icon: icons.services },
-  { id: "links" as Section, label: "My Bio Link", icon: icons.link },
   { id: "calendar" as Section, label: "Calendar", icon: icons.calendar },
-  { id: "analytics" as Section, label: "Analytics", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M18 20V10M12 20V4M6 20v-6" strokeLinecap="round" strokeLinejoin="round"/></svg> },
 ];
 
 const NAV_BOTTOM = [
@@ -1453,7 +1447,6 @@ export function DashboardContent() {
   const [uploadError, setUploadError] = useState("");
   const [showTemplates, setShowTemplates] = useState(false);
   const [showTestimonials, setShowTestimonials] = useState(false);
-  const [analyticsTab, setAnalyticsTab] = useState<"views" | "earnings">("views");
 
   async function handleUpload(file: File, type: "avatar" | "cover") {
     setUploadError("");
@@ -1833,14 +1826,12 @@ export function DashboardContent() {
                         <div className="flex-1 min-w-0"><div className="text-sm font-semibold text-neutral-900">Edit Page</div><div className="text-xs text-neutral-400 mt-0.5">Templates, links, design</div></div>
                       </a>
                     )}
-                    <button onClick={() => setSection("links")} className="flex items-center gap-3 bg-white rounded-2xl border border-neutral-200/60 p-4 hover:border-neutral-300 hover:shadow-sm transition-all group w-full text-left">
-                      <div className="w-10 h-10 rounded-xl bg-neutral-100 flex items-center justify-center shrink-0 text-neutral-500 group-hover:bg-neutral-200 transition-colors">{icons.sparkle}</div>
-                      <div className="flex-1 min-w-0"><div className="text-sm font-semibold text-neutral-900">Animations</div><div className="text-xs text-neutral-400 mt-0.5">Premium intro effects</div></div>
-                    </button>
-                    <button onClick={() => setSection("analytics")} className="flex items-center gap-3 bg-white rounded-2xl border border-neutral-200/60 p-4 hover:border-neutral-300 hover:shadow-sm transition-all group w-full text-left">
-                      <div className="w-10 h-10 rounded-xl bg-neutral-100 flex items-center justify-center shrink-0 text-neutral-500 group-hover:bg-neutral-200 transition-colors"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M18 20V10M12 20V4M6 20v-6" strokeLinecap="round" strokeLinejoin="round"/></svg></div>
-                      <div className="flex-1 min-w-0"><div className="text-sm font-semibold text-neutral-900">Analytics</div><div className="text-xs text-neutral-400 mt-0.5">Views & earnings</div></div>
-                    </button>
+                    {user.slug && (
+                      <a href={`/dashboard/link-in-bio`} className="flex items-center gap-3 bg-white rounded-2xl border border-neutral-200/60 p-4 hover:border-neutral-300 hover:shadow-sm transition-all group">
+                        <div className="w-10 h-10 rounded-xl bg-neutral-100 flex items-center justify-center shrink-0 text-neutral-500 group-hover:bg-neutral-200 transition-colors">{icons.sparkle}</div>
+                        <div className="flex-1 min-w-0"><div className="text-sm font-semibold text-neutral-900">Edit Bio Link</div><div className="text-xs text-neutral-400 mt-0.5">Templates, links, design</div></div>
+                      </a>
+                    )}
                     {/* Boost Profile */}
                     {user.slug && (
                       <button onClick={async () => {
@@ -1855,37 +1846,6 @@ export function DashboardContent() {
                         <div className="flex-1 min-w-0"><div className="text-sm font-semibold text-neutral-900">Boost Profile</div><div className="text-xs text-amber-600 mt-0.5">$4.99/week — rank higher in search</div></div>
                       </button>
                     )}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* LINKS */}
-            {section === "links" && (
-              <div className="max-w-2xl">
-                <div className="flex items-center justify-between mb-5">
-                  <div>
-                    <h2 className="text-lg font-bold text-neutral-900">Your Links</h2>
-                    <p className="text-xs text-neutral-400 mt-0.5">Add links to your link-in-bio page. Drag to reorder.</p>
-                  </div>
-                  {user.slug && <a href={`/u/${user.slug}/edit`} className="px-4 py-2 text-xs font-semibold text-white bg-neutral-900 rounded-xl hover:bg-neutral-800 active:scale-[0.98] transition-all">Open Editor</a>}
-                </div>
-                <div className="bg-white rounded-2xl border border-neutral-200/60 p-5">
-                  <LinkManager />
-                </div>
-
-                {/* Animations */}
-                <div className="mt-6">
-                  <AnimationsContent />
-                  <div className="mt-4 p-4 bg-neutral-50 border border-neutral-200/60 rounded-2xl">
-                    <h4 className="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-2">Animation Purchase Terms</h4>
-                    <ul className="text-[11px] text-neutral-400 space-y-1 list-disc list-inside leading-relaxed">
-                      <li>All animation purchases are non-refundable once applied to your profile.</li>
-                      <li>Animations are a one-time purchase — no recurring charges.</li>
-                      <li>Purchased animations are tied to your account and are non-transferable.</li>
-                      <li>HireACreator reserves the right to modify or discontinue animations at any time.</li>
-                      <li>Use of animations is subject to the HireACreator platform Terms of Service.</li>
-                    </ul>
                   </div>
                 </div>
               </div>
@@ -1920,19 +1880,6 @@ export function DashboardContent() {
               <OffersManager user={user} />
             )}
 
-            {/* ANALYTICS (with Earnings tab) */}
-            {section === "analytics" && (
-              <div>
-                <div className="flex gap-1 mb-6 bg-neutral-100 rounded-xl p-1 max-w-xs">
-                  <button onClick={() => setAnalyticsTab("views")} className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-colors ${analyticsTab === "views" ? "bg-white text-neutral-900 shadow-sm" : "text-neutral-500 hover:text-neutral-700"}`}>Views</button>
-                  <button onClick={() => setAnalyticsTab("earnings")} className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-colors ${analyticsTab === "earnings" ? "bg-white text-neutral-900 shadow-sm" : "text-neutral-500 hover:text-neutral-700"}`}>Earnings</button>
-                </div>
-                {analyticsTab === "views" && <AnalyticsContent />}
-                {analyticsTab === "earnings" && <EarningsContent />}
-              </div>
-            )}
-
-
             {/* SETTINGS */}
             {section === "settings" && (
               <div className="max-w-2xl space-y-3">
@@ -1940,22 +1887,13 @@ export function DashboardContent() {
                   { href: "/dashboard/settings", label: "Account & Security", desc: "Email, password, 2FA, sessions", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg> },
                   { href: "/dashboard/settings?tab=privacy", label: "Privacy", desc: "Profile visibility, messaging, content warnings", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg> },
                   { href: "/dashboard/settings?tab=plan", label: "Plan & Billing", desc: "Subscription, upgrade, payment history", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="1" y="4" width="22" height="16" rx="2" /><path d="M1 10h22" /></svg> },
-                  { href: user.slug ? `/u/${user.slug}/edit` : "/dashboard", label: "Link in Bio Editor", desc: "Templates, backgrounds, buttons, colors", icon: icons.pencil },
-                  { href: "#", label: "Animations Store", desc: "Premium intro effects for your link in bio", icon: icons.sparkle, onClick: () => setSection("links") },
+                  { href: "/dashboard/link-in-bio", label: "Link in Bio Editor", desc: "Templates, links, design, animations", icon: icons.pencil },
                 ].map(item => (
-                  item.onClick ? (
-                    <button key={item.label} onClick={item.onClick} className="flex items-center gap-4 bg-white rounded-2xl border border-neutral-200/60 p-4 hover:border-neutral-300 hover:shadow-sm transition-all group w-full text-left">
-                      <div className="w-10 h-10 rounded-xl bg-neutral-100 flex items-center justify-center shrink-0 text-neutral-500 group-hover:bg-neutral-200 transition-colors">{item.icon}</div>
-                      <div className="flex-1 min-w-0"><div className="text-sm font-semibold text-neutral-900">{item.label}</div><div className="text-xs text-neutral-400 mt-0.5">{item.desc}</div></div>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-neutral-300 shrink-0"><path d="M9 18l6-6-6-6" strokeLinecap="round" /></svg>
-                    </button>
-                  ) : (
-                    <Link key={item.href} href={item.href} className="flex items-center gap-4 bg-white rounded-2xl border border-neutral-200/60 p-4 hover:border-neutral-300 hover:shadow-sm transition-all group">
-                      <div className="w-10 h-10 rounded-xl bg-neutral-100 flex items-center justify-center shrink-0 text-neutral-500 group-hover:bg-neutral-200 transition-colors">{item.icon}</div>
-                      <div className="flex-1 min-w-0"><div className="text-sm font-semibold text-neutral-900">{item.label}</div><div className="text-xs text-neutral-400 mt-0.5">{item.desc}</div></div>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-neutral-300 shrink-0"><path d="M9 18l6-6-6-6" strokeLinecap="round" /></svg>
-                    </Link>
-                  )
+                  <Link key={item.href} href={item.href} className="flex items-center gap-4 bg-white rounded-2xl border border-neutral-200/60 p-4 hover:border-neutral-300 hover:shadow-sm transition-all group">
+                    <div className="w-10 h-10 rounded-xl bg-neutral-100 flex items-center justify-center shrink-0 text-neutral-500 group-hover:bg-neutral-200 transition-colors">{item.icon}</div>
+                    <div className="flex-1 min-w-0"><div className="text-sm font-semibold text-neutral-900">{item.label}</div><div className="text-xs text-neutral-400 mt-0.5">{item.desc}</div></div>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-neutral-300 shrink-0"><path d="M9 18l6-6-6-6" strokeLinecap="round" /></svg>
+                  </Link>
                 ))}
 
                 {/* Sign Out */}
@@ -1984,9 +1922,7 @@ export function DashboardContent() {
             { id: "overview" as Section, label: "Overview", icon: icons.overview },
             { id: "offers" as Section, label: "Offers", icon: icons.offers },
             { id: "services" as Section, label: "Services", icon: icons.services },
-            { id: "links" as Section, label: "Bio Link", icon: icons.link },
             { id: "calendar" as Section, label: "Calendar", icon: icons.calendar },
-            { id: "analytics" as Section, label: "Analytics", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M18 20V10M12 20V4M6 20v-6" strokeLinecap="round" strokeLinejoin="round"/></svg> },
             { id: "settings" as Section, label: "Settings", icon: icons.settings },
           ]).map(n => (
             <button key={n.id} onClick={() => setSection(n.id)}

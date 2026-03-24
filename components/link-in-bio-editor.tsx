@@ -951,7 +951,7 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-5">
         <div className="flex flex-col lg:flex-row gap-5">
           {/* Left — Editor */}
-          <div className="lg:w-[55%] space-y-4">
+          <div className="lg:w-[55%] space-y-4 pb-20 lg:pb-0">
             {/* Section tabs — scrollable */}
             <div className="flex gap-1 p-1 bg-white rounded-2xl border border-neutral-200/60 overflow-x-auto sticky top-14 z-40 scrollbar-hide">
               {sections.map(s => (
@@ -978,7 +978,7 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
             {section === "template" && (
               <div className="bg-white rounded-2xl border border-neutral-200/60 p-5">
                 <h2 className="text-sm font-bold text-neutral-900 mb-4">Choose Template</h2>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 max-h-[70vh] overflow-y-auto pr-1">
                   {TEMPLATES.map(t => (
                     <button key={t.id} onClick={() => save({ template: t.id })} className={`relative rounded-2xl overflow-hidden transition-all active:scale-95 ${settings.template === t.id ? "ring-2 ring-neutral-900 ring-offset-2" : "hover:ring-1 hover:ring-neutral-300"}`}>
                       <EditorTemplateMini id={t.id} />
@@ -1445,14 +1445,22 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
         </div>
       </div>
 
-      {/* Mobile Preview FAB */}
-      <button
-        onClick={() => setMobilePreview(true)}
-        className="lg:hidden fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-neutral-900 text-white shadow-xl flex items-center justify-center hover:bg-neutral-800 active:scale-95 transition-all"
-        aria-label="Preview"
-      >
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>
-      </button>
+      {/* Mobile bottom bar — save status + preview */}
+      <div className="lg:hidden fixed bottom-0 inset-x-0 z-50 bg-white/95 backdrop-blur-xl border-t border-neutral-200 px-4 py-3 flex items-center justify-between gap-3" style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 12px)" }}>
+        <div className="flex items-center gap-2 min-w-0">
+          {saving && <div className="w-4 h-4 border-2 border-neutral-300 border-t-neutral-900 rounded-full animate-spin shrink-0" />}
+          {saved && <span className="text-xs text-emerald-600 font-medium flex items-center gap-1 px-2 py-1 bg-emerald-50 rounded-full shrink-0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 13l4 4L19 7" strokeLinecap="round" /></svg>Saved</span>}
+          {saveError && <span className="text-xs text-red-600 font-medium truncate">{saveError}</span>}
+          {!saving && !saved && !saveError && <span className="text-xs text-neutral-400">Auto-saves on change</span>}
+        </div>
+        <button
+          onClick={() => setMobilePreview(true)}
+          className="flex items-center gap-2 px-4 py-2.5 bg-neutral-900 text-white text-sm font-semibold rounded-xl hover:bg-neutral-800 active:scale-95 transition-all shrink-0"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>
+          Preview
+        </button>
+      </div>
 
       {/* Mobile Preview Overlay */}
       {mobilePreview && (

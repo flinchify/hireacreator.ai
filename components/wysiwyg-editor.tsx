@@ -198,10 +198,16 @@ const PREMIUM_ANIMS = [
 function DesignPanel({ data, onUpdate, ownedAnimations }: { data: Record<string, any>; onUpdate: (fields: Record<string, any>) => void; ownedAnimations: string[] }) {
   const templates = [
     { id: "minimal", name: "Minimal" }, { id: "glass", name: "Glass" },
-    { id: "bold", name: "Bold" }, { id: "neon", name: "Neon" },
-    { id: "showcase", name: "Showcase" }, { id: "collage", name: "Collage" },
+    { id: "bold", name: "Bold" }, { id: "showcase", name: "Showcase" },
+    { id: "neon", name: "Neon" }, { id: "collage", name: "Collage" },
     { id: "bento", name: "Bento" }, { id: "split", name: "Split" },
-    { id: "founder", name: "Founder" },
+    { id: "aurora", name: "Aurora" }, { id: "brutalist", name: "Brutalist" },
+    { id: "sunset", name: "Sunset" }, { id: "terminal", name: "Terminal" },
+    { id: "pastel", name: "Pastel" }, { id: "magazine", name: "Magazine" },
+    { id: "retro", name: "Retro" }, { id: "midnight", name: "Midnight" },
+    { id: "clay", name: "Clay" }, { id: "gradient-mesh", name: "Gradient Mesh" },
+    { id: "trader", name: "Trader" }, { id: "educator", name: "Educator" },
+    { id: "developer", name: "Developer" }, { id: "executive", name: "Executive" },
   ];
 
   const gradients = [
@@ -236,7 +242,7 @@ function DesignPanel({ data, onUpdate, ownedAnimations }: { data: Record<string,
       {/* Template */}
       <div>
         <h3 className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-2">Template</h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-1.5">
+        <div className="grid grid-cols-3 md:grid-cols-4 gap-1.5 max-h-[280px] overflow-y-auto pr-1">
           {templates.map(t => (
             <button key={t.id} onClick={() => onUpdate({ link_bio_template: t.id })} className={`py-2 text-[10px] font-medium rounded-lg transition-all ${data.link_bio_template === t.id ? "bg-neutral-900 text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"}`}>{t.name}</button>
           ))}
