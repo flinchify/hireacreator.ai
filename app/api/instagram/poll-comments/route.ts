@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
-import { generateSmartReply } from "@/lib/bot-replies";
+import { generateSmartReply, parseOfferFromText, generateOfferReply } from "@/lib/bot-replies";
 
 export const maxDuration = 30;
 
@@ -99,8 +99,61 @@ export async function GET(request: Request) {
           `.catch(() => [{ cnt: 0 }]);
           const replyCount = Number(recentReplies[0]?.cnt || 0);
           if (replyCount >= 3) continue;
-          const replyText = generateSmartReply(comment.text, username, "instagram");
-          
+          // Check for offer in comment text
+          const parsed = parseOfferFromText(comment.text);
+          let replyText: string;
+          let offerCreated = false;
+
+          if (parsed.hasOffer && parsed.creatorHandle) {
+            try {
+              let brandUserId: string | null = null;
+              const brandRows = await sql`
+                SELECT u.id FROM users u
+                JOIN social_connections sc ON sc.user_id = u.id
+                WHERE sc.platform = 'instagram' AND LOWER(sc.handle) = LOWER(${username})
+                LIMIT 1
+              `.catch(() => []);
+              if (brandRows.length > 0) brandUserId = brandRows[0].id;
+
+              let creatorUserId: string | null = null;
+              const creatorRows = await sql`
+                SELECT u.id FROM users u
+                JOIN social_connections sc ON sc.user_id = u.id
+                WHERE sc.platform = 'instagram' AND LOWER(sc.handle) = LOWER(${parsed.creatorHandle})
+                LIMIT 1
+              `.catch(() => []);
+              if (creatorRows.length > 0) creatorUserId = creatorRows[0].id;
+
+              const budgetCents = Math.round(parsed.budget! * 100);
+              const feeCents = Math.round(budgetCents * 0.15);
+
+              if (brandUserId) {
+                await sql`
+                  INSERT INTO offers (
+                    brand_user_id, creator_handle, creator_platform, creator_user_id,
+                    budget_cents, fee_cents, brief, deliverables, status
+                  ) VALUES (
+                    ${brandUserId}, ${parsed.creatorHandle.toLowerCase()}, 'instagram', ${creatorUserId},
+                    ${budgetCents}, ${feeCents}, ${comment.text}, ${parsed.deliverables || 'social media offer'}, 'pending'
+                  )
+                `.catch((e: any) => console.error("[IG Poll] Offer insert error:", e));
+              }
+              offerCreated = true;
+            } catch (e) {
+              console.error("[IG Poll] Offer creation failed:", e);
+            }
+
+            replyText = generateOfferReply(
+              parsed.creatorHandle,
+              username,
+              parsed.budget!,
+              parsed.deliverables,
+              "instagram"
+            );
+          } else {
+            replyText = generateSmartReply(comment.text, username, "instagram");
+          }
+
           try {
             const replyRes = await fetch(
               `https://graph.instagram.com/v21.0/${comment.id}/replies`,
@@ -114,7 +167,7 @@ export async function GET(request: Request) {
               }
             );
             const replyData = await replyRes.json();
-            
+
             // Track the reply
             if (replyRes.ok) {
               await sql`
@@ -137,6 +190,8 @@ export async function GET(request: Request) {
               text: comment.text,
               reply_status: replyRes.ok ? "replied" : "failed",
               reply_data: replyData,
+              offer_detected: parsed.hasOffer,
+              offer_created: offerCreated,
             });
           } catch (e: any) {
             results.push({

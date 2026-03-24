@@ -54,11 +54,19 @@ export async function generateAutoProfile(
         `.catch(() => {});
 
         const score = calculateCreatorScore(freshProfile);
+        const freshDesign = designProfile(freshProfile);
         await db`
           UPDATE claimed_profiles SET
             creator_score = ${score.score},
             score_breakdown = ${JSON.stringify(score.breakdown)},
-            estimated_post_value = ${score.estimatedPostValue}
+            estimated_post_value = ${score.estimatedPostValue},
+            link_bio_template = ${freshDesign.template},
+            link_bio_bg_type = ${freshDesign.bgType},
+            link_bio_bg_value = ${freshDesign.bgValue},
+            link_bio_text_color = ${freshDesign.textColor},
+            link_bio_font = ${freshDesign.font},
+            link_bio_button_shape = ${freshDesign.buttonShape},
+            link_bio_headline = ${freshDesign.suggestedHeadline}
           WHERE id = ${row.id}
         `.catch(() => {});
 
@@ -166,20 +174,26 @@ export async function generateAutoProfile(
     }
   }
 
-  // Insert into claimed_profiles
+  const design = designProfile(profile);
+
+  // Insert into claimed_profiles (with AI design fields)
   await db`
     INSERT INTO claimed_profiles (
       platform, platform_handle, platform_id, display_name, avatar_url, bio,
       follower_count, following_count, post_count, engagement_rate, niche,
       creator_score, score_breakdown, estimated_post_value, auto_profile_slug,
-      referrer_handle, source_post_url
+      referrer_handle, source_post_url,
+      link_bio_template, link_bio_bg_type, link_bio_bg_value, link_bio_text_color,
+      link_bio_font, link_bio_button_shape, link_bio_headline
     ) VALUES (
       ${platform}, ${cleanHandle}, ${profile.handle}, ${profile.displayName},
       ${profile.avatarUrl}, ${profile.bio}, ${profile.followerCount},
       ${profile.followingCount}, ${profile.postCount}, ${profile.followerCount > 0 ? score.breakdown.engagement : 0},
       ${score.detectedNiche}, ${score.score}, ${JSON.stringify(score.breakdown)},
       ${score.estimatedPostValue}, ${slug}, ${options?.referrerHandle || null},
-      ${options?.sourcePostUrl || null}
+      ${options?.sourcePostUrl || null},
+      ${design.template}, ${design.bgType}, ${design.bgValue}, ${design.textColor},
+      ${design.font}, ${design.buttonShape}, ${design.suggestedHeadline}
     )
     ON CONFLICT (platform, platform_handle) DO UPDATE SET
       display_name = EXCLUDED.display_name,
@@ -192,10 +206,15 @@ export async function generateAutoProfile(
       score_breakdown = EXCLUDED.score_breakdown,
       estimated_post_value = EXCLUDED.estimated_post_value,
       niche = EXCLUDED.niche,
+      link_bio_template = EXCLUDED.link_bio_template,
+      link_bio_bg_type = EXCLUDED.link_bio_bg_type,
+      link_bio_bg_value = EXCLUDED.link_bio_bg_value,
+      link_bio_text_color = EXCLUDED.link_bio_text_color,
+      link_bio_font = EXCLUDED.link_bio_font,
+      link_bio_button_shape = EXCLUDED.link_bio_button_shape,
+      link_bio_headline = EXCLUDED.link_bio_headline,
       updated_at = NOW()
   `;
-
-  const design = designProfile(profile);
 
   return {
     profile,

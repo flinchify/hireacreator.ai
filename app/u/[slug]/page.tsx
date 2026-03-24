@@ -8,6 +8,9 @@ import { getDb } from "@/lib/db";
 import { LinkInBioContent } from "@/components/link-in-bio-content";
 import { OwnerEditBar } from "@/components/owner-edit-bar";
 import { UnclaimedProfile } from "./unclaimed-profile";
+import { ClaimBanner } from "./claim-banner";
+import { designProfile } from "@/lib/ai-profile-designer";
+import type { Creator } from "@/lib/types";
 
 async function getSessionUserId(): Promise<string | null> {
   const token = cookies().get("session_token")?.value;
@@ -92,41 +95,113 @@ export default async function LinkInBioPage({ params }: { params: { slug: string
   const autoProfile = await getAutoProfile(params.slug);
 
   if (autoProfile && !autoProfile.claimed_by) {
-    // Unclaimed auto-generated profile
-    const campaigns = await getMatchingCampaigns(
-      (autoProfile.niche as string) || "general",
-      (autoProfile.follower_count as number) || 0,
-      (autoProfile.platform as string) || "instagram"
-    );
+    // Use stored design fields or generate on-the-fly
+    const hasStoredDesign = !!(autoProfile.link_bio_template);
+    const niche = (autoProfile.niche as string) || "general";
+    const followerCount = (autoProfile.follower_count as number) || 0;
 
-    const breakdown = typeof autoProfile.score_breakdown === "string"
-      ? JSON.parse(autoProfile.score_breakdown)
-      : autoProfile.score_breakdown || {};
+    let template = autoProfile.link_bio_template as string || "";
+    let bgType = autoProfile.link_bio_bg_type as string || "";
+    let bgValue = autoProfile.link_bio_bg_value as string || "";
+    let textColor = autoProfile.link_bio_text_color as string || "";
+    let font = autoProfile.link_bio_font as string || "";
+    let buttonShape = autoProfile.link_bio_button_shape as string || "";
+    let headline = autoProfile.link_bio_headline as string || "";
+
+    if (!hasStoredDesign) {
+      const design = designProfile({
+        platform: (autoProfile.platform as string) || "instagram",
+        handle: (autoProfile.platform_handle as string) || "",
+        displayName: (autoProfile.display_name as string) || (autoProfile.platform_handle as string),
+        avatarUrl: autoProfile.avatar_url as string | null,
+        bio: autoProfile.bio as string | null,
+        followerCount,
+        followingCount: (autoProfile.following_count as number) || 0,
+        postCount: (autoProfile.post_count as number) || 0,
+        isVerified: false,
+        category: niche,
+        externalUrl: null,
+        websites: [],
+        otherSocials: [],
+        profileUrl: "",
+        isBusinessAccount: false,
+      });
+      template = design.template;
+      bgType = design.bgType;
+      bgValue = design.bgValue;
+      textColor = design.textColor;
+      font = design.font;
+      buttonShape = design.buttonShape;
+      headline = design.suggestedHeadline;
+    }
+
+    const creator: Creator = {
+      id: autoProfile.id as string,
+      name: (autoProfile.display_name as string) || (autoProfile.platform_handle as string),
+      slug: params.slug,
+      avatar: autoProfile.avatar_url as string | null,
+      cover: null,
+      headline: headline || null,
+      bio: autoProfile.bio as string | null,
+      location: null,
+      category: niche,
+      hourlyRate: null,
+      rating: 0,
+      reviewCount: 0,
+      totalProjects: 0,
+      isVerified: false,
+      isFeatured: false,
+      isOnline: false,
+      isPro: false,
+      subscriptionTier: "free",
+      visibleInMarketplace: false,
+      websiteUrl: null,
+      businessName: null,
+      businessUrl: null,
+      allowMessages: false,
+      is18PlusContent: false,
+      linkBioTemplate: template || "minimal",
+      linkBioAccent: "",
+      linkBioFont: font || "jakarta",
+      linkBioTextColor: textColor || "",
+      linkBioBgType: bgType || "gradient",
+      linkBioBgValue: bgValue || "",
+      linkBioBgVideo: "",
+      linkBioBgImages: [],
+      linkBioButtonShape: buttonShape || "soft",
+      linkBioButtonAnim: "",
+      linkBioCardStyle: "",
+      linkBioIntroAnim: "none",
+      linkBioTextSize: "",
+      linkBioAvatarSize: "",
+      linkBioButtonSize: "",
+      linkBioContentPosition: "",
+      linkBioContentAlign: "",
+      hasStripeAccount: false,
+      calendarEnabled: false,
+      profileViews: 0,
+      nicheRank: 0,
+      creatorScore: (autoProfile.creator_score as number) || 0,
+      scoreBreakdown: typeof autoProfile.score_breakdown === "string"
+        ? JSON.parse(autoProfile.score_breakdown)
+        : autoProfile.score_breakdown || {},
+      bioLinks: [],
+      socials: [],
+      services: [],
+      portfolio: [],
+      reviews: [],
+      products: [],
+      testimonials: [],
+    };
 
     return (
-      <UnclaimedProfile
-        profile={{
-          platform: autoProfile.platform as string,
-          handle: autoProfile.platform_handle as string,
-          displayName: (autoProfile.display_name as string) || (autoProfile.platform_handle as string),
-          avatarUrl: autoProfile.avatar_url as string | null,
-          bio: autoProfile.bio as string | null,
-          followerCount: (autoProfile.follower_count as number) || 0,
-          followingCount: (autoProfile.following_count as number) || 0,
-          postCount: (autoProfile.post_count as number) || 0,
-          niche: (autoProfile.niche as string) || "general",
-          score: (autoProfile.creator_score as number) || 0,
-          breakdown,
-          estimatedPostValue: (autoProfile.estimated_post_value as number) || 500,
-          slug: params.slug,
-        }}
-        campaigns={campaigns.map((c) => ({
-          id: c.id as string,
-          title: c.title as string,
-          niche: (c.niche as string) || "",
-          budgetPerCreator: (c.budget_per_creator_cents as number) || 0,
-        }))}
-      />
+      <>
+        <LinkInBioContent creator={creator} />
+        <ClaimBanner
+          platform={(autoProfile.platform as string) || "instagram"}
+          handle={(autoProfile.platform_handle as string) || ""}
+        />
+      </>
     );
   }
 

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
-import { generateSmartReply } from "@/lib/bot-replies";
+import { generateSmartReply, parseOfferFromText, generateOfferReply } from "@/lib/bot-replies";
 
 const VERIFY_TOKEN = process.env.INSTAGRAM_WEBHOOK_VERIFY_TOKEN || "hireacreator-ig-verify-2026";
 
@@ -83,20 +83,34 @@ export async function POST(request: Request) {
 
             // Auto-reply to the comment mentioning the creator
             if (commentId) {
-              const accessToken = process.env.INSTAGRAM_ACCESS_TOKEN;
-              if (accessToken) {
-                const replyText = generateSmartReply(text, from.username, "instagram");
+              // Check if already replied (prevent duplicates from webhook + poll overlap)
+              await sql`CREATE TABLE IF NOT EXISTS ig_replied_comments (comment_id TEXT PRIMARY KEY, username TEXT, replied_at TIMESTAMPTZ DEFAULT NOW())`.catch(() => {});
+              const alreadyReplied = await sql`SELECT comment_id FROM ig_replied_comments WHERE comment_id = ${commentId}`.catch(() => []);
+              
+              if (alreadyReplied && alreadyReplied.length > 0) {
+                console.log(`[Instagram Webhook] Already replied to comment ${commentId}, skipping`);
+              } else {
+                const accessToken = process.env.INSTAGRAM_ACCESS_TOKEN;
+                if (accessToken) {
+                  const replyText = generateSmartReply(text, from.username, "instagram");
 
-                fetch(`https://graph.instagram.com/v21.0/${commentId}/replies`, {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({
-                    message: replyText,
-                    access_token: accessToken,
-                  }),
-                }).catch((err) => {
-                  console.error("[Instagram Webhook] Reply failed:", err);
-                });
+                  const replyRes = await fetch(`https://graph.instagram.com/v21.0/${commentId}/replies`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      message: replyText,
+                      access_token: accessToken,
+                    }),
+                  }).catch((err) => {
+                    console.error("[Instagram Webhook] Reply failed:", err);
+                    return null;
+                  });
+
+                  // Track the reply
+                  if (replyRes && replyRes.ok) {
+                    await sql`INSERT INTO ig_replied_comments (comment_id, username) VALUES (${commentId}, ${from.username || 'unknown'})`.catch(() => {});
+                  }
+                }
               }
             }
           }

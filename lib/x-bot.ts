@@ -258,4 +258,4 @@ export async function scrapeXProfile(handle: string): Promise<{
 }
 
 /** Generate a smart reply based on tweet content — delegates to shared bot-replies */
-export { generateSmartReply } from "./bot-replies";
+export { generateSmartReply, parseOfferFromText, generateOfferReply } from "./bot-replies";

@@ -39,8 +39,6 @@ export function generateClaimNotification(handle: string, slug: string): string 
   return `Your HireACreator profile has been claimed! Customize it at hireacreator.ai/u/${slug}/edit`;
 }
 
-/* ─── Smart contextual replies for X and Instagram bots ─── */
-
 export type BotPlatform = "x" | "instagram";
 
 function pick<T>(arr: T[]): T {
@@ -50,6 +48,104 @@ function pick<T>(arr: T[]): T {
 function claimUrl(platform: BotPlatform, handle: string): string {
   return `hireacreator.ai/claim?platform=${platform}&handle=${handle}`;
 }
+
+/* ─── Offer parsing from tweet/comment text ─── */
+
+export interface ParsedOffer {
+  hasOffer: boolean;
+  budget?: number;
+  deliverables?: string;
+  creatorHandle?: string;
+}
+
+/**
+ * Parse a tweet/comment for an offer: dollar amount, creator @handle, deliverables.
+ * Examples:
+ *   '@hireacreatorAI @konnydev pay $200 for code review' → { hasOffer: true, budget: 200, deliverables: 'code review', creatorHandle: 'konnydev' }
+ *   '@hireacreatorAI check me out' → { hasOffer: false }
+ */
+export function parseOfferFromText(text: string): ParsedOffer {
+  // Extract dollar amounts: $200, $1,500, $50.00, $1.5k, $2k
+  const moneyMatch = text.match(/\$\s*([\d,]+(?:\.\d{1,2})?)\s*k?\b/i);
+  if (!moneyMatch) return { hasOffer: false };
+
+  let budget = parseFloat(moneyMatch[1].replace(/,/g, ""));
+  // Handle $1.5k, $2k style
+  if (/\$\s*[\d,]+(?:\.\d{1,2})?\s*k\b/i.test(text)) {
+    budget *= 1000;
+  }
+  if (budget <= 0 || budget > 99999) return { hasOffer: false };
+
+  // Extract @mentions that aren't @hireacreator*
+  const mentionMatches = text.match(/@([\w.]+)/g) || [];
+  const otherMentions = mentionMatches
+    .map((m) => m.slice(1).toLowerCase())
+    .filter((h) => !h.startsWith("hireacreator"));
+
+  const creatorHandle = otherMentions.length > 0 ? otherMentions[0] : undefined;
+
+  // Extract deliverables: text after the dollar amount, often preceded by 'for', 'for a', 'to do'
+  let deliverables: string | undefined;
+  const afterMoney = text.slice((moneyMatch.index || 0) + moneyMatch[0].length);
+  const deliverableMatch = afterMoney.match(/(?:for\s+(?:a\s+)?|to\s+do\s+|to\s+)(.+)/i);
+  if (deliverableMatch) {
+    // Clean up: remove trailing @mentions, URLs, and trim
+    deliverables = deliverableMatch[1]
+      .replace(/@[\w.]+/g, "")
+      .replace(/https?:\/\/\S+/g, "")
+      .replace(/hireacreator\.\S+/g, "")
+      .trim()
+      .replace(/[.!,]+$/, "")
+      .trim();
+    if (!deliverables) deliverables = undefined;
+  }
+
+  // Also try: 'pay you $X for Y' where deliverables come after 'for'
+  if (!deliverables) {
+    const beforeMoney = text.slice(0, moneyMatch.index || 0);
+    const afterAll = text.slice((moneyMatch.index || 0) + moneyMatch[0].length);
+    const forMatch = afterAll.match(/\s+for\s+(.+)/i) || beforeMoney.match(/for\s+(.+?)(?:\$)/i);
+    if (forMatch) {
+      deliverables = forMatch[1]
+        .replace(/@[\w.]+/g, "")
+        .replace(/https?:\/\/\S+/g, "")
+        .replace(/hireacreator\.\S+/g, "")
+        .trim()
+        .replace(/[.!,]+$/, "")
+        .trim();
+      if (!deliverables) deliverables = undefined;
+    }
+  }
+
+  return { hasOffer: true, budget, deliverables, creatorHandle };
+}
+
+/* ─── Offer reply templates ─── */
+
+function formatBudget(budget: number): string {
+  if (budget >= 1000 && budget % 1000 === 0) return `$${budget / 1000}k`;
+  return `$${budget}`;
+}
+
+export function generateOfferReply(
+  creatorHandle: string,
+  brandHandle: string,
+  budget: number,
+  deliverables: string | undefined,
+  platform: BotPlatform
+): string {
+  const amount = formatBudget(budget);
+  const url = claimUrl(platform, creatorHandle);
+  const task = deliverables ? ` for ${deliverables}` : "";
+
+  return pick([
+    `yo @${creatorHandle} @${brandHandle} just offered you ${amount}${task}. claim your profile to accept ${url}`,
+    `@${creatorHandle} you just got a ${amount} offer from @${brandHandle}${task}. claim it ${url}`,
+    `heads up @${creatorHandle}, @${brandHandle} wants to pay you ${amount}${task}. your profile is ready ${url}`,
+  ]);
+}
+
+/* ─── Smart contextual replies for X and Instagram bots ─── */
 
 /**
  * Generate a smart, contextual reply based on comment/tweet content.

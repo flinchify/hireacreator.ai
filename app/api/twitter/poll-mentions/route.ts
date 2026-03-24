@@ -6,6 +6,8 @@ import {
   getUserMentions,
   replyToTweet,
   generateSmartReply,
+  parseOfferFromText,
+  generateOfferReply,
   scrapeXProfile,
 } from "@/lib/x-bot";
 
@@ -174,8 +176,65 @@ export async function GET(request: Request) {
         }
       }
 
-      // Generate smart reply
-      const replyText = generateSmartReply(tweet.text, username, "x");
+      // Check for offer in tweet text
+      const parsed = parseOfferFromText(tweet.text);
+      let replyText: string;
+      let offerCreated = false;
+
+      if (parsed.hasOffer && parsed.creatorHandle) {
+        // Create offer in DB
+        try {
+          // Find or note the brand (tweet author) by X handle
+          let brandUserId: string | null = null;
+          const brandRows = await sql`
+            SELECT u.id FROM users u
+            JOIN social_connections sc ON sc.user_id = u.id
+            WHERE sc.platform = 'x' AND LOWER(sc.handle) = LOWER(${username})
+            LIMIT 1
+          `.catch(() => []);
+          if (brandRows.length > 0) brandUserId = brandRows[0].id;
+
+          // Look up creator user id if they exist
+          let creatorUserId: string | null = null;
+          const creatorRows = await sql`
+            SELECT u.id FROM users u
+            JOIN social_connections sc ON sc.user_id = u.id
+            WHERE sc.platform = 'x' AND LOWER(sc.handle) = LOWER(${parsed.creatorHandle})
+            LIMIT 1
+          `.catch(() => []);
+          if (creatorRows.length > 0) creatorUserId = creatorRows[0].id;
+
+          const budgetCents = Math.round(parsed.budget! * 100);
+          const feeCents = Math.round(budgetCents * 0.15);
+
+          if (brandUserId) {
+            await sql`
+              INSERT INTO offers (
+                brand_user_id, creator_handle, creator_platform, creator_user_id,
+                budget_cents, fee_cents, brief, deliverables, status
+              ) VALUES (
+                ${brandUserId}, ${parsed.creatorHandle.toLowerCase()}, 'x', ${creatorUserId},
+                ${budgetCents}, ${feeCents}, ${tweet.text}, ${parsed.deliverables || 'social media offer'}, 'pending'
+              )
+            `.catch((e: any) => console.error("[X Poll] Offer insert error:", e));
+          }
+
+          offerCreated = true;
+        } catch (e) {
+          console.error("[X Poll] Offer creation failed:", e);
+        }
+
+        replyText = generateOfferReply(
+          parsed.creatorHandle,
+          username,
+          parsed.budget!,
+          parsed.deliverables,
+          "x"
+        );
+      } else {
+        // No offer detected — use existing smart reply logic
+        replyText = generateSmartReply(tweet.text, username, "x");
+      }
 
       // Reply to the tweet
       const replyResult = await replyToTweet(tweet.id, replyText);
@@ -217,6 +276,8 @@ export async function GET(request: Request) {
         reply_text: replyText,
         reply_status: replyResult.ok ? "replied" : "failed",
         reply_data: replyResult.data || replyResult.error,
+        offer_detected: parsed.hasOffer,
+        offer_created: offerCreated,
       });
     }
 

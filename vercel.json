@@ -6,7 +6,7 @@
     },
     {
       "path": "/api/instagram/poll-comments?secret=hireacreator-ig-verify-2026",
-      "schedule": "* * * * *"
+      "schedule": "*/5 * * * *"
     },
     {
       "path": "/api/cron/refresh-followers",
