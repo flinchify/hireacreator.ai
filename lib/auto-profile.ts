@@ -3,6 +3,22 @@ import { fetchSocialProfile, buildManualProfile, type SocialProfile } from "./so
 import { calculateCreatorScore, generateSlug, type ScoreResult } from "./claim-scoring";
 import { designProfile, type AIProfileDesign } from "./ai-profile-designer";
 
+// Auto-migrate: ensure design columns exist on claimed_profiles
+let _migrated = false;
+async function ensureDesignColumns(db: ReturnType<typeof getDb>) {
+  if (_migrated) return;
+  try {
+    await db`ALTER TABLE claimed_profiles ADD COLUMN IF NOT EXISTS link_bio_template VARCHAR(50)`;
+    await db`ALTER TABLE claimed_profiles ADD COLUMN IF NOT EXISTS link_bio_bg_type VARCHAR(20)`;
+    await db`ALTER TABLE claimed_profiles ADD COLUMN IF NOT EXISTS link_bio_bg_value TEXT`;
+    await db`ALTER TABLE claimed_profiles ADD COLUMN IF NOT EXISTS link_bio_text_color VARCHAR(20)`;
+    await db`ALTER TABLE claimed_profiles ADD COLUMN IF NOT EXISTS link_bio_font VARCHAR(50)`;
+    await db`ALTER TABLE claimed_profiles ADD COLUMN IF NOT EXISTS link_bio_button_shape VARCHAR(20)`;
+    await db`ALTER TABLE claimed_profiles ADD COLUMN IF NOT EXISTS link_bio_headline TEXT`;
+    _migrated = true;
+  } catch { _migrated = true; }
+}
+
 export interface AutoProfileResult {
   profile: SocialProfile;
   score: ScoreResult;
@@ -175,6 +191,9 @@ export async function generateAutoProfile(
   }
 
   const design = designProfile(profile);
+
+  // Ensure design columns exist
+  await ensureDesignColumns(db);
 
   // Insert into claimed_profiles (with AI design fields)
   await db`
