@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { getDb } from "@/lib/db";
+import { getStripe } from "@/lib/stripe";
 
 // Helper function to get authenticated user
 async function getAuthenticatedUser() {
@@ -220,6 +221,10 @@ export async function GET(req: NextRequest) {
           status: offer.status,
           counter_budget_cents: offer.counter_budget_cents,
           counter_message: offer.counter_message,
+          delivery_notes: offer.delivery_notes,
+          delivered_at: offer.delivered_at,
+          completed_at: offer.completed_at,
+          stripe_checkout_id: offer.stripe_checkout_id,
           expires_at: offer.expires_at,
           created_at: offer.created_at,
         }))
@@ -282,6 +287,9 @@ export async function GET(req: NextRequest) {
           status: offer.status,
           counter_budget_cents: offer.counter_budget_cents,
           counter_message: offer.counter_message,
+          delivery_notes: offer.delivery_notes,
+          delivered_at: offer.delivered_at,
+          completed_at: offer.completed_at,
           expires_at: offer.expires_at,
           verified_at: offer.verified_at,
           created_at: offer.created_at,
@@ -310,7 +318,7 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: "Missing offer_id or action" }, { status: 400 });
     }
 
-    const validActions = ["view", "accept", "decline", "counter"];
+    const validActions = ["view", "accept", "decline", "counter", "deliver", "approve", "dispute"];
     if (!validActions.includes(action)) {
       return NextResponse.json({ error: "Invalid action" }, { status: 400 });
     }
@@ -351,10 +359,27 @@ export async function PATCH(req: NextRequest) {
       }
 
       await sql`
-        UPDATE offers 
+        UPDATE offers
         SET status = 'accepted', updated_at = NOW()
         WHERE id = ${offer_id}
       `;
+
+      // Create checkout session for the brand to pay
+      try {
+        const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+        const checkoutRes = await fetch(`${appUrl}/api/checkout/offer`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Cookie: `session_token=${cookies().get("session_token")?.value}` },
+          body: JSON.stringify({ offer_id }),
+        });
+        if (checkoutRes.ok) {
+          const checkoutData = await checkoutRes.json();
+          return NextResponse.json({ success: true, status: "accepted", checkout_url: checkoutData.url });
+        }
+      } catch (e) {
+        // Checkout creation failed but accept still succeeded
+        console.error("Failed to create checkout for accepted offer:", e);
+      }
 
       return NextResponse.json({ success: true, status: "accepted" });
     }
@@ -390,20 +415,115 @@ export async function PATCH(req: NextRequest) {
       }
 
       await sql`
-        UPDATE offers 
-        SET status = 'countered', 
+        UPDATE offers
+        SET status = 'countered',
             counter_budget_cents = ${counterBudgetCents},
             counter_message = ${counter_message},
             updated_at = NOW()
         WHERE id = ${offer_id}
       `;
 
-      return NextResponse.json({ 
-        success: true, 
+      return NextResponse.json({
+        success: true,
         status: "countered",
         counter_budget_cents: counterBudgetCents,
         counter_message
       });
+    }
+
+    if (action === "deliver") {
+      // Creator marks as delivered — must be paid first
+      if (offer.creator_user_id !== user.id) {
+        return NextResponse.json({ error: "Not your offer" }, { status: 403 });
+      }
+      if (offer.status !== "paid") {
+        return NextResponse.json({ error: "Offer must be paid before marking as delivered" }, { status: 400 });
+      }
+
+      const { delivery_notes } = body;
+
+      await sql`
+        UPDATE offers
+        SET status = 'delivered',
+            delivery_notes = ${delivery_notes || null},
+            delivered_at = NOW(),
+            updated_at = NOW()
+        WHERE id = ${offer_id}
+      `;
+
+      return NextResponse.json({ success: true, status: "delivered" });
+    }
+
+    if (action === "approve") {
+      // Brand approves delivery → completed → trigger payout
+      if (offer.brand_user_id !== user.id) {
+        return NextResponse.json({ error: "Not your offer" }, { status: 403 });
+      }
+      if (offer.status !== "delivered") {
+        return NextResponse.json({ error: "Offer must be delivered before approving" }, { status: 400 });
+      }
+
+      await sql`
+        UPDATE offers
+        SET status = 'completed',
+            completed_at = NOW(),
+            updated_at = NOW()
+        WHERE id = ${offer_id}
+      `;
+
+      // Trigger payout to creator via Stripe transfer
+      if (offer.creator_user_id) {
+        const creatorRows = await sql`
+          SELECT stripe_account_id FROM users WHERE id = ${offer.creator_user_id} LIMIT 1
+        `;
+
+        if (creatorRows.length > 0 && creatorRows[0].stripe_account_id) {
+          try {
+            const stripe = getStripe();
+            await stripe.transfers.create({
+              amount: offer.budget_cents as number,
+              currency: "aud",
+              destination: creatorRows[0].stripe_account_id as string,
+              metadata: { offer_id: offer.id, creator_user_id: offer.creator_user_id },
+            });
+            console.log(`Payout of ${offer.budget_cents} cents to creator ${offer.creator_user_id}`);
+
+            // Update creator stats
+            await sql`
+              UPDATE users
+              SET total_earnings = COALESCE(total_earnings, 0) + ${offer.budget_cents},
+                  total_projects = COALESCE(total_projects, 0) + 1,
+                  updated_at = NOW()
+              WHERE id = ${offer.creator_user_id}
+            `;
+          } catch (err) {
+            console.error("Stripe transfer failed:", err);
+            // Don't fail the approval — admin can retry transfer
+          }
+        } else {
+          console.log(`Creator ${offer.creator_user_id} has no Stripe account — payout pending`);
+        }
+      }
+
+      return NextResponse.json({ success: true, status: "completed" });
+    }
+
+    if (action === "dispute") {
+      // Brand disputes delivery
+      if (offer.brand_user_id !== user.id) {
+        return NextResponse.json({ error: "Not your offer" }, { status: 403 });
+      }
+      if (offer.status !== "delivered") {
+        return NextResponse.json({ error: "Can only dispute delivered offers" }, { status: 400 });
+      }
+
+      await sql`
+        UPDATE offers
+        SET status = 'disputed', updated_at = NOW()
+        WHERE id = ${offer_id}
+      `;
+
+      return NextResponse.json({ success: true, status: "disputed" });
     }
 
   } catch (err) {

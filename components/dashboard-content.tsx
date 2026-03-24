@@ -888,14 +888,95 @@ function OffersManager({ user }: { user: User }) {
     }
   };
 
+  const handlePayOffer = async (offerId: string) => {
+    try {
+      const res = await fetch("/api/checkout/offer", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ offer_id: offerId }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.url) window.location.href = data.url;
+      } else {
+        const data = await res.json();
+        alert(data.error || "Failed to create checkout");
+      }
+    } catch (err) {
+      console.error("Pay offer error:", err);
+      alert("Failed to start payment");
+    }
+  };
+
+  const handleDeliverOffer = async (offerId: string) => {
+    const notes = prompt("Add delivery notes (optional):");
+    try {
+      const res = await fetch("/api/offers", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ offer_id: offerId, action: "deliver", delivery_notes: notes || "" }),
+      });
+      if (res.ok) {
+        loadOffers();
+      } else {
+        const data = await res.json();
+        alert(data.error || "Failed to mark as delivered");
+      }
+    } catch (err) {
+      alert("Failed to mark as delivered");
+    }
+  };
+
+  const handleApproveOffer = async (offerId: string) => {
+    if (!confirm("Approve this delivery? Payment will be released to the creator.")) return;
+    try {
+      const res = await fetch("/api/offers", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ offer_id: offerId, action: "approve" }),
+      });
+      if (res.ok) {
+        loadOffers();
+      } else {
+        const data = await res.json();
+        alert(data.error || "Failed to approve");
+      }
+    } catch (err) {
+      alert("Failed to approve delivery");
+    }
+  };
+
+  const handleDisputeOffer = async (offerId: string) => {
+    if (!confirm("Dispute this delivery? An admin will review.")) return;
+    try {
+      const res = await fetch("/api/offers", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ offer_id: offerId, action: "dispute" }),
+      });
+      if (res.ok) {
+        loadOffers();
+      } else {
+        const data = await res.json();
+        alert(data.error || "Failed to dispute");
+      }
+    } catch (err) {
+      alert("Failed to dispute delivery");
+    }
+  };
+
   function statusBadge(status: string) {
     const styles: Record<string, string> = {
       pending: "bg-amber-100 text-amber-700",
       viewed: "bg-blue-100 text-blue-700",
       accepted: "bg-emerald-100 text-emerald-700",
+      paid: "bg-green-100 text-green-700",
+      delivered: "bg-cyan-100 text-cyan-700",
+      completed: "bg-emerald-100 text-emerald-800",
       declined: "bg-red-100 text-red-700",
       countered: "bg-violet-100 text-violet-700",
       expired: "bg-gray-100 text-gray-700",
+      disputed: "bg-orange-100 text-orange-700",
     };
     return (
       <span className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded-full ${styles[status] || "bg-neutral-100 text-neutral-500"}`}>
@@ -1003,9 +1084,47 @@ function OffersManager({ user }: { user: User }) {
                       </div>
                     )}
 
-                    {/* Action buttons for creators */}
+                    {/* Delivery notes */}
+                    {offer.delivery_notes && (
+                      <div className="bg-cyan-50 border border-cyan-200 rounded-lg p-3 mt-3">
+                        <h4 className="text-xs font-semibold text-cyan-700 mb-1">Delivery Notes</h4>
+                        <p className="text-xs text-cyan-600 leading-relaxed">{offer.delivery_notes}</p>
+                      </div>
+                    )}
+
+                    {/* Brand action buttons */}
+                    {isBrand && (
+                      <div className="flex flex-wrap gap-2 mt-4 pt-3 border-t border-neutral-100">
+                        {offer.status === "accepted" && (
+                          <button
+                            onClick={() => handlePayOffer(offer.id)}
+                            className="px-4 py-1.5 text-xs font-semibold bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
+                          >
+                            Pay Now
+                          </button>
+                        )}
+                        {offer.status === "delivered" && (
+                          <>
+                            <button
+                              onClick={() => handleApproveOffer(offer.id)}
+                              className="px-4 py-1.5 text-xs font-semibold bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
+                            >
+                              Approve Delivery
+                            </button>
+                            <button
+                              onClick={() => handleDisputeOffer(offer.id)}
+                              className="px-3 py-1.5 text-xs font-medium bg-orange-100 text-orange-700 rounded-lg hover:bg-orange-200 transition-colors"
+                            >
+                              Dispute
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Creator action buttons */}
                     {!isBrand && offer.verified_at && (
-                      <div className="flex gap-2 mt-4 pt-3 border-t border-neutral-100">
+                      <div className="flex flex-wrap gap-2 mt-4 pt-3 border-t border-neutral-100">
                         {offer.status === "pending" && (
                           <button
                             onClick={() => handleOfferAction(offer.id, "view")}
@@ -1036,7 +1155,15 @@ function OffersManager({ user }: { user: User }) {
                             </button>
                           </>
                         )}
-                        {!["accepted", "declined"].includes(offer.status) && (
+                        {offer.status === "paid" && (
+                          <button
+                            onClick={() => handleDeliverOffer(offer.id)}
+                            className="px-4 py-1.5 text-xs font-semibold bg-cyan-600 text-white rounded-lg hover:bg-cyan-700 transition-colors"
+                          >
+                            Mark as Delivered
+                          </button>
+                        )}
+                        {!["accepted", "declined", "paid", "delivered", "completed", "disputed"].includes(offer.status) && (
                           <button
                             onClick={() => handleOfferAction(offer.id, "decline")}
                             className="px-3 py-1.5 text-xs font-medium bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors"

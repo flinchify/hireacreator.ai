@@ -167,6 +167,23 @@ export async function POST(request: Request) {
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
         console.log(`Checkout completed: ${session.id} mode=${session.mode}`);
+
+        // Handle offer payment completion
+        const offerId = session.metadata?.offer_id;
+        if (offerId) {
+          const paymentIntentId = typeof session.payment_intent === "string"
+            ? session.payment_intent
+            : session.payment_intent?.id || null;
+
+          await sql`
+            UPDATE offers
+            SET status = 'paid',
+                stripe_payment_intent_id = ${paymentIntentId},
+                updated_at = NOW()
+            WHERE id = ${offerId} AND status = 'accepted'
+          `;
+          console.log(`Offer ${offerId} marked as paid, pi=${paymentIntentId}`);
+        }
         break;
       }
 
