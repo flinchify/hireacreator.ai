@@ -200,7 +200,7 @@ export default async function LinkInBioPage({ params }: { params: { slug: string
 
     return (
       <>
-        <LinkInBioContent creator={creator} />
+        <LinkInBioContent creator={creator} isUnclaimed />
         <ClaimBanner
           platform={(autoProfile.platform as string) || "instagram"}
           handle={(autoProfile.platform_handle as string) || ""}

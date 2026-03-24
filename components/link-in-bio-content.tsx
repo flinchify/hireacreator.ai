@@ -436,14 +436,16 @@ function ServiceCard({ service, creator, light, accent }: { service: any; creato
 /* ══════════════════════════════════════════════════════
    CTA button — shared
    ══════════════════════════════════════════════════════ */
-function CTAButton({ creator, light, accent }: { creator: Creator; light?: boolean; accent?: string }) {
+function CTAButton({ creator, light, accent, isUnclaimed }: { creator: Creator; light?: boolean; accent?: string; isUnclaimed?: boolean }) {
   const ac = accent || creator.linkBioAccent || "#171717";
   const bs = BUTTON_SIZES[creator.linkBioButtonSize || "medium"] || BUTTON_SIZES.medium;
+  const ctaHref = isUnclaimed ? `/claim?platform=instagram&handle=${creator.slug}` : `/creators/${creator.slug}`;
+  const ctaText = isUnclaimed ? "Claim This Profile" : "View Full Profile";
   return (
-    <a href={`/creators/${creator.slug}`}
+    <a href={ctaHref}
       className={`block w-full mt-4 font-semibold text-center rounded-2xl ${bs} transition-all duration-200 hover:scale-[1.02] hover:shadow-xl shadow-lg text-white`}
       style={{ background: ac }}>
-      View Full Profile
+      {ctaText}
     </a>
   );
 }
@@ -452,7 +454,7 @@ function CTAButton({ creator, light, accent }: { creator: Creator; light?: boole
    TEMPLATE: MINIMAL — "The Business Card"
    Warm ivory/cream bg, white card, elegant spacing, professional
    ══════════════════════════════════════════════════════════════ */
-function TemplateMinimal({ creator }: { creator: Creator }) {
+function TemplateMinimal({ creator, isUnclaimed }: { creator: Creator; isUnclaimed?: boolean }) {
   const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
   const hasCustomBg = !!creator.linkBioBgType;
   const accent = creator.linkBioAccent || "#171717";
@@ -531,7 +533,7 @@ function TemplateMinimal({ creator }: { creator: Creator }) {
 
           {creator.calendarEnabled && <div className="my-6"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
           {isEmpty && <EmptyState />}
-          {!isEmpty && <CTAButton creator={creator} accent={accent} />}
+          {!isEmpty && <CTAButton creator={creator} accent={accent} isUnclaimed={isUnclaimed} />}
           <Branding />
         </div>
       </div>
@@ -543,7 +545,7 @@ function TemplateMinimal({ creator }: { creator: Creator }) {
    TEMPLATE: GLASS — "The Creator"
    Deep space gradient, floating orbs, frosted glass panels, premium app feel
    ══════════════════════════════════════════════════════════════ */
-function TemplateGlass({ creator }: { creator: Creator }) {
+function TemplateGlass({ creator, isUnclaimed }: { creator: Creator; isUnclaimed?: boolean }) {
   const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
   const hasCustomBg = !!creator.linkBioBgType;
   const accent = creator.linkBioAccent || "#818cf8";
@@ -636,7 +638,7 @@ function TemplateGlass({ creator }: { creator: Creator }) {
 
           {creator.calendarEnabled && <div className="my-6"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
           {isEmpty && <EmptyState light />}
-          {!isEmpty && <CTAButton creator={creator} light accent={accent} />}
+          {!isEmpty && <CTAButton creator={creator} light accent={accent} isUnclaimed={isUnclaimed} />}
         </div>
         <Branding light />
       </div>
@@ -648,7 +650,7 @@ function TemplateGlass({ creator }: { creator: Creator }) {
    TEMPLATE: BOLD — "The Statement"
    Pure black, accent color highlights, high contrast, dramatic
    ══════════════════════════════════════════════════════════════ */
-function TemplateBold({ creator }: { creator: Creator }) {
+function TemplateBold({ creator, isUnclaimed }: { creator: Creator; isUnclaimed?: boolean }) {
   const accent = creator.linkBioAccent || "#6366f1";
   const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
   const hasCustomBg = !!creator.linkBioBgType;
@@ -730,7 +732,7 @@ function TemplateBold({ creator }: { creator: Creator }) {
 
           {creator.calendarEnabled && <div className="my-6"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
           {isEmpty && <EmptyState light />}
-          {!isEmpty && <CTAButton creator={creator} light accent={accent} />}
+          {!isEmpty && <CTAButton creator={creator} light accent={accent} isUnclaimed={isUnclaimed} />}
           <Branding light />
         </div>
       </div>
@@ -742,7 +744,7 @@ function TemplateBold({ creator }: { creator: Creator }) {
    TEMPLATE: SHOWCASE — "The Portfolio"
    Light bg, portfolio-first, prominent cover, visual-first layout
    ══════════════════════════════════════════════════════════════ */
-function TemplateShowcase({ creator }: { creator: Creator }) {
+function TemplateShowcase({ creator, isUnclaimed }: { creator: Creator; isUnclaimed?: boolean }) {
   const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
   const hasCustomBg = !!creator.linkBioBgType;
   const accent = creator.linkBioAccent || "#171717";
@@ -828,7 +830,7 @@ function TemplateShowcase({ creator }: { creator: Creator }) {
 
           {creator.calendarEnabled && <div className="my-6"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
           {isEmpty && <EmptyState />}
-          {!isEmpty && <CTAButton creator={creator} accent={accent} />}
+          {!isEmpty && <CTAButton creator={creator} accent={accent} isUnclaimed={isUnclaimed} />}
           <Branding />
         </div>
       </div>
@@ -840,7 +842,7 @@ function TemplateShowcase({ creator }: { creator: Creator }) {
    TEMPLATE: NEON — "The Gamer"
    Pure black, accent glow, double ring avatar, cyberpunk aesthetic
    ══════════════════════════════════════════════════════════════ */
-function TemplateNeon({ creator }: { creator: Creator }) {
+function TemplateNeon({ creator, isUnclaimed }: { creator: Creator; isUnclaimed?: boolean }) {
   const accent = creator.linkBioAccent || "#22d3ee";
   const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
   const hasCustomBg = !!creator.linkBioBgType;
@@ -936,7 +938,7 @@ function TemplateNeon({ creator }: { creator: Creator }) {
 
           {creator.calendarEnabled && <div className="my-6"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
           {isEmpty && <EmptyState light />}
-          {!isEmpty && <CTAButton creator={creator} light accent={accent} />}
+          {!isEmpty && <CTAButton creator={creator} light accent={accent} isUnclaimed={isUnclaimed} />}
           <Branding light />
         </div>
       </div>
@@ -948,7 +950,7 @@ function TemplateNeon({ creator }: { creator: Creator }) {
    TEMPLATE: COLLAGE — "The Photographer"
    Portfolio tiles as darkened bg, frosted content panel, moody editorial
    ══════════════════════════════════════════════════════════════ */
-function TemplateCollage({ creator }: { creator: Creator }) {
+function TemplateCollage({ creator, isUnclaimed }: { creator: Creator; isUnclaimed?: boolean }) {
   const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
   const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
   const justify = CONTENT_JUSTIFY[creator.linkBioContentPosition || 'top'] || CONTENT_JUSTIFY.top;
@@ -1034,7 +1036,7 @@ function TemplateCollage({ creator }: { creator: Creator }) {
 
           {creator.calendarEnabled && <div className="my-6"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
           {isEmpty && <EmptyState light />}
-          {!isEmpty && <CTAButton creator={creator} light />}
+          {!isEmpty && <CTAButton creator={creator} light isUnclaimed={isUnclaimed} />}
         </div>
         <Branding light />
       </div>
@@ -1046,7 +1048,7 @@ function TemplateCollage({ creator }: { creator: Creator }) {
    TEMPLATE: BENTO — "The Grid"
    Apple-style bento grid, dark bg, accent-bordered cells
    ══════════════════════════════════════════════════════════════ */
-function TemplateBento({ creator }: { creator: Creator }) {
+function TemplateBento({ creator, isUnclaimed }: { creator: Creator; isUnclaimed?: boolean }) {
   const accent = creator.linkBioAccent || "#6366f1";
   const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
   const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
@@ -1156,10 +1158,10 @@ function TemplateBento({ creator }: { creator: Creator }) {
 
           {/* CTA — col-span-4 with accent bg */}
           {!isEmpty && (
-            <a href={`/creators/${creator.slug}`}
+            <a href={isUnclaimed ? `/claim?platform=instagram&handle=${creator.slug}` : `/creators/${creator.slug}`}
               className="col-span-4 row-span-1 rounded-2xl font-semibold text-sm text-center flex items-center justify-center text-white transition-all duration-200 hover:opacity-90 hover:scale-[1.02]"
               style={{ background: accent }}>
-              View Full Profile
+              {isUnclaimed ? "Claim This Profile" : "View Full Profile"}
             </a>
           )}
           {isEmpty && (
@@ -1178,7 +1180,7 @@ function TemplateBento({ creator }: { creator: Creator }) {
    TEMPLATE: SPLIT — "The Magazine"
    Two-column: sticky hero left, scrollable content right, editorial feel
    ══════════════════════════════════════════════════════════════ */
-function TemplateSplit({ creator }: { creator: Creator }) {
+function TemplateSplit({ creator, isUnclaimed }: { creator: Creator; isUnclaimed?: boolean }) {
   const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
   const accent = creator.linkBioAccent || "#171717";
   const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
@@ -1304,7 +1306,7 @@ function TemplateSplit({ creator }: { creator: Creator }) {
             )}
 
             {isEmpty && <EmptyState />}
-            {!isEmpty && <CTAButton creator={creator} accent={accent} />}
+            {!isEmpty && <CTAButton creator={creator} accent={accent} isUnclaimed={isUnclaimed} />}
             <Branding />
           </div>
         </div>
@@ -1317,7 +1319,7 @@ function TemplateSplit({ creator }: { creator: Creator }) {
    TEMPLATE: CUSTOM — User-designed, fully customizable
    Uses all customization fields, no preset assumptions
    ══════════════════════════════════════════════════════════════ */
-function TemplateCustom({ creator }: { creator: Creator }) {
+function TemplateCustom({ creator, isUnclaimed }: { creator: Creator; isUnclaimed?: boolean }) {
   const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
   const accent = creator.linkBioAccent || "#6366f1";
   const hasCustomBg = !!creator.linkBioBgType;
@@ -1380,7 +1382,7 @@ function TemplateCustom({ creator }: { creator: Creator }) {
           {creator.portfolio.length > 0 && <div className="grid grid-cols-3 gap-1.5 pt-2">{creator.portfolio.slice(0, 6).map(p => <div key={p.id} className={`aspect-square rounded-xl overflow-hidden ${isDarkBg ? "bg-white/5" : "bg-neutral-100"}`}>{p.image ? <img src={p.image} alt={p.title} className="w-full h-full object-cover" /> : <div className={`w-full h-full flex items-center justify-center text-xs ${isDarkBg ? "text-white/20" : "text-neutral-300"}`}>{p.title}</div>}</div>)}</div>}
           {creator.calendarEnabled && <div className="my-4"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
           {isEmpty && <EmptyState light={isDarkBg} />}
-          {!isEmpty && <CTAButton creator={creator} light={isDarkBg} accent={accent} />}
+          {!isEmpty && <CTAButton creator={creator} light={isDarkBg} accent={accent} isUnclaimed={isUnclaimed} />}
         </div>
         <Branding light={isDarkBg} />
       </div>
@@ -1392,7 +1394,7 @@ function TemplateCustom({ creator }: { creator: Creator }) {
    TEMPLATE: FOUNDER — "The Landing Page"
    Clean dark theme for startup founders & business owners
    ══════════════════════════════════════════════════════════════ */
-function TemplateFounder({ creator }: { creator: Creator }) {
+function TemplateFounder({ creator, isUnclaimed }: { creator: Creator; isUnclaimed?: boolean }) {
   const accent = creator.linkBioAccent || "#3b82f6";
   const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0 && creator.bioLinks.length === 0;
   const hasCustomBg = !!creator.linkBioBgType;
@@ -1596,7 +1598,7 @@ function TemplateFounder({ creator }: { creator: Creator }) {
         )}
 
         {isEmpty && <EmptyState light />}
-        {!isEmpty && <CTAButton creator={creator} light accent={accent} />}
+        {!isEmpty && <CTAButton creator={creator} light accent={accent} isUnclaimed={isUnclaimed} />}
         <Branding light />
       </div>
     </div>
@@ -1606,7 +1608,7 @@ function TemplateFounder({ creator }: { creator: Creator }) {
 /* ══════════════════════════════════════════════════════════════
    TEMPLATE: BRUTALIST — Raw, bold, anti-design. Punk zine aesthetic.
    ══════════════════════════════════════════════════════════════ */
-function TemplateBrutalist({ creator }: { creator: Creator }) {
+function TemplateBrutalist({ creator, isUnclaimed }: { creator: Creator; isUnclaimed?: boolean }) {
   const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
   const accent = creator.linkBioAccent || "#ffffff";
   const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
@@ -1705,7 +1707,7 @@ function TemplateBrutalist({ creator }: { creator: Creator }) {
 /* ══════════════════════════════════════════════════════════════
    TEMPLATE: AURORA — Animated gradient aurora bg, glassmorphic cards
    ══════════════════════════════════════════════════════════════ */
-function TemplateAurora({ creator }: { creator: Creator }) {
+function TemplateAurora({ creator, isUnclaimed }: { creator: Creator; isUnclaimed?: boolean }) {
   const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
   const accent = creator.linkBioAccent || "#60a5fa";
   const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
@@ -1784,7 +1786,7 @@ function TemplateAurora({ creator }: { creator: Creator }) {
 
         {creator.calendarEnabled && <div className="my-6"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
         {isEmpty && <EmptyState light />}
-        {!isEmpty && <CTAButton creator={creator} light accent={accent} />}
+        {!isEmpty && <CTAButton creator={creator} light accent={accent} isUnclaimed={isUnclaimed} />}
         <Branding light />
       </div>
     </div>
@@ -1794,7 +1796,7 @@ function TemplateAurora({ creator }: { creator: Creator }) {
 /* ══════════════════════════════════════════════════════════════
    TEMPLATE: SUNSET — Warm gradient (orange→pink→purple)
    ══════════════════════════════════════════════════════════════ */
-function TemplateSunset({ creator }: { creator: Creator }) {
+function TemplateSunset({ creator, isUnclaimed }: { creator: Creator; isUnclaimed?: boolean }) {
   const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
   const accent = creator.linkBioAccent || "#f59e0b";
   const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
@@ -1858,10 +1860,10 @@ function TemplateSunset({ creator }: { creator: Creator }) {
         {creator.calendarEnabled && <div className="my-6"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
         {isEmpty && <EmptyState light />}
         {!isEmpty && (
-          <a href={`/creators/${creator.slug}`}
+          <a href={isUnclaimed ? `/claim?platform=instagram&handle=${creator.slug}` : `/creators/${creator.slug}`}
             className="block w-full mt-8 font-semibold text-center rounded-2xl py-4 px-5 transition-all hover:scale-[1.02] hover:shadow-xl shadow-lg"
             style={{ background: "rgba(255,255,255,0.25)", color: "white", backdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.3)" }}>
-            View Full Profile
+            {isUnclaimed ? "Claim This Profile" : "View Full Profile"}
           </a>
         )}
         <Branding light />
@@ -1873,7 +1875,7 @@ function TemplateSunset({ creator }: { creator: Creator }) {
 /* ══════════════════════════════════════════════════════════════
    TEMPLATE: TERMINAL — Hacker/dev green-on-black terminal aesthetic
    ══════════════════════════════════════════════════════════════ */
-function TemplateTerminal({ creator }: { creator: Creator }) {
+function TemplateTerminal({ creator, isUnclaimed }: { creator: Creator; isUnclaimed?: boolean }) {
   const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
   const accent = creator.linkBioAccent || "#00ff00";
   const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
@@ -1990,7 +1992,7 @@ function TemplateTerminal({ creator }: { creator: Creator }) {
 /* ══════════════════════════════════════════════════════════════
    TEMPLATE: PASTEL — Soft pastel colors, cute, rounded
    ══════════════════════════════════════════════════════════════ */
-function TemplatePastel({ creator }: { creator: Creator }) {
+function TemplatePastel({ creator, isUnclaimed }: { creator: Creator; isUnclaimed?: boolean }) {
   const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
   const accent = creator.linkBioAccent || "#c084fc";
   const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
@@ -2068,10 +2070,10 @@ function TemplatePastel({ creator }: { creator: Creator }) {
         {creator.calendarEnabled && <div className="my-6"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
         {isEmpty && <EmptyState />}
         {!isEmpty && (
-          <a href={`/creators/${creator.slug}`}
+          <a href={isUnclaimed ? `/claim?platform=instagram&handle=${creator.slug}` : `/creators/${creator.slug}`}
             className={`block w-full mt-8 font-semibold text-center rounded-full ${bs} shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all text-white`}
             style={{ background: accent }}>
-            View Full Profile
+            {isUnclaimed ? "Claim This Profile" : "View Full Profile"}
           </a>
         )}
         <Branding />
@@ -2083,7 +2085,7 @@ function TemplatePastel({ creator }: { creator: Creator }) {
 /* ══════════════════════════════════════════════════════════════
    TEMPLATE: MAGAZINE — Editorial layout, serif headings, clean
    ══════════════════════════════════════════════════════════════ */
-function TemplateMagazine({ creator }: { creator: Creator }) {
+function TemplateMagazine({ creator, isUnclaimed }: { creator: Creator; isUnclaimed?: boolean }) {
   const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
   const accent = creator.linkBioAccent || "#171717";
   const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
@@ -2159,7 +2161,7 @@ function TemplateMagazine({ creator }: { creator: Creator }) {
 
         {creator.calendarEnabled && <div className="my-6"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
         {isEmpty && <EmptyState />}
-        {!isEmpty && <CTAButton creator={creator} accent={accent} />}
+        {!isEmpty && <CTAButton creator={creator} accent={accent} isUnclaimed={isUnclaimed} />}
         <Branding />
       </div>
     </div>
@@ -2169,7 +2171,7 @@ function TemplateMagazine({ creator }: { creator: Creator }) {
 /* ══════════════════════════════════════════════════════════════
    TEMPLATE: RETRO — 90s/Y2K, bright colors, chunky offset shadows
    ══════════════════════════════════════════════════════════════ */
-function TemplateRetro({ creator }: { creator: Creator }) {
+function TemplateRetro({ creator, isUnclaimed }: { creator: Creator; isUnclaimed?: boolean }) {
   const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
   const accent = creator.linkBioAccent || "#ec4899";
   const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
@@ -2258,10 +2260,10 @@ function TemplateRetro({ creator }: { creator: Creator }) {
         {creator.calendarEnabled && <div className="my-6"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
         {isEmpty && <EmptyState />}
         {!isEmpty && (
-          <a href={`/creators/${creator.slug}`}
+          <a href={isUnclaimed ? `/claim?platform=instagram&handle=${creator.slug}` : `/creators/${creator.slug}`}
             className={`block w-full mt-8 font-black text-center rounded-xl ${bs} border-black uppercase tracking-wider hover:translate-x-[2px] hover:translate-y-[2px] transition-all`}
             style={{ background: "#ff6ec7", boxShadow: "5px 5px 0 #000", borderWidth: "3px", color: "#000" }}>
-            View Full Profile
+            {isUnclaimed ? "Claim This Profile" : "View Full Profile"}
           </a>
         )}
         <Branding />
@@ -2273,7 +2275,7 @@ function TemplateRetro({ creator }: { creator: Creator }) {
 /* ══════════════════════════════════════════════════════════════
    TEMPLATE: MIDNIGHT — Deep navy, star dots, silver/white, elegant
    ══════════════════════════════════════════════════════════════ */
-function TemplateMidnight({ creator }: { creator: Creator }) {
+function TemplateMidnight({ creator, isUnclaimed }: { creator: Creator; isUnclaimed?: boolean }) {
   const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
   const accent = creator.linkBioAccent || "#818cf8";
   const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
@@ -2347,7 +2349,7 @@ function TemplateMidnight({ creator }: { creator: Creator }) {
 
         {creator.calendarEnabled && <div className="my-6"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
         {isEmpty && <EmptyState light />}
-        {!isEmpty && <CTAButton creator={creator} light accent={accent} />}
+        {!isEmpty && <CTAButton creator={creator} light accent={accent} isUnclaimed={isUnclaimed} />}
         <Branding light />
       </div>
     </div>
@@ -2357,7 +2359,7 @@ function TemplateMidnight({ creator }: { creator: Creator }) {
 /* ══════════════════════════════════════════════════════════════
    TEMPLATE: CLAY — Soft 3D neumorphism, tactile clay buttons
    ══════════════════════════════════════════════════════════════ */
-function TemplateClay({ creator }: { creator: Creator }) {
+function TemplateClay({ creator, isUnclaimed }: { creator: Creator; isUnclaimed?: boolean }) {
   const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
   const accent = creator.linkBioAccent || "#6366f1";
   const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
@@ -2438,10 +2440,10 @@ function TemplateClay({ creator }: { creator: Creator }) {
         {creator.calendarEnabled && <div className="my-6"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
         {isEmpty && <EmptyState />}
         {!isEmpty && (
-          <a href={`/creators/${creator.slug}`}
+          <a href={isUnclaimed ? `/claim?platform=instagram&handle=${creator.slug}` : `/creators/${creator.slug}`}
             className={`block w-full mt-8 font-semibold text-center rounded-2xl ${bs} text-white transition-all hover:scale-[1.02]`}
             style={{ background: accent, boxShadow: "6px 6px 12px #bebebe, -6px -6px 12px #ffffff" }}>
-            View Full Profile
+            {isUnclaimed ? "Claim This Profile" : "View Full Profile"}
           </a>
         )}
         <Branding />
@@ -2453,7 +2455,7 @@ function TemplateClay({ creator }: { creator: Creator }) {
 /* ══════════════════════════════════════════════════════════════
    TEMPLATE: GRADIENT MESH — Multi-color mesh bg, white blur cards
    ══════════════════════════════════════════════════════════════ */
-function TemplateGradientMesh({ creator }: { creator: Creator }) {
+function TemplateGradientMesh({ creator, isUnclaimed }: { creator: Creator; isUnclaimed?: boolean }) {
   const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
   const accent = creator.linkBioAccent || "#ec4899";
   const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
@@ -2532,10 +2534,10 @@ function TemplateGradientMesh({ creator }: { creator: Creator }) {
           {creator.calendarEnabled && <div className="my-6"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
           {isEmpty && <EmptyState />}
           {!isEmpty && (
-            <a href={`/creators/${creator.slug}`}
+            <a href={isUnclaimed ? `/claim?platform=instagram&handle=${creator.slug}` : `/creators/${creator.slug}`}
               className="block w-full mt-6 font-semibold text-center rounded-2xl py-4 px-5 shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all text-white"
               style={{ background: accent }}>
-              View Full Profile
+              {isUnclaimed ? "Claim This Profile" : "View Full Profile"}
             </a>
           )}
           <Branding />
@@ -2548,7 +2550,7 @@ function TemplateGradientMesh({ creator }: { creator: Creator }) {
 /* ══════════════════════════════════════════════════════════════
    TEMPLATE: TRADER — Financial traders, crypto, forex, stocks
    ══════════════════════════════════════════════════════════════ */
-function TemplateTrader({ creator }: { creator: Creator }) {
+function TemplateTrader({ creator, isUnclaimed }: { creator: Creator; isUnclaimed?: boolean }) {
   const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
   const accent = creator.linkBioAccent || "#00c087";
   const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
@@ -2667,7 +2669,7 @@ function TemplateTrader({ creator }: { creator: Creator }) {
 /* ══════════════════════════════════════════════════════════════
    TEMPLATE: EDUCATOR — Course sellers, coaches, mentors
    ══════════════════════════════════════════════════════════════ */
-function TemplateEducator({ creator }: { creator: Creator }) {
+function TemplateEducator({ creator, isUnclaimed }: { creator: Creator; isUnclaimed?: boolean }) {
   const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
   const accent = creator.linkBioAccent || "#d97706";
   const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
@@ -2749,10 +2751,10 @@ function TemplateEducator({ creator }: { creator: Creator }) {
         {creator.calendarEnabled && <div className="my-6"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
         {isEmpty && <EmptyState />}
         {!isEmpty && (
-          <a href={`/creators/${creator.slug}`}
+          <a href={isUnclaimed ? `/claim?platform=instagram&handle=${creator.slug}` : `/creators/${creator.slug}`}
             className={`block w-full mt-8 font-semibold text-center rounded-xl ${bs} shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all text-white`}
             style={{ background: accent }}>
-            View Full Profile
+            {isUnclaimed ? "Claim This Profile" : "View Full Profile"}
           </a>
         )}
         <Branding />
@@ -2764,7 +2766,7 @@ function TemplateEducator({ creator }: { creator: Creator }) {
 /* ══════════════════════════════════════════════════════════════
    TEMPLATE: DEVELOPER — Coders, engineers, open source devs
    ══════════════════════════════════════════════════════════════ */
-function TemplateDeveloper({ creator }: { creator: Creator }) {
+function TemplateDeveloper({ creator, isUnclaimed }: { creator: Creator; isUnclaimed?: boolean }) {
   const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
   const accent = creator.linkBioAccent || "#7dcfff";
   const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
@@ -2887,7 +2889,7 @@ function TemplateDeveloper({ creator }: { creator: Creator }) {
 /* ══════════════════════════════════════════════════════════════
    TEMPLATE: EXECUTIVE — Business owners, founders, CEOs
    ══════════════════════════════════════════════════════════════ */
-function TemplateExecutive({ creator }: { creator: Creator }) {
+function TemplateExecutive({ creator, isUnclaimed }: { creator: Creator; isUnclaimed?: boolean }) {
   const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
   const accent = creator.linkBioAccent || "#1e3a5f";
   const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
@@ -2968,10 +2970,10 @@ function TemplateExecutive({ creator }: { creator: Creator }) {
         {creator.calendarEnabled && <div className="my-6"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
         {isEmpty && <EmptyState />}
         {!isEmpty && (
-          <a href={`/creators/${creator.slug}`}
+          <a href={isUnclaimed ? `/claim?platform=instagram&handle=${creator.slug}` : `/creators/${creator.slug}`}
             className={`block w-full mt-8 font-medium text-center rounded-lg ${bs} border transition-colors hover:bg-slate-50`}
             style={{ borderColor: accent, color: accent }}>
-            View Full Profile
+            {isUnclaimed ? "Claim This Profile" : "View Full Profile"}
           </a>
         )}
         <Branding />
@@ -2983,7 +2985,7 @@ function TemplateExecutive({ creator }: { creator: Creator }) {
 /* ══════════════════════════════════════════════════════════════
    MAIN EXPORT
    ══════════════════════════════════════════════════════════════ */
-const TEMPLATES: Record<string, React.ComponentType<{ creator: Creator }>> = {
+const TEMPLATES: Record<string, React.ComponentType<{ creator: Creator; isUnclaimed?: boolean }>> = {
   minimal: TemplateMinimal,
   glass: TemplateGlass,
   bold: TemplateBold,
@@ -3281,7 +3283,7 @@ function TypewriterText({ name, accent }: { name: string; accent: string }) {
 }
 
 /* ── Main export ── */
-export function LinkInBioContent({ creator }: { creator: Creator }) {
+export function LinkInBioContent({ creator, isUnclaimed }: { creator: Creator; isUnclaimed?: boolean }) {
   const template = creator.linkBioTemplate || "minimal";
   const font = FONT_MAP[creator.linkBioFont] || FONT_MAP.jakarta;
   const textColor = creator.linkBioTextColor || "";
@@ -3316,7 +3318,7 @@ export function LinkInBioContent({ creator }: { creator: Creator }) {
         />
       )}
       <div>
-        <TemplateComponent creator={creator} />
+        <TemplateComponent creator={creator} isUnclaimed={isUnclaimed} />
       </div>
     </div>
   );
