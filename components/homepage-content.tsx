@@ -235,9 +235,7 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
             className="text-3xl sm:text-5xl lg:text-7xl text-neutral-800 leading-[1.1] mb-6"
             style={{ fontFamily: "var(--font-serif)" }}
           >
-            The marketplace where creators{" "}
-            <br className="hidden sm:block" />
-            <TypingRotation />
+            The marketplace where creators <TypingRotation />
           </h1>
 
           <p className="text-neutral-500 text-base sm:text-lg max-w-xl mx-auto">
