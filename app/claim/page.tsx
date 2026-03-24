@@ -311,13 +311,26 @@ function ClaimPageInner() {
                   handle={scoreData.profile.handle} 
                 />
 
-                {!scoreData.isClaimed && (
+                {!scoreData.isClaimed ? (
                   <a
                     href={scoreData.profileUrl.replace("https://hireacreator.ai", "")}
                     className="block w-full py-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg font-semibold text-center text-sm hover:from-blue-600 hover:to-blue-700 shadow-lg shadow-blue-500/25 transition-all mb-3"
                   >
                     Claim Your Profile — Get Matched With Brands
                   </a>
+                ) : (
+                  <div className="mb-3">
+                    <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-center mb-3">
+                      <p className="text-sm font-medium text-amber-800">This profile has already been claimed</p>
+                      <p className="text-xs text-amber-600 mt-1">If this is your account, sign in to access your dashboard</p>
+                    </div>
+                    <a
+                      href="/dashboard"
+                      className="block w-full py-4 bg-neutral-900 text-white rounded-lg font-semibold text-center text-sm hover:bg-neutral-800 transition-all"
+                    >
+                      Sign In
+                    </a>
+                  </div>
                 )}
 
                 <button
