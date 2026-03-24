@@ -54,6 +54,29 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Link any pending offers to this creator
+    let pendingOfferCount = 0;
+    try {
+      // Get all social connections for this user to match offers
+      const connections = await db`
+        SELECT platform, handle FROM social_connections WHERE user_id = ${userId}
+      `;
+
+      for (const sc of connections) {
+        const updated = await db`
+          UPDATE offers
+          SET creator_user_id = ${userId}, verified_at = NOW(), updated_at = NOW()
+          WHERE creator_platform = ${sc.platform}
+          AND LOWER(creator_handle) = LOWER(${sc.handle})
+          AND creator_user_id IS NULL
+          RETURNING id
+        `;
+        pendingOfferCount += updated.length;
+      }
+    } catch (e) {
+      console.error("[Claim] Error linking offers:", e);
+    }
+
     // Get the user's slug for redirect
     const users = await db`
       SELECT slug FROM users WHERE id = ${userId} LIMIT 1
@@ -63,6 +86,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       success: true,
       redirectUrl: `/u/${slug}`,
+      pending_offers: pendingOfferCount,
+      message: pendingOfferCount > 0 ? `You have ${pendingOfferCount} offer${pendingOfferCount > 1 ? 's' : ''} waiting!` : undefined,
     });
   } catch (err) {
     console.error("Claim API error:", err);

@@ -90,10 +90,62 @@ export async function POST(request: Request) {
               if (alreadyReplied && alreadyReplied.length > 0) {
                 console.log(`[Instagram Webhook] Already replied to comment ${commentId}, skipping`);
               } else {
+                // Check for offer in comment text
+                const parsed = parseOfferFromText(text);
+                let replyText: string;
+
+                if (parsed.hasOffer && parsed.creatorHandle) {
+                  // Create offer in DB
+                  try {
+                    let brandUserId: string | null = null;
+                    const brandRows = await sql`
+                      SELECT u.id FROM users u
+                      JOIN social_connections sc ON sc.user_id = u.id
+                      WHERE sc.platform = 'instagram' AND LOWER(sc.handle) = LOWER(${from.username})
+                      LIMIT 1
+                    `.catch(() => []);
+                    if (brandRows.length > 0) brandUserId = brandRows[0].id;
+
+                    let creatorUserId: string | null = null;
+                    const creatorRows = await sql`
+                      SELECT u.id FROM users u
+                      JOIN social_connections sc ON sc.user_id = u.id
+                      WHERE sc.platform = 'instagram' AND LOWER(sc.handle) = LOWER(${parsed.creatorHandle})
+                      LIMIT 1
+                    `.catch(() => []);
+                    if (creatorRows.length > 0) creatorUserId = creatorRows[0].id;
+
+                    const budgetCents = Math.round(parsed.budget! * 100);
+                    const feeCents = Math.round(budgetCents * 0.15);
+
+                    if (brandUserId) {
+                      await sql`
+                        INSERT INTO offers (
+                          brand_user_id, creator_handle, creator_platform, creator_user_id,
+                          budget_cents, fee_cents, brief, deliverables, status
+                        ) VALUES (
+                          ${brandUserId}, ${parsed.creatorHandle.toLowerCase()}, 'instagram', ${creatorUserId},
+                          ${budgetCents}, ${feeCents}, ${text}, ${parsed.deliverables || 'social media offer'}, 'pending'
+                        )
+                      `.catch((e: any) => console.error("[IG Webhook] Offer insert error:", e));
+                    }
+                  } catch (e) {
+                    console.error("[IG Webhook] Offer creation failed:", e);
+                  }
+
+                  replyText = generateOfferReply(
+                    parsed.creatorHandle,
+                    from.username,
+                    parsed.budget!,
+                    parsed.deliverables,
+                    "instagram"
+                  );
+                } else {
+                  replyText = generateSmartReply(text, from.username, "instagram");
+                }
+
                 const accessToken = process.env.INSTAGRAM_ACCESS_TOKEN;
                 if (accessToken) {
-                  const replyText = generateSmartReply(text, from.username, "instagram");
-
                   const replyRes = await fetch(`https://graph.instagram.com/v21.0/${commentId}/replies`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
