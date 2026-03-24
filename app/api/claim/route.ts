@@ -88,6 +88,8 @@ export async function POST(req: NextRequest) {
       redirectUrl: `/u/${slug}`,
       pending_offers: pendingOfferCount,
       message: pendingOfferCount > 0 ? `You have ${pendingOfferCount} offer${pendingOfferCount > 1 ? 's' : ''} waiting!` : undefined,
+      needs_verification: true,
+      verification_message: "Verify your social account from your dashboard to accept offers and get a verified badge.",
     });
   } catch (err) {
     console.error("Claim API error:", err);

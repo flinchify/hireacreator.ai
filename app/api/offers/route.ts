@@ -358,6 +358,11 @@ export async function PATCH(req: NextRequest) {
         return NextResponse.json({ error: "Cannot accept this offer" }, { status: 403 });
       }
 
+      // Require bio-verified account to accept offers
+      if (!user.is_verified) {
+        return NextResponse.json({ error: "You must verify your social account before accepting offers. Go to your dashboard to verify." }, { status: 403 });
+      }
+
       await sql`
         UPDATE offers
         SET status = 'accepted', updated_at = NOW()
@@ -403,6 +408,10 @@ export async function PATCH(req: NextRequest) {
       // Only if verified_at is set, requires counter_budget and counter_message
       if (!offer.verified_at || offer.creator_user_id !== user.id) {
         return NextResponse.json({ error: "Cannot counter this offer" }, { status: 403 });
+      }
+
+      if (!user.is_verified) {
+        return NextResponse.json({ error: "You must verify your social account before countering offers." }, { status: 403 });
       }
 
       if (!counter_budget || !counter_message) {

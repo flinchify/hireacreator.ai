@@ -8,6 +8,7 @@ import { ReplyTemplatesManager } from "./reply-templates-manager";
 import { VerificationManager } from "./verification-manager";
 import { BioWriterModal } from "./bio-writer-modal";
 import { SendOfferModal } from "./send-offer-modal";
+import { VerifySocialModal } from "./verify-social-modal";
 import Link from "next/link";
 
 /* ═══ Icons ═══ */
@@ -1447,6 +1448,9 @@ export function DashboardContent() {
   const [uploadError, setUploadError] = useState("");
   const [showTemplates, setShowTemplates] = useState(false);
   const [showTestimonials, setShowTestimonials] = useState(false);
+  const [verifyModalOpen, setVerifyModalOpen] = useState(false);
+  const [verifyPlatform, setVerifyPlatform] = useState("");
+  const [verifyHandle, setVerifyHandle] = useState("");
 
   async function handleUpload(file: File, type: "avatar" | "cover") {
     setUploadError("");
@@ -1635,6 +1639,36 @@ export function DashboardContent() {
                     <div className="flex items-center gap-2 px-4 py-3 bg-emerald-50 border border-emerald-200/60 rounded-2xl">
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-emerald-600 shrink-0"><path d="M20 6L9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" /></svg>
                       <span className="text-sm font-medium text-emerald-700">Payments connected via Stripe</span>
+                    </div>
+                  )}
+
+                  {/* Bio verification banner */}
+                  {dataLoaded && !user.isVerified && socials.length > 0 && (
+                    <div className="p-4 bg-amber-50 border border-amber-200/60 rounded-2xl flex items-start gap-3">
+                      <div className="w-8 h-8 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-amber-600"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-sm font-semibold text-neutral-900">Verify your account to receive offers</h3>
+                        <p className="text-xs text-neutral-500 mt-0.5">Prove you own your social account by adding a unique code to your bio. Required to accept brand deals.</p>
+                        <div className="flex flex-wrap gap-2 mt-3">
+                          {socials.filter((s: any) => ["instagram", "x"].includes(s.platform)).map((s: any) => (
+                            <button
+                              key={s.id}
+                              onClick={() => { setVerifyPlatform(s.platform); setVerifyHandle(s.handle); setVerifyModalOpen(true); }}
+                              className="px-4 py-2 text-xs font-semibold text-white bg-neutral-900 rounded-lg hover:bg-neutral-800 transition-colors"
+                            >
+                              Verify @{s.handle} on {s.platform === "x" ? "X" : "Instagram"}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  {dataLoaded && user.isVerified && (
+                    <div className="flex items-center gap-2 px-4 py-3 bg-emerald-50 border border-emerald-200/60 rounded-2xl">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="#10b981"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                      <span className="text-sm font-medium text-emerald-700">Verified creator</span>
                     </div>
                   )}
 
@@ -1946,6 +1980,15 @@ export function DashboardContent() {
         await fetch("/api/profile", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ bio }) });
         refreshUser();
       }} />
+      {verifyModalOpen && verifyPlatform && verifyHandle && (
+        <VerifySocialModal
+          open={verifyModalOpen}
+          onClose={() => setVerifyModalOpen(false)}
+          platform={verifyPlatform}
+          handle={verifyHandle}
+          onVerified={() => refreshUser()}
+        />
+      )}
 
       <style>{`
         @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
