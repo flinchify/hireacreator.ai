@@ -110,21 +110,30 @@ export async function GET(request: Request) {
       const limit = 50;
       const offset = (page - 1) * limit;
 
-      const where = status ? sql`WHERE o.status = ${status}` : sql``;
-      const countWhere = status ? sql`WHERE status = ${status}` : sql``;
-
       const [offers, total] = await Promise.all([
-        sql`
-          SELECT o.id, o.creator_handle, o.creator_platform, o.budget_cents, o.fee_cents,
-                 o.status, o.brief, o.created_at, o.delivered_at, o.completed_at,
-                 u.full_name as brand_name, u.email as brand_email
-          FROM offers o
-          LEFT JOIN users u ON u.id = o.brand_user_id
-          ${where}
-          ORDER BY o.created_at DESC
-          LIMIT ${limit} OFFSET ${offset}
-        `.catch(() => []),
-        sql`SELECT COUNT(*) as count FROM offers ${countWhere}`.catch(() => [{ count: 0 }]),
+        status
+          ? sql`
+              SELECT o.id, o.creator_handle, o.creator_platform, o.budget_cents, o.fee_cents,
+                     o.status, o.brief, o.created_at, o.delivered_at, o.completed_at,
+                     u.full_name as brand_name, u.email as brand_email
+              FROM offers o
+              LEFT JOIN users u ON u.id = o.brand_user_id
+              WHERE o.status = ${status}
+              ORDER BY o.created_at DESC
+              LIMIT ${limit} OFFSET ${offset}
+            `.catch(() => [])
+          : sql`
+              SELECT o.id, o.creator_handle, o.creator_platform, o.budget_cents, o.fee_cents,
+                     o.status, o.brief, o.created_at, o.delivered_at, o.completed_at,
+                     u.full_name as brand_name, u.email as brand_email
+              FROM offers o
+              LEFT JOIN users u ON u.id = o.brand_user_id
+              ORDER BY o.created_at DESC
+              LIMIT ${limit} OFFSET ${offset}
+            `.catch(() => []),
+        status
+          ? sql`SELECT COUNT(*) as count FROM offers WHERE status = ${status}`.catch(() => [{ count: 0 }])
+          : sql`SELECT COUNT(*) as count FROM offers`.catch(() => [{ count: 0 }]),
       ]);
 
       return NextResponse.json({ offers, total: Number(total[0].count), page, limit });
@@ -135,22 +144,30 @@ export async function GET(request: Request) {
       const page = parseInt(url.searchParams.get("page") || "1");
       const limit = 50;
       const offset = (page - 1) * limit;
-
-      const searchFilter = search
-        ? sql`WHERE u.full_name ILIKE ${"%" + search + "%"} OR u.email ILIKE ${"%" + search + "%"}`
-        : sql``;
+      const like = "%" + search + "%";
 
       const [users, total] = await Promise.all([
-        sql`
-          SELECT u.id, u.full_name, u.email, u.role, u.subscription_tier, u.is_verified,
-                 u.is_banned, u.created_at,
-                 (SELECT COUNT(*) FROM social_connections WHERE user_id = u.id) as social_count
-          FROM users u
-          ${searchFilter}
-          ORDER BY u.created_at DESC
-          LIMIT ${limit} OFFSET ${offset}
-        `,
-        sql`SELECT COUNT(*) as count FROM users u ${searchFilter}`,
+        search
+          ? sql`
+              SELECT u.id, u.full_name, u.email, u.role, u.subscription_tier, u.is_verified,
+                     u.is_banned, u.created_at,
+                     (SELECT COUNT(*) FROM social_connections WHERE user_id = u.id) as social_count
+              FROM users u
+              WHERE u.full_name ILIKE ${like} OR u.email ILIKE ${like}
+              ORDER BY u.created_at DESC
+              LIMIT ${limit} OFFSET ${offset}
+            `
+          : sql`
+              SELECT u.id, u.full_name, u.email, u.role, u.subscription_tier, u.is_verified,
+                     u.is_banned, u.created_at,
+                     (SELECT COUNT(*) FROM social_connections WHERE user_id = u.id) as social_count
+              FROM users u
+              ORDER BY u.created_at DESC
+              LIMIT ${limit} OFFSET ${offset}
+            `,
+        search
+          ? sql`SELECT COUNT(*) as count FROM users u WHERE u.full_name ILIKE ${like} OR u.email ILIKE ${like}`
+          : sql`SELECT COUNT(*) as count FROM users`,
       ]);
 
       return NextResponse.json({ users, total: Number(total[0].count), page, limit });
@@ -161,21 +178,28 @@ export async function GET(request: Request) {
       const page = parseInt(url.searchParams.get("page") || "1");
       const limit = 50;
       const offset = (page - 1) * limit;
-
-      const searchFilter = search
-        ? sql`WHERE platform_handle ILIKE ${"%" + search + "%"} OR display_name ILIKE ${"%" + search + "%"}`
-        : sql``;
+      const like = "%" + search + "%";
 
       const [profiles, total] = await Promise.all([
-        sql`
-          SELECT id, platform, platform_handle, display_name, follower_count, creator_score,
-                 claimed_by, claimed_at, auto_profile_slug, created_at
-          FROM claimed_profiles
-          ${searchFilter}
-          ORDER BY creator_score DESC
-          LIMIT ${limit} OFFSET ${offset}
-        `.catch(() => []),
-        sql`SELECT COUNT(*) as count FROM claimed_profiles ${searchFilter}`.catch(() => [{ count: 0 }]),
+        search
+          ? sql`
+              SELECT id, platform, platform_handle, display_name, follower_count, creator_score,
+                     claimed_by, claimed_at, auto_profile_slug, created_at
+              FROM claimed_profiles
+              WHERE platform_handle ILIKE ${like} OR display_name ILIKE ${like}
+              ORDER BY creator_score DESC
+              LIMIT ${limit} OFFSET ${offset}
+            `.catch(() => [])
+          : sql`
+              SELECT id, platform, platform_handle, display_name, follower_count, creator_score,
+                     claimed_by, claimed_at, auto_profile_slug, created_at
+              FROM claimed_profiles
+              ORDER BY creator_score DESC
+              LIMIT ${limit} OFFSET ${offset}
+            `.catch(() => []),
+        search
+          ? sql`SELECT COUNT(*) as count FROM claimed_profiles WHERE platform_handle ILIKE ${like} OR display_name ILIKE ${like}`.catch(() => [{ count: 0 }])
+          : sql`SELECT COUNT(*) as count FROM claimed_profiles`.catch(() => [{ count: 0 }]),
       ]);
 
       return NextResponse.json({ profiles, total: Number(total[0].count), page, limit });

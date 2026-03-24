@@ -89,16 +89,18 @@ function RoleBadge({ role }: { role: string }) {
 function OverviewSection() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     fetch("/api/admin/dashboard?section=overview")
-      .then((r) => r.json())
-      .then(setData)
+      .then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
+      .then((d) => { if (d.error) throw new Error(d.error); setData(d); })
+      .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
   }, []);
 
   if (loading) return <Loader />;
-  if (!data) return <div className="text-neutral-400">Failed to load overview</div>;
+  if (error || !data) return <div className="text-red-400">Failed to load overview{error ? `: ${error}` : ""}</div>;
 
   const { users, offers, revenue, newUsers } = data;
 
@@ -147,8 +149,9 @@ function BotsSection() {
   const load = useCallback(() => {
     setLoading(true);
     fetch("/api/admin/dashboard?section=bots")
-      .then((r) => r.json())
-      .then(setData)
+      .then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
+      .then((d) => { if (d.error) throw new Error(d.error); setData(d); })
+      .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 
@@ -251,8 +254,9 @@ function OffersSection() {
     const params = new URLSearchParams({ section: "offers", page: String(page) });
     if (statusFilter) params.set("status", statusFilter);
     fetch(`/api/admin/dashboard?${params}`)
-      .then((r) => r.json())
-      .then(setData)
+      .then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
+      .then((d) => { if (d.error) throw new Error(d.error); setData(d); })
+      .catch(() => setData({ offers: [], total: 0, page: 1, limit: 50 }))
       .finally(() => setLoading(false));
   }, [statusFilter, page]);
 
@@ -388,8 +392,9 @@ function UsersSection() {
     const params = new URLSearchParams({ section: "users", page: String(page) });
     if (search) params.set("q", search);
     fetch(`/api/admin/dashboard?${params}`)
-      .then((r) => r.json())
-      .then(setData)
+      .then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
+      .then((d) => { if (d.error) throw new Error(d.error); setData(d); })
+      .catch(() => setData({ users: [], total: 0, page: 1, limit: 50 }))
       .finally(() => setLoading(false));
   }, [search, page]);
 
@@ -523,8 +528,9 @@ function ProfilesSection() {
     const params = new URLSearchParams({ section: "profiles", page: String(page) });
     if (search) params.set("q", search);
     fetch(`/api/admin/dashboard?${params}`)
-      .then((r) => r.json())
-      .then(setData)
+      .then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
+      .then((d) => { if (d.error) throw new Error(d.error); setData(d); })
+      .catch(() => setData({ profiles: [], total: 0, page: 1, limit: 50 }))
       .finally(() => setLoading(false));
   }, [search, page]);
 
@@ -624,16 +630,18 @@ function ProfilesSection() {
 function RevenueSection() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     fetch("/api/admin/dashboard?section=revenue")
-      .then((r) => r.json())
-      .then(setData)
+      .then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
+      .then((d) => { if (d.error) throw new Error(d.error); setData(d); })
+      .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
   }, []);
 
   if (loading) return <Loader />;
-  if (!data) return <div className="text-neutral-400">Failed to load revenue</div>;
+  if (error || !data) return <div className="text-red-400">Failed to load revenue{error ? `: ${error}` : ""}</div>;
 
   const { totals, topCreators } = data;
 
@@ -684,8 +692,9 @@ function SettingsSection() {
 
   useEffect(() => {
     fetch("/api/admin/dashboard?section=settings")
-      .then((r) => r.json())
-      .then(setSettings)
+      .then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
+      .then((d) => { if (d.error) throw new Error(d.error); setSettings(d); })
+      .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 
@@ -893,7 +902,7 @@ export default function AdminDashboard() {
       {/* Mobile header */}
       <div className="lg:hidden flex items-center justify-between px-4 py-3 bg-neutral-900 border-b border-neutral-800 sticky top-0 z-40">
         <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 min-h-[48px] min-w-[48px] flex items-center justify-center hover:bg-neutral-800 rounded-lg">
-          <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
             {sidebarOpen ? <path d="M4 4l12 12M4 16L16 4" /> : <path d="M3 6h14M3 10h14M3 14h14" />}
           </svg>
         </button>
@@ -910,7 +919,7 @@ export default function AdminDashboard() {
         `}>
           <div className="p-5 border-b border-neutral-800">
             <Link href="/dashboard" className="text-xs text-neutral-400 hover:text-white transition-colors flex items-center gap-1">
-              <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
               Back to Dashboard
             </Link>
             <div className="mt-3 text-lg font-bold text-white">Admin</div>
@@ -928,7 +937,7 @@ export default function AdminDashboard() {
                     : "text-neutral-400 hover:text-white hover:bg-neutral-800/50"
                 }`}
               >
-                <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
                   <path d={item.icon} />
                 </svg>
                 {item.label}
