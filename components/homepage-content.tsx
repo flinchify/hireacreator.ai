@@ -52,7 +52,7 @@ function TypingRotation() {
   }, [text, isDeleting, wordIndex]);
 
   return (
-    <span className="bg-gradient-to-r from-blue-500 via-sky-500 to-cyan-500 bg-clip-text text-transparent">
+    <span className="bg-gradient-to-r from-blue-500 via-sky-500 to-cyan-500 bg-clip-text text-transparent text-[0.85em]">
       {text}
       <span className="animate-blink text-blue-500">|</span>
     </span>
@@ -232,7 +232,7 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
 
         <div className="relative z-10 max-w-4xl mx-auto text-center animate-hero-fade-in">
           <h1
-            className="text-2xl sm:text-4xl lg:text-[3.2rem] text-neutral-800 leading-[1.5] mb-6"
+            className="text-2xl sm:text-4xl lg:text-[3rem] text-neutral-800 leading-[1.6] mb-6"
             style={{ fontFamily: "var(--font-serif)" }}
           >
             The marketplace where creators
