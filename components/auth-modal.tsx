@@ -98,14 +98,39 @@ export function AuthModal() {
       const data = await res.json();
       if (data.success) {
         await refreshUser();
-        // Navigate after login — use window.location for in-app browser compatibility
-        const isNew = data.isNewUser;
-        const slug = data.user?.slug;
         close();
-        if (isNew && slug) {
-          window.location.href = `/dashboard?welcome=true`;
+
+        // Check for claim intent stored before signup
+        let claimIntent: { platform?: string; handle?: string; slug?: string } | null = null;
+        try {
+          const raw = localStorage.getItem("hac_claim_intent");
+          if (raw) {
+            claimIntent = JSON.parse(raw);
+            localStorage.removeItem("hac_claim_intent");
+          }
+        } catch {}
+
+        if (claimIntent && (claimIntent.slug || (claimIntent.platform && claimIntent.handle))) {
+          try {
+            const res = await fetch("/api/claim-link", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(claimIntent),
+            });
+            const claimData = await res.json();
+            if (claimData.success) {
+              window.location.href = "/dashboard?claimed=true";
+              return;
+            }
+          } catch {}
+        }
+
+        // Default redirect
+        const isNew = data.isNewUser;
+        if (isNew) {
+          window.location.href = "/dashboard?welcome=true";
         } else {
-          window.location.href = `/dashboard`;
+          window.location.href = "/dashboard";
         }
         return;
       } else {

@@ -211,6 +211,7 @@ export default async function LinkInBioPage({ params, searchParams }: { params: 
         <ClaimBanner
           platform={(autoProfile.platform as string) || "instagram"}
           handle={(autoProfile.platform_handle as string) || ""}
+          slug={params.slug}
         />
       </>
     );

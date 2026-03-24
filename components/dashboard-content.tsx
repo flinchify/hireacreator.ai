@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
+import { useSearchParams } from "next/navigation";
 import { useAuth, User } from "./auth-context";
 import { CalendarManager } from "./calendar-manager";
 import { PlatformIcon } from "./icons/platforms";
@@ -1436,6 +1437,7 @@ function SlugEditor({ user, onChanged }: { user: User; onChanged: () => void }) 
 /* ═══ Main Dashboard ═══ */
 export function DashboardContent() {
   const { user, loading, refreshUser, logout } = useAuth();
+  const searchParams = useSearchParams();
   const [section, setSection] = useState<Section>("overview");
   const [editProfile, setEditProfile] = useState(false);
   const [editSocials, setEditSocials] = useState(false);
@@ -1451,6 +1453,7 @@ export function DashboardContent() {
   const [verifyModalOpen, setVerifyModalOpen] = useState(false);
   const [verifyPlatform, setVerifyPlatform] = useState("");
   const [verifyHandle, setVerifyHandle] = useState("");
+  const [claimBannerVisible, setClaimBannerVisible] = useState(searchParams.get("claimed") === "true");
 
   async function handleUpload(file: File, type: "avatar" | "cover") {
     setUploadError("");
@@ -1499,6 +1502,20 @@ export function DashboardContent() {
 
   return (
     <div className="min-h-screen bg-[#f8f8fa] overflow-x-hidden">
+      {claimBannerVisible && (
+        <div className="fixed top-16 left-0 right-0 z-40 px-4 py-2">
+          <div className="max-w-xl mx-auto bg-green-50 border border-green-200 rounded-xl p-3 flex items-center gap-3 shadow-lg">
+            <span className="text-green-600 text-lg">&#10003;</span>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-green-900">Profile claimed!</p>
+              <p className="text-xs text-green-700">Verify your social account from your dashboard to accept offers and get a verified badge.</p>
+            </div>
+            <button onClick={() => setClaimBannerVisible(false)} className="shrink-0 p-1 text-green-400 hover:text-green-600">
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+          </div>
+        </div>
+      )}
       <div className="flex">
 
         {/* ═══ LEFT SIDEBAR (desktop only) ═══ */}

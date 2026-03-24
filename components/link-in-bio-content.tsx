@@ -439,8 +439,8 @@ function ServiceCard({ service, creator, light, accent }: { service: any; creato
 function CTAButton({ creator, light, accent, isUnclaimed }: { creator: Creator; light?: boolean; accent?: string; isUnclaimed?: boolean }) {
   const ac = accent || creator.linkBioAccent || "#171717";
   const bs = BUTTON_SIZES[creator.linkBioButtonSize || "medium"] || BUTTON_SIZES.medium;
-  const ctaHref = isUnclaimed ? `/claim?platform=instagram&handle=${creator.slug}` : `/creators/${creator.slug}`;
-  const ctaText = isUnclaimed ? "Claim This Profile" : "View Full Profile";
+  const ctaHref = isUnclaimed ? `/u/${creator.slug}/claim` : `/creators/${creator.slug}`;
+  const ctaText = isUnclaimed ? "Claim & Customize" : "View Full Profile";
   return (
     <a href={ctaHref}
       className={`block w-full mt-4 font-semibold text-center rounded-2xl ${bs} transition-all duration-200 hover:scale-[1.02] hover:shadow-xl shadow-lg text-white`}
@@ -1158,10 +1158,10 @@ function TemplateBento({ creator, isUnclaimed }: { creator: Creator; isUnclaimed
 
           {/* CTA — col-span-4 with accent bg */}
           {!isEmpty && (
-            <a href={isUnclaimed ? `/claim?platform=instagram&handle=${creator.slug}` : `/creators/${creator.slug}`}
+            <a href={isUnclaimed ? `/u/${creator.slug}/claim` : `/creators/${creator.slug}`}
               className="col-span-4 row-span-1 rounded-2xl font-semibold text-sm text-center flex items-center justify-center text-white transition-all duration-200 hover:opacity-90 hover:scale-[1.02]"
               style={{ background: accent }}>
-              {isUnclaimed ? "Claim This Profile" : "View Full Profile"}
+              {isUnclaimed ? "Claim & Customize" : "View Full Profile"}
             </a>
           )}
           {isEmpty && (
@@ -1860,10 +1860,10 @@ function TemplateSunset({ creator, isUnclaimed }: { creator: Creator; isUnclaime
         {creator.calendarEnabled && <div className="my-6"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
         {isEmpty && <EmptyState light />}
         {!isEmpty && (
-          <a href={isUnclaimed ? `/claim?platform=instagram&handle=${creator.slug}` : `/creators/${creator.slug}`}
+          <a href={isUnclaimed ? `/u/${creator.slug}/claim` : `/creators/${creator.slug}`}
             className="block w-full mt-8 font-semibold text-center rounded-2xl py-4 px-5 transition-all hover:scale-[1.02] hover:shadow-xl shadow-lg"
             style={{ background: "rgba(255,255,255,0.25)", color: "white", backdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.3)" }}>
-            {isUnclaimed ? "Claim This Profile" : "View Full Profile"}
+            {isUnclaimed ? "Claim & Customize" : "View Full Profile"}
           </a>
         )}
         <Branding light />
@@ -2070,10 +2070,10 @@ function TemplatePastel({ creator, isUnclaimed }: { creator: Creator; isUnclaime
         {creator.calendarEnabled && <div className="my-6"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
         {isEmpty && <EmptyState />}
         {!isEmpty && (
-          <a href={isUnclaimed ? `/claim?platform=instagram&handle=${creator.slug}` : `/creators/${creator.slug}`}
+          <a href={isUnclaimed ? `/u/${creator.slug}/claim` : `/creators/${creator.slug}`}
             className={`block w-full mt-8 font-semibold text-center rounded-full ${bs} shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all text-white`}
             style={{ background: accent }}>
-            {isUnclaimed ? "Claim This Profile" : "View Full Profile"}
+            {isUnclaimed ? "Claim & Customize" : "View Full Profile"}
           </a>
         )}
         <Branding />
@@ -2260,10 +2260,10 @@ function TemplateRetro({ creator, isUnclaimed }: { creator: Creator; isUnclaimed
         {creator.calendarEnabled && <div className="my-6"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
         {isEmpty && <EmptyState />}
         {!isEmpty && (
-          <a href={isUnclaimed ? `/claim?platform=instagram&handle=${creator.slug}` : `/creators/${creator.slug}`}
+          <a href={isUnclaimed ? `/u/${creator.slug}/claim` : `/creators/${creator.slug}`}
             className={`block w-full mt-8 font-black text-center rounded-xl ${bs} border-black uppercase tracking-wider hover:translate-x-[2px] hover:translate-y-[2px] transition-all`}
             style={{ background: "#ff6ec7", boxShadow: "5px 5px 0 #000", borderWidth: "3px", color: "#000" }}>
-            {isUnclaimed ? "Claim This Profile" : "View Full Profile"}
+            {isUnclaimed ? "Claim & Customize" : "View Full Profile"}
           </a>
         )}
         <Branding />
@@ -2440,10 +2440,10 @@ function TemplateClay({ creator, isUnclaimed }: { creator: Creator; isUnclaimed?
         {creator.calendarEnabled && <div className="my-6"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
         {isEmpty && <EmptyState />}
         {!isEmpty && (
-          <a href={isUnclaimed ? `/claim?platform=instagram&handle=${creator.slug}` : `/creators/${creator.slug}`}
+          <a href={isUnclaimed ? `/u/${creator.slug}/claim` : `/creators/${creator.slug}`}
             className={`block w-full mt-8 font-semibold text-center rounded-2xl ${bs} text-white transition-all hover:scale-[1.02]`}
             style={{ background: accent, boxShadow: "6px 6px 12px #bebebe, -6px -6px 12px #ffffff" }}>
-            {isUnclaimed ? "Claim This Profile" : "View Full Profile"}
+            {isUnclaimed ? "Claim & Customize" : "View Full Profile"}
           </a>
         )}
         <Branding />
@@ -2534,10 +2534,10 @@ function TemplateGradientMesh({ creator, isUnclaimed }: { creator: Creator; isUn
           {creator.calendarEnabled && <div className="my-6"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
           {isEmpty && <EmptyState />}
           {!isEmpty && (
-            <a href={isUnclaimed ? `/claim?platform=instagram&handle=${creator.slug}` : `/creators/${creator.slug}`}
+            <a href={isUnclaimed ? `/u/${creator.slug}/claim` : `/creators/${creator.slug}`}
               className="block w-full mt-6 font-semibold text-center rounded-2xl py-4 px-5 shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all text-white"
               style={{ background: accent }}>
-              {isUnclaimed ? "Claim This Profile" : "View Full Profile"}
+              {isUnclaimed ? "Claim & Customize" : "View Full Profile"}
             </a>
           )}
           <Branding />
@@ -2751,10 +2751,10 @@ function TemplateEducator({ creator, isUnclaimed }: { creator: Creator; isUnclai
         {creator.calendarEnabled && <div className="my-6"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
         {isEmpty && <EmptyState />}
         {!isEmpty && (
-          <a href={isUnclaimed ? `/claim?platform=instagram&handle=${creator.slug}` : `/creators/${creator.slug}`}
+          <a href={isUnclaimed ? `/u/${creator.slug}/claim` : `/creators/${creator.slug}`}
             className={`block w-full mt-8 font-semibold text-center rounded-xl ${bs} shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all text-white`}
             style={{ background: accent }}>
-            {isUnclaimed ? "Claim This Profile" : "View Full Profile"}
+            {isUnclaimed ? "Claim & Customize" : "View Full Profile"}
           </a>
         )}
         <Branding />
@@ -2970,10 +2970,10 @@ function TemplateExecutive({ creator, isUnclaimed }: { creator: Creator; isUncla
         {creator.calendarEnabled && <div className="my-6"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
         {isEmpty && <EmptyState />}
         {!isEmpty && (
-          <a href={isUnclaimed ? `/claim?platform=instagram&handle=${creator.slug}` : `/creators/${creator.slug}`}
+          <a href={isUnclaimed ? `/u/${creator.slug}/claim` : `/creators/${creator.slug}`}
             className={`block w-full mt-8 font-medium text-center rounded-lg ${bs} border transition-colors hover:bg-slate-50`}
             style={{ borderColor: accent, color: accent }}>
-            {isUnclaimed ? "Claim This Profile" : "View Full Profile"}
+            {isUnclaimed ? "Claim & Customize" : "View Full Profile"}
           </a>
         )}
         <Branding />
