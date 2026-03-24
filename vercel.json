@@ -1,6 +1,14 @@
 {
   "crons": [
     {
+      "path": "/api/twitter/poll-mentions?secret=hireacreator-ig-verify-2026",
+      "schedule": "* * * * *"
+    },
+    {
+      "path": "/api/instagram/poll-comments?secret=hireacreator-ig-verify-2026",
+      "schedule": "* * * * *"
+    },
+    {
       "path": "/api/cron/refresh-followers",
       "schedule": "0 0 * * *"
     },
