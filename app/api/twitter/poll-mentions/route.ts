@@ -50,6 +50,12 @@ export async function GET(request: Request) {
   const debug: any = { queries_tried: [], mentions_source: null };
 
   try {
+    // Check if X bot is enabled in site_settings
+    const botSetting = await sql`SELECT value FROM site_settings WHERE key = 'x_bot_enabled'`.catch(() => []);
+    if (botSetting.length > 0 && botSetting[0].value === "false") {
+      return NextResponse.json({ message: "X bot is disabled", paused: true });
+    }
+
     // Ensure tracking table exists
     await sql`
       CREATE TABLE IF NOT EXISTS x_replied_tweets (

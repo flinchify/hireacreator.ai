@@ -60,6 +60,11 @@ function UserMenu() {
           <Link href="/dashboard/settings" onClick={() => setOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
             Settings
           </Link>
+          {user.role === "admin" && (
+            <Link href="/admin" onClick={() => setOpen(false)} className="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">
+              Admin
+            </Link>
+          )}
           <Link href="/referrals" onClick={() => setOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors flex items-center gap-2">
             Referrals
             <span className="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-[9px] font-bold rounded-full">20%</span>
@@ -191,6 +196,7 @@ export function Header() {
               <>
                 <Link href="/dashboard" className="px-4 py-3 text-sm font-medium rounded-xl min-h-[48px] flex items-center text-neutral-800 hover:bg-neutral-50" onClick={() => setMobileOpen(false)}>Dashboard</Link>
                 {user.role !== "brand" && <Link href={user.slug ? `/u/${user.slug}` : "/dashboard"} className="px-4 py-3 text-sm font-medium rounded-xl min-h-[48px] flex items-center text-neutral-800 hover:bg-neutral-50" onClick={() => setMobileOpen(false)}>My Link in Bio</Link>}
+                {user.role === "admin" && <Link href="/admin" className="px-4 py-3 text-sm font-medium rounded-xl min-h-[48px] flex items-center text-red-600 hover:bg-red-50" onClick={() => setMobileOpen(false)}>Admin</Link>}
               </>
             ) : (
               <>

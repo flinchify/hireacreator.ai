@@ -28,6 +28,12 @@ export async function GET(request: Request) {
   const results: any[] = [];
 
   try {
+    // Check if Instagram bot is enabled in site_settings
+    const botSetting = await sql`SELECT value FROM site_settings WHERE key = 'ig_bot_enabled'`.catch(() => []);
+    if (botSetting.length > 0 && botSetting[0].value === "false") {
+      return NextResponse.json({ message: "Instagram bot is disabled", paused: true });
+    }
+
     // Ensure tracking table exists
     await sql`
       CREATE TABLE IF NOT EXISTS ig_replied_comments (
