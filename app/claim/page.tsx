@@ -7,6 +7,7 @@ import { Footer } from "@/components/footer";
 import { ScoreChecker } from "@/components/score-checker";
 import { ScoreGauge, BreakdownBars } from "@/components/score-gauge";
 import { OfferCountBanner } from "@/components/offer-count-banner";
+import { useAuth } from "@/components/auth-context";
 
 interface ScoreData {
   score: number;
@@ -61,6 +62,7 @@ function formatFollowers(count: number): string {
 
 function ClaimPageInner() {
   const searchParams = useSearchParams();
+  const { openSignup } = useAuth();
   const [scoreData, setScoreData] = useState<ScoreData | null>(null);
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -311,13 +313,36 @@ function ClaimPageInner() {
                   handle={scoreData.profile.handle} 
                 />
 
+                {/* Link-in-bio preview */}
+                {scoreData.design?.template && scoreData.design?.bgValue && (
+                  <div className="mb-4 rounded-2xl overflow-hidden border border-neutral-100 shadow-md">
+                    <div className="text-[10px] font-medium text-neutral-400 text-center py-1.5 bg-neutral-50">Your link-in-bio preview</div>
+                    <div className="h-48 flex items-center justify-center p-4" style={{ background: scoreData.design.bgValue || '#f5f5f5' }}>
+                      <div className="text-center">
+                        {scoreData.profile.avatarUrl && (
+                          <img src={scoreData.profile.avatarUrl} alt="" className="w-16 h-16 rounded-full mx-auto mb-2 border-2 border-white/50 object-cover" />
+                        )}
+                        <div className="text-sm font-bold" style={{ color: scoreData.design.textColor || '#fff', fontFamily: scoreData.design.font ? `var(--font-${scoreData.design.font})` : undefined }}>
+                          {scoreData.profile.displayName}
+                        </div>
+                        <div className="text-[10px] mt-0.5" style={{ color: scoreData.design.textColor ? scoreData.design.textColor + 'aa' : 'rgba(255,255,255,0.7)' }}>
+                          @{scoreData.profile.handle}
+                        </div>
+                        <div className="text-[9px] mt-2" style={{ color: scoreData.design.textColor ? scoreData.design.textColor + '88' : 'rgba(255,255,255,0.5)' }}>
+                          {scoreData.design.template} template
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {!scoreData.isClaimed ? (
-                  <a
-                    href={scoreData.profileUrl.replace("https://hireacreator.ai", "")}
-                    className="block w-full py-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg font-semibold text-center text-sm hover:from-blue-600 hover:to-blue-700 shadow-lg shadow-blue-500/25 transition-all mb-3"
+                  <button
+                    onClick={() => openSignup ? openSignup() : window.location.href = '/dashboard'}
+                    className="block w-full py-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg font-semibold text-center text-sm hover:from-blue-600 hover:to-blue-700 shadow-lg shadow-blue-500/25 transition-all mb-3 cursor-pointer"
                   >
                     Claim Your Profile — Get Matched With Brands
-                  </a>
+                  </button>
                 ) : (
                   <div className="mb-3">
                     <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-center mb-3">
