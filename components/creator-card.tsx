@@ -29,7 +29,7 @@ export function CreatorCard({
           {creator.cover ? (
             <img
               src={creator.cover}
-              alt=""
+              alt={`${creator.name || "Creator"} cover photo`}
               className="w-full h-full object-cover"
             />
           ) : (

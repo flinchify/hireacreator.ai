@@ -44,7 +44,7 @@ function Sheet({ open, onClose, title, children }: { open: boolean; onClose: () 
         </div>
         <div className="sticky top-0 bg-white border-b border-neutral-100 px-5 py-4 flex items-center justify-between z-10 rounded-t-2xl">
           <h3 className="font-display font-bold text-neutral-900">{title}</h3>
-          <button onClick={onClose} className="p-1 rounded-lg hover:bg-neutral-100 text-neutral-400">{icons.close}</button>
+          <button onClick={onClose} className="p-1 rounded-lg hover:bg-neutral-100 text-neutral-400" aria-label="Close">{icons.close}</button>
         </div>
         <div className="p-5">{children}</div>
       </div>
@@ -108,7 +108,7 @@ function EditProfileSheet({ user, open, onClose, onOpenBioWriter }: { user: User
         <div><label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Website</label><input className={inp} value={form.website_url} onChange={e => setForm({ ...form, website_url: e.target.value })} placeholder="https://yoursite.com" /></div>
         <div><label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Business Name</label><input className={inp} value={form.business_name} onChange={e => setForm({ ...form, business_name: e.target.value })} placeholder="My Agency" /></div>
         <div className="flex items-center gap-3 py-2">
-          <button onClick={() => setForm({ ...form, is_online: !form.is_online })} className={`relative w-11 h-6 rounded-full transition-colors ${form.is_online ? "bg-emerald-500" : "bg-neutral-300"}`}>
+          <button onClick={() => setForm({ ...form, is_online: !form.is_online })} role="switch" aria-checked={form.is_online} className={`relative w-11 h-6 rounded-full transition-colors ${form.is_online ? "bg-emerald-500" : "bg-neutral-300"}`}>
             <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${form.is_online ? "translate-x-5" : ""}`} />
           </button>
           <span className="text-sm text-neutral-700">Show as online</span>

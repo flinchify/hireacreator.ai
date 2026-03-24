@@ -172,6 +172,7 @@ export function BrowseContent({
             <input
               type="number"
               placeholder="Min"
+              aria-label="Minimum hourly rate"
               value={priceMin}
               onChange={(e) => setPriceMin(e.target.value)}
               className="w-full pl-7 pr-3 py-2 rounded-lg border border-neutral-300 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent"
@@ -183,6 +184,7 @@ export function BrowseContent({
             <input
               type="number"
               placeholder="Max"
+              aria-label="Maximum hourly rate"
               value={priceMax}
               onChange={(e) => setPriceMax(e.target.value)}
               className="w-full pl-7 pr-3 py-2 rounded-lg border border-neutral-300 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent"

@@ -27,7 +27,7 @@ function UserMenu() {
         className="flex items-center gap-2 px-2 py-1.5 rounded-full hover:bg-neutral-100 transition-colors"
       >
         {user.avatar ? (
-          <img src={user.avatar} alt="" className="w-7 h-7 rounded-full object-cover" />
+          <img src={user.avatar} alt={`${user.name || "User"} avatar`} className="w-7 h-7 rounded-full object-cover" />
         ) : (
           <div className="w-7 h-7 rounded-full bg-neutral-200 flex items-center justify-center">
             <span className="text-xs font-medium text-neutral-600">{user.name?.charAt(0) || "?"}</span>
