@@ -203,10 +203,9 @@ function formatFollowerTier(count: number): string {
 function generateHeadline(profile: SocialProfile): string {
   const parts: string[] = [];
 
-  // Category label
-  const cat = profile.category;
+  // Category label — use profile category or detect from bio
+  const cat = profile.category || detectNicheFromBio(profile.bio, profile.handle);
   if (cat) {
-    // Capitalize first letter of each word
     const label = cat.replace(/\b\w/g, (c) => c.toUpperCase());
     parts.push(`${label} Creator`);
   } else {
@@ -277,8 +276,34 @@ function selectButtonShape(category: string | null): string {
 
 // --- Main Entry Point ---
 
+function detectNicheFromBio(bio: string | null, handle: string): string | null {
+  const text = [bio || "", handle].join(" ").toLowerCase();
+  const nicheKeywords: Record<string, string[]> = {
+    "fitness": ["fitness", "gym", "workout", "trainer", "coach", "athlete", "crossfit", "yoga", "health", "nutrition"],
+    "beauty": ["beauty", "makeup", "skincare", "cosmetics", "mua", "esthetician", "hair", "nails"],
+    "fashion": ["fashion", "style", "model", "designer", "outfit", "streetwear", "clothing"],
+    "tech": ["tech", "developer", "coding", "software", "startup", "founder", "saas", "ai", "engineer", "builds"],
+    "gaming": ["gaming", "gamer", "streamer", "esports", "twitch"],
+    "photography": ["photo", "photographer", "portrait", "landscape", "camera", "visual"],
+    "music": ["music", "musician", "singer", "rapper", "dj", "producer", "artist", "beats"],
+    "food": ["food", "chef", "cooking", "recipe", "foodie", "baking", "restaurant"],
+    "travel": ["travel", "adventure", "explore", "wanderlust", "digital nomad"],
+    "business": ["business", "entrepreneur", "ceo", "finance", "investing", "marketing", "agency"],
+    "education": ["teacher", "tutor", "education", "professor", "mentor", "learn"],
+    "automotive": ["car", "cars", "automotive", "4wd", "jeep", "offroad", "motorsport"],
+  };
+  let best: string | null = null;
+  let bestCount = 0;
+  for (const [niche, keywords] of Object.entries(nicheKeywords)) {
+    const count = keywords.filter(k => text.includes(k)).length;
+    if (count > bestCount) { bestCount = count; best = niche; }
+  }
+  return best;
+}
+
 export function designProfile(profile: SocialProfile): AIProfileDesign {
-  const category = profile.category;
+  // Try profile category first, then detect from bio/handle
+  const category = profile.category || detectNicheFromBio(profile.bio, profile.handle);
   const template = selectTemplate(category);
   const { bgType, bgValue, textColor } = extractColorPalette(category);
   const suggestedServices = detectServices(profile.bio, profile.externalUrl, profile.websites, category);
