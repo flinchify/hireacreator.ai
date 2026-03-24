@@ -471,7 +471,7 @@ export function WysiwygEditor({ initialData, slug }: { initialData: EditorData; 
   const prevStatus = useRef(status);
   useEffect(() => {
     if (prevStatus.current === "saving" && status === "saved" && iframeRef.current) {
-      iframeRef.current.src = `/u/${slug}?t=${Date.now()}`;
+      iframeRef.current.src = `/u/${slug}?t=${Date.now()}&preview=true`;
     }
     prevStatus.current = status;
   }, [status, slug]);
@@ -556,7 +556,7 @@ export function WysiwygEditor({ initialData, slug }: { initialData: EditorData; 
           <div className="w-full max-w-[420px]">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-sm font-bold text-neutral-900">Live Preview</h3>
-              <button onClick={() => { if (iframeRef.current) iframeRef.current.src = `/u/${slug}?t=${Date.now()}`; }} className="text-[11px] text-neutral-400 hover:text-neutral-600 font-medium flex items-center gap-1">
+              <button onClick={() => { if (iframeRef.current) iframeRef.current.src = `/u/${slug}?t=${Date.now()}&preview=true`; }} className="text-[11px] text-neutral-400 hover:text-neutral-600 font-medium flex items-center gap-1">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M23 4v6h-6M1 20v-6h6" strokeLinecap="round" strokeLinejoin="round" /><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 Refresh
               </button>
@@ -564,7 +564,7 @@ export function WysiwygEditor({ initialData, slug }: { initialData: EditorData; 
             <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-neutral-200">
               <iframe
                 ref={iframeRef}
-                src={`/u/${slug}?t=${Date.now()}`}
+                src={`/u/${slug}?t=${Date.now()}&preview=true`}
                 className="w-full border-0"
                 style={{ height: "calc(100vh - 160px)", minHeight: "600px" }}
                 title="Live Preview"
