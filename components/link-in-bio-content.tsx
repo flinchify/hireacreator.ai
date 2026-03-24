@@ -2546,6 +2546,441 @@ function TemplateGradientMesh({ creator }: { creator: Creator }) {
 }
 
 /* ══════════════════════════════════════════════════════════════
+   TEMPLATE: TRADER — Financial traders, crypto, forex, stocks
+   ══════════════════════════════════════════════════════════════ */
+function TemplateTrader({ creator }: { creator: Creator }) {
+  const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
+  const accent = creator.linkBioAccent || "#00c087";
+  const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
+  const avatarSz = AVATAR_SIZES[creator.linkBioAvatarSize || "medium"] || AVATAR_SIZES.medium;
+  const bs = BUTTON_SIZES[creator.linkBioButtonSize || "medium"] || BUTTON_SIZES.medium;
+  const justify = CONTENT_JUSTIFY[creator.linkBioContentPosition || 'top'] || CONTENT_JUSTIFY.top;
+  const align = CONTENT_ALIGN[creator.linkBioContentAlign || 'center'] || CONTENT_ALIGN.center;
+
+  return (
+    <div className="min-h-screen relative" style={{ background: "#0b0e11", fontFamily: "'SF Mono', 'Fira Code', 'Courier New', monospace" }}>
+      {/* Scanline overlay */}
+      <div className="fixed inset-0 pointer-events-none z-20 opacity-[0.03]" style={{ backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,192,135,0.08) 3px, rgba(0,192,135,0.08) 4px)" }} />
+
+      <div className={`relative z-10 w-full lg:max-w-[480px] mx-auto px-5 pt-8 pb-10 min-h-screen ${align} flex flex-col ${justify}`}>
+        <div className="absolute top-3 right-4"><ShareBtn slug={creator.slug} light /></div>
+
+        {/* Ticker header bar */}
+        <div className="flex items-center justify-between mb-6 pb-2 border-b border-[#00c087]/20">
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-bold tracking-widest" style={{ color: "#00c087" }}>${(creator.slug || "TICKER").toUpperCase()}</span>
+            <span className="text-[9px] px-1.5 py-0.5 rounded bg-[#00c087]/10 text-[#00c087]">LIVE</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-[9px] text-neutral-500">followers</span>
+            <span className="text-[10px] font-bold text-[#00c087]">{creator.socials.reduce((sum, s) => sum + (parseInt(s.followers?.replace(/[^0-9]/g, '') || '0') || 0), 0).toLocaleString()}</span>
+          </div>
+        </div>
+
+        {/* Avatar with green ring */}
+        <div className="text-center mb-5">
+          {creator.avatar ? (
+            <img src={creator.avatar} alt="" className={`${avatarSz} rounded-full object-cover mx-auto ring-2 ring-[#00c087]/60 ring-offset-2 ring-offset-[#0b0e11]`} />
+          ) : (
+            <div className={`${avatarSz} rounded-full mx-auto bg-[#00c087]/10 flex items-center justify-center ring-2 ring-[#00c087]/60 ring-offset-2 ring-offset-[#0b0e11]`}>
+              <span className="text-3xl font-bold text-[#00c087]/70">{(creator.name || "?")[0]}</span>
+            </div>
+          )}
+          {creator.isOnline && <OnlineDot />}
+        </div>
+
+        {/* Name / ticker */}
+        <div className="text-center mb-5">
+          <div className="flex items-center justify-center gap-1.5">
+            <h1 className={`${ts.name} font-bold tracking-tight`} style={{ color: "#e8eaed" }}>{creator.name || "Your Name"}</h1>
+            {creator.isVerified && <VerifiedBadge light />}{creator.isPro && <ProBadge />}
+          </div>
+          <p className="text-[10px] mt-1 tracking-widest" style={{ color: "#00c087", opacity: 0.5 }}>@{creator.slug}</p>
+          <NicheRankBadge creator={creator} light />
+          {creator.headline && <p className={`mt-2 ${ts.headline} text-neutral-400 max-w-[300px] mx-auto`}>{creator.headline}</p>}
+          {creator.location && <p className="mt-1 text-xs text-neutral-500 flex items-center justify-center gap-1"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>{creator.location}</p>}
+        </div>
+
+        {/* Bio in terminal box */}
+        {creator.bio && (
+          <div className="mb-6 p-3 border border-[#00c087]/15 bg-[#00c087]/[0.03] rounded">
+            <p className={`${ts.bio} leading-relaxed`} style={{ color: "#00c087", opacity: 0.8 }}>{creator.bio}</p>
+          </div>
+        )}
+
+        {creator.socials.length > 0 && (
+          <div className="flex items-center justify-center gap-3 my-5 flex-wrap">
+            {creator.socials.map(s => (
+              <a key={s.platform} href={s.url || "#"} target="_blank" rel="noopener noreferrer"
+                className="w-11 h-11 rounded border border-[#00c087]/20 flex items-center justify-center hover:bg-[#00c087]/10 transition-colors"
+                aria-label={`Visit ${s.platform}`}>
+                <PlatformIcon platform={s.platform} size={17} className="text-[#00c087]/60" />
+              </a>
+            ))}
+          </div>
+        )}
+
+        <BioLinksSection creator={creator} light />
+        <ProductsSection creator={creator} light accent={accent} />
+
+        {creator.services.length > 0 && (
+          <div className="space-y-2 mb-6">
+            <div className="text-[10px] font-bold tracking-widest" style={{ color: "#00c087", opacity: 0.4 }}>POSITIONS</div>
+            {creator.services.map(s => (
+              <a key={s.id} href={`/creators/${creator.slug}`}
+                className={`block w-full ${bs} rounded border border-[#00c087]/20 hover:bg-[#00c087]/10 transition-colors text-left`}
+                style={{ color: "#e8eaed" }}>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">{s.title}</span>
+                  <span className="text-xs font-bold" style={{ color: "#00c087" }}>${priceLabel(s.price, s.deliveryDays)}</span>
+                </div>
+              </a>
+            ))}
+          </div>
+        )}
+
+        {creator.portfolio.length > 0 && (
+          <div className="grid grid-cols-3 gap-1.5 mb-6">
+            {creator.portfolio.slice(0, 6).map(p => (
+              <div key={p.id} className="aspect-square overflow-hidden rounded border border-[#00c087]/10">
+                {p.image ? <img src={p.image} alt={p.title} className="w-full h-full object-cover" style={{ filter: "brightness(0.85)" }} /> : <div className="w-full h-full bg-[#00c087]/5 flex items-center justify-center text-xs text-[#00c087]/20">{p.title}</div>}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {creator.calendarEnabled && <div className="my-6"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
+        {isEmpty && <EmptyState light />}
+        {!isEmpty && (
+          <a href={`/creators/${creator.slug}`}
+            className={`block w-full mt-8 font-bold text-center rounded ${bs} border-2 transition-colors hover:bg-[#00c087]/10`}
+            style={{ borderColor: "#00c087", color: "#00c087" }}>
+            VIEW FULL PROFILE
+          </a>
+        )}
+        <Branding light />
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TEMPLATE: EDUCATOR — Course sellers, coaches, mentors
+   ══════════════════════════════════════════════════════════════ */
+function TemplateEducator({ creator }: { creator: Creator }) {
+  const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
+  const accent = creator.linkBioAccent || "#d97706";
+  const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
+  const avatarSz = AVATAR_SIZES[creator.linkBioAvatarSize || "medium"] || AVATAR_SIZES.medium;
+  const bs = BUTTON_SIZES[creator.linkBioButtonSize || "medium"] || BUTTON_SIZES.medium;
+  const justify = CONTENT_JUSTIFY[creator.linkBioContentPosition || 'top'] || CONTENT_JUSTIFY.top;
+  const align = CONTENT_ALIGN[creator.linkBioContentAlign || 'center'] || CONTENT_ALIGN.center;
+
+  return (
+    <div className="min-h-screen" style={{ background: "linear-gradient(180deg, #fffbf0 0%, #fff 40%, #fef3e2 100%)" }}>
+      <div className={`w-full lg:max-w-[480px] mx-auto px-5 pt-12 pb-10 min-h-screen ${align} flex flex-col ${justify}`}>
+        <div className="absolute top-3 right-4"><ShareBtn slug={creator.slug} /></div>
+
+        {/* Avatar */}
+        <div className="relative inline-block mb-5">
+          {creator.avatar ? (
+            <img src={creator.avatar} alt="" className={`${avatarSz} rounded-full object-cover shadow-md ring-4 ring-amber-100`} />
+          ) : (
+            <div className={`${avatarSz} rounded-full bg-amber-50 shadow-md flex items-center justify-center ring-4 ring-amber-100`}>
+              <span className="text-3xl font-bold text-amber-400">{(creator.name || "?")[0]}</span>
+            </div>
+          )}
+          {creator.isOnline && <OnlineDot />}
+        </div>
+
+        {/* Name */}
+        <div className="flex items-center justify-center gap-1.5">
+          <h1 className={`${ts.name} font-bold text-neutral-800 tracking-tight`} style={{ fontFamily: "'Georgia', 'Times New Roman', serif" }}>{creator.name || "Your Name"}</h1>
+          {creator.isVerified && <VerifiedBadge />}{creator.isPro && <ProBadge />}
+        </div>
+        <p className="text-xs text-neutral-400 mt-0.5">@{creator.slug}</p>
+        <NicheRankBadge creator={creator} />
+        {creator.headline && <p className={`mt-2 ${ts.headline} text-neutral-500 max-w-[320px] mx-auto leading-relaxed`}>{creator.headline}</p>}
+        {creator.location && <p className="mt-2 text-xs text-neutral-400 flex items-center justify-center gap-1"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>{creator.location}</p>}
+
+        {/* Bio as featured mission statement */}
+        {creator.bio && (
+          <div className="my-6 p-5 bg-white rounded-xl shadow-sm border border-amber-100 relative">
+            <span className="absolute -top-3 left-4 text-4xl leading-none font-serif" style={{ color: accent, opacity: 0.3 }}>&ldquo;</span>
+            <p className={`${ts.bio} text-neutral-600 leading-relaxed italic`} style={{ fontFamily: "'Georgia', 'Times New Roman', serif" }}>{creator.bio}</p>
+            <span className="absolute -bottom-3 right-4 text-4xl leading-none font-serif" style={{ color: accent, opacity: 0.3 }}>&rdquo;</span>
+          </div>
+        )}
+
+        <Socials creator={creator} />
+
+        <BioLinksSection creator={creator} />
+        <ProductsSection creator={creator} accent={accent} />
+
+        {creator.services.length > 0 && (
+          <div className="space-y-3 mb-6">
+            <SectionLabel>Offerings</SectionLabel>
+            {creator.services.map(s => (
+              <a key={s.id} href={`/creators/${creator.slug}`}
+                className={`block w-full ${bs} rounded-xl bg-white shadow-sm text-left hover:shadow-md hover:scale-[1.01] transition-all border-l-4`}
+                style={{ borderLeftColor: accent }}>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <span className="text-sm font-semibold text-neutral-800">{s.title}</span>
+                    {s.description && <p className="text-xs text-neutral-400 mt-0.5 line-clamp-1">{s.description}</p>}
+                  </div>
+                  <span className="text-xs font-bold shrink-0 ml-3" style={{ color: accent }}>{priceLabel(s.price, s.deliveryDays)}</span>
+                </div>
+              </a>
+            ))}
+          </div>
+        )}
+
+        {creator.portfolio.length > 0 && (
+          <div className="grid grid-cols-3 gap-2.5 mb-6">
+            {creator.portfolio.slice(0, 6).map(p => (
+              <div key={p.id} className="aspect-square rounded-xl overflow-hidden bg-white shadow-sm border border-amber-50">
+                {p.image ? <img src={p.image} alt={p.title} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-xs text-neutral-300">{p.title}</div>}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {creator.calendarEnabled && <div className="my-6"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
+        {isEmpty && <EmptyState />}
+        {!isEmpty && (
+          <a href={`/creators/${creator.slug}`}
+            className={`block w-full mt-8 font-semibold text-center rounded-xl ${bs} shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all text-white`}
+            style={{ background: accent }}>
+            View Full Profile
+          </a>
+        )}
+        <Branding />
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TEMPLATE: DEVELOPER — Coders, engineers, open source devs
+   ══════════════════════════════════════════════════════════════ */
+function TemplateDeveloper({ creator }: { creator: Creator }) {
+  const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
+  const accent = creator.linkBioAccent || "#7dcfff";
+  const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
+  const avatarSz = AVATAR_SIZES[creator.linkBioAvatarSize || "medium"] || AVATAR_SIZES.medium;
+  const bs = BUTTON_SIZES[creator.linkBioButtonSize || "medium"] || BUTTON_SIZES.medium;
+  const justify = CONTENT_JUSTIFY[creator.linkBioContentPosition || 'top'] || CONTENT_JUSTIFY.top;
+  const align = CONTENT_ALIGN[creator.linkBioContentAlign || 'center'] || CONTENT_ALIGN.center;
+
+  /* Decorative GitHub-style dots */
+  const dots = Array.from({ length: 35 }, (_, i) => {
+    const colors = ["#9ece6a", "#7dcfff", "#bb9af7", "#ff9e64", "#1a1b26"];
+    return colors[Math.floor(Math.random() * colors.length)];
+  });
+
+  return (
+    <div className="min-h-screen relative" style={{ background: "#1a1b26", fontFamily: "'JetBrains Mono', 'Fira Code', 'Courier New', monospace" }}>
+      <div className={`relative z-10 w-full lg:max-w-[480px] mx-auto px-5 pt-8 pb-10 min-h-screen ${align} flex flex-col ${justify}`}>
+        <div className="absolute top-3 right-4"><ShareBtn slug={creator.slug} light /></div>
+
+        {/* GitHub-style activity dots */}
+        <div className="flex flex-wrap gap-[3px] mb-6 max-w-[200px]">
+          {dots.map((color, i) => (
+            <div key={i} className="w-[10px] h-[10px] rounded-sm" style={{ background: color, opacity: color === "#1a1b26" ? 0.3 : 0.6 }} />
+          ))}
+        </div>
+
+        {/* Profile as code comment */}
+        <div className="mb-1 text-xs" style={{ color: "#565f89" }}>{"// @"}{creator.slug}</div>
+
+        <div className="flex items-start gap-4 mb-5">
+          {creator.avatar ? (
+            <img src={creator.avatar} alt="" className={`${avatarSz} rounded-lg object-cover border border-[#7dcfff]/20`} />
+          ) : (
+            <div className={`${avatarSz} rounded-lg bg-[#7dcfff]/10 flex items-center justify-center border border-[#7dcfff]/20`}>
+              <span className="text-3xl font-bold text-[#7dcfff]/60">{(creator.name || "?")[0]}</span>
+            </div>
+          )}
+          <div className="flex-1 min-w-0 pt-1">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <h1 className={`${ts.name} font-bold`} style={{ color: "#c0caf5" }}>{creator.name || "Your Name"}</h1>
+              {creator.isVerified && <VerifiedBadge light />}{creator.isPro && <ProBadge />}
+            </div>
+            <NicheRankBadge creator={creator} light />
+            {creator.headline && <p className={`mt-1 ${ts.headline}`} style={{ color: "#9ece6a", opacity: 0.8 }}>{creator.headline}</p>}
+            {creator.location && <p className="mt-1 text-xs" style={{ color: "#565f89" }}>{creator.location}</p>}
+            {creator.isOnline && <OnlineDot />}
+          </div>
+        </div>
+
+        {/* Bio in code block */}
+        {creator.bio && (
+          <div className="mb-6 p-4 rounded-lg border border-[#292e42]" style={{ background: "#16161e" }}>
+            <div className="text-[10px] mb-2" style={{ color: "#565f89" }}>/** README.md */</div>
+            <p className={`${ts.bio} leading-relaxed`} style={{ color: "#a9b1d6" }}>{creator.bio}</p>
+          </div>
+        )}
+
+        {creator.socials.length > 0 && (
+          <div className="flex items-center gap-3 my-5 flex-wrap">
+            {creator.socials.map(s => (
+              <a key={s.platform} href={s.url || "#"} target="_blank" rel="noopener noreferrer"
+                className="w-11 h-11 rounded-lg border border-[#292e42] flex items-center justify-center hover:bg-[#292e42] transition-colors"
+                aria-label={`Visit ${s.platform}`}>
+                <PlatformIcon platform={s.platform} size={17} className="text-[#7dcfff]/60" />
+              </a>
+            ))}
+          </div>
+        )}
+
+        <BioLinksSection creator={creator} light />
+        <ProductsSection creator={creator} light accent={accent} />
+
+        {creator.services.length > 0 && (
+          <div className="space-y-2 mb-6">
+            <div className="text-xs font-bold" style={{ color: "#565f89" }}>{"{"} services {"}"}</div>
+            {creator.services.map((s, i) => (
+              <a key={s.id} href={`/creators/${creator.slug}`}
+                className={`block w-full ${bs} rounded-lg border border-[#292e42] hover:bg-[#292e42]/60 transition-colors text-left`}
+                style={{ background: "#16161e" }}>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="text-xs shrink-0" style={{ color: "#bb9af7" }}>const</span>
+                    <span className="text-sm truncate" style={{ color: "#c0caf5" }}>{s.title}</span>
+                  </div>
+                  <span className="text-xs font-bold shrink-0 ml-2" style={{ color: "#9ece6a" }}>{priceLabel(s.price, s.deliveryDays)}</span>
+                </div>
+              </a>
+            ))}
+          </div>
+        )}
+
+        {creator.portfolio.length > 0 && (
+          <div className="mb-6">
+            <div className="text-xs mb-2" style={{ color: "#565f89" }}>{"{"} portfolio {"}"}</div>
+            <div className="grid grid-cols-3 gap-1.5">
+              {creator.portfolio.slice(0, 6).map(p => (
+                <div key={p.id} className="aspect-square overflow-hidden rounded-lg border border-[#292e42]">
+                  {p.image ? <img src={p.image} alt={p.title} className="w-full h-full object-cover" style={{ filter: "brightness(0.85)" }} /> : <div className="w-full h-full bg-[#16161e] flex items-center justify-center text-xs" style={{ color: "#565f89" }}>{p.title}</div>}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {creator.calendarEnabled && <div className="my-6"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
+        {isEmpty && <EmptyState light />}
+        {!isEmpty && (
+          <a href={`/creators/${creator.slug}`}
+            className={`block w-full mt-8 font-bold text-center rounded-lg ${bs} border transition-colors hover:bg-[#7dcfff]/10`}
+            style={{ borderColor: "#7dcfff", color: "#7dcfff" }}>
+            $ view --full-profile
+          </a>
+        )}
+        <Branding light />
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TEMPLATE: EXECUTIVE — Business owners, founders, CEOs
+   ══════════════════════════════════════════════════════════════ */
+function TemplateExecutive({ creator }: { creator: Creator }) {
+  const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
+  const accent = creator.linkBioAccent || "#1e3a5f";
+  const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
+  const avatarSz = AVATAR_SIZES[creator.linkBioAvatarSize || "medium"] || AVATAR_SIZES.medium;
+  const bs = BUTTON_SIZES[creator.linkBioButtonSize || "medium"] || BUTTON_SIZES.medium;
+  const justify = CONTENT_JUSTIFY[creator.linkBioContentPosition || 'top'] || CONTENT_JUSTIFY.top;
+  const align = CONTENT_ALIGN[creator.linkBioContentAlign || 'center'] || CONTENT_ALIGN.center;
+
+  return (
+    <div className="min-h-screen" style={{ background: "#ffffff" }}>
+      <div className={`w-full lg:max-w-[480px] mx-auto px-6 pt-16 pb-12 min-h-screen ${align} flex flex-col ${justify}`}>
+        <div className="absolute top-3 right-4"><ShareBtn slug={creator.slug} /></div>
+
+        {/* Large centered avatar */}
+        <div className="text-center mb-8">
+          {creator.avatar ? (
+            <img src={creator.avatar} alt="" className={`${avatarSz} rounded-full object-cover mx-auto shadow-lg`} />
+          ) : (
+            <div className={`${avatarSz} rounded-full mx-auto shadow-lg flex items-center justify-center`} style={{ background: "#f1f5f9" }}>
+              <span className="text-3xl font-bold" style={{ color: accent }}>{(creator.name || "?")[0]}</span>
+            </div>
+          )}
+          {creator.isOnline && <OnlineDot />}
+        </div>
+
+        {/* Name in serif */}
+        <div className="text-center mb-6">
+          <div className="flex items-center justify-center gap-1.5">
+            <h1 className={`${ts.name} font-bold tracking-tight`} style={{ color: "#0f1729", fontFamily: "'Georgia', 'Cambria', serif" }}>{creator.name || "Your Name"}</h1>
+            {creator.isVerified && <VerifiedBadge />}{creator.isPro && <ProBadge />}
+          </div>
+          <p className="text-xs mt-1 tracking-widest uppercase" style={{ color: "#94a3b8" }}>@{creator.slug}</p>
+          <NicheRankBadge creator={creator} />
+          {creator.headline && <p className={`mt-3 ${ts.headline} max-w-[320px] mx-auto leading-relaxed`} style={{ color: "#64748b" }}>{creator.headline}</p>}
+          {creator.location && <p className="mt-2 text-xs flex items-center justify-center gap-1" style={{ color: "#94a3b8" }}><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>{creator.location}</p>}
+        </div>
+
+        {/* Thin divider */}
+        <div className="w-12 h-px mx-auto mb-6" style={{ background: "#cbd5e1" }} />
+
+        {/* Bio */}
+        {creator.bio && (
+          <p className={`${ts.bio} text-center leading-relaxed mb-6 max-w-[340px] mx-auto`} style={{ color: "#475569" }}>{creator.bio}</p>
+        )}
+
+        <Socials creator={creator} />
+
+        <BioLinksSection creator={creator} />
+        <ProductsSection creator={creator} accent={accent} />
+
+        {creator.services.length > 0 && (
+          <div className="mb-6 w-full">
+            <SectionLabel>Services</SectionLabel>
+            <div className="divide-y" style={{ borderColor: "#e2e8f0" }}>
+              {creator.services.map(s => (
+                <a key={s.id} href={`/creators/${creator.slug}`}
+                  className="block w-full py-4 hover:bg-slate-50/50 transition-colors text-left">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium" style={{ color: "#0f1729" }}>{s.title}</span>
+                    <span className="text-xs font-medium" style={{ color: accent }}>{priceLabel(s.price, s.deliveryDays)}</span>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {creator.portfolio.length > 0 && (
+          <div className="grid grid-cols-3 gap-3 mb-6">
+            {creator.portfolio.slice(0, 6).map(p => (
+              <div key={p.id} className="aspect-square rounded-lg overflow-hidden shadow-sm">
+                {p.image ? <img src={p.image} alt={p.title} className="w-full h-full object-cover" /> : <div className="w-full h-full bg-slate-50 flex items-center justify-center text-xs text-slate-300">{p.title}</div>}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {creator.calendarEnabled && <div className="my-6"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
+        {isEmpty && <EmptyState />}
+        {!isEmpty && (
+          <a href={`/creators/${creator.slug}`}
+            className={`block w-full mt-8 font-medium text-center rounded-lg ${bs} border transition-colors hover:bg-slate-50`}
+            style={{ borderColor: accent, color: accent }}>
+            View Full Profile
+          </a>
+        )}
+        <Branding />
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════
    MAIN EXPORT
    ══════════════════════════════════════════════════════════════ */
 const TEMPLATES: Record<string, React.ComponentType<{ creator: Creator }>> = {
@@ -2569,6 +3004,10 @@ const TEMPLATES: Record<string, React.ComponentType<{ creator: Creator }>> = {
   midnight: TemplateMidnight,
   clay: TemplateClay,
   "gradient-mesh": TemplateGradientMesh,
+  trader: TemplateTrader,
+  educator: TemplateEducator,
+  developer: TemplateDeveloper,
+  executive: TemplateExecutive,
 };
 
 /* ── Intro Animation Overlay ── */

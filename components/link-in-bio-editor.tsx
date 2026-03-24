@@ -46,6 +46,10 @@ const TEMPLATES = [
   { id: "midnight", name: "Midnight", dark: true },
   { id: "clay", name: "Clay", dark: false },
   { id: "gradient-mesh", name: "Gradient Mesh", dark: true },
+  { id: "trader", name: "Trader", dark: true },
+  { id: "educator", name: "Educator", dark: false },
+  { id: "developer", name: "Developer", dark: true },
+  { id: "executive", name: "Executive", dark: false },
 ];
 
 const FONTS = [
@@ -677,6 +681,93 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
           </div>
         ))}</div>
         <div className="w-full mt-4"><CTAButton altStyle={{ borderRadius: btnRadius, background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.2)", backdropFilter: "blur(12px)", color: "#fff", width: "100%", padding: "10px 0", fontSize: "11px", fontWeight: 700 }} /></div>
+      </div>
+    </div>
+  );
+
+  /* ═══ TRADER — Trading terminal dark green/black ═══ */
+  if (tpl === "trader") return (
+    <div className="relative w-full min-h-full bg-[#0b0e11] overflow-hidden" style={{ fontFamily: "'SF Mono', 'Courier New', monospace", ...getBgStyle() }}>
+      <div className="absolute inset-0 opacity-[0.02]" style={{backgroundImage:"repeating-linear-gradient(0deg, #00c087 0px, transparent 1px, transparent 4px)"}}/>
+      <BgLayers />
+      <div className="relative z-10 flex flex-col items-center pt-6 px-5 pb-8 max-w-[440px] mx-auto">
+        <div className="w-full flex items-center justify-between mb-4 text-[8px] font-mono">
+          <span className="text-[#00c087]/50">{name.toUpperCase().replace(/\s/g, '')}.X</span>
+          <div className="flex gap-2"><span className="text-[#00c087]">▲ LIVE</span></div>
+        </div>
+        <Avatar size="w-14 h-14" borderCol="#00c087" />
+        <h2 className="mt-3 text-sm font-bold text-[#00c087]" style={{ color: textCol }}>{name}</h2>
+        <p className="text-[10px] text-[#00c087]/40 font-mono" style={{ color: textMuted }}>{headline}</p>
+        <div className="flex gap-1.5 mt-3">{socials.slice(0, 5).map((s: any, i: number) => (
+          <div key={i} className="w-7 h-7 rounded border border-[#00c087]/20 bg-[#00c087]/5 flex items-center justify-center"><PlatformIcon platform={s.platform} size={14} className="text-[#00c087]/50" /></div>
+        ))}</div>
+        <div className="w-full mt-4 space-y-2">{services.map((s: any, i: number) => (
+          <div key={i} className="w-full py-2.5 px-3 text-[11px] font-mono border border-[#00c087]/15 bg-[#00c087]/[0.03]" style={{ borderRadius: "4px", color: textCol || "#00c087" }}>
+            <div className="flex items-center justify-between"><span>{s.title}</span><span className="text-[#00c087]/50">${s.price}</span></div>
+          </div>
+        ))}</div>
+        <div className="w-full mt-4"><CTAButton altStyle={{ borderRadius: "4px", background: "#00c087", color: "#0b0e11", width: "100%", padding: "10px 0", fontSize: "11px", fontWeight: 700, fontFamily: "monospace" }} /></div>
+      </div>
+    </div>
+  );
+
+  /* ═══ EDUCATOR — Warm, trustworthy, course-seller aesthetic ═══ */
+  if (tpl === "educator") return (
+    <div className="relative w-full min-h-full" style={{ fontFamily, background: hasStoredColor ? storedBgValue : "linear-gradient(180deg, #fffbf0 0%, #fff 40%, #fef3e2 100%)", ...getBgStyle() }}>
+      <BgLayers />
+      <div className="relative z-10 flex flex-col items-center pt-10 px-5 pb-8 max-w-[440px] mx-auto">
+        <Avatar size="w-16 h-16" borderCol="#d97706" />
+        <h2 className="mt-3 text-sm font-bold text-neutral-900" style={{ color: textCol, fontFamily: "'Georgia', serif" }}>{name}</h2>
+        <p className="text-[10px] text-amber-700/60" style={{ color: textMuted }}>{headline}</p>
+        <div className="mt-3"><Socials /></div>
+        <div className="w-full mt-4 space-y-2">{services.map((s: any, i: number) => (
+          <div key={i} className="w-full py-2.5 px-3 text-[11px] font-medium bg-white border border-amber-200/50 shadow-sm" style={{ borderRadius: "12px", borderLeft: "3px solid #d97706", color: textCol || "#1a1a1a" }}>
+            <div className="flex items-center justify-between"><span>{s.title}</span><span style={{ opacity: 0.4 }}>${s.price}</span></div>
+          </div>
+        ))}</div>
+        <div className="w-full mt-4"><CTAButton altStyle={{ borderRadius: "12px", background: "#d97706", color: "#fff", width: "100%", padding: "10px 0", fontSize: "11px", fontWeight: 700 }} /></div>
+      </div>
+    </div>
+  );
+
+  /* ═══ DEVELOPER — Code editor dark, syntax colors ═══ */
+  if (tpl === "developer") return (
+    <div className="relative w-full min-h-full bg-[#1a1b26] overflow-hidden" style={{ fontFamily: "'JetBrains Mono', 'Courier New', monospace", ...getBgStyle() }}>
+      <BgLayers />
+      <div className="relative z-10 flex flex-col items-center pt-8 px-5 pb-8 max-w-[440px] mx-auto">
+        <div className="text-[8px] text-[#565f89] self-start mb-3 font-mono">// profile.ts</div>
+        <Avatar size="w-14 h-14" shape="square" borderCol="#7dcfff" />
+        <h2 className="mt-3 text-sm font-bold text-[#c0caf5]" style={{ color: textCol }}>{name}</h2>
+        <p className="text-[10px] text-[#565f89] font-mono" style={{ color: textMuted }}>@{(creator?.slug || name).toLowerCase().replace(/\s/g, '-')}</p>
+        <div className="flex gap-1.5 mt-3">{socials.slice(0, 5).map((s: any, i: number) => (
+          <div key={i} className="w-7 h-7 rounded-lg border border-[#7dcfff]/20 bg-[#7dcfff]/5 flex items-center justify-center"><PlatformIcon platform={s.platform} size={14} className="text-[#7dcfff]/50" /></div>
+        ))}</div>
+        <div className="w-full mt-4 space-y-2">{services.map((s: any, i: number) => (
+          <div key={i} className="w-full py-2.5 px-3 text-[11px] font-mono border border-[#9ece6a]/15 bg-white/[0.03]" style={{ borderRadius: "6px", color: textCol || "#c0caf5" }}>
+            <div className="flex items-center justify-between"><span><span className="text-[#7dcfff]/60">$ </span>{s.title}</span><span className="text-[#bb9af7]/50">${s.price}</span></div>
+          </div>
+        ))}</div>
+        <div className="w-full mt-4"><CTAButton altStyle={{ borderRadius: "6px", background: "#7dcfff", color: "#1a1b26", width: "100%", padding: "10px 0", fontSize: "11px", fontWeight: 700, fontFamily: "monospace" }} /></div>
+      </div>
+    </div>
+  );
+
+  /* ═══ EXECUTIVE — Ultra-clean, premium whitespace ═══ */
+  if (tpl === "executive") return (
+    <div className="relative w-full min-h-full bg-white" style={{ fontFamily, ...getBgStyle() }}>
+      <BgLayers />
+      <div className="relative z-10 flex flex-col items-center pt-12 px-6 pb-8 max-w-[440px] mx-auto">
+        <Avatar size="w-20 h-20" borderCol="transparent" />
+        <h2 className="mt-4 text-base font-bold text-[#0f1729]" style={{ color: textCol, fontFamily: "'Georgia', serif" }}>{name}</h2>
+        <p className="text-[10px] text-neutral-400 mt-1" style={{ color: textMuted }}>{headline}</p>
+        <div className="mt-3"><Socials /></div>
+        <div className="w-16 h-[0.5px] bg-neutral-200 my-4" />
+        <div className="w-full space-y-2">{services.map((s: any, i: number) => (
+          <div key={i} className="w-full py-3 px-4 text-[11px] font-medium bg-white border border-neutral-200 hover:border-neutral-300 transition-colors" style={{ borderRadius: "10px", color: textCol || "#0f1729" }}>
+            <div className="flex items-center justify-between"><span>{s.title}</span><span className="text-neutral-400">${s.price}</span></div>
+          </div>
+        ))}</div>
+        <div className="w-full mt-4"><CTAButton altStyle={{ borderRadius: "10px", background: "#1e3a5f", color: "#fff", width: "100%", padding: "10px 0", fontSize: "11px", fontWeight: 700, fontFamily: "'Georgia', serif" }} /></div>
       </div>
     </div>
   );
@@ -1762,6 +1853,65 @@ function EditorTemplateMini({ id }: { id: string }) {
         </div>
         <div className="w-full h-3.5 rounded-full bg-white/15 border border-white/20 mt-1.5" />
       </div>
+    </div>
+  );
+
+  if (id === "trader") return (
+    <div className={`${c} bg-[#0b0e11] flex flex-col items-center pt-2 px-2`}>
+      <div className="w-full flex items-center justify-between mb-1">
+        <div className="flex gap-0.5"><div className="w-1.5 h-1.5 rounded-full bg-[#00c087]/60" /><div className="w-4 h-0.5 bg-[#00c087]/30 rounded-full mt-0.5" /></div>
+        <div className="flex gap-1"><div className="w-3 h-1.5 rounded-sm bg-[#00c087]/20 text-[3px] text-[#00c087]/60 flex items-center justify-center">+</div><div className="w-3 h-1.5 rounded-sm bg-red-500/20" /></div>
+      </div>
+      <div className="w-8 h-8 rounded-full border border-[#00c087]/40 bg-[#00c087]/5" />
+      <div className="w-10 h-1 rounded-full bg-[#00c087]/40 mt-1" />
+      <div className="w-full space-y-1 mt-2">
+        <div className="h-4 rounded-sm border border-[#00c087]/20 bg-[#00c087]/5 flex items-center justify-between px-1"><div className="w-6 h-0.5 bg-[#00c087]/30 rounded-full"/><div className="w-3 h-0.5 bg-[#00c087]/20 rounded-full"/></div>
+        <div className="h-4 rounded-sm border border-[#00c087]/20 bg-[#00c087]/5 flex items-center justify-between px-1"><div className="w-8 h-0.5 bg-[#00c087]/30 rounded-full"/><div className="w-3 h-0.5 bg-[#00c087]/20 rounded-full"/></div>
+      </div>
+      <div className="w-full h-3.5 bg-[#00c087] rounded-sm mt-1.5" />
+    </div>
+  );
+
+  if (id === "educator") return (
+    <div className={`${c} flex flex-col items-center justify-center px-2`} style={{ background: "linear-gradient(180deg, #fffbf0 0%, #fff 50%, #fef3e2 100%)" }}>
+      <div className="w-8 h-8 rounded-full bg-amber-100 border-2 border-amber-300/50" />
+      <div className="w-10 h-1 rounded-full bg-amber-900/60 mt-1" />
+      <div className="w-full mt-1.5 p-1 rounded-lg bg-amber-50 border border-amber-200/50">
+        <div className="w-full h-0.5 bg-amber-300/40 rounded-full mb-0.5" />
+        <div className="w-8 h-0.5 bg-amber-300/30 rounded-full" />
+      </div>
+      <div className="w-full space-y-1 mt-1.5">
+        <div className="h-4 rounded-lg bg-white border border-amber-200/40 shadow-sm flex items-center px-1"><div className="w-0.5 h-2.5 bg-amber-500 rounded-full mr-1"/><div className="w-6 h-0.5 bg-neutral-600/40 rounded-full"/></div>
+        <div className="h-4 rounded-lg bg-white border border-amber-200/40 shadow-sm flex items-center px-1"><div className="w-0.5 h-2.5 bg-amber-500 rounded-full mr-1"/><div className="w-8 h-0.5 bg-neutral-600/40 rounded-full"/></div>
+      </div>
+      <div className="w-full h-3.5 rounded-lg mt-1.5" style={{ background: "#d97706" }} />
+    </div>
+  );
+
+  if (id === "developer") return (
+    <div className={`${c} bg-[#1a1b26] flex flex-col items-center pt-2 px-2`}>
+      <div className="flex gap-0.5 mb-1.5 self-start">{[...Array(7)].map((_, i) => <div key={i} className="w-1.5 h-1.5 rounded-sm" style={{ background: i % 3 === 0 ? "#9ece6a" : i % 3 === 1 ? "#7dcfff33" : "#bb9af733", opacity: 0.3 + Math.random() * 0.5 }} />)}</div>
+      <div className="w-8 h-8 rounded-lg border border-[#7dcfff]/30 bg-[#7dcfff]/5" />
+      <div className="w-10 h-1 rounded-full bg-[#bb9af7]/40 mt-1" />
+      <div className="w-full space-y-1 mt-2">
+        <div className="h-4 rounded-sm border border-[#9ece6a]/15 bg-white/[0.03] flex items-center px-1"><span className="text-[4px] text-[#7dcfff]/40 mr-0.5">$</span><div className="w-6 h-0.5 bg-[#9ece6a]/30 rounded-full"/></div>
+        <div className="h-4 rounded-sm border border-[#9ece6a]/15 bg-white/[0.03] flex items-center px-1"><span className="text-[4px] text-[#7dcfff]/40 mr-0.5">$</span><div className="w-8 h-0.5 bg-[#bb9af7]/30 rounded-full"/></div>
+      </div>
+      <div className="w-full h-3.5 rounded-sm mt-1.5 border border-[#7dcfff]/40" style={{ background: "#7dcfff" }} />
+    </div>
+  );
+
+  if (id === "executive") return (
+    <div className={`${c} bg-white flex flex-col items-center justify-center px-2`}>
+      <div className="w-10 h-10 rounded-full bg-neutral-100 border border-neutral-200 shadow-sm" />
+      <div className="w-12 h-1 rounded-full bg-[#0f1729] mt-1.5" />
+      <div className="w-8 h-0.5 rounded-full bg-neutral-300 mt-0.5" />
+      <div className="w-full h-[0.5px] bg-neutral-200 my-2" />
+      <div className="w-full space-y-1">
+        <div className="h-4 rounded-lg bg-white border border-neutral-200 flex items-center justify-between px-1"><div className="w-8 h-0.5 bg-neutral-600/50 rounded-full"/><div className="w-2 h-0.5 bg-neutral-300 rounded-full"/></div>
+        <div className="h-4 rounded-lg bg-white border border-neutral-200 flex items-center justify-between px-1"><div className="w-6 h-0.5 bg-neutral-600/50 rounded-full"/><div className="w-2 h-0.5 bg-neutral-300 rounded-full"/></div>
+      </div>
+      <div className="w-full h-3.5 rounded-lg mt-1.5 bg-[#1e3a5f]" />
     </div>
   );
 
