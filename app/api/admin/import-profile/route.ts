@@ -122,19 +122,45 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "ScrapingBee API key not configured" }, { status: 500 });
     }
 
-    const params = new URLSearchParams({
-      api_key: apiKey,
-      url,
-      render_js: "true",
-      premium_proxy: "true",
-    });
-    const scrapeRes = await fetch(`https://app.scrapingbee.com/api/v1/?${params}`, {
-      signal: AbortSignal.timeout(20000),
-    });
-    if (!scrapeRes.ok) {
-      return NextResponse.json({ error: `Failed to scrape URL (status ${scrapeRes.status})` }, { status: 502 });
+    // Try multiple scraping strategies
+    let html = "";
+    
+    // Strategy 1: ScrapingBee with stealth and JS rendering
+    const strategies: Record<string, string>[] = [
+      { render_js: "true", premium_proxy: "true", stealth_proxy: "true" },
+      { render_js: "true", premium_proxy: "true" },
+      { render_js: "false", premium_proxy: "true" },
+      { render_js: "false" },
+    ];
+    
+    for (const strategy of strategies) {
+      try {
+        const params = new URLSearchParams({ api_key: apiKey, url, ...strategy } as Record<string, string>);
+        const scrapeRes = await fetch(`https://app.scrapingbee.com/api/v1/?${params}`, {
+          signal: AbortSignal.timeout(20000),
+        });
+        if (scrapeRes.ok) {
+          html = await scrapeRes.text();
+          if (html.length > 500) break; // Got real content
+        }
+      } catch { continue; }
     }
-    const html = await scrapeRes.text();
+
+    // Strategy 2: Direct fetch with Googlebot UA as fallback
+    if (html.length < 500) {
+      try {
+        const directRes = await fetch(url, {
+          headers: { "User-Agent": "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)", "Accept": "text/html" },
+          signal: AbortSignal.timeout(10000),
+          redirect: "follow",
+        });
+        if (directRes.ok) html = await directRes.text();
+      } catch {}
+    }
+
+    if (html.length < 100) {
+      return NextResponse.json({ error: "Could not scrape this URL. The site may be blocking automated access." }, { status: 502 });
+    }
 
     // Parse the HTML
     const parsed = parseImportedHtml(html, url);
