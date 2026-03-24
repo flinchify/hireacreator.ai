@@ -26,17 +26,18 @@ export function generateTagReply(
   estimatedPostValue: number
 ): string {
   const value = formatCents(estimatedPostValue);
+  const lowerSlug = slug.toLowerCase();
   const idx = Math.floor(Math.random() * TEMPLATES.length);
-  const reply = TEMPLATES[idx](handle, slug, score, value);
+  const reply = TEMPLATES[idx](handle, lowerSlug, score, value);
   // Ensure under 280 chars for X compatibility
   if (reply.length > 280) {
-    return `@${handle} scored ${score}/100 for brand deals. Profile: hireacreator.ai/u/${slug}`;
+    return `@${handle} scored ${score}/100 for brand deals. Profile: hireacreator.ai/u/${lowerSlug}`;
   }
   return reply;
 }
 
 export function generateClaimNotification(handle: string, slug: string): string {
-  return `Your HireACreator profile has been claimed! Customize it at hireacreator.ai/u/${slug}/edit`;
+  return `Your HireACreator profile has been claimed! Customize it at hireacreator.ai/u/${slug.toLowerCase()}/edit`;
 }
 
 export type BotPlatform = "x" | "instagram";
