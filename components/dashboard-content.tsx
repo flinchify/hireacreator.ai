@@ -1453,7 +1453,23 @@ export function DashboardContent() {
   const [verifyModalOpen, setVerifyModalOpen] = useState(false);
   const [verifyPlatform, setVerifyPlatform] = useState("");
   const [verifyHandle, setVerifyHandle] = useState("");
+  const [claimSlug, setClaimSlug] = useState("");
   const [claimBannerVisible, setClaimBannerVisible] = useState(searchParams.get("claimed") === "true");
+  const [claimVerifyPending, setClaimVerifyPending] = useState(false);
+
+  // Auto-open verification modal when redirected from claim flow
+  useEffect(() => {
+    const verifyParam = searchParams.get("verify");
+    const handleParam = searchParams.get("handle");
+    const claimSlugParam = searchParams.get("claim_slug");
+    if (verifyParam && handleParam) {
+      setVerifyPlatform(verifyParam);
+      setVerifyHandle(handleParam);
+      if (claimSlugParam) setClaimSlug(claimSlugParam);
+      setClaimVerifyPending(true);
+      setVerifyModalOpen(true);
+    }
+  }, [searchParams]);
 
   async function handleUpload(file: File, type: "avatar" | "cover") {
     setUploadError("");
@@ -2000,10 +2016,28 @@ export function DashboardContent() {
       {verifyModalOpen && verifyPlatform && verifyHandle && (
         <VerifySocialModal
           open={verifyModalOpen}
-          onClose={() => setVerifyModalOpen(false)}
+          onClose={() => { setVerifyModalOpen(false); setClaimVerifyPending(false); setClaimSlug(""); }}
           platform={verifyPlatform}
           handle={verifyHandle}
-          onVerified={() => refreshUser()}
+          onVerified={async () => {
+            await refreshUser();
+            // If this verification was part of a claim flow, complete the claim now
+            if (claimVerifyPending && claimSlug) {
+              try {
+                const res = await fetch("/api/claim-link", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ slug: claimSlug, platform: verifyPlatform, handle: verifyHandle, verified: true }),
+                });
+                const data = await res.json();
+                if (data.success) {
+                  setClaimBannerVisible(true);
+                }
+              } catch {}
+              setClaimVerifyPending(false);
+              setClaimSlug("");
+            }
+          }}
         />
       )}
 

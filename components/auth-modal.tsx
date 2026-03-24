@@ -111,18 +111,13 @@ export function AuthModal() {
         } catch {}
 
         if (claimIntent && (claimIntent.slug || (claimIntent.platform && claimIntent.handle))) {
-          try {
-            const res = await fetch("/api/claim-link", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(claimIntent),
-            });
-            const claimData = await res.json();
-            if (claimData.success) {
-              window.location.href = "/dashboard?claimed=true";
-              return;
-            }
-          } catch {}
+          // Redirect to claim page which will look up platform info and redirect to verification
+          if (claimIntent.slug) {
+            window.location.href = `/u/${encodeURIComponent(claimIntent.slug)}/claim`;
+          } else if (claimIntent.platform && claimIntent.handle) {
+            window.location.href = `/dashboard?verify=${encodeURIComponent(claimIntent.platform)}&handle=${encodeURIComponent(claimIntent.handle)}`;
+          }
+          return;
         }
 
         // Default redirect
