@@ -89,7 +89,7 @@ export async function GET(req: NextRequest) {
             {score}
           </div>
           <div style={{ fontSize: 24, color: "#737373", marginTop: 8 }}>
-            Creator Score
+            Creator Rating
           </div>
 
           <div style={{ display: "flex", gap: 32, marginTop: 32, fontSize: 18, color: "#525252" }}>

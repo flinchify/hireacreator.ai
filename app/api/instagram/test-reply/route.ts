@@ -1,13 +1,21 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
+import { getDb } from "@/lib/db";
 
 export const maxDuration = 30;
 
 /**
  * GET /api/instagram/test-reply
  * Reads latest comments and tries to reply to the newest @hireacreator mention.
- * Shows full debug output.
+ * Requires authenticated admin user.
  */
 export async function GET() {
+  const token = (await cookies()).get("session")?.value;
+  if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const db = getDb();
+  const rows = await db`SELECT role FROM users WHERE session_token = ${token} LIMIT 1`;
+  if (!rows.length || rows[0].role !== "admin") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+
   const accessToken = process.env.INSTAGRAM_ACCESS_TOKEN;
   if (!accessToken) return NextResponse.json({ error: "No token" });
 

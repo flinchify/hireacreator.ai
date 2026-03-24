@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import {
   searchRecentTweets,
   getUserByUsername,
@@ -15,8 +16,16 @@ export const maxDuration = 30;
  * GET /api/twitter/test-reply
  * Full debug endpoint: tries all query formats, shows raw responses,
  * OAuth details (masked), and attempts smart replies.
+ * Requires authenticated admin user.
  */
 export async function GET() {
+  const token = (await cookies()).get("session")?.value;
+  if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const { getDb } = await import("@/lib/db");
+  const authDb = getDb();
+  const authRows = await authDb`SELECT role FROM users WHERE session_token = ${token} LIMIT 1`;
+  if (!authRows.length || authRows[0].role !== "admin") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+
   const bearerToken = process.env.X_BEARER_TOKEN;
   if (!bearerToken)
     return NextResponse.json({ error: "No X_BEARER_TOKEN" });

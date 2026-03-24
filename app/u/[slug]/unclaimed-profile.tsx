@@ -192,7 +192,7 @@ export function UnclaimedProfile({
           <div className="grid lg:grid-cols-2 gap-8">
             {/* Score Card */}
             <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-6 sm:p-8">
-              <h3 className="text-lg font-semibold text-neutral-900 mb-6 text-center">Creator Score</h3>
+              <h3 className="text-lg font-semibold text-neutral-900 mb-6 text-center">Creator Rating</h3>
               <ScoreGauge score={profile.score} />
 
               <div className="mt-6 text-center">

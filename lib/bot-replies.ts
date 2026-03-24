@@ -10,7 +10,7 @@ const TEMPLATES = [
   (h: string, s: string, sc: number, v: string) =>
     `Brand profile for @${h} is ready — scored ${sc}/100. Claim it here: hireacreator.ai/u/${s}`,
   (h: string, s: string, sc: number, v: string) =>
-    `We just analyzed @${h} — ${sc}/100 creator score, ~${v}/post potential. See more: hireacreator.ai/u/${s}`,
+    `We just analyzed @${h} — ${sc}/100 creator rating, ~${v}/post potential. See more: hireacreator.ai/u/${s}`,
 ];
 
 function formatCents(cents: number): string {

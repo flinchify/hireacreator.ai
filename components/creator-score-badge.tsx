@@ -1,7 +1,7 @@
 import { getScoreTier } from "@/lib/creator-score";
 
 /**
- * Circular score badge showing the Creator Score (0-100).
+ * Circular score badge showing the Creator Rating (0-100).
  * Uses a ring that fills based on score percentage.
  */
 export function CreatorScoreBadge({

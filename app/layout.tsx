@@ -10,7 +10,7 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: {
-    default: "HireACreator.ai - Hire Creators or Let Your AI Agent Do It",
+    default: "HireACreator.ai - The Creator Marketplace with 0% Fees",
     template: "%s | HireACreator.ai",
   },
   description:

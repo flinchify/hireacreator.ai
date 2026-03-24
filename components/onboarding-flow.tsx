@@ -556,7 +556,7 @@ export function OnboardingFlow() {
             <div className="p-4 rounded-2xl bg-neutral-50 border border-neutral-200">
               <div className="flex items-center justify-between mb-3">
                 <div>
-                  <h3 className="text-xs font-bold text-neutral-900 uppercase tracking-wider">Creator Score</h3>
+                  <h3 className="text-xs font-bold text-neutral-900 uppercase tracking-wider">Creator Rating</h3>
                   <p className="text-[10px] text-neutral-400 mt-0.5">Complete your profile to rank higher</p>
                 </div>
                 <div className="text-right">

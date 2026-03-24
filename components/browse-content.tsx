@@ -273,7 +273,7 @@ export function BrowseContent({
             className="px-4 py-2.5 rounded-full border border-neutral-300 text-sm text-neutral-900 bg-white focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent"
           >
             <option value="relevance">Relevance</option>
-            <option value="score">Creator Score</option>
+            <option value="score">Creator Rating</option>
             <option value="rating">Rating</option>
             <option value="price-low">Price: Low to High</option>
             <option value="price-high">Price: High to Low</option>
