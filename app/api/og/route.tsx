@@ -12,14 +12,15 @@ export async function GET() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)",
+          backgroundColor: "#f5f5f5",
         }}
       >
         <img
-          src="https://hireacreator.ai/logo-512.png"
+          src="https://hireacreator.ai/og-logo.png"
           alt=""
-          width={300}
-          height={300}
+          width={400}
+          height={400}
+          style={{ objectFit: "contain" }}
         />
       </div>
     ),
