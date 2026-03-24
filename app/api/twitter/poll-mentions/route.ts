@@ -151,27 +151,39 @@ export async function GET(request: Request) {
       `.catch(() => []);
       if (existing && existing.length > 0) continue;
 
-      // Check if the tagged creator has social offers disabled
-      if (username) {
+      // Determine the creator handle (the other @mention, or the tweeter if self-promo)
+      const tweetMentions = (tweet.text || "").match(/@([\w.]+)/g) || [];
+      const otherMentions = tweetMentions
+        .map((m: string) => m.slice(1).toLowerCase())
+        .filter((h: string) => h !== "hireacreatorai" && h !== username.toLowerCase());
+      const creatorHandle = otherMentions.length > 0 ? otherMentions[0] : username.toLowerCase();
+
+      // Check if the creator has social offers disabled
+      if (creatorHandle) {
         const creatorCheck = await sql`
           SELECT u.social_offers_enabled FROM users u
           JOIN social_connections sc ON sc.user_id = u.id
-          WHERE sc.platform = 'x' AND LOWER(sc.handle) = LOWER(${username})
+          WHERE sc.platform = 'x' AND LOWER(sc.handle) = LOWER(${creatorHandle})
           LIMIT 1
         `.catch(() => []);
         if (creatorCheck.length > 0 && creatorCheck[0].social_offers_enabled === false) continue;
       }
 
-      // Rate limit: max 3 replies per user per 24 hours (anti-spam)
-      if (username) {
+      // Rate limit by CREATOR: max 1 reply per creator handle per 24h
+      if (creatorHandle) {
+        // Check if this creator already has a profile AND was replied to recently
+        const existingProfile = await sql`
+          SELECT 1 FROM claimed_profiles
+          WHERE platform = 'x' AND platform_handle = ${creatorHandle}
+        `.catch(() => []);
         const recentReplies = await sql`
           SELECT COUNT(*) as cnt FROM x_replied_tweets
-          WHERE username = ${username} AND replied_at > NOW() - INTERVAL '24 hours'
+          WHERE username = ${creatorHandle} AND replied_at > NOW() - INTERVAL '24 hours'
         `.catch(() => [{ cnt: 0 }]);
         const count = Number(recentReplies[0]?.cnt || 0);
-        if (count >= 3) {
+        if (existingProfile.length > 0 && count >= 1) {
           debug.rate_limited = debug.rate_limited || [];
-          (debug.rate_limited as any[]).push({ tweet_id: tweet.id, from: username });
+          (debug.rate_limited as any[]).push({ tweet_id: tweet.id, creator: creatorHandle, reason: "creator already replied to" });
           continue;
         }
       }
@@ -239,10 +251,10 @@ export async function GET(request: Request) {
       // Reply to the tweet
       const replyResult = await replyToTweet(tweet.id, replyText);
 
-      // Track the reply
+      // Track the reply (store creator handle for rate limiting by creator)
       if (replyResult.ok) {
         await sql`
-          INSERT INTO x_replied_tweets (tweet_id, username) VALUES (${tweet.id}, ${username})
+          INSERT INTO x_replied_tweets (tweet_id, username) VALUES (${tweet.id}, ${creatorHandle})
         `.catch(() => {});
       }
 

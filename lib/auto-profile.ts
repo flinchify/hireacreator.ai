@@ -172,7 +172,7 @@ export async function generateAutoProfile(
   `;
   score.matchingCampaigns = parseInt(String(campaigns[0]?.cnt || "0"));
 
-  // Generate slug — check for conflicts with users.slug and other claimed profiles
+  // Generate slug — prefer handle-only, fall back to platform-prefixed if taken
   let slug = generateSlug(platform, cleanHandle);
   const slugCheck = await db`
     SELECT 1 FROM users WHERE slug = ${slug}
@@ -180,8 +180,7 @@ export async function generateAutoProfile(
     SELECT 1 FROM claimed_profiles WHERE auto_profile_slug = ${slug}
   `;
   if (slugCheck.length > 0) {
-    slug = `${slug}-${platform}`;
-    // Double-check the suffixed slug
+    slug = `${platform}-${slug}`;
     const doubleCheck = await db`
       SELECT 1 FROM users WHERE slug = ${slug}
       UNION ALL

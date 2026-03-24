@@ -30,7 +30,20 @@ async function getAutoProfile(slug: string) {
       WHERE auto_profile_slug = ${slug}
       LIMIT 1
     `;
-    return rows.length > 0 ? rows[0] : null;
+    if (rows.length > 0) return rows[0];
+
+    // Fallback: try common platform-prefixed slugs for existing profiles
+    const prefixes = ["x", "instagram", "tiktok", "youtube"];
+    for (const prefix of prefixes) {
+      const prefixed = await sql`
+        SELECT * FROM claimed_profiles
+        WHERE auto_profile_slug = ${`${prefix}-${slug}`}
+        LIMIT 1
+      `;
+      if (prefixed.length > 0) return prefixed[0];
+    }
+
+    return null;
   } catch {
     return null;
   }

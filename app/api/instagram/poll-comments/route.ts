@@ -82,23 +82,34 @@ export async function GET(request: Request) {
 
           if (existing && existing.length > 0) continue; // Already replied
 
-          // Check if the tagged creator has social offers disabled
+          // Determine the creator handle (other @mention, or commenter if self-promo)
           const username = comment.username;
+          const commentMentions = (comment.text || "").match(/@([\w.]+)/g) || [];
+          const igOtherMentions = commentMentions
+            .map((m: string) => m.slice(1).toLowerCase())
+            .filter((h: string) => !h.startsWith("hireacreator") && h !== commentUsername);
+          const creatorHandle = igOtherMentions.length > 0 ? igOtherMentions[0] : commentUsername;
+
+          // Check if the creator has social offers disabled
           const creatorCheck = await sql`
             SELECT u.social_offers_enabled FROM users u
             JOIN social_connections sc ON sc.user_id = u.id
-            WHERE sc.platform = 'instagram' AND LOWER(sc.handle) = LOWER(${username})
+            WHERE sc.platform = 'instagram' AND LOWER(sc.handle) = LOWER(${creatorHandle})
             LIMIT 1
           `.catch(() => []);
           if (creatorCheck.length > 0 && creatorCheck[0].social_offers_enabled === false) continue;
 
-          // Rate limit: max 3 replies per user per 24 hours (anti-spam)
+          // Rate limit by CREATOR: max 1 reply per creator handle per 24h
+          const existingProfile = await sql`
+            SELECT 1 FROM claimed_profiles
+            WHERE platform = 'instagram' AND platform_handle = ${creatorHandle}
+          `.catch(() => []);
           const recentReplies = await sql`
             SELECT COUNT(*) as cnt FROM ig_replied_comments
-            WHERE username = ${username} AND replied_at > NOW() - INTERVAL '24 hours'
+            WHERE username = ${creatorHandle} AND replied_at > NOW() - INTERVAL '24 hours'
           `.catch(() => [{ cnt: 0 }]);
           const replyCount = Number(recentReplies[0]?.cnt || 0);
-          if (replyCount >= 3) continue;
+          if (existingProfile.length > 0 && replyCount >= 1) continue;
           // Check for offer in comment text
           const parsed = parseOfferFromText(comment.text);
           let replyText: string;
@@ -168,10 +179,10 @@ export async function GET(request: Request) {
             );
             const replyData = await replyRes.json();
 
-            // Track the reply
+            // Track the reply (store creator handle for rate limiting by creator)
             if (replyRes.ok) {
               await sql`
-                INSERT INTO ig_replied_comments (comment_id, username) VALUES (${comment.id}, ${username})
+                INSERT INTO ig_replied_comments (comment_id, username) VALUES (${comment.id}, ${creatorHandle})
               `.catch(() => {});
             }
 

@@ -187,8 +187,7 @@ export function calculateCreatorScore(profile: SocialProfile): ScoreResult {
 }
 
 export function generateSlug(platform: string, handle: string): string {
-  const clean = handle.replace(/^@/, "").trim().toLowerCase().replace(/[^a-z0-9_.-]/g, "");
-  // If handle alone is unique enough, use it. Otherwise prefix with platform.
-  if (platform === "instagram") return clean;
-  return `${platform === "x" ? "x" : platform}-${clean}`;
+  // Always prefer the clean handle without platform prefix.
+  // Conflict resolution (platform prefix) is handled by the caller (auto-profile.ts).
+  return handle.replace(/^@/, "").trim().toLowerCase().replace(/[^a-z0-9_.-]/g, "");
 }

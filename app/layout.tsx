@@ -27,13 +27,13 @@ export const metadata: Metadata = {
     siteName: "HireACreator.ai",
     type: "website",
     locale: "en_AU",
-    images: [{ url: "/api/og", width: 1200, height: 630, alt: "HireACreator.ai" }],
+    images: [{ url: "https://hireacreator.ai/og-logo.png", width: 1200, height: 630, alt: "HireACreator.ai" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "HireACreator.ai - 0% Fees Creator Marketplace",
     description: "Book verified creators for UGC, video, photography, and more. Creators keep 100%.",
-    images: ["/api/og"],
+    images: ["https://hireacreator.ai/og-logo.png"],
   },
   metadataBase: new URL("https://hireacreator.ai"),
   icons: {
