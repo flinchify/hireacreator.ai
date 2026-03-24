@@ -265,32 +265,25 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
           <p className="text-xs text-neutral-400 mt-3">Free forever. Takes 30 seconds.</p>
         </div>
 
-        {/* Hero visual: floating creator profile mockups */}
-        <div className="relative z-10 mt-12 sm:mt-16 max-w-5xl mx-auto">
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+        {/* Hero visual: why switch from Linktree */}
+        <div className="relative z-10 mt-12 sm:mt-16 max-w-3xl mx-auto">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
-              { name: "Add Creator", role: "Your photo here", score: "—", color: "from-blue-100 to-sky-100" },
-              { name: "Add Creator", role: "Your photo here", score: "—", color: "from-cyan-100 to-blue-100" },
-              { name: "Add Creator", role: "Your photo here", score: "—", color: "from-sky-100 to-indigo-100" },
-              { name: "Add Creator", role: "Your photo here", score: "—", color: "from-blue-100 to-cyan-100" },
-            ].map((creator, i) => (
+              { stat: "0%", label: "Creator fees", sub: "You keep everything" },
+              { stat: "60s", label: "Profile built", sub: "AI does the work" },
+              { stat: "15+", label: "Platforms", sub: "All your socials" },
+              { stat: "24/7", label: "Brand offers", sub: "Get discovered" },
+            ].map((item, i) => (
               <div
                 key={i}
                 className="bg-white/70 backdrop-blur-sm border border-neutral-200/60 rounded-2xl p-4 shadow-md shadow-blue-500/5 hover:-translate-y-1 hover:shadow-lg transition-all duration-300 text-center"
-                style={{ animationDelay: `${i * 150}ms` }}
               >
-                <div className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br ${creator.color} mx-auto mb-3 flex items-center justify-center`}>
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-blue-400">
-                    <circle cx="12" cy="8" r="4" /><path d="M4 21v-1a6 6 0 0112 0v1" strokeLinecap="round" />
-                    <path d="M16 11h6M19 8v6" strokeLinecap="round" />
-                  </svg>
-                </div>
-                <div className="text-xs font-medium text-neutral-400">{creator.name}</div>
-                <div className="text-[10px] text-neutral-300 mt-0.5">{creator.role}</div>
+                <div className="text-2xl sm:text-3xl font-bold text-blue-500 mb-1">{item.stat}</div>
+                <div className="text-xs font-semibold text-neutral-800">{item.label}</div>
+                <div className="text-[10px] text-neutral-400 mt-0.5">{item.sub}</div>
               </div>
             ))}
           </div>
-          <p className="text-center text-xs text-neutral-300 mt-4">Replace with your featured creators</p>
         </div>
       </section>
 
