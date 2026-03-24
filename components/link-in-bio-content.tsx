@@ -25,9 +25,9 @@ const TEXT_SIZES: Record<string, { name: string; bio: string; link: string; head
 };
 
 const AVATAR_SIZES: Record<string, string> = {
-  small: 'w-20 h-20',
-  medium: 'w-24 h-24',
-  large: 'w-32 h-32',
+  small: 'w-16 h-16 sm:w-20 sm:h-20',
+  medium: 'w-20 h-20 sm:w-24 sm:h-24',
+  large: 'w-20 h-20 sm:w-32 sm:h-32',
 };
 
 const BUTTON_SIZES: Record<string, string> = {

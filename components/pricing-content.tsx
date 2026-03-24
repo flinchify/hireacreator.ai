@@ -142,7 +142,7 @@ export function PricingContent() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="text-center mb-10">
-            <h1 style={{ fontFamily: "var(--font-serif)" }} className="text-4xl sm:text-6xl font-bold text-neutral-900 tracking-tight mb-4">
+            <h1 style={{ fontFamily: "var(--font-serif)" }} className="text-3xl sm:text-6xl font-bold text-neutral-900 tracking-tight mb-4">
               Simple, transparent pricing
             </h1>
             <p className="text-base sm:text-lg text-neutral-500 max-w-2xl mx-auto">
@@ -202,7 +202,7 @@ export function PricingContent() {
             <>
               <StaggerChildren className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto" staggerMs={100}>
                 {/* Free */}
-                <div className="aos-stagger-item border border-neutral-200 rounded-2xl p-8 flex flex-col">
+                <div className="aos-stagger-item border border-neutral-200 rounded-2xl p-6 sm:p-8 flex flex-col">
                   <div className="text-sm font-medium text-neutral-400 uppercase tracking-wider mb-2">Free</div>
                   <div className="flex items-baseline gap-1 mb-1">
                     <span className="font-display text-4xl font-bold text-neutral-900">$0</span>
@@ -240,7 +240,7 @@ export function PricingContent() {
                 </div>
 
                 {/* Creator Pro */}
-                <div className="aos-stagger-item relative rounded-2xl p-8 flex flex-col bg-gradient-to-r from-blue-50 via-white to-blue-50 border-2 border-blue-200">
+                <div className="aos-stagger-item relative rounded-2xl p-6 sm:p-8 flex flex-col bg-gradient-to-r from-blue-50 via-white to-blue-50 border-2 border-blue-200">
                   <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 bg-neutral-900 text-white text-xs font-medium rounded-full">
                     Popular
                   </div>
@@ -296,7 +296,7 @@ export function PricingContent() {
                 </div>
 
                 {/* Creator Business */}
-                <div className="aos-stagger-item border border-neutral-200 rounded-2xl p-8 flex flex-col">
+                <div className="aos-stagger-item border border-neutral-200 rounded-2xl p-6 sm:p-8 flex flex-col">
                   <div className="text-sm font-medium text-neutral-400 uppercase tracking-wider mb-2">Creator Business</div>
                   <div className="flex items-baseline gap-1 mb-1">
                     <span className="font-display text-4xl font-bold text-neutral-900">
@@ -394,7 +394,7 @@ export function PricingContent() {
             <>
               <StaggerChildren className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto" staggerMs={100}>
                 {/* Brand Free */}
-                <div className="aos-stagger-item border border-neutral-200 rounded-2xl p-8 flex flex-col">
+                <div className="aos-stagger-item border border-neutral-200 rounded-2xl p-6 sm:p-8 flex flex-col">
                   <div className="text-sm font-medium text-neutral-400 uppercase tracking-wider mb-2">Free</div>
                   <div className="flex items-baseline gap-1 mb-1">
                     <span className="font-display text-4xl font-bold text-neutral-900">$0</span>
@@ -427,7 +427,7 @@ export function PricingContent() {
                 </div>
 
                 {/* Brand Pro */}
-                <div className="aos-stagger-item relative rounded-2xl p-8 flex flex-col bg-gradient-to-r from-blue-50 via-white to-blue-50 border-2 border-blue-200">
+                <div className="aos-stagger-item relative rounded-2xl p-6 sm:p-8 flex flex-col bg-gradient-to-r from-blue-50 via-white to-blue-50 border-2 border-blue-200">
                   <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 bg-neutral-900 text-white text-xs font-medium rounded-full">
                     Popular
                   </div>
@@ -480,7 +480,7 @@ export function PricingContent() {
                 </div>
 
                 {/* Brand Enterprise */}
-                <div className="aos-stagger-item border border-neutral-200 rounded-2xl p-8 flex flex-col">
+                <div className="aos-stagger-item border border-neutral-200 rounded-2xl p-6 sm:p-8 flex flex-col">
                   <div className="text-sm font-medium text-neutral-400 uppercase tracking-wider mb-2">Brand Enterprise</div>
                   <div className="flex items-baseline gap-1 mb-1">
                     <span className="font-display text-4xl font-bold text-neutral-900">

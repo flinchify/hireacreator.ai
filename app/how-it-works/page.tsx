@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 
 function Step({ number, title, description, commands, badge }: { number: string; title: string; description: string; commands?: { cmd: string; result: string }[]; badge?: React.ReactNode }) {
   return (
-    <div className="border border-neutral-200 rounded-2xl p-8 hover:shadow-lg transition-shadow">
+    <div className="border border-neutral-200 rounded-2xl p-5 sm:p-8 hover:shadow-lg transition-shadow">
       <div className="flex items-start gap-5">
         <div className="w-12 h-12 rounded-full bg-blue-500 text-white flex items-center justify-center text-lg font-bold flex-shrink-0">
           {number}
@@ -48,7 +48,7 @@ export default function HowItWorksPage() {
       <section className="pt-32 pb-16 px-6 bg-gradient-to-br from-blue-50 via-white to-blue-50/30 relative">
         <div className="absolute inset-0 opacity-[0.02] bg-[radial-gradient(circle_at_1px_1px,rgb(0,0,0)_1px,transparent_0)] bg-[length:32px_32px]"></div>
         <div className="max-w-3xl mx-auto text-center relative">
-          <h1 className="text-4xl sm:text-5xl font-bold text-neutral-900 mb-6" style={{ fontFamily: "var(--font-serif)" }}>
+          <h1 className="text-3xl sm:text-5xl font-bold text-neutral-900 mb-6" style={{ fontFamily: "var(--font-serif)" }}>
             How HireACreator Works
           </h1>
           <p className="text-lg text-neutral-600 max-w-2xl mx-auto leading-relaxed">
@@ -140,7 +140,7 @@ export default function HowItWorksPage() {
                 example: "Great for nominating creators you think deserve brand deals.",
               },
             ].map((item) => (
-              <div key={item.command} className="bg-white border border-blue-100 rounded-2xl p-6">
+              <div key={item.command} className="bg-white border border-blue-100 rounded-2xl p-4 sm:p-6">
                 <div className="font-mono text-sm font-semibold text-neutral-900 bg-neutral-50 inline-block px-3 py-1 rounded-lg mb-3">
                   {item.command}
                 </div>
@@ -429,11 +429,11 @@ export default function HowItWorksPage() {
               { q: "Do I need to tag you to use the platform?", a: "No. You can also go directly to hireacreator.ai/claim and enter your handle to get rated and claim your profile without tagging." },
             ].map((faq) => (
               <details key={faq.q} className="group border border-neutral-100 rounded-xl">
-                <summary className="px-6 py-4 cursor-pointer font-medium text-neutral-900 flex justify-between items-center hover:bg-neutral-50 rounded-xl transition-colors">
+                <summary className="px-4 sm:px-6 py-4 cursor-pointer font-medium text-neutral-900 flex justify-between items-center hover:bg-neutral-50 rounded-xl transition-colors min-h-[48px]">
                   {faq.q}
                   <svg className="w-5 h-5 text-neutral-400 group-open:rotate-180 transition-transform flex-shrink-0" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd"/></svg>
                 </summary>
-                <div className="px-6 pb-4 text-sm text-neutral-600 leading-relaxed">{faq.a}</div>
+                <div className="px-4 sm:px-6 pb-4 text-sm text-neutral-600 leading-relaxed">{faq.a}</div>
               </details>
             ))}
           </div>
@@ -450,10 +450,10 @@ export default function HowItWorksPage() {
             Tag @hireacreator on Instagram or X. Or check your rating right now.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="/claim" className="px-8 py-3 bg-white text-neutral-900 rounded-lg font-semibold text-sm hover:bg-neutral-100 transition-colors">
+            <a href="/claim" className="px-8 py-3 min-h-[48px] flex items-center justify-center bg-white text-neutral-900 rounded-lg font-semibold text-sm hover:bg-neutral-100 transition-colors">
               Check Your Rating
             </a>
-            <a href="/campaigns" className="px-8 py-3 border border-white/20 text-white rounded-lg font-semibold text-sm hover:bg-white/10 transition-colors">
+            <a href="/campaigns" className="px-8 py-3 min-h-[48px] flex items-center justify-center border border-white/20 text-white rounded-lg font-semibold text-sm hover:bg-white/10 transition-colors">
               Browse Campaigns
             </a>
           </div>

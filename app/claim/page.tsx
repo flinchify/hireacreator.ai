@@ -166,7 +166,7 @@ function ClaimPageInner() {
       {showManual && !scoreData?.score && (
         <section className="pb-16 px-5">
           <div className="max-w-lg mx-auto">
-            <div className="bg-white border border-neutral-100 rounded-2xl p-8 shadow-md shadow-neutral-900/5">
+            <div className="bg-white border border-neutral-100 rounded-2xl p-5 sm:p-8 shadow-md shadow-neutral-900/5">
               <h3 className="font-semibold text-lg text-neutral-800 mb-2">We could not auto-detect your profile</h3>
               <p className="text-sm text-neutral-500 mb-6">Enter your details manually so we can build your profile.</p>
               <form onSubmit={handleManualSubmit} className="space-y-4">
@@ -198,11 +198,11 @@ function ClaimPageInner() {
 
       {/* Score Results */}
       {scoreData?.score && !scoreData.error && (
-        <section className="pt-24 pb-16 px-5">
+        <section className="pt-20 sm:pt-24 pb-16 px-5">
           <div className="max-w-4xl mx-auto">
             <div className="grid lg:grid-cols-2 gap-12">
               {/* Left: Score Gauge */}
-              <div className="flex flex-col items-center bg-blue-50 rounded-2xl p-8">
+              <div className="flex flex-col items-center bg-blue-50 rounded-2xl p-5 sm:p-8">
                 <ScoreGauge score={scoreData.score} size={220} />
                 <div className="mt-8 w-full max-w-sm">
                   <BreakdownBars breakdown={scoreData.breakdown} />
@@ -211,7 +211,7 @@ function ClaimPageInner() {
 
               {/* Right: Profile Preview + Actions */}
               <div>
-                <div className="bg-white border border-neutral-100 rounded-2xl p-8 shadow-md shadow-neutral-900/5 mb-6">
+                <div className="bg-white border border-neutral-100 rounded-2xl p-5 sm:p-8 shadow-md shadow-neutral-900/5 mb-6">
                   <div className="flex items-center gap-4 mb-6">
                     {scoreData.profile.avatarUrl ? (
                       <img src={scoreData.profile.avatarUrl} alt="" className="w-16 h-16 rounded-lg object-cover" />
@@ -377,7 +377,7 @@ function ClaimPageInner() {
               { q: "Can someone else claim my profile?", a: "No. Only the real account owner can claim a profile. We verify ownership through email or social login." },
             ].map((faq) => (
               <details key={faq.q} className="group border border-neutral-100 rounded-xl">
-                <summary className="px-5 py-4 cursor-pointer font-medium text-neutral-800 text-sm flex justify-between items-center hover:bg-neutral-50 rounded-xl transition-colors">
+                <summary className="px-4 sm:px-5 py-4 cursor-pointer font-medium text-neutral-800 text-sm flex justify-between items-center hover:bg-neutral-50 rounded-xl transition-colors min-h-[48px]">
                   {faq.q}
                   <svg className="w-5 h-5 text-neutral-400 group-open:rotate-180 transition-transform shrink-0 ml-2" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd"/></svg>
                 </summary>

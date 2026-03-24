@@ -187,7 +187,7 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
   return (
     <>
       {/* ═══ Section 1: Hero ═══ */}
-      <section className="relative pt-40 sm:pt-52 pb-20 sm:pb-32 px-5 overflow-hidden min-h-[90vh] flex flex-col justify-center">
+      <section className="relative pt-32 sm:pt-52 pb-20 sm:pb-32 px-5 overflow-hidden min-h-[90vh] flex flex-col justify-center">
         {/* Ocean gradient mesh background */}
         <div className="absolute inset-0 pointer-events-none" style={{
           background: `
@@ -564,7 +564,7 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
           <div className="space-y-3">
             {faqs.map((faq) => (
               <details key={faq.q} className="group border border-neutral-100 rounded-xl">
-                <summary className="px-5 py-4 cursor-pointer font-medium text-neutral-800 text-sm flex justify-between items-center hover:bg-neutral-50 rounded-xl transition-colors">
+                <summary className="px-5 py-4 cursor-pointer font-medium text-neutral-800 text-sm flex justify-between items-center hover:bg-neutral-50 rounded-xl transition-colors min-h-[48px]">
                   {faq.q}
                   <svg className="w-5 h-5 text-neutral-400 group-open:rotate-180 transition-transform shrink-0 ml-2" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd"/></svg>
                 </summary>

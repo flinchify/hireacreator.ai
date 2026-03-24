@@ -130,7 +130,7 @@ export function BrowseContent({
         <select
           value={selectedCategory || ""}
           onChange={(e) => setSelectedCategory(e.target.value || null)}
-          className="w-full px-3 py-2 rounded-lg border border-neutral-300 text-sm text-neutral-900 bg-white focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent"
+          className="w-full px-3 py-2 min-h-[48px] rounded-lg border border-neutral-300 text-sm text-neutral-900 bg-white focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent"
         >
           <option value="">All Categories</option>
           {categories.map((cat) => (
@@ -175,7 +175,7 @@ export function BrowseContent({
               aria-label="Minimum hourly rate"
               value={priceMin}
               onChange={(e) => setPriceMin(e.target.value)}
-              className="w-full pl-7 pr-3 py-2 rounded-lg border border-neutral-300 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent"
+              className="w-full pl-7 pr-3 py-2 min-h-[48px] rounded-lg border border-neutral-300 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent"
             />
           </div>
           <span className="text-neutral-400 text-sm">to</span>
@@ -187,7 +187,7 @@ export function BrowseContent({
               aria-label="Maximum hourly rate"
               value={priceMax}
               onChange={(e) => setPriceMax(e.target.value)}
-              className="w-full pl-7 pr-3 py-2 rounded-lg border border-neutral-300 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent"
+              className="w-full pl-7 pr-3 py-2 min-h-[48px] rounded-lg border border-neutral-300 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent"
             />
           </div>
         </div>
@@ -203,7 +203,7 @@ export function BrowseContent({
           placeholder="City, state, or country..."
           value={location}
           onChange={(e) => setLocation(e.target.value)}
-          className="w-full px-3 py-2 rounded-lg border border-neutral-300 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent"
+          className="w-full px-3 py-2 min-h-[48px] rounded-lg border border-neutral-300 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent"
         />
       </div>
 
@@ -265,14 +265,14 @@ export function BrowseContent({
             placeholder="Search by name, skill, or keyword..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-full border border-neutral-300 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent transition-colors"
+            className="w-full pl-10 pr-4 py-2.5 min-h-[48px] rounded-full border border-neutral-300 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent transition-colors"
           />
         </div>
         <div className="flex gap-2">
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as SortOption)}
-            className="px-4 py-2.5 rounded-full border border-neutral-300 text-sm text-neutral-900 bg-white focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent"
+            className="px-4 py-2.5 min-h-[48px] rounded-full border border-neutral-300 text-sm text-neutral-900 bg-white focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent"
           >
             <option value="relevance">Relevance</option>
             <option value="score">Creator Rating</option>
@@ -285,7 +285,7 @@ export function BrowseContent({
           {/* Mobile filter toggle */}
           <button
             onClick={() => setFiltersOpen(!filtersOpen)}
-            className="lg:hidden px-4 py-2.5 rounded-full border border-neutral-300 text-sm font-medium text-neutral-700 bg-white hover:bg-neutral-50 transition-colors flex items-center gap-2"
+            className="lg:hidden px-4 py-2.5 min-h-[48px] rounded-full border border-neutral-300 text-sm font-medium text-neutral-700 bg-white hover:bg-neutral-50 transition-colors flex items-center gap-2"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="4" y1="6" x2="20" y2="6" />

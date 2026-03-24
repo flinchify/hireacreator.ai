@@ -54,12 +54,12 @@ export function ForCreatorsContent() {
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
             <button
               onClick={() => openSignup("creator")}
-              className="px-8 py-3.5 text-base font-medium text-white bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-colors shadow-md shadow-blue-500/5 w-full sm:w-auto"
+              className="min-h-[48px] px-8 py-3.5 text-base font-medium text-white bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-colors shadow-md shadow-blue-500/5 w-full sm:w-auto"
             >
               Claim Your Profile
             </button>
             <Link href="/browse">
-              <button className="px-8 py-3.5 text-base font-medium text-neutral-700 bg-white border border-neutral-200 rounded-lg hover:border-neutral-400 hover:bg-neutral-50 transition-all w-full sm:w-auto">
+              <button className="min-h-[48px] px-8 py-3.5 text-base font-medium text-neutral-700 bg-white border border-neutral-200 rounded-lg hover:border-neutral-400 hover:bg-neutral-50 transition-all w-full sm:w-auto">
                 See Live Profiles
               </button>
             </Link>
@@ -77,7 +77,7 @@ export function ForCreatorsContent() {
           </div>
         </AnimateOnScroll>
         <StaggerChildren className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4" staggerMs={150}>
-          <div className="aos-stagger-item bg-blue-50 rounded-2xl p-8 border border-blue-100">
+          <div className="aos-stagger-item bg-blue-50 rounded-2xl p-6 sm:p-8 border border-blue-100">
             <div className="text-2xl mb-4">&#x1F4AC;</div>
             <h3 className="font-display font-bold text-neutral-900 mb-2">&ldquo;DM me for rates&rdquo;</h3>
             <p className="text-sm text-neutral-500 leading-relaxed">
@@ -85,7 +85,7 @@ export function ForCreatorsContent() {
               were never serious. Your inbox is a mess.
             </p>
           </div>
-          <div className="aos-stagger-item bg-blue-50 rounded-2xl p-8 border border-blue-100">
+          <div className="aos-stagger-item bg-blue-50 rounded-2xl p-6 sm:p-8 border border-blue-100">
             <div className="text-2xl mb-4">&#x1F4B8;</div>
             <h3 className="font-display font-bold text-neutral-900 mb-2">Platforms take 20%+</h3>
             <p className="text-sm text-neutral-500 leading-relaxed">
@@ -93,7 +93,7 @@ export function ForCreatorsContent() {
               On a $1,000 job, that&apos;s $200 gone.
             </p>
           </div>
-          <div className="aos-stagger-item bg-blue-50 rounded-2xl p-8 border border-blue-100">
+          <div className="aos-stagger-item bg-blue-50 rounded-2xl p-6 sm:p-8 border border-blue-100">
             <div className="text-2xl mb-4">&#x1F50D;</div>
             <h3 className="font-display font-bold text-neutral-900 mb-2">Brands can&apos;t find you</h3>
             <p className="text-sm text-neutral-500 leading-relaxed">
@@ -203,7 +203,7 @@ export function ForCreatorsContent() {
           </div>
 
           <div className="grid sm:grid-cols-2 gap-6">
-            <div className="border border-neutral-200 rounded-2xl p-8">
+            <div className="border border-neutral-200 rounded-2xl p-6 sm:p-8">
               <div className="font-display font-bold text-neutral-400 text-lg mb-4">Linktree</div>
               <ul className="space-y-3">
                 {[
@@ -221,7 +221,7 @@ export function ForCreatorsContent() {
                 ))}
               </ul>
             </div>
-            <div className="border-2 border-blue-500 rounded-2xl p-8 bg-blue-50 shadow-md shadow-blue-500/5">
+            <div className="border-2 border-blue-500 rounded-2xl p-6 sm:p-8 bg-blue-50 shadow-md shadow-blue-500/5">
               <div className="font-display font-bold text-neutral-900 text-lg mb-4">HireACreator</div>
               <ul className="space-y-3">
                 {[

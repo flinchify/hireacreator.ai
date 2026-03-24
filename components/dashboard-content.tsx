@@ -1979,13 +1979,14 @@ export function DashboardContent() {
 
       {/* ═══ MOBILE BOTTOM NAV ═══ */}
       <div className="lg:hidden fixed bottom-0 inset-x-0 bg-white border-t border-neutral-200 z-40" style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
-        <div className="flex items-center justify-around px-1 py-1">
+        <div className="flex items-center overflow-x-auto scrollbar-hide px-1 py-1">
           {([
             { id: "overview" as Section, label: "Overview", icon: icons.overview },
             { id: "offers" as Section, label: "Offers", icon: icons.offers },
             { id: "services" as Section, label: "Services", icon: icons.services },
             { id: "links" as Section, label: "Bio Link", icon: icons.link },
             { id: "calendar" as Section, label: "Calendar", icon: icons.calendar },
+            { id: "analytics" as Section, label: "Analytics", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M18 20V10M12 20V4M6 20v-6" strokeLinecap="round" strokeLinejoin="round"/></svg> },
             { id: "settings" as Section, label: "Settings", icon: icons.settings },
           ]).map(n => (
             <button key={n.id} onClick={() => setSection(n.id)}

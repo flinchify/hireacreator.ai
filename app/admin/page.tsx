@@ -130,7 +130,7 @@ function OverviewSection() {
         <StatCard label="Avg Deal Size" value={fmt(Number(revenue.avg_deal_size))} />
       </div>
 
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <StatCard label="New Today" value={newUsers.today} />
         <StatCard label="New This Week" value={newUsers.thisWeek} />
         <StatCard label="New This Month" value={newUsers.thisMonth} />
@@ -414,7 +414,7 @@ function UsersSection() {
           placeholder="Search by name or email..."
           value={search}
           onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-          className="bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-blue-500 w-full sm:w-72"
+          className="bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 min-h-[48px] text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-blue-500 w-full sm:w-72"
         />
       </div>
 
@@ -550,7 +550,7 @@ function ProfilesSection() {
           placeholder="Search by handle or name..."
           value={search}
           onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-          className="bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-blue-500 w-full sm:w-72"
+          className="bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 min-h-[48px] text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-blue-500 w-full sm:w-72"
         />
       </div>
 
@@ -776,7 +776,7 @@ export default function AdminDashboard() {
     <div className="min-h-screen bg-neutral-900 text-white">
       {/* Mobile header */}
       <div className="lg:hidden flex items-center justify-between px-4 py-3 bg-neutral-900 border-b border-neutral-800 sticky top-0 z-40">
-        <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 hover:bg-neutral-800 rounded-lg">
+        <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 min-h-[48px] min-w-[48px] flex items-center justify-center hover:bg-neutral-800 rounded-lg">
           <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
             {sidebarOpen ? <path d="M4 4l12 12M4 16L16 4" /> : <path d="M3 6h14M3 10h14M3 14h14" />}
           </svg>
@@ -806,7 +806,7 @@ export default function AdminDashboard() {
               <button
                 key={item.key}
                 onClick={() => { setSection(item.key); setSidebarOpen(false); }}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
+                className={`w-full flex items-center gap-3 px-3 py-2.5 min-h-[44px] rounded-lg text-sm transition-colors ${
                   section === item.key
                     ? "bg-blue-500/10 text-blue-400 font-medium"
                     : "text-neutral-400 hover:text-white hover:bg-neutral-800/50"

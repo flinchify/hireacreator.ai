@@ -145,13 +145,13 @@ export function ForBrandsContent() {
 
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link href="/browse">
-              <button className="px-8 py-3.5 text-base font-medium text-white bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg hover:from-blue-600 hover:to-blue-700 active:scale-[0.98] transition-all shadow-md shadow-blue-500/5 w-full sm:w-auto">
+              <button className="min-h-[48px] px-8 py-3.5 text-base font-medium text-white bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg hover:from-blue-600 hover:to-blue-700 active:scale-[0.98] transition-all shadow-md shadow-blue-500/5 w-full sm:w-auto">
                 Browse Creators
               </button>
             </Link>
             <button
               onClick={() => openSignup("brand")}
-              className="px-8 py-3.5 text-base font-medium text-neutral-700 bg-white border border-neutral-200 rounded-lg hover:border-neutral-400 hover:bg-neutral-50 transition-all w-full sm:w-auto"
+              className="min-h-[48px] px-8 py-3.5 text-base font-medium text-neutral-700 bg-white border border-neutral-200 rounded-lg hover:border-neutral-400 hover:bg-neutral-50 transition-all w-full sm:w-auto"
             >
               Create Brand Account
             </button>
@@ -174,7 +174,7 @@ export function ForBrandsContent() {
 
         <StaggerChildren className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6" staggerMs={150}>
           {/* Step 1 */}
-          <div className="aos-stagger-item group bg-white border border-neutral-200 rounded-2xl p-8 hover:border-neutral-300 hover:shadow-sm transition-all duration-200">
+          <div className="aos-stagger-item group bg-white border border-neutral-200 rounded-2xl p-6 sm:p-8 hover:border-neutral-300 hover:shadow-sm transition-all duration-200">
             <div className="flex items-center gap-4 mb-6">
               <span className="font-display text-3xl font-bold text-blue-200 group-hover:text-blue-300 transition-colors">01</span>
               <SearchIcon />
@@ -190,7 +190,7 @@ export function ForBrandsContent() {
           </div>
 
           {/* Step 2 */}
-          <div className="aos-stagger-item group bg-white border border-neutral-200 rounded-2xl p-8 hover:border-neutral-300 hover:shadow-sm transition-all duration-200">
+          <div className="aos-stagger-item group bg-white border border-neutral-200 rounded-2xl p-6 sm:p-8 hover:border-neutral-300 hover:shadow-sm transition-all duration-200">
             <div className="flex items-center gap-4 mb-6">
               <span className="font-display text-3xl font-bold text-blue-200 group-hover:text-blue-300 transition-colors">02</span>
               <BookPayIcon />
@@ -206,7 +206,7 @@ export function ForBrandsContent() {
           </div>
 
           {/* Step 3 */}
-          <div className="aos-stagger-item group bg-white border border-neutral-200 rounded-2xl p-8 hover:border-neutral-300 hover:shadow-sm transition-all duration-200">
+          <div className="aos-stagger-item group bg-white border border-neutral-200 rounded-2xl p-6 sm:p-8 hover:border-neutral-300 hover:shadow-sm transition-all duration-200">
             <div className="flex items-center gap-4 mb-6">
               <span className="font-display text-3xl font-bold text-blue-200 group-hover:text-blue-300 transition-colors">03</span>
               <DeliverIcon />
@@ -256,7 +256,7 @@ export function ForBrandsContent() {
                 detail: "JSON payloads over HTTPS",
               },
             ].map((card) => (
-              <div key={card.title} className="aos-stagger-item group bg-white/[0.05] border border-white/10 rounded-2xl p-8 hover:bg-white/[0.08] hover:border-white/20 transition-all duration-300">
+              <div key={card.title} className="aos-stagger-item group bg-white/[0.05] border border-white/10 rounded-2xl p-6 sm:p-8 hover:bg-white/[0.08] hover:border-white/20 transition-all duration-300">
                 <div className="mb-5 text-white">{card.icon}</div>
                 <h3 className="font-display text-lg font-bold mb-2">{card.title}</h3>
                 <p className="text-neutral-400 text-sm leading-relaxed mb-4">{card.desc}</p>
@@ -339,7 +339,7 @@ export function ForBrandsContent() {
 
           <StaggerChildren className="grid sm:grid-cols-3 gap-6 max-w-4xl mx-auto" staggerMs={150}>
             {/* Brand Free */}
-            <div className="aos-stagger-item group border border-neutral-200 rounded-2xl p-8 hover:border-neutral-300 shadow-md shadow-blue-500/5 transition-all duration-200">
+            <div className="aos-stagger-item group border border-neutral-200 rounded-2xl p-6 sm:p-8 hover:border-neutral-300 shadow-md shadow-blue-500/5 transition-all duration-200">
               <h3 className="font-display text-lg font-bold text-neutral-900 mb-1">Free</h3>
               <div className="flex items-baseline gap-1 mb-6">
                 <span className="font-display text-4xl font-bold text-neutral-900">$0</span>
@@ -354,7 +354,7 @@ export function ForBrandsContent() {
             </div>
 
             {/* Brand Pro */}
-            <div className="aos-stagger-item group border-2 border-blue-500 rounded-2xl p-8 shadow-md shadow-blue-500/5 transition-all duration-200">
+            <div className="aos-stagger-item group border-2 border-blue-500 rounded-2xl p-6 sm:p-8 shadow-md shadow-blue-500/5 transition-all duration-200">
               <h3 className="font-display text-lg font-bold text-neutral-900 mb-1">Brand Pro</h3>
               <div className="flex items-baseline gap-1 mb-6">
                 <span className="font-display text-4xl font-bold text-neutral-900">$99</span>
@@ -370,7 +370,7 @@ export function ForBrandsContent() {
             </div>
 
             {/* Enterprise */}
-            <div className="aos-stagger-item group border border-neutral-200 rounded-2xl p-8 hover:border-neutral-300 shadow-md shadow-blue-500/5 transition-all duration-200">
+            <div className="aos-stagger-item group border border-neutral-200 rounded-2xl p-6 sm:p-8 hover:border-neutral-300 shadow-md shadow-blue-500/5 transition-all duration-200">
               <h3 className="font-display text-lg font-bold text-neutral-900 mb-1">Enterprise</h3>
               <div className="flex items-baseline gap-1 mb-6">
                 <span className="font-display text-4xl font-bold text-neutral-900">$999</span>
@@ -458,7 +458,7 @@ export function ForBrandsContent() {
                   required
                   value={form.company}
                   onChange={(e) => setForm({ ...form, company: e.target.value })}
-                  className="w-full px-4 py-3 border border-neutral-200 rounded-xl text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900/10 focus:border-neutral-400 transition-colors"
+                  className="w-full px-4 py-3 min-h-[48px] border border-neutral-200 rounded-xl text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900/10 focus:border-neutral-400 transition-colors"
                   placeholder="Acme Inc."
                 />
               </div>
@@ -471,7 +471,7 @@ export function ForBrandsContent() {
                   required
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  className="w-full px-4 py-3 border border-neutral-200 rounded-xl text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900/10 focus:border-neutral-400 transition-colors"
+                  className="w-full px-4 py-3 min-h-[48px] border border-neutral-200 rounded-xl text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900/10 focus:border-neutral-400 transition-colors"
                   placeholder="you@company.com"
                 />
               </div>
@@ -482,7 +482,7 @@ export function ForBrandsContent() {
                   id="budget"
                   value={form.budget}
                   onChange={(e) => setForm({ ...form, budget: e.target.value })}
-                  className="w-full px-4 py-3 border border-neutral-200 rounded-xl text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-900/10 focus:border-neutral-400 transition-colors bg-white appearance-none"
+                  className="w-full px-4 py-3 min-h-[48px] border border-neutral-200 rounded-xl text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-900/10 focus:border-neutral-400 transition-colors bg-white appearance-none"
                 >
                   <option value="">Select a range</option>
                   {BUDGET_OPTIONS.map((opt) => (

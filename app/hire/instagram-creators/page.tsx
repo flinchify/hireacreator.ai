@@ -36,7 +36,7 @@ export default function HireInstagramCreators() {
           </p>
           <Link
             href="/browse"
-            className="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+            className="inline-flex items-center justify-center w-full sm:w-auto px-6 py-3 min-h-[48px] bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
           >
             Browse Creators
           </Link>
@@ -165,7 +165,7 @@ export default function HireInstagramCreators() {
           </p>
           <Link
             href="/browse"
-            className="inline-flex items-center px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+            className="inline-flex items-center justify-center w-full sm:w-auto px-8 py-3 min-h-[48px] bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
           >
             Find Your Creator
           </Link>
