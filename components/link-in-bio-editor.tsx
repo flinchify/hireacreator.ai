@@ -11,19 +11,11 @@ type Settings = {
   accent: string;
   bgType: string;
   bgValue: string;
-  bgVideo: string;
-  bgImages: string[]; // multiple photo URLs
+  textColor: string;
+  font: string;
   buttonShape: string;
   buttonAnim: string;
-  font: string;
-  textColor: string;
   introAnim: string;
-  cardStyle: string;
-  textSize: string;
-  avatarSize: string;
-  buttonSize: string;
-  contentPosition: string;
-  contentAlign: string;
 };
 
 /* ── Constants ── */
@@ -175,14 +167,14 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
   const dark = TEMPLATES.find(t => t.id === settings.template)?.dark ?? false;
   const accent = settings.accent || "#6366f1";
   const btnRadius = BUTTON_SHAPES.find(s => s.id === settings.buttonShape)?.radius || "16px";
-  const fontFamily = FONTS.find(f => f.id === settings.font)?.css || "'Inter', sans-serif";
-  const textCol = settings.textColor || (dark ? "#ffffff" : "#171717");
-  const textMuted = settings.textColor ? `${settings.textColor}99` : (dark ? "rgba(255,255,255,0.5)" : "rgba(23,23,23,0.5)");
+  const fontFamily = "'Inter', sans-serif"; // Default font
+  const textCol = dark ? "#ffffff" : "#171717"; // Default text colors
+  const textMuted = dark ? "rgba(255,255,255,0.5)" : "rgba(23,23,23,0.5)";
 
-  // Positioning
-  const justifyPos = settings.contentPosition === "center" ? "center" : settings.contentPosition === "bottom" ? "flex-end" : "flex-start";
-  const textAlignVal = (settings.contentAlign || "center") as React.CSSProperties["textAlign"];
-  const alignItemsVal = settings.contentAlign === "left" ? "flex-start" : settings.contentAlign === "right" ? "flex-end" : "center";
+  // Default positioning
+  const justifyPos = "flex-start"; // Default to top
+  const textAlignVal = "center" as React.CSSProperties["textAlign"];
+  const alignItemsVal = "center";
   const positioningStyle: React.CSSProperties = { minHeight: '100%', justifyContent: justifyPos, alignItems: alignItemsVal, textAlign: textAlignVal };
 
   const name = creator.full_name || creator.name || "Your Name";
@@ -195,41 +187,27 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
     { title: "Social Media Audit", price: 99 },
   ];
 
-  const hasBgMedia = settings.bgType === "image" || settings.bgType === "video" || settings.bgType === "photos";
-
-  // The user's stored bgValue — used as direct bg for gradient/solid, or as overlay color for media types
-  const storedBgValue = settings.bgValue;
-  const hasStoredColor = storedBgValue && !storedBgValue.startsWith("http");
-
-  function getBgStyle(): React.CSSProperties {
-    if (settings.bgType === "gradient" && storedBgValue) return { background: storedBgValue };
-    if (settings.bgType === "solid" && storedBgValue) return { background: storedBgValue };
-    if (settings.bgType === "image" && storedBgValue?.startsWith("http")) return { backgroundImage: `url(${storedBgValue})`, backgroundSize: "cover", backgroundPosition: "center" };
-    if (settings.bgType === "photos" && settings.bgImages.length > 0) return {};
-    return {};
+  // Helper components
+  function PlatformIcon({ platform, size = 16, className }: { platform: string; size?: number; className?: string }) {
+    return <div className={className} style={{ width: size, height: size }} />;
   }
 
-  /** Returns CSS for the overlay on media backgrounds, using the user's color/gradient at ~60% opacity */
-  function getOverlayStyle(): React.CSSProperties {
-    if (!hasStoredColor) return {};
-    if (storedBgValue.startsWith("linear-gradient")) return { background: storedBgValue, opacity: 0.6 };
-    // Solid color — apply at 60% opacity
-    return { background: storedBgValue, opacity: 0.6 };
+  function Avatar({ size, borderCol = "#fff", shape = "circle" }: { size: string; borderCol?: string; shape?: string }) {
+    const isCircle = shape === "circle";
+    return avatar ? (
+      <img src={avatar} alt="" className={`${size} ${isCircle ? "rounded-full" : "rounded-xl"} object-cover border-4`} style={{ borderColor: borderCol }} />
+    ) : (
+      <div className={`${size} ${isCircle ? "rounded-full" : "rounded-xl"} bg-neutral-300 flex items-center justify-center text-2xl font-bold text-neutral-600 border-4`} style={{ borderColor: borderCol }}>
+        {name[0]}
+      </div>
+    );
   }
 
-  function Avatar({ size, shape, borderCol }: { size: string; shape?: string; borderCol?: string }) {
-    const cls = shape === "square" ? "rounded-2xl" : "rounded-full";
-    return avatar
-      ? <img src={avatar} alt="" className={`${size} ${cls} object-cover shadow-lg`} style={{ border: `2px solid ${borderCol || (dark ? "rgba(255,255,255,0.2)" : "#fff")}` }} />
-      : <div className={`${size} ${cls} flex items-center justify-center text-lg font-bold shadow-lg ${dark ? "bg-white/10 text-white/60" : "bg-neutral-200 text-neutral-400"}`} style={{ border: `2px solid ${borderCol || (dark ? "rgba(255,255,255,0.2)" : "#fff")}` }}>{name[0]}</div>;
-  }
-
-  function Socials({ light, shape }: { light?: boolean; shape?: string }) {
-    const cls = shape === "square" ? "rounded-lg" : "rounded-full";
+  function Socials({ light = false }: { light?: boolean } = {}) {
     return (
-      <div className="flex gap-1.5 flex-wrap justify-center">
+      <div className="flex gap-1.5">
         {socials.slice(0, 5).map((s: any, i: number) => (
-          <div key={i} className={`w-7 h-7 ${cls} flex items-center justify-center ${light ? "bg-white/10 border border-white/[0.08]" : "bg-neutral-100"}`}>
+          <div key={i} className={`w-7 h-7 rounded-full border ${light ? "border-white/20 bg-white/10" : "border-neutral-200 bg-neutral-50"} flex items-center justify-center`}>
             <PlatformIcon platform={s.platform} size={14} className={light ? "text-white/60" : "text-neutral-500"} />
           </div>
         ))}
@@ -237,49 +215,39 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
     );
   }
 
-  function ServiceCard({ s, i }: { s: any; i: number }) {
-    const cardStyle = settings.cardStyle;
-    const cardBg = cardStyle === "filled" ? (dark ? "rgba(255,255,255,0.12)" : accent) :
-                   cardStyle === "glass" ? (dark ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.8)") :
-                   cardStyle === "shadow" ? (dark ? "rgba(255,255,255,0.08)" : "#fff") :
-                   dark ? "rgba(255,255,255,0.08)" : "#fff";
-    const cardBorder = cardStyle === "outlined" ? `1px solid ${dark ? "rgba(255,255,255,0.15)" : accent}` :
-                       cardStyle === "shadow" ? "none" : `1px solid ${dark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)"}`;
-    const cardShadow = cardStyle === "shadow" ? "0 4px 20px rgba(0,0,0,0.12)" : "none";
+  function CTAButton({ altStyle }: { altStyle?: React.CSSProperties } = {}) {
     return (
-      <div className="w-full py-2.5 px-3 text-[11px] font-medium text-left" style={{ borderRadius: btnRadius, background: cardBg, border: cardBorder, boxShadow: cardShadow, color: cardStyle === "filled" && !dark ? "#fff" : textCol, backdropFilter: cardStyle === "glass" ? "blur(10px)" : undefined }}>
-        <div className="flex items-center justify-between"><span>{s.title}</span><span style={{ opacity: 0.4 }}>${s.price}</span></div>
-      </div>
+      <button
+        className="w-full py-3 text-sm font-semibold text-center transition-all hover:opacity-90 active:scale-95"
+        style={{
+          borderRadius: btnRadius,
+          background: accent,
+          color: "#fff",
+          ...altStyle
+        }}
+      >
+        Book Now
+      </button>
     );
   }
 
-  function CTAButton({ text, altStyle }: { text?: string; altStyle?: React.CSSProperties }) {
-    return <button className="w-full py-2.5 text-[11px] font-bold" style={altStyle || { borderRadius: btnRadius, background: dark ? "#fff" : "#171717", color: dark ? "#171717" : "#fff" }}>{text || "View Full Profile"}</button>;
-  }
-
-  // Shared bg layers — renders media + overlay using user's chosen color
-  function BgLayers() {
-    return <>
-      {settings.bgType === "video" && settings.bgVideo && <video src={settings.bgVideo} autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover" />}
-      {settings.bgType === "photos" && settings.bgImages.length > 0 && (
-        <div className="absolute inset-0 grid grid-cols-2 gap-0.5 opacity-30">
-          {settings.bgImages.slice(0, 10).map((img, i) => <div key={i} className="overflow-hidden"><img src={img} alt="" className="w-full h-full object-cover" onError={e => (e.currentTarget.style.display = "none")} /></div>)}
-        </div>
-      )}
-      {hasBgMedia && (
-        hasStoredColor
-          ? <div className="absolute inset-0" style={getOverlayStyle()} />
-          : <div className="absolute inset-0 bg-black/40" />
-      )}
-    </>;
+  function ServiceCard({ s, i }: { s: any; i: number }) {
+    const cardStyle = "default"; // Default card style
+    const cardBg = dark ? "rgba(255,255,255,0.08)" : "#fff";
+    const cardBorder = `1px solid ${dark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)"}`;
+    const cardShadow = "none";
+    return (
+      <div className="w-full py-2.5 px-3 text-[11px] font-medium text-left" style={{ borderRadius: btnRadius, background: cardBg, border: cardBorder, boxShadow: cardShadow, color: textCol }}>
+        <div className="flex items-center justify-between"><span>{s.title}</span><span style={{ opacity: 0.4 }}>${s.price}</span></div>
+      </div>
+    );
   }
 
   const tpl = settings.template;
 
   /* ═══ MINIMAL — White card on grey, cover, centered avatar ═══ */
   if (tpl === "minimal") return (
-    <div className="relative w-full min-h-full bg-neutral-200 flex items-start justify-center sm:py-2 sm:px-2" style={{ fontFamily, ...((hasBgMedia || settings.bgType === "gradient" || settings.bgType === "solid") ? getBgStyle() : {}) }}>
-      <BgLayers />
+    <div className="relative w-full min-h-full bg-neutral-200 flex items-start justify-center sm:py-2 sm:px-2" style={{ fontFamily }}>
       <div className="relative z-10 w-full sm:max-w-[400px] bg-white sm:rounded-2xl shadow-xl overflow-hidden">
         <div className="h-20 bg-gradient-to-br from-neutral-100 to-neutral-200 relative">
           {creator.cover_url && <img src={creator.cover_url} alt="" className="w-full h-full object-cover" />}
@@ -299,8 +267,7 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
 
   /* ═══ GLASS — Full-bleed gradient, frosted cards ═══ */
   if (tpl === "glass") return (
-    <div className="relative w-full min-h-full overflow-hidden" style={{ fontFamily, background: hasStoredColor ? storedBgValue : "linear-gradient(135deg, #667eea 0%, #764ba2 100%)", ...getBgStyle() }}>
-      <BgLayers />
+    <div className="relative w-full min-h-full overflow-hidden" style={{ fontFamily, background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" }}>
       <div className="absolute top-10 right-4 w-24 h-24 rounded-full bg-pink-400/20 blur-2xl" />
       <div className="absolute bottom-10 left-2 w-32 h-32 rounded-full bg-blue-400/15 blur-3xl" />
       <div className="relative z-10 flex flex-col items-center pt-10 px-5 pb-8 max-w-[440px] mx-auto" style={positioningStyle}>
@@ -320,15 +287,14 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
 
   /* ═══ BOLD — Dark, big square avatar, accent accent accent ═══ */
   if (tpl === "bold") return (
-    <div className="relative w-full min-h-full bg-neutral-950 overflow-hidden" style={{ fontFamily, ...getBgStyle() }}>
-      <BgLayers />
+    <div className="relative w-full min-h-full bg-neutral-950 overflow-hidden" style={{ fontFamily }}>
       <div className="absolute top-0 right-0 w-1/3 h-full -skew-x-12 translate-x-8" style={{ background: `${accent}10` }} />
       <div className="relative z-10 flex flex-col items-center pt-8 px-5 pb-8 max-w-[440px] mx-auto" style={positioningStyle}>
         <Avatar size="w-20 h-20" shape="square" borderCol={accent} />
         <h2 className="mt-3 text-base font-black text-white tracking-tight" style={{ color: textCol }}>{name}</h2>
         <p className="text-[10px] mt-0.5" style={{ color: accent }}>@{creator.slug?.split("-")[0] || "creator"}</p>
         <p className="text-[10px] mt-1" style={{ color: textMuted }}>{headline}</p>
-        <div className="mt-3"><Socials light shape="square" /></div>
+        <div className="mt-3"><Socials light /></div>
         <div className="w-8 h-[2px] mt-4 mb-3" style={{ background: accent }} />
         <div className="w-full space-y-2">{services.map((s: any, i: number) => (
           <div key={i} className="w-full py-2.5 px-3 text-[11px] font-medium text-left bg-neutral-900 border border-neutral-800" style={{ borderRadius: btnRadius, color: textCol }}>
@@ -342,8 +308,7 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
 
   /* ═══ NEON — Black, glowing ring, scanlines ═══ */
   if (tpl === "neon") return (
-    <div className="relative w-full min-h-full bg-black overflow-hidden" style={{ fontFamily, ...getBgStyle() }}>
-      <BgLayers />
+    <div className="relative w-full min-h-full bg-black overflow-hidden" style={{ fontFamily }}>
       <div className="absolute inset-0 opacity-[0.03]" style={{backgroundImage:"repeating-linear-gradient(0deg, " + accent + " 0px, transparent 1px, transparent 4px)"}}/>
       <div className="absolute top-2 left-2 w-4 h-[1px]" style={{background:`${accent}50`}}/><div className="absolute top-2 left-2 w-[1px] h-4" style={{background:`${accent}50`}}/>
       <div className="absolute bottom-2 right-2 w-4 h-[1px]" style={{background:`${accent}50`}}/><div className="absolute bottom-2 right-2 w-[1px] h-4" style={{background:`${accent}50`}}/>
@@ -375,18 +340,9 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
 
   /* ═══ COLLAGE — Photo mosaic bg, frosted card ═══ */
   if (tpl === "collage") return (
-    <div className="relative w-full min-h-full overflow-hidden" style={{ fontFamily, ...getBgStyle() }}>
-      {settings.bgType === "photos" && settings.bgImages.length > 0 ? (
-        <div className="absolute inset-[-5%] grid grid-cols-3 auto-rows-fr rotate-[-4deg] scale-110">
-          {settings.bgImages.slice(0, 12).map((img, i) => <div key={i} className="overflow-hidden"><img src={img} alt="" className="w-full h-full object-cover brightness-[0.4] saturate-75" /></div>)}
-        </div>
-      ) : (
-        <div className="absolute inset-0 bg-gradient-to-br from-neutral-900 to-neutral-950" />
-      )}
-      {hasStoredColor
-        ? <div className="absolute inset-0" style={{ background: storedBgValue, opacity: 0.5 }} />
-        : <div className="absolute inset-0 bg-black/30" />
-      }
+    <div className="relative w-full min-h-full overflow-hidden" style={{ fontFamily }}>
+      <div className="absolute inset-0 bg-gradient-to-br from-neutral-900 to-neutral-950" />
+      <div className="absolute inset-0 bg-black/30" />
       <div className="relative z-10 flex flex-col items-center pt-10 px-5 pb-8 max-w-[440px] mx-auto" style={positioningStyle}>
         <div className="w-full bg-black/30 rounded-2xl p-5 border border-white/10 flex flex-col items-center" style={{backdropFilter:"blur(12px)"}}>
           <Avatar size="w-14 h-14" shape="square" borderCol="rgba(255,255,255,0.2)" />
@@ -406,8 +362,8 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
 
   /* ═══ BENTO — Dark grid layout ═══ */
   if (tpl === "bento") return (
-    <div className="relative w-full min-h-full bg-neutral-950 p-3" style={{ fontFamily, ...getBgStyle() }}>
-      <BgLayers />
+    <div className="relative w-full min-h-full bg-neutral-950 p-3" style={{ fontFamily }}>
+      
       <div className="relative z-10 max-w-[440px] mx-auto grid grid-cols-4 gap-2 auto-rows-[60px]">
         {/* Identity card */}
         <div className="col-span-4 row-span-2 rounded-2xl overflow-hidden relative flex items-center gap-3 px-4" style={{ background: `${accent}10`, border: `1px solid ${accent}20` }}>
@@ -442,14 +398,14 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
 
   /* ═══ SHOWCASE — Light, 2-col grid ═══ */
   if (tpl === "showcase") return (
-    <div className="relative w-full min-h-full bg-neutral-100 flex items-start justify-center sm:py-2 sm:px-2" style={{ fontFamily, ...getBgStyle() }}>
-      <BgLayers />
+    <div className="relative w-full min-h-full bg-neutral-100 flex items-start justify-center sm:py-2 sm:px-2" style={{ fontFamily }}>
+      
       <div className="relative z-10 w-full sm:max-w-[400px] bg-white sm:rounded-2xl shadow-xl overflow-hidden">
         <div className="px-4 pb-6 pt-6 text-center">
           <Avatar size="w-14 h-14" shape="square" borderCol="transparent" />
           <h2 className="mt-2 text-sm font-bold" style={{ color: textCol }}>{name}</h2>
           <p className="text-[10px]" style={{ color: textMuted }}>{headline}</p>
-          <div className="mt-3"><Socials shape="square" /></div>
+          <div className="mt-3"><Socials /></div>
           <div className="grid grid-cols-2 gap-2 mt-4">{services.map((s: any, i: number) => (
             <div key={i} className="rounded-xl bg-neutral-50 border border-neutral-200 p-3 text-left">
               <div className="text-[11px] font-semibold" style={{ color: textCol }}>{s.title}</div>
@@ -464,7 +420,7 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
 
   /* ═══ SPLIT — Left hero, right content ═══ */
   if (tpl === "split") return (
-    <div className="relative w-full min-h-full bg-white" style={{ fontFamily, ...getBgStyle() }}>
+    <div className="relative w-full min-h-full bg-white" style={{ fontFamily }}>
       <div className="min-h-full flex">
         <div className="w-[42%] relative">
           {creator.cover_url ? <img src={creator.cover_url} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full bg-gradient-to-b from-neutral-300 to-neutral-400" />}
@@ -498,11 +454,10 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
 
   /* ═══ AURORA — Animated gradient bg, centered, ethereal ═══ */
   if (tpl === "aurora") return (
-    <div className="relative w-full min-h-full overflow-hidden" style={{ fontFamily, background: hasStoredColor ? storedBgValue : "linear-gradient(135deg, #0f0c29, #302b63, #24243e)", ...getBgStyle() }}>
+    <div className="relative w-full min-h-full overflow-hidden" style={{ fontFamily, background: "linear-gradient(135deg, #0f0c29, #302b63, #24243e)" }}>
       <div className="absolute top-0 left-1/4 w-40 h-40 rounded-full bg-purple-500/20 blur-3xl" />
       <div className="absolute bottom-10 right-0 w-48 h-48 rounded-full bg-teal-400/15 blur-3xl" />
       <div className="absolute top-1/2 left-0 w-32 h-32 rounded-full bg-pink-500/10 blur-3xl" />
-      <BgLayers />
       <div className="relative z-10 flex flex-col items-center pt-10 px-5 pb-8 max-w-[440px] mx-auto" style={positioningStyle}>
         <Avatar size="w-16 h-16" borderCol="rgba(167,139,250,0.4)" />
         <h2 className="mt-3 text-sm font-bold" style={{ color: textCol || "#fff" }}>{name}</h2>
@@ -520,8 +475,8 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
 
   /* ═══ BRUTALIST — White bg, thick black borders, raw typography ═══ */
   if (tpl === "brutalist") return (
-    <div className="relative w-full min-h-full bg-white" style={{ fontFamily, ...getBgStyle() }}>
-      <BgLayers />
+    <div className="relative w-full min-h-full bg-white" style={{ fontFamily }}>
+      
       <div className="relative z-10 flex flex-col items-center pt-8 px-5 pb-8 max-w-[440px] mx-auto" style={positioningStyle}>
         <div className="w-20 h-20 border-[3px] border-black overflow-hidden">{avatar ? <img src={avatar} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full bg-neutral-100 flex items-center justify-center text-2xl font-black">{name[0]}</div>}</div>
         <h2 className="mt-3 text-lg font-black uppercase tracking-widest" style={{ color: textCol }}>{name}</h2>
@@ -541,8 +496,8 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
 
   /* ═══ SUNSET — Warm gradient, rounded everything ═══ */
   if (tpl === "sunset") return (
-    <div className="relative w-full min-h-full overflow-hidden" style={{ fontFamily, background: hasStoredColor ? storedBgValue : "linear-gradient(180deg, #ff6b6b 0%, #ee5a24 40%, #f39c12 100%)", ...getBgStyle() }}>
-      <BgLayers />
+    <div className="relative w-full min-h-full overflow-hidden" style={{ fontFamily, background: "linear-gradient(180deg, #ff6b6b 0%, #ee5a24 40%, #f39c12 100%)" }}>
+      
       <div className="relative z-10 flex flex-col items-center pt-10 px-5 pb-8 max-w-[440px] mx-auto" style={positioningStyle}>
         <Avatar size="w-16 h-16" borderCol="rgba(255,255,255,0.4)" />
         <h2 className="mt-3 text-sm font-bold text-white" style={{ color: textCol }}>{name}</h2>
@@ -560,9 +515,9 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
 
   /* ═══ TERMINAL — Hacker green-on-black, monospace ═══ */
   if (tpl === "terminal") return (
-    <div className="relative w-full min-h-full bg-[#0a0a0a] overflow-hidden" style={{ fontFamily: "'Space Grotesk', monospace", ...getBgStyle() }}>
+    <div className="relative w-full min-h-full bg-[#0a0a0a] overflow-hidden" style={{ fontFamily: "'Space Grotesk', monospace" }}>
       <div className="absolute inset-0 opacity-[0.03]" style={{backgroundImage:"repeating-linear-gradient(0deg, #00ff00 0px, transparent 1px, transparent 3px)"}}/>
-      <BgLayers />
+      
       <div className="relative z-10 flex flex-col items-center pt-8 px-5 pb-8 max-w-[440px] mx-auto" style={positioningStyle}>
         <div className="text-[10px] text-green-500/50 self-start mb-3 font-mono">$ cat profile.json</div>
         <Avatar size="w-14 h-14" borderCol="#22c55e" />
@@ -583,8 +538,8 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
 
   /* ═══ PASTEL — Soft pastel bg, rounded cards, playful ═══ */
   if (tpl === "pastel") return (
-    <div className="relative w-full min-h-full" style={{ fontFamily, background: hasStoredColor ? storedBgValue : "linear-gradient(180deg, #fce4ec 0%, #e8eaf6 50%, #e0f7fa 100%)", ...getBgStyle() }}>
-      <BgLayers />
+    <div className="relative w-full min-h-full" style={{ fontFamily, background: "linear-gradient(180deg, #fce4ec 0%, #e8eaf6 50%, #e0f7fa 100%)" }}>
+      
       <div className="relative z-10 flex flex-col items-center pt-10 px-5 pb-8 max-w-[440px] mx-auto" style={positioningStyle}>
         <Avatar size="w-16 h-16" borderCol="#fff" />
         <h2 className="mt-3 text-sm font-bold text-neutral-800" style={{ color: textCol }}>{name}</h2>
@@ -602,8 +557,8 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
 
   /* ═══ MAGAZINE — Editorial, left-aligned, serif feel ═══ */
   if (tpl === "magazine") return (
-    <div className="relative w-full min-h-full bg-[#fafaf8]" style={{ fontFamily, ...getBgStyle() }}>
-      <BgLayers />
+    <div className="relative w-full min-h-full bg-[#fafaf8]" style={{ fontFamily }}>
+      
       <div className="relative z-10 max-w-[440px] mx-auto px-6 pt-8 pb-8 flex flex-col" style={positioningStyle}>
         <div className="flex items-start gap-4 mb-6">
           <Avatar size="w-14 h-14" borderCol="transparent" />
@@ -628,10 +583,10 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
 
   /* ═══ RETRO — 80s/synthwave, neon pink + purple ═══ */
   if (tpl === "retro") return (
-    <div className="relative w-full min-h-full overflow-hidden" style={{ fontFamily, background: hasStoredColor ? storedBgValue : "linear-gradient(180deg, #1a0533 0%, #2d1b69 50%, #0f0c29 100%)", ...getBgStyle() }}>
+    <div className="relative w-full min-h-full overflow-hidden" style={{ fontFamily, background: "linear-gradient(180deg, #1a0533 0%, #2d1b69 50%, #0f0c29 100%)" }}>
       {/* Grid floor */}
       <div className="absolute bottom-0 left-0 right-0 h-1/2 opacity-20" style={{backgroundImage:"linear-gradient(rgba(236,72,153,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(236,72,153,0.3) 1px, transparent 1px)", backgroundSize:"30px 30px", transform:"perspective(200px) rotateX(40deg)", transformOrigin:"bottom"}}/>
-      <BgLayers />
+      
       <div className="relative z-10 flex flex-col items-center pt-10 px-5 pb-8 max-w-[440px] mx-auto" style={positioningStyle}>
         <Avatar size="w-16 h-16" borderCol="#ec4899" />
         <h2 className="mt-3 text-sm font-bold" style={{ color: textCol || "#f472b6" }}>{name}</h2>
@@ -651,8 +606,8 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
 
   /* ═══ MIDNIGHT — Deep navy, gold accents ═══ */
   if (tpl === "midnight") return (
-    <div className="relative w-full min-h-full bg-[#0a1628]" style={{ fontFamily, ...getBgStyle() }}>
-      <BgLayers />
+    <div className="relative w-full min-h-full bg-[#0a1628]" style={{ fontFamily }}>
+      
       <div className="relative z-10 flex flex-col items-center pt-10 px-5 pb-8 max-w-[440px] mx-auto" style={positioningStyle}>
         <Avatar size="w-16 h-16" borderCol="#d4a574" />
         <h2 className="mt-3 text-sm font-bold" style={{ color: textCol || "#f5f0e8" }}>{name}</h2>
@@ -672,8 +627,8 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
 
   /* ═══ CLAY — Soft 3D clay/neumorphic, light bg ═══ */
   if (tpl === "clay") return (
-    <div className="relative w-full min-h-full bg-[#e8e4df]" style={{ fontFamily, ...getBgStyle() }}>
-      <BgLayers />
+    <div className="relative w-full min-h-full bg-[#e8e4df]" style={{ fontFamily }}>
+      
       <div className="relative z-10 flex flex-col items-center pt-10 px-5 pb-8 max-w-[440px] mx-auto" style={positioningStyle}>
         <div className="w-16 h-16 rounded-2xl overflow-hidden" style={{ boxShadow: "6px 6px 12px #c5c1bc, -6px -6px 12px #fff" }}>
           {avatar ? <img src={avatar} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full bg-[#e8e4df] flex items-center justify-center text-xl font-bold text-neutral-400">{name[0]}</div>}
@@ -695,12 +650,12 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
 
   /* ═══ GRADIENT MESH — Colorful mesh gradient bg ═══ */
   if (tpl === "gradient-mesh") return (
-    <div className="relative w-full min-h-full overflow-hidden" style={{ fontFamily, background: "#000", ...getBgStyle() }}>
+    <div className="relative w-full min-h-full overflow-hidden" style={{ fontFamily, background: "#000" }}>
       <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[50%] rounded-full bg-purple-600/40 blur-[80px]" />
       <div className="absolute top-[30%] right-[-10%] w-[50%] h-[40%] rounded-full bg-blue-500/30 blur-[80px]" />
       <div className="absolute bottom-[-10%] left-[20%] w-[50%] h-[40%] rounded-full bg-emerald-500/25 blur-[80px]" />
       <div className="absolute top-[10%] left-[40%] w-[30%] h-[30%] rounded-full bg-pink-500/20 blur-[60px]" />
-      <BgLayers />
+      
       <div className="relative z-10 flex flex-col items-center pt-10 px-5 pb-8 max-w-[440px] mx-auto" style={positioningStyle}>
         <Avatar size="w-16 h-16" borderCol="rgba(255,255,255,0.3)" />
         <h2 className="mt-3 text-sm font-bold text-white" style={{ color: textCol }}>{name}</h2>
@@ -718,9 +673,9 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
 
   /* ═══ TRADER — Trading terminal dark green/black ═══ */
   if (tpl === "trader") return (
-    <div className="relative w-full min-h-full bg-[#0b0e11] overflow-hidden" style={{ fontFamily: "'SF Mono', 'Courier New', monospace", ...getBgStyle() }}>
+    <div className="relative w-full min-h-full bg-[#0b0e11] overflow-hidden" style={{ fontFamily: "'SF Mono', 'Courier New', monospace" }}>
       <div className="absolute inset-0 opacity-[0.02]" style={{backgroundImage:"repeating-linear-gradient(0deg, #00c087 0px, transparent 1px, transparent 4px)"}}/>
-      <BgLayers />
+      
       <div className="relative z-10 flex flex-col items-center pt-6 px-5 pb-8 max-w-[440px] mx-auto" style={positioningStyle}>
         <div className="w-full flex items-center justify-between mb-4 text-[8px] font-mono">
           <span className="text-[#00c087]/50">{name.toUpperCase().replace(/\s/g, '')}.X</span>
@@ -744,8 +699,8 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
 
   /* ═══ EDUCATOR — Warm, trustworthy, course-seller aesthetic ═══ */
   if (tpl === "educator") return (
-    <div className="relative w-full min-h-full" style={{ fontFamily, background: hasStoredColor ? storedBgValue : "linear-gradient(180deg, #fffbf0 0%, #fff 40%, #fef3e2 100%)", ...getBgStyle() }}>
-      <BgLayers />
+    <div className="relative w-full min-h-full" style={{ fontFamily, background: "linear-gradient(180deg, #fffbf0 0%, #fff 40%, #fef3e2 100%)" }}>
+      
       <div className="relative z-10 flex flex-col items-center pt-10 px-5 pb-8 max-w-[440px] mx-auto" style={positioningStyle}>
         <Avatar size="w-16 h-16" borderCol="#d97706" />
         <h2 className="mt-3 text-sm font-bold text-neutral-900" style={{ color: textCol, fontFamily: "'Georgia', serif" }}>{name}</h2>
@@ -763,8 +718,8 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
 
   /* ═══ DEVELOPER — Code editor dark, syntax colors ═══ */
   if (tpl === "developer") return (
-    <div className="relative w-full min-h-full bg-[#1a1b26] overflow-hidden" style={{ fontFamily: "'JetBrains Mono', 'Courier New', monospace", ...getBgStyle() }}>
-      <BgLayers />
+    <div className="relative w-full min-h-full bg-[#1a1b26] overflow-hidden" style={{ fontFamily: "'JetBrains Mono', 'Courier New', monospace" }}>
+      
       <div className="relative z-10 flex flex-col items-center pt-8 px-5 pb-8 max-w-[440px] mx-auto" style={positioningStyle}>
         <div className="text-[8px] text-[#565f89] self-start mb-3 font-mono">// profile.ts</div>
         <Avatar size="w-14 h-14" shape="square" borderCol="#7dcfff" />
@@ -785,8 +740,8 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
 
   /* ═══ EXECUTIVE — Ultra-clean, premium whitespace ═══ */
   if (tpl === "executive") return (
-    <div className="relative w-full min-h-full bg-white" style={{ fontFamily, ...getBgStyle() }}>
-      <BgLayers />
+    <div className="relative w-full min-h-full bg-white" style={{ fontFamily }}>
+      
       <div className="relative z-10 flex flex-col items-center pt-12 px-6 pb-8 max-w-[440px] mx-auto" style={positioningStyle}>
         <Avatar size="w-20 h-20" borderCol="transparent" />
         <h2 className="mt-4 text-base font-bold text-[#0f1729]" style={{ color: textCol, fontFamily: "'Georgia', serif" }}>{name}</h2>
@@ -805,8 +760,8 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
 
   /* ═══ FALLBACK ═══ */
   return (
-    <div className="relative w-full min-h-full overflow-hidden" style={{ fontFamily, background: dark ? "#0a0a0a" : "#e5e5e5", ...getBgStyle() }}>
-      <BgLayers />
+    <div className="relative w-full min-h-full overflow-hidden" style={{ fontFamily, background: dark ? "#0a0a0a" : "#e5e5e5" }}>
+      
       <div className="relative z-10 flex flex-col items-center pt-10 px-4 pb-8" style={positioningStyle}>
         <Avatar size="w-16 h-16" />
         <h2 className="mt-3 text-sm font-bold" style={{ color: textCol }}>{name}</h2>
@@ -826,36 +781,24 @@ function getAnim(id: string): string | undefined {
 
 /* ── Main Editor ── */
 export function LinkInBioEditorContent({ user }: { user: any }) {
-  const parseBgImages = (v: string): string[] => { try { return JSON.parse(v || "[]"); } catch { return []; } };
+
 
   const [settings, setSettings] = useState<Settings>({
     template: user.link_bio_template || "minimal",
     accent: user.link_bio_accent || "#6366f1",
-    bgType: user.link_bio_bg_type || "gradient",
+    bgType: user.link_bio_bg_type || "",
     bgValue: user.link_bio_bg_value || "",
-    bgVideo: user.link_bio_bg_video || "",
-    bgImages: parseBgImages(user.link_bio_bg_images),
+    textColor: user.link_bio_text_color || "",
+    font: user.link_bio_font || "jakarta",
     buttonShape: user.link_bio_button_shape || "rounded",
     buttonAnim: user.link_bio_button_anim || "none",
-    font: user.link_bio_font || "jakarta",
-    textColor: user.link_bio_text_color || "",
     introAnim: user.link_bio_intro_anim || "none",
-    cardStyle: user.link_bio_card_style || "default",
-    textSize: user.link_bio_text_size || "medium",
-    avatarSize: user.link_bio_avatar_size || "medium",
-    buttonSize: user.link_bio_button_size || "medium",
-    contentPosition: user.link_bio_content_position || "top",
-    contentAlign: user.link_bio_content_align || "center",
   });
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [section, setSection] = useState("links");
-  const [uploading, setUploading] = useState(false);
   const [previewMode, setPreviewMode] = useState<"mobile" | "desktop">("mobile");
   const [mobilePreview, setMobilePreview] = useState(false);
-  const fileRef = useRef<HTMLInputElement>(null);
-  const videoRef = useRef<HTMLInputElement>(null);
-  const photosRef = useRef<HTMLInputElement>(null);
 
   // Use ref for latest settings so save never has stale closure
   const settingsRef = useRef(settings);
@@ -902,21 +845,23 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
         body: JSON.stringify({
           link_bio_template: next.template,
           link_bio_accent: next.accent,
-          link_bio_bg_type: next.bgType,
-          link_bio_bg_value: next.bgValue,
-          link_bio_bg_video: next.bgVideo,
-          link_bio_bg_images: JSON.stringify(next.bgImages),
+          // Keeping removed fields to preserve existing data
+          link_bio_bg_type: user.link_bio_bg_type || "gradient",
+          link_bio_bg_value: user.link_bio_bg_value || "",
+          link_bio_bg_video: user.link_bio_bg_video || "",
+          link_bio_bg_images: user.link_bio_bg_images || "[]",
+          link_bio_font: user.link_bio_font || "jakarta",
+          link_bio_text_color: user.link_bio_text_color || "",
+          link_bio_card_style: user.link_bio_card_style || "default",
+          link_bio_text_size: user.link_bio_text_size || "medium",
+          link_bio_avatar_size: user.link_bio_avatar_size || "medium",
+          link_bio_button_size: user.link_bio_button_size || "medium",
+          link_bio_content_position: user.link_bio_content_position || "top",
+          link_bio_content_align: user.link_bio_content_align || "center",
+          // Only update the fields we still have
           link_bio_button_shape: next.buttonShape,
           link_bio_button_anim: next.buttonAnim,
-          link_bio_font: next.font,
-          link_bio_text_color: next.textColor,
           link_bio_intro_anim: next.introAnim,
-          link_bio_card_style: next.cardStyle,
-          link_bio_text_size: next.textSize,
-          link_bio_avatar_size: next.avatarSize,
-          link_bio_button_size: next.buttonSize,
-          link_bio_content_position: next.contentPosition,
-          link_bio_content_align: next.contentAlign,
         }),
       });
       if (!res.ok) {
@@ -934,54 +879,18 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
     setSaving(false);
   }
 
-  async function uploadImage(file: File, purpose: "bg" | "photos") {
-    setUploading(true);
-    const fd = new FormData();
-    fd.append("file", file);
-    fd.append("type", "cover");
-    const res = await fetch("/api/upload", { method: "POST", body: fd });
-    const data = await res.json();
-    setUploading(false);
-    if (data.url) {
-      if (purpose === "bg") save({ bgType: "image", bgValue: data.url });
-      else save({ bgImages: [...settings.bgImages, data.url] });
-    } else alert(data.message || "Upload failed");
-  }
 
-  async function uploadVideo(file: File) {
-    setUploading(true);
-    const fd = new FormData();
-    fd.append("file", file);
-    fd.append("type", "cover");
-    const res = await fetch("/api/upload", { method: "POST", body: fd });
-    const data = await res.json();
-    setUploading(false);
-    if (data.url) save({ bgType: "video", bgVideo: data.url });
-    else alert(data.message || "Upload failed");
-  }
-
-  function removePhoto(idx: number) {
-    const next = settings.bgImages.filter((_, i) => i !== idx);
-    save({ bgImages: next });
-  }
 
   const sections = [
     { id: "links", name: "Links" },
     { id: "template", name: "Template" },
-    { id: "background", name: "Background" },
-    { id: "typography", name: "Typography" },
     { id: "buttons", name: "Buttons" },
-    { id: "layout", name: "Layout" },
-    { id: "sizes", name: "Sizes" },
     { id: "animation", name: "Animation" },
-    { id: "colors", name: "Colors" },
   ];
 
   return (
     <div className="min-h-screen bg-neutral-100">
-      <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif" className="hidden" onChange={e => { if (e.target.files?.[0]) uploadImage(e.target.files[0], "bg"); }} />
-      <input ref={videoRef} type="file" accept="video/mp4,video/webm" className="hidden" onChange={e => { if (e.target.files?.[0]) uploadVideo(e.target.files[0]); }} />
-      <input ref={photosRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple className="hidden" onChange={e => { if (e.target.files) Array.from(e.target.files).forEach(f => uploadImage(f, "photos")); }} />
+
 
       {/* Top bar */}
       <div className="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-neutral-200/60">
@@ -1051,7 +960,7 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
                 <h2 className="text-sm font-bold text-neutral-900 mb-4">Choose Template</h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 max-h-[70vh] overflow-y-auto pr-1">
                   {TEMPLATES.map(t => (
-                    <button key={t.id} onClick={() => { const defaults = TEMPLATE_DEFAULTS[t.id]; save({ template: t.id, ...(defaults ? { bgType: defaults.bgType, bgValue: defaults.bgValue, textColor: defaults.textColor } : {}) }); }} className={`relative rounded-2xl overflow-hidden transition-all active:scale-95 ${settings.template === t.id ? "ring-2 ring-neutral-900 ring-offset-2" : "hover:ring-1 hover:ring-neutral-300"}`}>
+                    <button key={t.id} onClick={() => save({ template: t.id })} className={`relative rounded-2xl overflow-hidden transition-all active:scale-95 ${settings.template === t.id ? "ring-2 ring-neutral-900 ring-offset-2" : "hover:ring-1 hover:ring-neutral-300"}`}>
                       <EditorTemplateMini id={t.id} />
                       <div className="p-2 bg-white text-center">
                         <div className="text-[10px] font-bold text-neutral-900">{t.name}</div>
@@ -1067,260 +976,11 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
               </div>
             )}
 
-            {/* ─── BACKGROUND ─── */}
-            {section === "background" && (
-              <div className="bg-white rounded-2xl border border-neutral-200/60 p-5 space-y-5">
-                <div>
-                  <h2 className="text-sm font-bold text-neutral-900 mb-3">Background</h2>
-                  <div className="flex flex-wrap gap-2">
-                    {["gradient", "solid", "image", "photos", "video"].map(t => (
-                      <button key={t} onClick={() => save({ bgType: t })} className={`px-4 py-3 rounded-xl text-sm font-semibold transition-all min-h-[48px] ${settings.bgType === t ? "bg-neutral-900 text-white" : "bg-neutral-100 text-neutral-500 hover:bg-neutral-200"}`}>
-                        {t === "photos" ? "Photo Collage" : t[0].toUpperCase() + t.slice(1)}
-                      </button>
-                    ))}
-                  </div>
-                </div>
 
-                {settings.bgType === "gradient" && (
-                  <div className="grid grid-cols-6 gap-2">
-                    {GRADIENTS.map((g, i) => (
-                      <button key={i} onClick={() => save({ bgValue: g })} className={`aspect-square rounded-xl min-w-[44px] min-h-[44px] transition-all hover:scale-105 ${settings.bgValue === g ? "ring-2 ring-neutral-900 ring-offset-2" : ""}`} style={{ background: g }} />
-                    ))}
-                  </div>
-                )}
 
-                {settings.bgType === "solid" && (
-                  <div>
-                    <div className="flex flex-wrap gap-2.5">
-                      {["#ffffff", "#f5f5f5", "#171717", "#0a0a0a", "#1e293b", "#fef3c7", "#ecfdf5", "#eff6ff", "#fdf2f8", "#f5f3ff", "#dc2626", "#2563eb", "#16a34a"].map(c => (
-                        <button key={c} onClick={() => save({ bgValue: c })} className={`w-11 h-11 rounded-xl border transition-all hover:scale-105 ${settings.bgValue === c ? "ring-2 ring-neutral-900 ring-offset-2" : "border-neutral-200"}`} style={{ background: c }} />
-                      ))}
-                    </div>
-                    <div className="mt-3 flex items-center gap-2">
-                      <input type="color" value={settings.bgValue || "#ffffff"} onChange={e => save({ bgValue: e.target.value })} className="w-9 h-9 rounded-lg cursor-pointer border-0" />
-                      <span className="text-xs text-neutral-400">Custom color</span>
-                    </div>
-                  </div>
-                )}
 
-                {settings.bgType === "image" && (
-                  <div className="space-y-3">
-                    <button onClick={() => fileRef.current?.click()} disabled={uploading} className="w-full py-8 border-2 border-dashed border-neutral-300 rounded-2xl text-center hover:border-neutral-400 hover:bg-neutral-50 transition-all">
-                      {uploading ? <Spinner /> : (
-                        <>
-                          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="mx-auto text-neutral-300 mb-2"><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><path d="M21 15l-5-5L5 21" /></svg>
-                          <div className="text-xs font-medium text-neutral-500">Upload background image</div>
-                          <div className="text-[10px] text-neutral-400 mt-1">JPG, PNG, WebP, GIF up to 5MB</div>
-                        </>
-                      )}
-                    </button>
-                    {settings.bgValue && settings.bgValue.startsWith("http") && (
-                      <>
-                        <div className="relative rounded-xl overflow-hidden aspect-video">
-                          <img src={settings.bgValue} alt="" className="w-full h-full object-cover" onError={e => (e.currentTarget.style.display = "none")} />
-                          <button onClick={() => save({ bgValue: "" })} className="absolute top-2 right-2 w-7 h-7 bg-black/60 rounded-full flex items-center justify-center hover:bg-black/80">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" /></svg>
-                          </button>
-                        </div>
-                        <button onClick={() => save({ bgValue: "" })} className="w-full py-2 text-xs font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors">
-                          Remove image
-                        </button>
-                      </>
-                    )}
-                  </div>
-                )}
 
-                {/* Photo collage — multiple uploads */}
-                {settings.bgType === "photos" && (
-                  <div className="space-y-3">
-                    <p className="text-[11px] text-neutral-400">Upload up to 10 photos. They'll tile as your background collage.</p>
-                    <button onClick={() => photosRef.current?.click()} disabled={uploading || settings.bgImages.length >= 10} className="w-full py-6 border-2 border-dashed border-neutral-300 rounded-2xl text-center hover:border-neutral-400 hover:bg-neutral-50 transition-all disabled:opacity-50">
-                      {uploading ? <Spinner /> : (
-                        <>
-                          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="mx-auto text-neutral-300 mb-1.5"><path d="M12 5v14M5 12h14" strokeLinecap="round" /></svg>
-                          <div className="text-xs font-medium text-neutral-500">Add photos ({settings.bgImages.length}/10)</div>
-                        </>
-                      )}
-                    </button>
-                    {settings.bgImages.length > 0 && (
-                      <>
-                        <div className="grid grid-cols-5 gap-2">
-                          {settings.bgImages.map((img, i) => (
-                            <div key={i} className="relative aspect-square rounded-xl overflow-hidden group">
-                              <img src={img} alt="" className="w-full h-full object-cover" />
-                              <button onClick={() => removePhoto(i)} className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" /></svg>
-                              </button>
-                              <button onClick={() => removePhoto(i)} className="absolute top-1 right-1 w-5 h-5 bg-black/70 rounded-full flex items-center justify-center hover:bg-black/90 z-10">
-                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" /></svg>
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                        <button onClick={() => save({ bgImages: [] })} className="w-full py-2 text-xs font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors">
-                          Remove all photos
-                        </button>
-                      </>
-                    )}
-                  </div>
-                )}
 
-                {settings.bgType === "video" && (
-                  <div className="space-y-3">
-                    <button onClick={() => videoRef.current?.click()} disabled={uploading} className="w-full py-8 border-2 border-dashed border-neutral-300 rounded-2xl text-center hover:border-neutral-400 hover:bg-neutral-50 transition-all">
-                      {uploading ? <Spinner /> : (
-                        <>
-                          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="mx-auto text-neutral-300 mb-2"><polygon points="5 3 19 12 5 21 5 3" /></svg>
-                          <div className="text-xs font-medium text-neutral-500">Upload background video</div>
-                          <div className="text-[10px] text-neutral-400 mt-1">MP4, WebM up to 5MB</div>
-                        </>
-                      )}
-                    </button>
-                    {settings.bgVideo && (
-                      <>
-                        <div className="relative rounded-xl overflow-hidden aspect-video bg-black">
-                          <video src={settings.bgVideo} autoPlay muted loop playsInline className="w-full h-full object-cover" />
-                          <button onClick={() => save({ bgVideo: "" })} className="absolute top-2 right-2 w-7 h-7 bg-black/60 rounded-full flex items-center justify-center hover:bg-black/80">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" /></svg>
-                          </button>
-                        </div>
-                        <button onClick={() => save({ bgVideo: "" })} className="w-full py-2 text-xs font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors">
-                          Remove video
-                        </button>
-                      </>
-                    )}
-                  </div>
-                )}
-
-                {/* Overlay tint — shown when bgType is photos or video (image stores URL in bgValue) */}
-                {(settings.bgType === "photos" || settings.bgType === "video") && (
-                  <div>
-                    <h3 className="text-sm font-bold text-neutral-900 mb-1">Overlay Color</h3>
-                    <p className="text-[10px] text-neutral-400 mb-3">Your color will overlay on top of your background</p>
-                    <div className="space-y-3">
-                      <div>
-                        <div className="text-[11px] font-medium text-neutral-500 mb-2">Gradients</div>
-                        <div className="grid grid-cols-6 gap-2">
-                          {GRADIENTS.slice(0, 12).map((g, i) => (
-                            <button key={i} onClick={() => save({ bgValue: g })} className={`aspect-square rounded-xl transition-all hover:scale-105 ${settings.bgValue === g ? "ring-2 ring-neutral-900 ring-offset-2" : ""}`} style={{ background: g }} />
-                          ))}
-                        </div>
-                      </div>
-                      <div>
-                        <div className="text-[11px] font-medium text-neutral-500 mb-2">Solid Colors</div>
-                        <div className="flex flex-wrap gap-2">
-                          {["#171717", "#0a0a0a", "#1e293b", "#dc2626", "#2563eb", "#16a34a", "#6c5ce7", "#ec4899", "#f39c12"].map(c => (
-                            <button key={c} onClick={() => save({ bgValue: c })} className={`w-8 h-8 rounded-xl border transition-all hover:scale-105 ${settings.bgValue === c ? "ring-2 ring-neutral-900 ring-offset-2" : "border-neutral-200"}`} style={{ background: c }} />
-                          ))}
-                        </div>
-                        <div className="mt-2 flex items-center gap-2">
-                          <input type="color" value={settings.bgValue && !settings.bgValue.startsWith("http") && !settings.bgValue.startsWith("linear") ? settings.bgValue : "#171717"} onChange={e => save({ bgValue: e.target.value })} className="w-8 h-8 rounded-lg cursor-pointer border-0" />
-                          <span className="text-[10px] text-neutral-400">Custom overlay color</span>
-                        </div>
-                      </div>
-                      {settings.bgValue && !settings.bgValue.startsWith("http") && (
-                        <button onClick={() => save({ bgValue: "" })} className="w-full py-2 text-xs font-medium text-neutral-500 hover:text-neutral-700 hover:bg-neutral-50 rounded-lg transition-colors">
-                          Remove overlay (use default)
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* ─── TYPOGRAPHY ─── */}
-            {section === "typography" && (
-              <div className="bg-white rounded-2xl border border-neutral-200/60 p-5 space-y-6">
-                <div>
-                  <h2 className="text-sm font-bold text-neutral-900 mb-3">Font</h2>
-                  <div className="grid grid-cols-2 gap-2">
-                    {FONTS.map(f => (
-                      <button key={f.id} onClick={() => save({ font: f.id })} className={`p-4 min-h-[56px] rounded-xl text-left transition-all ${settings.font === f.id ? "bg-neutral-900 text-white" : "bg-neutral-50 text-neutral-600 hover:bg-neutral-100"}`}>
-                        <div className="text-base font-bold" style={{ fontFamily: f.css }}>{f.name}</div>
-                        <div className="text-[10px] mt-0.5 opacity-50" style={{ fontFamily: f.css }}>The quick brown fox</div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <h2 className="text-sm font-bold text-neutral-900 mb-3">Text Color</h2>
-                  <div className="flex flex-wrap gap-2">
-                    {TEXT_COLORS.map(c => (
-                      <button key={c.id || "auto"} onClick={() => save({ textColor: c.id })} className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium transition-all ${settings.textColor === c.id ? "ring-2 ring-neutral-900 ring-offset-1" : "bg-neutral-50 hover:bg-neutral-100"}`}>
-                        {c.id ? <div className="w-4 h-4 rounded-full border border-neutral-200" style={{ background: c.color }} /> : <div className="w-4 h-4 rounded-full bg-gradient-to-r from-neutral-900 to-neutral-200 border border-neutral-200" />}
-                        <span>{c.name}</span>
-                      </button>
-                    ))}
-                  </div>
-                  <div className="mt-3 flex items-center gap-2">
-                    <input type="color" value={settings.textColor || "#171717"} onChange={e => save({ textColor: e.target.value })} className="w-8 h-8 rounded cursor-pointer border-0" />
-                    <span className="text-xs text-neutral-400">Custom text color</span>
-                  </div>
-                </div>
-
-                <div>
-                  <h2 className="text-sm font-bold text-neutral-900 mb-3">Card Style</h2>
-                  <div className="grid grid-cols-5 gap-2">
-                    {CARD_STYLES.map(c => (
-                      <button key={c.id} onClick={() => save({ cardStyle: c.id })} className={`py-2.5 rounded-xl text-[10px] font-semibold transition-all ${settings.cardStyle === c.id ? "bg-neutral-900 text-white" : "bg-neutral-50 text-neutral-500 hover:bg-neutral-100"}`}>
-                        {c.name}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* ─── LAYOUT ─── */}
-            {section === "layout" && (
-              <div className="bg-white rounded-2xl border border-neutral-200/60 p-5 space-y-6">
-                {/* Content Position (vertical) */}
-                <div>
-                  <h2 className="text-sm font-bold text-neutral-900 mb-1">Content Position</h2>
-                  <p className="text-[11px] text-neutral-400 mb-3">Controls where content sits vertically on the page</p>
-                  <div className="grid grid-cols-3 gap-2">
-                    {([
-                      { id: "top", label: "Top" },
-                      { id: "center", label: "Center" },
-                      { id: "bottom", label: "Bottom" },
-                    ] as const).map(p => (
-                      <button key={p.id} onClick={() => save({ contentPosition: p.id })} className={`p-3 min-h-[80px] rounded-xl text-center transition-all flex flex-col items-center justify-center gap-2 ${settings.contentPosition === p.id ? "border-2 border-neutral-900 bg-neutral-50" : "border border-neutral-200 bg-white hover:bg-neutral-50"}`}>
-                        <div className="w-8 h-14 rounded-md border border-neutral-300 bg-neutral-50 flex flex-col justify-between p-1">
-                          {p.id === "top" && <><div className="w-full h-1.5 rounded-full bg-neutral-400" /><div /></>}
-                          {p.id === "center" && <><div /><div className="w-full h-1.5 rounded-full bg-neutral-400" /><div /></>}
-                          {p.id === "bottom" && <><div /><div className="w-full h-1.5 rounded-full bg-neutral-400" /></>}
-                        </div>
-                        <span className="text-[10px] font-semibold text-neutral-500">{p.label}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Content Alignment (horizontal) */}
-                <div>
-                  <h2 className="text-sm font-bold text-neutral-900 mb-1">Content Alignment</h2>
-                  <p className="text-[11px] text-neutral-400 mb-3">Controls horizontal text and content alignment</p>
-                  <div className="grid grid-cols-3 gap-2">
-                    {([
-                      { id: "left", label: "Left" },
-                      { id: "center", label: "Center" },
-                      { id: "right", label: "Right" },
-                    ] as const).map(a => (
-                      <button key={a.id} onClick={() => save({ contentAlign: a.id })} className={`p-3 min-h-[80px] rounded-xl text-center transition-all flex flex-col items-center justify-center gap-2 ${settings.contentAlign === a.id ? "border-2 border-neutral-900 bg-neutral-50" : "border border-neutral-200 bg-white hover:bg-neutral-50"}`}>
-                        <div className="w-10 h-10 rounded-md border border-neutral-300 bg-neutral-50 flex flex-col justify-center gap-1 p-1.5">
-                          {a.id === "left" && <><div className="w-full h-1 rounded-full bg-neutral-400" /><div className="w-3/4 h-1 rounded-full bg-neutral-300" /><div className="w-1/2 h-1 rounded-full bg-neutral-300" /></>}
-                          {a.id === "center" && <><div className="w-full h-1 rounded-full bg-neutral-400 mx-auto" /><div className="w-3/4 h-1 rounded-full bg-neutral-300 mx-auto" /><div className="w-1/2 h-1 rounded-full bg-neutral-300 mx-auto" /></>}
-                          {a.id === "right" && <><div className="w-full h-1 rounded-full bg-neutral-400 ml-auto" /><div className="w-3/4 h-1 rounded-full bg-neutral-300 ml-auto" /><div className="w-1/2 h-1 rounded-full bg-neutral-300 ml-auto" /></>}
-                        </div>
-                        <span className="text-[10px] font-semibold text-neutral-500">{a.label}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
 
             {/* ─── BUTTONS ─── */}
             {section === "buttons" && (
@@ -1352,66 +1012,7 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
               </div>
             )}
 
-            {/* ─── SIZES ─── */}
-            {section === "sizes" && (
-              <div className="bg-white rounded-2xl border border-neutral-200/60 p-5 space-y-6">
-                {/* Text Size */}
-                <div>
-                  <h2 className="text-sm font-bold text-neutral-900 mb-1">Text Size</h2>
-                  <p className="text-[11px] text-neutral-400 mb-3">Controls name, bio, and link title sizes</p>
-                  <div className="grid grid-cols-3 gap-2">
-                    {([
-                      { id: "small", label: "Small", nameClass: "text-base", bioClass: "text-xs" },
-                      { id: "medium", label: "Medium", nameClass: "text-xl", bioClass: "text-sm" },
-                      { id: "large", label: "Large", nameClass: "text-2xl", bioClass: "text-base" },
-                    ] as const).map(s => (
-                      <button key={s.id} onClick={() => save({ textSize: s.id })} className={`p-3 min-h-[72px] rounded-xl text-center transition-all flex flex-col items-center justify-center gap-1 ${settings.textSize === s.id ? "border-2 border-neutral-900 bg-neutral-50" : "border border-neutral-200 bg-white hover:bg-neutral-50"}`}>
-                        <span className={`font-bold text-neutral-900 ${s.nameClass}`}>Aa</span>
-                        <span className={`text-neutral-500 ${s.bioClass}`}>{s.label}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
 
-                {/* Avatar Size */}
-                <div>
-                  <h2 className="text-sm font-bold text-neutral-900 mb-1">Avatar Size</h2>
-                  <p className="text-[11px] text-neutral-400 mb-3">Controls your profile picture size</p>
-                  <div className="grid grid-cols-3 gap-2">
-                    {([
-                      { id: "small", label: "Small", size: "w-10 h-10" },
-                      { id: "medium", label: "Medium", size: "w-14 h-14" },
-                      { id: "large", label: "Large", size: "w-[72px] h-[72px]" },
-                    ] as const).map(s => (
-                      <button key={s.id} onClick={() => save({ avatarSize: s.id })} className={`p-3 min-h-[88px] rounded-xl text-center transition-all flex flex-col items-center justify-center gap-2 ${settings.avatarSize === s.id ? "border-2 border-neutral-900 bg-neutral-50" : "border border-neutral-200 bg-white hover:bg-neutral-50"}`}>
-                        <div className={`${s.size} rounded-full bg-neutral-200`} />
-                        <span className="text-[10px] font-semibold text-neutral-500">{s.label}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Button Size */}
-                <div>
-                  <h2 className="text-sm font-bold text-neutral-900 mb-1">Button Size</h2>
-                  <p className="text-[11px] text-neutral-400 mb-3">Controls link button padding and text</p>
-                  <div className="grid grid-cols-3 gap-2">
-                    {([
-                      { id: "small", label: "Compact", py: "py-2", textCls: "text-[10px]" },
-                      { id: "medium", label: "Normal", py: "py-3", textCls: "text-xs" },
-                      { id: "large", label: "Large", py: "py-4", textCls: "text-sm" },
-                    ] as const).map(s => (
-                      <button key={s.id} onClick={() => save({ buttonSize: s.id })} className={`p-3 min-h-[72px] rounded-xl text-center transition-all flex flex-col items-center justify-center gap-2 ${settings.buttonSize === s.id ? "border-2 border-neutral-900 bg-neutral-50" : "border border-neutral-200 bg-white hover:bg-neutral-50"}`}>
-                        <div className={`w-full bg-neutral-200 rounded-lg ${s.py}`}>
-                          <span className={`font-semibold text-neutral-600 ${s.textCls}`}>Button</span>
-                        </div>
-                        <span className="text-[10px] font-semibold text-neutral-500">{s.label}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
 
             {/* ─── ANIMATION ─── */}
             {section === "animation" && (
@@ -1459,22 +1060,7 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
               </div>
             )}
 
-            {/* ─── COLORS ─── */}
-            {section === "colors" && (
-              <div className="bg-white rounded-2xl border border-neutral-200/60 p-5">
-                <h2 className="text-sm font-bold text-neutral-900 mb-1">Accent Color</h2>
-                <p className="text-[11px] text-neutral-400 mb-4">Used by Bold, Neon, and Bento templates. Also used for Filled and Outlined card styles.</p>
-                <div className="flex flex-wrap gap-2.5">
-                  {ACCENT_COLORS.map(c => (
-                    <button key={c} onClick={() => save({ accent: c })} className={`w-12 h-12 rounded-xl transition-all hover:scale-110 active:scale-95 ${settings.accent === c ? "ring-2 ring-offset-2 ring-neutral-900 scale-110" : ""} ${c === "#ffffff" ? "border border-neutral-200" : ""}`} style={{ background: c }} />
-                  ))}
-                </div>
-                <div className="mt-4 flex items-center gap-2">
-                  <input type="color" value={settings.accent} onChange={e => save({ accent: e.target.value })} className="w-10 h-10 rounded-lg cursor-pointer border-0" />
-                  <span className="text-xs text-neutral-400">Custom accent</span>
-                </div>
-              </div>
-            )}
+
           </div>
 
           {/* Right — Live preview */}
@@ -1494,7 +1080,7 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
               {previewMode === "mobile" && (
                 <div className="mx-auto w-[280px] h-[560px] bg-black rounded-[2.5rem] shadow-2xl border-[6px] border-neutral-800 overflow-hidden relative">
                   <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[90px] h-[22px] bg-black rounded-b-2xl z-50" />
-                  <div className="w-full h-full overflow-y-auto rounded-[2rem]"><MiniPreview key={`${settings.template}-${settings.font}-${settings.textColor}-${settings.bgType}-${settings.bgValue}-${settings.buttonShape}-${settings.cardStyle}-${settings.contentPosition}-${settings.contentAlign}-${settings.accent}`} settings={settings} creator={user} /></div>
+                  <div className="w-full h-full overflow-y-auto rounded-[2rem]"><MiniPreview key={`${settings.template}-${settings.buttonShape}-${settings.accent}`} settings={settings} creator={user} /></div>
                   <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-[100px] h-[4px] bg-white/30 rounded-full z-50" />
                 </div>
               )}
@@ -1506,7 +1092,7 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
                   </div>
                   <div className="w-full h-[450px] border border-t-0 border-neutral-200 rounded-b-xl overflow-y-auto bg-neutral-100">
                     <div className="flex items-start justify-center py-6 min-h-full">
-                      <div className="w-[400px] bg-white rounded-2xl shadow-lg overflow-hidden"><MiniPreview key={`d-${settings.template}-${settings.font}-${settings.textColor}-${settings.bgType}-${settings.bgValue}-${settings.buttonShape}-${settings.cardStyle}-${settings.contentPosition}-${settings.contentAlign}-${settings.accent}`} settings={settings} creator={user} /></div>
+                      <div className="w-[400px] bg-white rounded-2xl shadow-lg overflow-hidden"><MiniPreview key={`d-${settings.template}-${settings.buttonShape}-${settings.accent}`} settings={settings} creator={user} /></div>
                     </div>
                   </div>
                 </div>
@@ -1546,7 +1132,7 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
             <div className="w-[320px] h-[640px] bg-black rounded-[2.5rem] shadow-2xl border-[6px] border-neutral-800 overflow-hidden relative">
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[90px] h-[22px] bg-black rounded-b-2xl z-50" />
               <div className="w-full h-full overflow-y-auto rounded-[2rem]">
-                <MiniPreview key={`m-${settings.template}-${settings.font}-${settings.textColor}-${settings.bgType}-${settings.bgValue}-${settings.buttonShape}-${settings.cardStyle}-${settings.contentPosition}-${settings.contentAlign}-${settings.accent}`} settings={settings} creator={user} />
+                <MiniPreview key={`m-${settings.template}-${settings.buttonShape}-${settings.accent}`} settings={settings} creator={user} />
               </div>
               <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-[100px] h-[4px] bg-white/30 rounded-full z-50" />
             </div>
