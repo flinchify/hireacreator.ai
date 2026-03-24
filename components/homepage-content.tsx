@@ -232,7 +232,7 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
 
         <div className="relative z-10 max-w-4xl mx-auto text-center animate-hero-fade-in">
           <h1
-            className="text-2xl sm:text-4xl lg:text-[3.5rem] text-neutral-800 leading-[1.15] mb-6"
+            className="text-2xl sm:text-4xl lg:text-[3.2rem] text-neutral-800 leading-[1.3] mb-6"
             style={{ fontFamily: "var(--font-serif)" }}
           >
             The marketplace where creators <TypingRotation />
