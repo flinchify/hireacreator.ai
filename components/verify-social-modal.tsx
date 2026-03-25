@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface VerifySocialModalProps {
   open: boolean;
@@ -42,9 +42,12 @@ export function VerifySocialModal({ open, onClose, platform, handle, onVerified 
   };
 
   // Trigger code generation on open
-  if (open && step === "loading" && !code) {
-    generateCode();
-  }
+  useEffect(() => {
+    if (open && step === "loading" && !code) {
+      generateCode();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
 
   const handleVerify = async () => {
     setStep("checking");

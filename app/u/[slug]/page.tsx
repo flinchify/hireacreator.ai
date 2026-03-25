@@ -228,7 +228,11 @@ export default async function LinkInBioPage({ params, searchParams }: { params: 
         id: `auto-bl-${i}`, title: l.title || "", url: l.url || "", thumbnailUrl: null, isVisible: true, isPinned: false, clickCount: 0, sectionName: null, displayStyle: "default",
       })),
       socials: (Array.isArray(autoProfile.auto_socials) ? autoProfile.auto_socials : []).map((s: any) => ({
-        platform: s.platform || "", handle: s.handle || "", followers: "", url: s.url || "",
+        platform: s.platform || "", handle: s.handle || "",
+        followers: s.platform === (autoProfile.platform as string) && followerCount > 0
+          ? (followerCount >= 1_000_000 ? `${(followerCount / 1_000_000).toFixed(1)}M` : followerCount >= 1_000 ? `${Math.round(followerCount / 1_000)}K` : String(followerCount))
+          : "",
+        url: s.url || "",
       })),
       services: [],
       portfolio: [],

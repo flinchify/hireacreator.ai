@@ -219,6 +219,12 @@ export async function getCreatorBySlug(
   if (users.length === 0) return null;
   const user = users[0];
 
+  // Fill missing avatar from claimed_profiles
+  if (!user.avatar_url) {
+    const claimed = await sql`SELECT avatar_url FROM claimed_profiles WHERE claimed_by = ${user.id} AND avatar_url IS NOT NULL LIMIT 1`;
+    if (claimed.length > 0) user.avatar_url = claimed[0].avatar_url;
+  }
+
   const [socials, services, portfolio, reviewRows, bioLinks, products, servicePackages, testimonials] = await Promise.all([
     sql`SELECT * FROM social_connections WHERE user_id = ${user.id}`,
     sql`SELECT * FROM services WHERE user_id = ${user.id} AND is_active = TRUE ORDER BY price ASC`,
@@ -402,6 +408,16 @@ export async function getFeaturedCreatorsRotation(): Promise<Creator[]> {
       if (users.length > 0) {
         const userIds = users.map((u) => u.id);
         const socials = await sql`SELECT * FROM social_connections WHERE user_id = ANY(${userIds})`;
+        // Fill missing avatars from claimed_profiles
+        const noAvatar = users.filter((u) => !u.avatar_url);
+        if (noAvatar.length > 0) {
+          const naIds = noAvatar.map((u) => u.id);
+          const claimed = await sql`SELECT claimed_by, avatar_url FROM claimed_profiles WHERE claimed_by = ANY(${naIds}) AND avatar_url IS NOT NULL LIMIT ${naIds.length}`;
+          const avatarMap = new Map(claimed.map((c: any) => [c.claimed_by, c.avatar_url]));
+          for (const u of noAvatar) {
+            if (avatarMap.has(u.id)) u.avatar_url = avatarMap.get(u.id);
+          }
+        }
         // Maintain position order
         const userMap = new Map(users.map((u) => [u.id, u]));
         return ids
