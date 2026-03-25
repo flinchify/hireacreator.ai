@@ -1,8 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { ScoreChecker } from "./score-checker";
 import { AnimateOnScroll, StaggerChildren } from "./animate-on-scroll";
 import { PlatformTicker } from "./platform-ticker";
@@ -116,50 +114,6 @@ function DemoGauge({ score }: { score: number }) {
   );
 }
 
-/* ─── Claim input for hero ─── */
-function ClaimInput() {
-  const [handle, setHandle] = useState("");
-  const router = useRouter();
-
-  const handleClaim = () => {
-    const trimmed = handle.trim().replace(/^@/, "");
-    if (trimmed) {
-      router.push(`/claim?handle=${encodeURIComponent(trimmed)}`);
-    } else {
-      router.push("/claim");
-    }
-  };
-
-  return (
-    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-0 w-full max-w-lg mx-auto">
-      <div className="flex items-center flex-1 bg-white rounded-xl sm:rounded-r-none border border-neutral-200 shadow-lg shadow-neutral-900/5 overflow-hidden">
-        <span
-          className="pl-4 pr-1 text-sm font-semibold text-neutral-400 whitespace-nowrap select-none"
-          style={{ fontFamily: "var(--font-display)" }}
-        >
-          hireacreator.ai/
-        </span>
-        <input
-          type="text"
-          value={handle}
-          onChange={(e) => setHandle(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleClaim()}
-          placeholder="yourname"
-          className="flex-1 py-3.5 pr-4 text-sm text-neutral-800 placeholder:text-neutral-300 outline-none bg-transparent min-w-0"
-          style={{ fontFamily: "var(--font-display)" }}
-        />
-      </div>
-      <button
-        onClick={handleClaim}
-        className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl sm:rounded-l-none px-6 py-3.5 font-semibold text-sm shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30 hover:scale-[1.02] transition-all whitespace-nowrap min-h-[48px]"
-        style={{ fontFamily: "var(--font-display)" }}
-      >
-        Claim your page
-      </button>
-    </div>
-  );
-}
-
 /* ─── Feature icons (inline SVGs) ─── */
 const featureIcons = {
   portfolio: (
@@ -218,30 +172,6 @@ const brandIcons = {
   ),
 };
 
-/* ─── Business feature icons ─── */
-const businessIcons = {
-  api: (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-blue-500">
-      <polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" />
-    </svg>
-  ),
-  analytics: (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-blue-500">
-      <path d="M18 20V10M12 20V4M6 20v-6" />
-    </svg>
-  ),
-  team: (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-blue-500">
-      <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
-    </svg>
-  ),
-  roi: (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-blue-500">
-      <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
-    </svg>
-  ),
-};
-
 /* ─── FAQ data ─── */
 const faqs = [
   { q: "How does HireACreator work?", a: "Enter your social handle and we instantly build your creator profile. Customize it, go live in our marketplace, and start getting discovered by brands looking for creators like you." },
@@ -256,7 +186,7 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
   return (
     <>
       {/* ═══ Section 1: Hero ═══ */}
-      <section className="relative pt-32 sm:pt-44 pb-20 sm:pb-32 px-5 overflow-hidden min-h-[90vh] flex flex-col justify-center">
+      <section className="relative pt-32 sm:pt-52 pb-20 sm:pb-32 px-5 overflow-hidden min-h-[90vh] flex flex-col justify-center">
         {/* Ocean gradient mesh background */}
         <div className="absolute inset-0 pointer-events-none" style={{
           background: `
@@ -267,7 +197,7 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
             linear-gradient(180deg, rgba(240,249,255,0.8) 0%, rgba(255,255,255,1) 100%)
           `,
         }} />
-        {/* Dot grid pattern */}
+        {/* Subtle animated dots/grid pattern */}
         <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{
           backgroundImage: "radial-gradient(circle, #3b82f6 1px, transparent 1px)",
           backgroundSize: "32px 32px",
@@ -300,49 +230,45 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
           ))}
         </div>
 
-        <div className="relative z-10 max-w-3xl mx-auto text-center animate-hero-fade-in">
+        <div className="relative z-10 max-w-4xl mx-auto text-center animate-hero-fade-in">
           <h1
-            className="text-3xl sm:text-5xl lg:text-[3.5rem] text-neutral-900 leading-[1.2] mb-6 font-bold tracking-tight"
+            className="text-2xl sm:text-4xl lg:text-[3rem] text-neutral-800 leading-[1.6] mb-6"
             style={{ fontFamily: "var(--font-serif)" }}
           >
-            The link-in-bio built for creators who get paid.
+            The marketplace where creators
+            <br />
+            <TypingRotation />
           </h1>
 
-          <p className="text-neutral-500 text-base sm:text-lg max-w-xl mx-auto mb-10">
-            One link for your content, your rates, and your brand deals. Claim your page in 30 seconds.
+          <p className="text-neutral-500 text-base sm:text-lg max-w-xl mx-auto">
+            Tag any creator on Instagram or X. We build their page, brands send offers, creators get paid.
           </p>
 
-          {/* Linktree-style claim input */}
-          <ClaimInput />
-
-          {/* Secondary typing rotation */}
-          <div className="mt-8 text-center">
-            <p
-              className="text-sm sm:text-base text-neutral-400"
-              style={{ fontFamily: "var(--font-serif)" }}
+          <div className="flex flex-col sm:flex-row gap-3 justify-center mt-10">
+            <a
+              href="/claim"
+              className="inline-flex items-center justify-center bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg px-8 py-3.5 font-semibold shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30 hover:scale-[1.02] transition-all min-h-[48px] text-sm"
+              style={{ fontFamily: "var(--font-display)" }}
             >
-              The marketplace where creators <TypingRotation />
-            </p>
-          </div>
-
-          <div className="flex flex-row gap-3 justify-center mt-6">
+              Claim Your Profile
+            </a>
             <a
               href="/for-brands"
-              className="inline-flex items-center justify-center bg-white/80 backdrop-blur-sm border border-neutral-200 text-neutral-700 rounded-xl px-6 py-2.5 font-medium hover:bg-white hover:border-neutral-300 transition-all text-sm"
+              className="inline-flex items-center justify-center bg-white/80 backdrop-blur-sm border border-neutral-200 text-neutral-700 rounded-lg px-8 py-3.5 font-medium hover:bg-white hover:border-neutral-300 transition-all min-h-[48px] text-sm"
               style={{ fontFamily: "var(--font-display)" }}
             >
               I'm a Brand
             </a>
           </div>
 
-          <div className="mt-8 flex justify-center">
+          <div className="mt-10 flex justify-center">
             <ScoreChecker variant="light" />
           </div>
           <p className="text-xs text-neutral-400 mt-3">Free forever. Takes 30 seconds.</p>
         </div>
 
-        {/* Stats bar */}
-        <div className="relative z-10 mt-14 sm:mt-16 max-w-3xl mx-auto">
+        {/* Hero visual: why switch from Linktree */}
+        <div className="relative z-10 mt-12 sm:mt-16 max-w-3xl mx-auto">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
               { stat: "0%", label: "Creator fees", sub: "You keep everything" },
@@ -352,7 +278,7 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
             ].map((item, i) => (
               <div
                 key={i}
-                className="bg-white/70 backdrop-blur-sm border border-neutral-200/60 rounded-3xl p-4 shadow-md shadow-blue-500/5 hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-500/10 transition-all duration-300 text-center"
+                className="bg-white/70 backdrop-blur-sm border border-neutral-200/60 rounded-2xl p-4 shadow-md shadow-blue-500/5 hover:-translate-y-1 hover:shadow-lg transition-all duration-300 text-center"
               >
                 <div className="text-2xl sm:text-3xl font-bold text-blue-500 mb-1">{item.stat}</div>
                 <div className="text-xs font-semibold text-neutral-800">{item.label}</div>
@@ -373,33 +299,15 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
       )}
 
       {/* ═══ Section 3: Platform Ticker ═══ */}
-      <AnimateOnScroll as="section" className="relative py-10 px-5">
-        <div className="absolute inset-0 pointer-events-none opacity-[0.02]" style={{
-          backgroundImage: "radial-gradient(circle, #3b82f6 1px, transparent 1px)",
-          backgroundSize: "24px 24px",
-        }} />
-        <p className="text-sm text-neutral-400 text-center mb-2">One profile for all your platforms</p>
-        <div className="relative max-w-4xl mx-auto mt-4 mb-6">
-          <Image
-            src="/images/hero/platforms-network.jpeg"
-            alt="Connected social media platforms network showing Instagram, TikTok, YouTube, and more unified in one profile"
-            width={1024}
-            height={576}
-            className="rounded-3xl shadow-lg shadow-neutral-900/10 w-full h-auto"
-          />
-          <div className="absolute inset-0 rounded-3xl bg-gradient-to-t from-white via-transparent to-transparent" />
-        </div>
+      <AnimateOnScroll as="section" className="py-10 px-5">
+        <p className="text-sm text-neutral-400 text-center mb-4">One profile for all your platforms</p>
         <PlatformTicker />
       </AnimateOnScroll>
 
       {/* ═══ Section 4: How It Works ═══ */}
       <section className="my-4">
-        <div className="relative bg-blue-50 py-16 sm:py-24 rounded-3xl mx-4 sm:mx-6 overflow-hidden">
-          <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{
-            backgroundImage: "radial-gradient(circle, #3b82f6 1px, transparent 1px)",
-            backgroundSize: "28px 28px",
-          }} />
-          <div className="relative max-w-5xl mx-auto px-5">
+        <div className="bg-blue-50 py-16 sm:py-24 rounded-3xl mx-4 sm:mx-6">
+          <div className="max-w-5xl mx-auto px-5">
             <h2
               className="text-2xl sm:text-3xl text-neutral-800 text-center mb-12 font-serif"
               style={{ fontFamily: "var(--font-serif)" }}
@@ -412,39 +320,25 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
                   step: "1",
                   title: "Claim your profile",
                   desc: "Enter your social handle. We instantly build your creator profile with your content, stats, and niche.",
-                  image: null,
                 },
                 {
                   step: "2",
                   title: "Get discovered",
                   desc: "Your profile goes live in our marketplace. Brands browse by niche, platform, and audience to find you.",
-                  image: "/images/hero/ai-builder.jpeg",
                 },
                 {
                   step: "3",
                   title: "Land brand deals",
                   desc: "Receive offers directly, negotiate on your terms. Funds are held in secure escrow and released to you only after the brand approves your deliverables.",
-                  image: null,
                 },
               ].map((item) => (
                 <div
                   key={item.step}
-                  className="aos-stagger-item bg-white rounded-3xl p-6 sm:p-8 shadow-md shadow-neutral-900/5 hover:-translate-y-2 hover:shadow-xl hover:shadow-neutral-900/10 transition-all duration-300"
+                  className="aos-stagger-item bg-white rounded-2xl p-6 sm:p-8 shadow-md shadow-neutral-900/5 hover:-translate-y-1 hover:shadow-lg transition-all duration-300"
                 >
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 text-white font-bold flex items-center justify-center text-sm shadow-md shadow-blue-500/20">
+                  <div className="w-10 h-10 rounded-full bg-blue-500 text-white font-bold flex items-center justify-center text-sm">
                     {item.step}
                   </div>
-                  {item.image && (
-                    <div className="mt-4 -mx-2">
-                      <Image
-                        src={item.image}
-                        alt="AI robot building a professional creator profile automatically"
-                        width={400}
-                        height={400}
-                        className="rounded-2xl w-full h-auto"
-                      />
-                    </div>
-                  )}
                   <h3 className="font-semibold text-neutral-800 text-base mt-4">{item.title}</h3>
                   <p className="text-neutral-500 text-sm mt-2 leading-relaxed">{item.desc}</p>
                 </div>
@@ -498,7 +392,7 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
             ].map((item) => (
               <div
                 key={item.step}
-                className="aos-stagger-item bg-white border border-neutral-100 rounded-3xl p-6 sm:p-8 hover:shadow-lg hover:shadow-neutral-900/10 hover:-translate-y-2 transition-all duration-300"
+                className="aos-stagger-item bg-white border border-neutral-100 rounded-2xl p-6 sm:p-8 hover:shadow-md hover:-translate-y-1 transition-all duration-300"
               >
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
@@ -524,11 +418,8 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
       </section>
 
       {/* ═══ Section 5: For Creators ═══ */}
-      <section className="relative py-16 sm:py-24 px-5">
-        <div className="absolute inset-0 pointer-events-none" style={{
-          background: "linear-gradient(180deg, transparent 0%, rgba(239,246,255,0.5) 30%, rgba(239,246,255,0.5) 70%, transparent 100%)",
-        }} />
-        <div className="relative max-w-5xl mx-auto">
+      <section className="py-16 sm:py-24 px-5">
+        <div className="max-w-5xl mx-auto">
           <div className="text-center">
             <h2
               className="text-2xl sm:text-3xl text-neutral-800 text-center mb-12 font-serif"
@@ -544,29 +435,13 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
               { icon: featureIcons.matching, title: "Brand Deal Matching", desc: "Get matched with campaigns that fit your niche and audience." },
               { icon: featureIcons.link, title: "Link-in-Bio", desc: "One link for all your platforms, content, and brand deal rates." },
               { icon: featureIcons.cross, title: "Cross-Platform Profile", desc: "Combine stats from 15+ platforms into one unified creator profile." },
-              {
-                icon: featureIcons.payments,
-                title: "Secure Payments",
-                desc: "Get paid securely through the platform. No invoicing headaches.",
-                image: "/images/hero/secure-payments.jpeg",
-              },
+              { icon: featureIcons.payments, title: "Direct Payments", desc: "Get paid securely through the platform. No invoicing headaches." },
             ].map((feature) => (
               <div
                 key={feature.title}
-                className="aos-stagger-item bg-white border border-neutral-100 rounded-3xl p-6 hover:shadow-lg hover:shadow-neutral-900/10 hover:-translate-y-2 hover:scale-[1.01] transition-all duration-300"
+                className="aos-stagger-item bg-white border border-neutral-100 rounded-2xl p-6 hover:shadow-md hover:-translate-y-1 transition-all duration-300"
               >
                 <div className="mb-3">{feature.icon}</div>
-                {"image" in feature && feature.image && (
-                  <div className="-mx-2 mb-3">
-                    <Image
-                      src={feature.image}
-                      alt="Shield protecting secure payment transactions between creators and brands"
-                      width={400}
-                      height={400}
-                      className="rounded-2xl w-full h-auto"
-                    />
-                  </div>
-                )}
                 <h3 className="font-semibold text-neutral-800 text-sm sm:text-base mt-3">{feature.title}</h3>
                 <p className="text-neutral-500 text-sm mt-1">{feature.desc}</p>
 
@@ -578,77 +453,53 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
 
       {/* ═══ Section 6: Score Demo ═══ */}
       <AnimateOnScroll className="mx-4 sm:mx-6">
-        <div className="relative bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 rounded-3xl py-16 px-5 sm:px-12 text-white text-center overflow-hidden">
-          {/* Dashboard image as background overlay */}
-          <div className="absolute inset-0 opacity-10">
-            <Image
-              src="/images/hero/hero-dashboard.jpeg"
-              alt="Creator analytics dashboard showing engagement metrics and transparency scores"
-              fill
-              className="object-cover"
-            />
-          </div>
-          <div className="absolute inset-0 pointer-events-none opacity-[0.05]" style={{
-            backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)",
-            backgroundSize: "24px 24px",
-          }} />
-          <div className="relative z-10">
-            <h2
-              className="text-2xl sm:text-3xl text-white font-serif"
-              style={{ fontFamily: "var(--font-serif)" }}
-            >
-              Know your worth
-            </h2>
-            <p className="text-white/70 text-sm mt-2 max-w-md mx-auto">
-              Every creator profile includes a transparency rating. Brands see exactly what you bring to the table.
-            </p>
+        <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-3xl py-16 px-5 sm:px-12 text-white text-center">
+          <h2
+            className="text-2xl sm:text-3xl text-white font-serif"
+            style={{ fontFamily: "var(--font-serif)" }}
+          >
+            Know your worth
+          </h2>
+          <p className="text-white/70 text-sm mt-2 max-w-md mx-auto">
+            Every creator profile includes a transparency rating. Brands see exactly what you bring to the table.
+          </p>
 
-            <div className="flex flex-col items-center gap-8 mt-10">
-              <DemoGauge score={85} />
+          <div className="flex flex-col items-center gap-8 mt-10">
+            <DemoGauge score={85} />
 
-              <div className="flex flex-wrap justify-center gap-3">
-                {[
-                  { label: "Reach", value: "92%" },
-                  { label: "Engagement", value: "78%" },
-                  { label: "Niche", value: "85%" },
-                ].map((item) => (
-                  <div key={item.label} className="bg-white/10 backdrop-blur-sm rounded-2xl px-5 py-3 text-center">
-                    <div className="text-lg font-bold text-white">{item.value}</div>
-                    <div className="text-xs text-white/50">{item.label}</div>
-                  </div>
-                ))}
-              </div>
-
-              <a
-                href="/claim"
-                className="inline-flex items-center gap-2 bg-white text-blue-600 rounded-xl px-8 py-3.5 font-semibold text-sm hover:bg-blue-50 hover:scale-[1.02] transition-all shadow-lg shadow-blue-900/20 mt-8"
-              >
-                Claim your profile
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-              </a>
+            <div className="flex flex-wrap justify-center gap-3">
+              {[
+                { label: "Reach", value: "92%" },
+                { label: "Engagement", value: "78%" },
+                { label: "Niche", value: "85%" },
+              ].map((item) => (
+                <div key={item.label} className="bg-white/10 backdrop-blur-sm rounded-xl px-4 py-2 text-center">
+                  <div className="text-lg font-bold text-white">{item.value}</div>
+                  <div className="text-xs text-white/50">{item.label}</div>
+                </div>
+              ))}
             </div>
+
+            <a
+              href="/claim"
+              className="inline-flex items-center gap-2 bg-white text-blue-600 rounded-lg px-6 py-3 font-semibold text-sm hover:bg-blue-50 transition-colors shadow-lg shadow-blue-900/20 mt-8"
+            >
+              Claim your profile
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+            </a>
           </div>
         </div>
       </AnimateOnScroll>
 
       {/* ═══ Section 7: For Brands ═══ */}
-      <section className="relative py-16 sm:py-24 px-5">
+      <section className="py-16 sm:py-24 px-5">
         <div className="max-w-5xl mx-auto text-center">
           <h2
-            className="text-2xl sm:text-3xl text-neutral-800 mb-4 font-serif"
+            className="text-2xl sm:text-3xl text-neutral-800 mb-12 font-serif"
             style={{ fontFamily: "var(--font-serif)" }}
           >
             Find creators that move the needle
           </h2>
-          <div className="max-w-3xl mx-auto mb-12">
-            <Image
-              src="/images/hero/brand-deals.jpeg"
-              alt="Brand and creator partnership handshake representing successful collaboration deals"
-              width={1024}
-              height={576}
-              className="rounded-3xl shadow-lg shadow-neutral-900/10 w-full h-auto"
-            />
-          </div>
           <StaggerChildren className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
             {[
               { icon: brandIcons.matched, title: "AI-Matched Creators", desc: "Our algorithm finds creators that fit your brand, niche, and budget." },
@@ -658,7 +509,7 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
             ].map((card) => (
               <div
                 key={card.title}
-                className="aos-stagger-item bg-white border border-neutral-100 rounded-3xl p-6 text-center shadow-md shadow-neutral-900/5 hover:-translate-y-2 hover:shadow-xl hover:shadow-neutral-900/10 hover:scale-[1.02] transition-all duration-300"
+                className="aos-stagger-item bg-white border border-neutral-100 rounded-2xl p-6 text-center shadow-md shadow-neutral-900/5 hover:-translate-y-1 hover:shadow-lg transition-all duration-300"
               >
                 <div className="flex justify-center mb-3">{card.icon}</div>
                 <h3 className="font-semibold text-neutral-800 mb-2 text-sm sm:text-base">{card.title}</h3>
@@ -667,75 +518,6 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
               </div>
             ))}
           </StaggerChildren>
-        </div>
-      </section>
-
-      {/* ═══ Section 7b: Built for Businesses ═══ */}
-      <section className="my-4">
-        <div className="relative bg-neutral-50 py-16 sm:py-24 rounded-3xl mx-4 sm:mx-6 overflow-hidden">
-          <div className="absolute inset-0 pointer-events-none opacity-[0.02]" style={{
-            backgroundImage: "radial-gradient(circle, #1e293b 1px, transparent 1px)",
-            backgroundSize: "32px 32px",
-          }} />
-          <div className="relative max-w-5xl mx-auto px-5">
-            <div className="text-center mb-4">
-              <span className="inline-block text-xs font-semibold text-blue-500 tracking-widest uppercase mb-3">Enterprise-Ready</span>
-              <h2
-                className="text-2xl sm:text-3xl text-neutral-800 font-serif"
-                style={{ fontFamily: "var(--font-serif)" }}
-              >
-                Built for businesses, not just influencers
-              </h2>
-              <p className="text-neutral-500 text-sm mt-3 max-w-lg mx-auto">
-                The infrastructure marketing teams need to run creator campaigns at scale. Designed for marketing managers, CMOs, and growth leads.
-              </p>
-            </div>
-            <StaggerChildren className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-12">
-              {[
-                {
-                  icon: businessIcons.api,
-                  title: "API Access",
-                  desc: "Integrate creator discovery and campaign management directly into your existing marketing stack via REST API.",
-                },
-                {
-                  icon: businessIcons.analytics,
-                  title: "Analytics Dashboard",
-                  desc: "Real-time performance metrics across every campaign. Track impressions, conversions, and cost-per-engagement.",
-                },
-                {
-                  icon: businessIcons.team,
-                  title: "Team Management",
-                  desc: "Multi-seat access with role-based permissions. Coordinate campaigns across your marketing, creative, and finance teams.",
-                },
-                {
-                  icon: businessIcons.roi,
-                  title: "Campaign ROI Tracking",
-                  desc: "Attribution modeling that connects creator content to conversions. Measure true return on every dollar spent.",
-                },
-              ].map((feature) => (
-                <div
-                  key={feature.title}
-                  className="aos-stagger-item bg-white border border-neutral-100 rounded-3xl p-6 shadow-md shadow-neutral-900/5 hover:-translate-y-2 hover:shadow-xl hover:shadow-neutral-900/10 hover:scale-[1.02] transition-all duration-300"
-                >
-                  <div className="w-10 h-10 rounded-2xl bg-blue-50 flex items-center justify-center mb-4">
-                    {feature.icon}
-                  </div>
-                  <h3 className="font-semibold text-neutral-800 text-sm sm:text-base">{feature.title}</h3>
-                  <p className="text-neutral-500 text-sm mt-2 leading-relaxed">{feature.desc}</p>
-                </div>
-              ))}
-            </StaggerChildren>
-            <div className="text-center mt-10">
-              <a
-                href="/for-brands"
-                className="inline-flex items-center gap-2 bg-gradient-to-r from-neutral-800 to-neutral-900 text-white rounded-xl px-8 py-3.5 font-semibold text-sm hover:from-neutral-700 hover:to-neutral-800 hover:scale-[1.02] transition-all shadow-lg shadow-neutral-900/20"
-                style={{ fontFamily: "var(--font-display)" }}
-              >
-                Request a demo
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-              </a>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -773,8 +555,8 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
           </h2>
           <div className="space-y-3">
             {faqs.map((faq) => (
-              <details key={faq.q} className="group border border-neutral-100 rounded-2xl">
-                <summary className="px-5 py-4 cursor-pointer font-medium text-neutral-800 text-sm flex justify-between items-center hover:bg-neutral-50 rounded-2xl transition-colors min-h-[48px]">
+              <details key={faq.q} className="group border border-neutral-100 rounded-xl">
+                <summary className="px-5 py-4 cursor-pointer font-medium text-neutral-800 text-sm flex justify-between items-center hover:bg-neutral-50 rounded-xl transition-colors min-h-[48px]">
                   {faq.q}
                   <svg className="w-5 h-5 text-neutral-400 group-open:rotate-180 transition-transform shrink-0 ml-2" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd"/></svg>
                 </summary>
@@ -787,30 +569,21 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
 
       {/* ═══ Section 10: Final CTA ═══ */}
       <section className="my-4 mb-8">
-        <div className="relative bg-neutral-900 rounded-3xl mx-4 sm:mx-6 py-16 px-5 text-white text-center overflow-hidden">
-          <div className="absolute inset-0 pointer-events-none opacity-[0.04]" style={{
-            backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)",
-            backgroundSize: "28px 28px",
-          }} />
-          <div className="absolute inset-0 pointer-events-none" style={{
-            background: "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(59,130,246,0.08) 0%, transparent 70%)",
-          }} />
-          <div className="relative z-10">
-            <h2
-              className="text-2xl sm:text-3xl text-white font-serif"
-              style={{ fontFamily: "var(--font-serif)" }}
-            >
-              Ready to get discovered?
-            </h2>
-            <p className="text-neutral-400 text-sm mt-3 max-w-md mx-auto mb-10">
-              {creatorCount > 0
-                ? `Join ${creatorCount.toLocaleString()} creators already on the platform.`
-                : "Free forever. No signup required."}
-            </p>
-            <div className="max-w-2xl mx-auto">
-              <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-6 border border-white/10">
-                <ScoreChecker variant="onBlue" />
-              </div>
+        <div className="bg-neutral-900 rounded-3xl mx-4 sm:mx-6 py-16 px-5 text-white text-center">
+          <h2
+            className="text-2xl sm:text-3xl text-white font-serif"
+            style={{ fontFamily: "var(--font-serif)" }}
+          >
+            Ready to get discovered?
+          </h2>
+          <p className="text-neutral-400 text-sm mt-3 max-w-md mx-auto mb-10">
+            {creatorCount > 0
+              ? `Join ${creatorCount.toLocaleString()} creators already on the platform.`
+              : "Free forever. No signup required."}
+          </p>
+          <div className="max-w-2xl mx-auto">
+            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
+              <ScoreChecker variant="onBlue" />
             </div>
           </div>
         </div>
