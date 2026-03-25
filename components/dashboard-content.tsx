@@ -55,6 +55,8 @@ function EditProfileSheet({ user, open, onClose, onOpenBioWriter }: { user: User
   const { refreshUser } = useAuth();
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiPreview, setAiPreview] = useState<{ bio?: string; headline?: string; category?: string } | null>(null);
   const [form, setForm] = useState({
     full_name: user.name || "", slug: user.slug || "", headline: user.headline || "",
     bio: user.bio || "", location: user.location || "", category: user.category || "",
@@ -62,6 +64,44 @@ function EditProfileSheet({ user, open, onClose, onOpenBioWriter }: { user: User
     business_name: user.businessName || "", business_url: user.businessUrl || "",
     is_online: user.isOnline,
   });
+
+  async function aiAutoFill() {
+    setAiLoading(true);
+    setAiPreview(null);
+    try {
+      // Get user's social connections
+      const profileRes = await fetch("/api/profile");
+      const profileData = await profileRes.json();
+      const socials = profileData.socials || [];
+      if (socials.length === 0) { setAiLoading(false); return; }
+      // Use first connected platform to score
+      const social = socials[0];
+      const scoreRes = await fetch("/api/score", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ platform: social.platform, handle: social.handle }),
+      });
+      const scoreData = await scoreRes.json();
+      if (scoreData.error) { setAiLoading(false); return; }
+      setAiPreview({
+        bio: scoreData.profile?.bio || undefined,
+        headline: scoreData.design?.suggestedHeadline || undefined,
+        category: scoreData.detectedNiche ? scoreData.detectedNiche.charAt(0).toUpperCase() + scoreData.detectedNiche.slice(1) : undefined,
+      });
+    } catch {}
+    setAiLoading(false);
+  }
+
+  function applyAiSuggestions() {
+    if (!aiPreview) return;
+    setForm(f => ({
+      ...f,
+      ...(aiPreview.bio && !f.bio ? { bio: aiPreview.bio } : {}),
+      ...(aiPreview.headline && !f.headline ? { headline: aiPreview.headline } : {}),
+      ...(aiPreview.category && !f.category ? { category: aiPreview.category } : {}),
+    }));
+    setAiPreview(null);
+  }
 
   // Sync form with user data when it changes (e.g., AI bio writer updates)
   useEffect(() => {
@@ -88,6 +128,26 @@ function EditProfileSheet({ user, open, onClose, onOpenBioWriter }: { user: User
   return (
     <Sheet open={open} onClose={onClose} title="Edit Profile">
       <div className="space-y-4">
+        {/* AI Auto-fill */}
+        <button onClick={aiAutoFill} disabled={aiLoading} className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border border-blue-100 bg-blue-50 text-blue-600 text-sm font-semibold hover:bg-blue-100 transition-colors disabled:opacity-50">
+          {aiLoading ? (
+            <><svg className="animate-spin h-4 w-4" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg> Analyzing your socials...</>
+          ) : (
+            <>{icons.sparkle} AI Auto-Fill from Socials</>
+          )}
+        </button>
+        {aiPreview && (
+          <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 space-y-2">
+            <p className="text-xs font-semibold text-blue-700">AI suggestions (will fill empty fields only):</p>
+            {aiPreview.headline && <p className="text-xs text-blue-600"><span className="font-medium">Headline:</span> {aiPreview.headline}</p>}
+            {aiPreview.bio && <p className="text-xs text-blue-600"><span className="font-medium">Bio:</span> {aiPreview.bio.slice(0, 120)}...</p>}
+            {aiPreview.category && <p className="text-xs text-blue-600"><span className="font-medium">Category:</span> {aiPreview.category}</p>}
+            <div className="flex gap-2 pt-1">
+              <button onClick={applyAiSuggestions} className="px-4 py-1.5 text-xs font-semibold bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">Apply</button>
+              <button onClick={() => setAiPreview(null)} className="px-4 py-1.5 text-xs font-medium text-blue-600 bg-white rounded-lg border border-blue-200 hover:bg-blue-50 transition-colors">Dismiss</button>
+            </div>
+          </div>
+        )}
         <div><label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Display Name</label><input className={inp} value={form.full_name} onChange={e => setForm({ ...form, full_name: e.target.value })} /></div>
         <div><label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Username</label><input className={inp} value={form.slug} onChange={e => setForm({ ...form, slug: e.target.value })} placeholder="your-name" /></div>
         <div><label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Headline</label><input className={inp} value={form.headline} onChange={e => setForm({ ...form, headline: e.target.value })} placeholder="UGC Creator & Photographer" /></div>
@@ -822,13 +882,12 @@ function AdminFeaturedCreators() {
 }
 
 /* ═══ Sidebar nav items ═══ */
-type Section = "overview" | "offers" | "services" | "calendar" | "settings";
+type Section = "overview" | "offers" | "services" | "settings";
 
 const NAV_MAIN = [
   { id: "overview" as Section, label: "Overview", icon: icons.overview },
   { id: "offers" as Section, label: "Offers", icon: icons.offers },
   { id: "services" as Section, label: "Services", icon: icons.services },
-  { id: "calendar" as Section, label: "Calendar", icon: icons.calendar },
 ];
 
 const NAV_BOTTOM = [
@@ -1926,22 +1985,6 @@ export function DashboardContent() {
               </div>
             )}
 
-            {/* CALENDAR (includes Bookings) */}
-            {section === "calendar" && (
-              <div className="max-w-2xl">
-                <div className="mb-5">
-                  <h2 className="text-lg font-bold text-neutral-900">Calendar</h2>
-                  <p className="text-xs text-neutral-400 mt-0.5">Manage bookable sessions and availability</p>
-                </div>
-                <div className="bg-white rounded-2xl border border-neutral-200/60 p-5">
-                  <CalendarManager />
-                </div>
-                <div className="mt-8">
-                  <MyBookings />
-                </div>
-              </div>
-            )}
-
             {/* OFFERS */}
             {section === "offers" && (
               <OffersManager user={user} />
@@ -1989,7 +2032,6 @@ export function DashboardContent() {
             { id: "overview" as Section, label: "Overview", icon: icons.overview },
             { id: "offers" as Section, label: "Offers", icon: icons.offers },
             { id: "services" as Section, label: "Services", icon: icons.services },
-            { id: "calendar" as Section, label: "Calendar", icon: icons.calendar },
             { id: "settings" as Section, label: "Settings", icon: icons.settings },
           ]).map(n => (
             <button key={n.id} onClick={() => setSection(n.id)}

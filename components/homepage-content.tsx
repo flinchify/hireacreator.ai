@@ -10,11 +10,11 @@ import type { Creator } from "@/lib/types";
 
 /* ─── Typing rotation for hero ─── */
 const heroWords = [
-  "get discovered by brands",
-  "land paid deals",
-  "build their portfolio",
-  "keep 100% of earnings",
-  "go from tagged to paid",
+  "land paid brand deals",
+  "turn followers into income",
+  "go from DMs to deposits",
+  "keep 100% of their earnings",
+  "get found by real brands",
 ];
 
 function TypingRotation() {
@@ -235,13 +235,13 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
             className="text-2xl sm:text-4xl lg:text-[3rem] text-neutral-800 leading-[1.6] mb-6"
             style={{ fontFamily: "var(--font-serif)" }}
           >
-            The marketplace where creators
+            The page that pays you.
             <br />
             <TypingRotation />
           </h1>
 
           <p className="text-neutral-500 text-base sm:text-lg max-w-xl mx-auto">
-            Tag any creator on Instagram or X. We build their page, brands send offers, creators get paid.
+            One link for your content, your rates, and your brand deals. Claim your page in 30 seconds.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center mt-10">

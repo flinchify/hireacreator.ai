@@ -439,11 +439,12 @@ function ServiceCard({ service, creator, light, accent }: { service: any; creato
 function CTAButton({ creator, light, accent, isUnclaimed }: { creator: Creator; light?: boolean; accent?: string; isUnclaimed?: boolean }) {
   const ac = accent || creator.linkBioAccent || "#171717";
   const bs = BUTTON_SIZES[creator.linkBioButtonSize || "medium"] || BUTTON_SIZES.medium;
+  const btn = btnClass(creator.linkBioButtonShape);
   const ctaHref = isUnclaimed ? `/u/${creator.slug}/claim` : `/creators/${creator.slug}`;
   const ctaText = isUnclaimed ? "Claim & Customize" : "View Full Profile";
   return (
     <a href={ctaHref}
-      className={`block w-full mt-4 font-semibold text-center rounded-2xl ${bs} transition-all duration-200 hover:scale-[1.02] hover:shadow-xl shadow-lg text-white`}
+      className={`block w-full mt-4 font-semibold text-center ${btn} ${bs} transition-all duration-200 hover:scale-[1.02] hover:shadow-xl shadow-lg text-white`}
       style={{ background: ac }}>
       {ctaText}
     </a>
@@ -1139,7 +1140,7 @@ function TemplateBento({ creator, isUnclaimed }: { creator: Creator; isUnclaimed
           {/* Services — col-span-2 each with accent border */}
           {creator.services.map(s => (
             <a key={s.id} href={`/creators/${creator.slug}`}
-              className="col-span-2 row-span-1 rounded-2xl px-4 flex items-center justify-between hover:bg-white/5 hover:scale-[1.02] transition-all duration-200"
+              className={`col-span-2 row-span-1 ${btnClass(creator.linkBioButtonShape)} px-4 flex items-center justify-between hover:bg-white/5 hover:scale-[1.02] transition-all duration-200`}
               style={{ borderColor: `${accent}25`, border: `1px solid ${accent}25`, background: `${accent}08` }}>
               <div className="min-w-0">
                 <div className="text-sm font-medium text-white truncate">{s.title}</div>
@@ -1557,7 +1558,7 @@ function TemplateFounder({ creator, isUnclaimed }: { creator: Creator; isUnclaim
             <div className="space-y-2.5 mb-6">
               {creator.services.map(s => (
                 <a key={s.id} href={`/creators/${creator.slug}`}
-                  className="group block w-full rounded-2xl bg-white/[0.05] border border-white/[0.08] px-6 py-4 min-h-[56px] hover:bg-white/[0.08] hover:scale-[1.02] transition-all">
+                  className={`group block w-full ${btnClass(creator.linkBioButtonShape)} bg-white/[0.05] border border-white/[0.08] px-6 py-4 min-h-[56px] hover:bg-white/[0.08] hover:scale-[1.02] transition-all`}>
                   <div className="flex items-center justify-between">
                     <div>
                       <div className="font-semibold text-sm text-white">{s.title}</div>
@@ -1670,7 +1671,7 @@ function TemplateBrutalist({ creator, isUnclaimed }: { creator: Creator; isUncla
             <div className="text-xs font-bold uppercase tracking-[0.4em] text-white/40 border-b border-white/20 pb-1">Services</div>
             {creator.services.map(s => (
               <a key={s.id} href={`/creators/${creator.slug}`}
-                className={`block w-full ${bs} border-[3px] border-white text-white hover:bg-white hover:text-black transition-colors uppercase tracking-wider font-bold`}>
+                className={`block w-full ${btnClass(creator.linkBioButtonShape)} ${bs} border-[3px] border-white text-white hover:bg-white hover:text-black transition-colors uppercase tracking-wider font-bold`}>
                 <div className="flex items-center justify-between">
                   <span className="text-sm">{s.title}</span>
                   <span className="text-xs">{priceLabel(s.price, s.deliveryDays)}</span>
@@ -1766,7 +1767,7 @@ function TemplateAurora({ creator, isUnclaimed }: { creator: Creator; isUnclaime
             <SectionLabel light>Services</SectionLabel>
             {creator.services.map(s => (
               <a key={s.id} href={`/creators/${creator.slug}`}
-                className="block w-full rounded-2xl px-6 py-4 min-h-[56px] bg-white/10 backdrop-blur-md border border-white/10 text-left hover:bg-white/15 transition-all hover:scale-[1.02]">
+                className={`block w-full ${btnClass(creator.linkBioButtonShape)} px-6 py-4 min-h-[56px] bg-white/10 backdrop-blur-md border border-white/10 text-left hover:bg-white/15 transition-all hover:scale-[1.02]`}>
                 <div className="font-semibold text-white text-sm">{s.title}</div>
                 <div className="text-xs mt-0.5 text-white/40">{priceLabel(s.price, s.deliveryDays)}</div>
               </a>
@@ -1839,7 +1840,7 @@ function TemplateSunset({ creator, isUnclaimed }: { creator: Creator; isUnclaime
             <SectionLabel light>Services</SectionLabel>
             {creator.services.map(s => (
               <a key={s.id} href={`/creators/${creator.slug}`}
-                className="block w-full rounded-2xl px-6 py-4 min-h-[56px] bg-white/15 backdrop-blur-sm border border-white/20 text-left hover:bg-white/25 transition-all hover:scale-[1.02]">
+                className={`block w-full ${btnClass(creator.linkBioButtonShape)} px-6 py-4 min-h-[56px] bg-white/15 backdrop-blur-sm border border-white/20 text-left hover:bg-white/25 transition-all hover:scale-[1.02]`}>
                 <div className="font-semibold text-white text-sm">{s.title}</div>
                 <div className="text-xs mt-0.5" style={{ color: "#fcd34d" }}>{priceLabel(s.price, s.deliveryDays)}</div>
               </a>
@@ -1861,7 +1862,7 @@ function TemplateSunset({ creator, isUnclaimed }: { creator: Creator; isUnclaime
         {isEmpty && <EmptyState light />}
         {!isEmpty && (
           <a href={isUnclaimed ? `/u/${creator.slug}/claim` : `/creators/${creator.slug}`}
-            className="block w-full mt-8 font-semibold text-center rounded-2xl py-4 px-5 transition-all hover:scale-[1.02] hover:shadow-xl shadow-lg"
+            className={`block w-full mt-8 font-semibold text-center ${btnClass(creator.linkBioButtonShape)} py-4 px-5 transition-all hover:scale-[1.02] hover:shadow-xl shadow-lg`}
             style={{ background: "rgba(255,255,255,0.25)", color: "white", backdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.3)" }}>
             {isUnclaimed ? "Claim & Customize" : "View Full Profile"}
           </a>
@@ -1953,7 +1954,7 @@ function TemplateTerminal({ creator, isUnclaimed }: { creator: Creator; isUnclai
             <div className="text-xs font-bold" style={{ color: "#00ff00", opacity: 0.3 }}>--- SERVICES ---</div>
             {creator.services.map(s => (
               <a key={s.id} href={`/creators/${creator.slug}`}
-                className={`block w-full ${bs} border border-[#00ff00]/20 hover:bg-[#00ff00]/10 transition-colors`}
+                className={`block w-full ${btnClass(creator.linkBioButtonShape)} ${bs} border border-[#00ff00]/20 hover:bg-[#00ff00]/10 transition-colors`}
                 style={{ color: "#00ff00" }}>
                 <div className="flex items-center justify-between">
                   <span className="text-sm">&gt; {s.title}</span>
@@ -2047,7 +2048,7 @@ function TemplatePastel({ creator, isUnclaimed }: { creator: Creator; isUnclaime
             <SectionLabel>Services</SectionLabel>
             {creator.services.map(s => (
               <a key={s.id} href={`/creators/${creator.slug}`}
-                className={`block w-full rounded-full ${bs} bg-white shadow-sm border border-neutral-100 text-left hover:shadow-md hover:scale-[1.02] transition-all`}>
+                className={`block w-full ${btnClass(creator.linkBioButtonShape)} ${bs} bg-white shadow-sm border border-neutral-100 text-left hover:shadow-md hover:scale-[1.02] transition-all`}>
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-semibold text-neutral-700">{s.title}</span>
                   <span className="text-xs font-medium" style={{ color: accent }}>{priceLabel(s.price, s.deliveryDays)}</span>
@@ -2071,7 +2072,7 @@ function TemplatePastel({ creator, isUnclaimed }: { creator: Creator; isUnclaime
         {isEmpty && <EmptyState />}
         {!isEmpty && (
           <a href={isUnclaimed ? `/u/${creator.slug}/claim` : `/creators/${creator.slug}`}
-            className={`block w-full mt-8 font-semibold text-center rounded-full ${bs} shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all text-white`}
+            className={`block w-full mt-8 font-semibold text-center ${btnClass(creator.linkBioButtonShape)} ${bs} shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all text-white`}
             style={{ background: accent }}>
             {isUnclaimed ? "Claim & Customize" : "View Full Profile"}
           </a>
@@ -2140,7 +2141,7 @@ function TemplateMagazine({ creator, isUnclaimed }: { creator: Creator; isUnclai
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {creator.services.map(s => (
                 <a key={s.id} href={`/creators/${creator.slug}`}
-                  className={`block w-full ${bs} border border-neutral-200 bg-white hover:border-neutral-400 transition-all rounded-lg`}>
+                  className={`block w-full ${bs} border border-neutral-200 bg-white hover:border-neutral-400 transition-all ${btnClass(creator.linkBioButtonShape)}`}>
                   <div className="font-semibold text-neutral-900 text-sm" style={{ fontFamily: "Georgia, serif" }}>{s.title}</div>
                   <div className="text-xs mt-0.5 text-neutral-400">{priceLabel(s.price, s.deliveryDays)}</div>
                 </a>
@@ -2235,7 +2236,7 @@ function TemplateRetro({ creator, isUnclaimed }: { creator: Creator; isUnclaimed
               const bg = colors[i % colors.length];
               return (
                 <a key={s.id} href={`/creators/${creator.slug}`}
-                  className={`block w-full ${bs} rounded-xl border-black font-bold text-black hover:translate-x-[2px] hover:translate-y-[2px] transition-all`}
+                  className={`block w-full ${bs} ${btnClass(creator.linkBioButtonShape)} border-black font-bold text-black hover:translate-x-[2px] hover:translate-y-[2px] transition-all`}
                   style={{ background: bg, boxShadow: "4px 4px 0 #000", borderWidth: "3px" }}>
                   <div className="flex items-center justify-between">
                     <span className="text-sm uppercase">{s.title}</span>
@@ -2261,7 +2262,7 @@ function TemplateRetro({ creator, isUnclaimed }: { creator: Creator; isUnclaimed
         {isEmpty && <EmptyState />}
         {!isEmpty && (
           <a href={isUnclaimed ? `/u/${creator.slug}/claim` : `/creators/${creator.slug}`}
-            className={`block w-full mt-8 font-black text-center rounded-xl ${bs} border-black uppercase tracking-wider hover:translate-x-[2px] hover:translate-y-[2px] transition-all`}
+            className={`block w-full mt-8 font-black text-center ${btnClass(creator.linkBioButtonShape)} ${bs} border-black uppercase tracking-wider hover:translate-x-[2px] hover:translate-y-[2px] transition-all`}
             style={{ background: "#ff6ec7", boxShadow: "5px 5px 0 #000", borderWidth: "3px", color: "#000" }}>
             {isUnclaimed ? "Claim & Customize" : "View Full Profile"}
           </a>
@@ -2326,7 +2327,7 @@ function TemplateMidnight({ creator, isUnclaimed }: { creator: Creator; isUnclai
             <SectionLabel light>Services</SectionLabel>
             {creator.services.map(s => (
               <a key={s.id} href={`/creators/${creator.slug}`}
-                className="block w-full rounded-2xl px-6 py-4 min-h-[56px] bg-white/[0.04] border border-white/[0.08] text-left transition-all hover:scale-[1.02] hover:border-indigo-400/30"
+                className={`block w-full ${btnClass(creator.linkBioButtonShape)} px-6 py-4 min-h-[56px] bg-white/[0.04] border border-white/[0.08] text-left transition-all hover:scale-[1.02] hover:border-indigo-400/30`}
                 style={{ transition: "all 0.2s, box-shadow 0.2s" }}
                 onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = `0 0 25px ${accent}15`; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = "none"; }}>
@@ -2416,7 +2417,7 @@ function TemplateClay({ creator, isUnclaimed }: { creator: Creator; isUnclaimed?
             <SectionLabel>Services</SectionLabel>
             {creator.services.map(s => (
               <a key={s.id} href={`/creators/${creator.slug}`}
-                className={`block w-full rounded-2xl ${bs} text-left transition-all hover:scale-[1.02]`}
+                className={`block w-full ${btnClass(creator.linkBioButtonShape)} ${bs} text-left transition-all hover:scale-[1.02]`}
                 style={{ background: bg, boxShadow: "6px 6px 12px #bebebe, -6px -6px 12px #ffffff" }}>
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-semibold text-neutral-700">{s.title}</span>
@@ -2441,7 +2442,7 @@ function TemplateClay({ creator, isUnclaimed }: { creator: Creator; isUnclaimed?
         {isEmpty && <EmptyState />}
         {!isEmpty && (
           <a href={isUnclaimed ? `/u/${creator.slug}/claim` : `/creators/${creator.slug}`}
-            className={`block w-full mt-8 font-semibold text-center rounded-2xl ${bs} text-white transition-all hover:scale-[1.02]`}
+            className={`block w-full mt-8 font-semibold text-center ${btnClass(creator.linkBioButtonShape)} ${bs} text-white transition-all hover:scale-[1.02]`}
             style={{ background: accent, boxShadow: "6px 6px 12px #bebebe, -6px -6px 12px #ffffff" }}>
             {isUnclaimed ? "Claim & Customize" : "View Full Profile"}
           </a>
@@ -2513,7 +2514,7 @@ function TemplateGradientMesh({ creator, isUnclaimed }: { creator: Creator; isUn
               <SectionLabel>Services</SectionLabel>
               {creator.services.map(s => (
                 <a key={s.id} href={`/creators/${creator.slug}`}
-                  className="block w-full rounded-2xl px-6 py-4 min-h-[56px] bg-white/70 backdrop-blur-md border border-white/60 text-left shadow-sm hover:shadow-md hover:scale-[1.02] transition-all">
+                  className={`block w-full ${btnClass(creator.linkBioButtonShape)} px-6 py-4 min-h-[56px] bg-white/70 backdrop-blur-md border border-white/60 text-left shadow-sm hover:shadow-md hover:scale-[1.02] transition-all`}>
                   <div className="font-semibold text-neutral-800 text-sm">{s.title}</div>
                   <div className="text-xs mt-0.5" style={{ color: accent }}>{priceLabel(s.price, s.deliveryDays)}</div>
                 </a>
@@ -2535,7 +2536,7 @@ function TemplateGradientMesh({ creator, isUnclaimed }: { creator: Creator; isUn
           {isEmpty && <EmptyState />}
           {!isEmpty && (
             <a href={isUnclaimed ? `/u/${creator.slug}/claim` : `/creators/${creator.slug}`}
-              className="block w-full mt-6 font-semibold text-center rounded-2xl py-4 px-5 shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all text-white"
+              className={`block w-full mt-6 font-semibold text-center ${btnClass(creator.linkBioButtonShape)} py-4 px-5 shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all text-white`}
               style={{ background: accent }}>
               {isUnclaimed ? "Claim & Customize" : "View Full Profile"}
             </a>
@@ -2630,7 +2631,7 @@ function TemplateTrader({ creator, isUnclaimed }: { creator: Creator; isUnclaime
             <div className="text-[10px] font-bold tracking-widest" style={{ color: "#00c087", opacity: 0.4 }}>POSITIONS</div>
             {creator.services.map(s => (
               <a key={s.id} href={`/creators/${creator.slug}`}
-                className={`block w-full ${bs} rounded border border-[#00c087]/20 hover:bg-[#00c087]/10 transition-colors text-left`}
+                className={`block w-full ${bs} ${btnClass(creator.linkBioButtonShape)} border border-[#00c087]/20 hover:bg-[#00c087]/10 transition-colors text-left`}
                 style={{ color: "#e8eaed" }}>
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium">{s.title}</span>
@@ -2655,7 +2656,7 @@ function TemplateTrader({ creator, isUnclaimed }: { creator: Creator; isUnclaime
         {isEmpty && <EmptyState light />}
         {!isEmpty && (
           <a href={`/creators/${creator.slug}`}
-            className={`block w-full mt-8 font-bold text-center rounded ${bs} border-2 transition-colors hover:bg-[#00c087]/10`}
+            className={`block w-full mt-8 font-bold text-center ${btnClass(creator.linkBioButtonShape)} ${bs} border-2 transition-colors hover:bg-[#00c087]/10`}
             style={{ borderColor: "#00c087", color: "#00c087" }}>
             VIEW FULL PROFILE
           </a>
@@ -2724,7 +2725,7 @@ function TemplateEducator({ creator, isUnclaimed }: { creator: Creator; isUnclai
             <SectionLabel>Offerings</SectionLabel>
             {creator.services.map(s => (
               <a key={s.id} href={`/creators/${creator.slug}`}
-                className={`block w-full ${bs} rounded-xl bg-white shadow-sm text-left hover:shadow-md hover:scale-[1.01] transition-all border-l-4`}
+                className={`block w-full ${bs} ${btnClass(creator.linkBioButtonShape)} bg-white shadow-sm text-left hover:shadow-md hover:scale-[1.01] transition-all border-l-4`}
                 style={{ borderLeftColor: accent }}>
                 <div className="flex items-center justify-between">
                   <div>
@@ -2752,7 +2753,7 @@ function TemplateEducator({ creator, isUnclaimed }: { creator: Creator; isUnclai
         {isEmpty && <EmptyState />}
         {!isEmpty && (
           <a href={isUnclaimed ? `/u/${creator.slug}/claim` : `/creators/${creator.slug}`}
-            className={`block w-full mt-8 font-semibold text-center rounded-xl ${bs} shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all text-white`}
+            className={`block w-full mt-8 font-semibold text-center ${btnClass(creator.linkBioButtonShape)} ${bs} shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all text-white`}
             style={{ background: accent }}>
             {isUnclaimed ? "Claim & Customize" : "View Full Profile"}
           </a>
@@ -2844,7 +2845,7 @@ function TemplateDeveloper({ creator, isUnclaimed }: { creator: Creator; isUncla
             <div className="text-xs font-bold" style={{ color: "#565f89" }}>{"{"} services {"}"}</div>
             {creator.services.map((s, i) => (
               <a key={s.id} href={`/creators/${creator.slug}`}
-                className={`block w-full ${bs} rounded-lg border border-[#292e42] hover:bg-[#292e42]/60 transition-colors text-left`}
+                className={`block w-full ${bs} ${btnClass(creator.linkBioButtonShape)} border border-[#292e42] hover:bg-[#292e42]/60 transition-colors text-left`}
                 style={{ background: "#16161e" }}>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 min-w-0">
@@ -2875,7 +2876,7 @@ function TemplateDeveloper({ creator, isUnclaimed }: { creator: Creator; isUncla
         {isEmpty && <EmptyState light />}
         {!isEmpty && (
           <a href={`/creators/${creator.slug}`}
-            className={`block w-full mt-8 font-bold text-center rounded-lg ${bs} border transition-colors hover:bg-[#7dcfff]/10`}
+            className={`block w-full mt-8 font-bold text-center ${btnClass(creator.linkBioButtonShape)} ${bs} border transition-colors hover:bg-[#7dcfff]/10`}
             style={{ borderColor: "#7dcfff", color: "#7dcfff" }}>
             $ view --full-profile
           </a>
@@ -2946,7 +2947,7 @@ function TemplateExecutive({ creator, isUnclaimed }: { creator: Creator; isUncla
             <div className="divide-y" style={{ borderColor: "#e2e8f0" }}>
               {creator.services.map(s => (
                 <a key={s.id} href={`/creators/${creator.slug}`}
-                  className="block w-full py-4 hover:bg-slate-50/50 transition-colors text-left">
+                  className={`block w-full ${btnClass(creator.linkBioButtonShape)} py-4 hover:bg-slate-50/50 transition-colors text-left`}>
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium" style={{ color: "#0f1729" }}>{s.title}</span>
                     <span className="text-xs font-medium" style={{ color: accent }}>{priceLabel(s.price, s.deliveryDays)}</span>
@@ -2971,7 +2972,7 @@ function TemplateExecutive({ creator, isUnclaimed }: { creator: Creator; isUncla
         {isEmpty && <EmptyState />}
         {!isEmpty && (
           <a href={isUnclaimed ? `/u/${creator.slug}/claim` : `/creators/${creator.slug}`}
-            className={`block w-full mt-8 font-medium text-center rounded-lg ${bs} border transition-colors hover:bg-slate-50`}
+            className={`block w-full mt-8 font-medium text-center ${btnClass(creator.linkBioButtonShape)} ${bs} border transition-colors hover:bg-slate-50`}
             style={{ borderColor: accent, color: accent }}>
             {isUnclaimed ? "Claim & Customize" : "View Full Profile"}
           </a>

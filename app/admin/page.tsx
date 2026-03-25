@@ -515,12 +515,88 @@ function UsersSection() {
   );
 }
 
+function ImportProfileForm({ onDone }: { onDone: () => void }) {
+  const [platform, setPlatform] = useState("instagram");
+  const [handle, setHandle] = useState("");
+  const [email, setEmail] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [result, setResult] = useState<any>(null);
+  const [error, setError] = useState("");
+
+  async function submit(createUser: boolean) {
+    if (!handle.trim()) return;
+    setSubmitting(true);
+    setError("");
+    setResult(null);
+    try {
+      const res = await fetch("/api/admin/import-profile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ platform, handle: handle.trim(), email: email.trim() || undefined, createUser }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Import failed");
+      setResult(data);
+      onDone();
+    } catch (e: any) {
+      setError(e.message);
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  const inp = "bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 min-h-[44px] text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-blue-500 w-full";
+
+  return (
+    <div className="bg-neutral-800/50 border border-neutral-700/50 rounded-xl p-5 space-y-4">
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="text-xs text-neutral-400 mb-1 block">Platform</label>
+          <select value={platform} onChange={e => setPlatform(e.target.value)} className={inp}>
+            <option value="instagram">Instagram</option>
+            <option value="x">X / Twitter</option>
+            <option value="tiktok">TikTok</option>
+            <option value="youtube">YouTube</option>
+          </select>
+        </div>
+        <div>
+          <label className="text-xs text-neutral-400 mb-1 block">Handle</label>
+          <input value={handle} onChange={e => setHandle(e.target.value)} placeholder="@username" className={inp} />
+        </div>
+      </div>
+      <div>
+        <label className="text-xs text-neutral-400 mb-1 block">Email (optional - assigns profile to user)</label>
+        <input value={email} onChange={e => setEmail(e.target.value)} placeholder="user@example.com" className={inp} />
+      </div>
+      <div className="flex gap-2">
+        <button onClick={() => submit(false)} disabled={submitting || !handle.trim()} className="px-4 py-2 min-h-[44px] text-sm rounded-lg bg-blue-500/20 text-blue-400 border border-blue-500/30 hover:bg-blue-500/30 transition-colors disabled:opacity-40">
+          {submitting ? "Importing..." : "Import Profile"}
+        </button>
+        {email.trim() && (
+          <button onClick={() => submit(true)} disabled={submitting || !handle.trim()} className="px-4 py-2 min-h-[44px] text-sm rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/30 transition-colors disabled:opacity-40">
+            {submitting ? "Creating..." : "Create For User"}
+          </button>
+        )}
+      </div>
+      {error && <div className="text-red-400 text-xs">{error}</div>}
+      {result && (
+        <div className="bg-neutral-900/50 rounded-lg p-3 text-xs space-y-1">
+          <div className="text-emerald-400 font-medium">Profile imported successfully</div>
+          <div className="text-neutral-400">@{result.profile?.handle} on {result.profile?.platform} - Score: {result.profile?.score} - Followers: {Number(result.profile?.followerCount || 0).toLocaleString()}</div>
+          {result.user && <div className="text-blue-400">Linked to {result.user.email}</div>}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function ProfilesSection() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [acting, setActing] = useState<string | null>(null);
+  const [showImport, setShowImport] = useState(false);
 
   const load = useCallback(() => {
     setLoading(true);
@@ -551,14 +627,21 @@ function ProfilesSection() {
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <h2 className="text-lg font-semibold text-white">Creator Profiles</h2>
-        <input
-          type="text"
-          placeholder="Search by handle or name..."
-          value={search}
-          onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-          className="bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 min-h-[48px] text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-blue-500 w-full sm:w-72"
-        />
+        <div className="flex gap-2">
+          <button onClick={() => setShowImport(!showImport)} className="px-3 py-2 min-h-[44px] text-xs rounded-lg bg-blue-500/20 text-blue-400 border border-blue-500/30 hover:bg-blue-500/30 transition-colors">
+            {showImport ? "Hide Import" : "Import / Create Profile"}
+          </button>
+          <input
+            type="text"
+            placeholder="Search by handle or name..."
+            value={search}
+            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+            className="bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 min-h-[48px] text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-blue-500 w-full sm:w-72"
+          />
+        </div>
       </div>
+
+      {showImport && <ImportProfileForm onDone={() => load()} />}
 
       {loading && !data ? <Loader /> : (
         <>
