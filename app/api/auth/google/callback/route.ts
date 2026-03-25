@@ -127,8 +127,8 @@ export async function GET(request: Request) {
       path: "/",
     });
 
-    // Redirect — new users to profile setup, existing to browse
-    const redirectTo = isNewUser ? `${appUrl}?welcome=true` : appUrl;
+    // Redirect — new users to dashboard setup, existing to dashboard
+    const redirectTo = isNewUser ? `${appUrl}/dashboard?welcome=true` : `${appUrl}/dashboard`;
     return NextResponse.redirect(redirectTo);
 
   } catch (err) {

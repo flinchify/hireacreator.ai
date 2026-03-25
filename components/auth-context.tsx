@@ -75,6 +75,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     refreshUser();
   }, [refreshUser]);
 
+  // Handle claim intent after OAuth redirect (Google OAuth can't read localStorage server-side)
+  useEffect(() => {
+    if (loading || !user) return;
+    try {
+      const raw = localStorage.getItem("hac_claim_intent");
+      if (!raw) return;
+      const intent = JSON.parse(raw) as { platform?: string; handle?: string; slug?: string };
+      localStorage.removeItem("hac_claim_intent");
+      // Only redirect if we're on a page that indicates fresh login (welcome or root)
+      const path = window.location.pathname;
+      const params = new URLSearchParams(window.location.search);
+      if (path !== "/" && path !== "/dashboard") return;
+      if (path === "/dashboard" && !params.get("welcome")) return;
+      // Redirect to claim flow
+      if (intent.slug) {
+        window.location.href = `/u/${encodeURIComponent(intent.slug)}/claim`;
+      } else if (intent.platform && intent.handle) {
+        window.location.href = `/dashboard?verify=${encodeURIComponent(intent.platform)}&handle=${encodeURIComponent(intent.handle)}`;
+      }
+    } catch {}
+  }, [loading, user]);
+
   const openLogin = useCallback(() => {
     setTab("login");
     setIsOpen(true);
