@@ -855,6 +855,7 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
         textColor: design.textColor,
         buttonShape: design.buttonShape,
         font: design.font,
+        accent: design.accent,
       });
       if (design.suggestedHeadline) {
         try {
@@ -886,20 +887,18 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
         body: JSON.stringify({
           link_bio_template: next.template,
           link_bio_accent: next.accent,
-          // Keeping removed fields to preserve existing data
-          link_bio_bg_type: user.link_bio_bg_type || "gradient",
-          link_bio_bg_value: user.link_bio_bg_value || "",
+          link_bio_bg_type: next.bgType || user.link_bio_bg_type || "gradient",
+          link_bio_bg_value: next.bgValue || user.link_bio_bg_value || "",
           link_bio_bg_video: user.link_bio_bg_video || "",
           link_bio_bg_images: user.link_bio_bg_images || "[]",
-          link_bio_font: user.link_bio_font || "jakarta",
-          link_bio_text_color: user.link_bio_text_color || "",
+          link_bio_font: next.font || user.link_bio_font || "jakarta",
+          link_bio_text_color: next.textColor || user.link_bio_text_color || "",
           link_bio_card_style: user.link_bio_card_style || "default",
           link_bio_text_size: user.link_bio_text_size || "medium",
           link_bio_avatar_size: user.link_bio_avatar_size || "medium",
           link_bio_button_size: user.link_bio_button_size || "medium",
           link_bio_content_position: user.link_bio_content_position || "top",
           link_bio_content_align: user.link_bio_content_align || "center",
-          // Only update the fields we still have
           link_bio_button_shape: next.buttonShape,
           link_bio_button_anim: next.buttonAnim,
           link_bio_intro_anim: next.introAnim,

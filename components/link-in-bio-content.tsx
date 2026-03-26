@@ -83,12 +83,18 @@ function cardCls(style: string, light: boolean): string {
 /* ── Background layer ── */
 function BgLayer({ creator, fallback }: { creator: Creator; fallback?: React.ReactNode }) {
   const { linkBioBgType: bgType, linkBioBgValue: bgValue, linkBioBgVideo: bgVideo, linkBioBgImages: bgImages } = creator;
+  const accent = creator.linkBioAccent || "#6366f1";
 
   if (bgType === "video" && bgVideo) {
     return <div className="fixed inset-0 z-0"><video autoPlay muted loop playsInline className="w-full h-full object-cover"><source src={bgVideo} type="video/mp4" /></video><div className="absolute inset-0 bg-black/60" /></div>;
   }
   if (bgType === "image" && bgValue) {
-    return <div className="fixed inset-0 z-0"><img src={bgValue} alt="" className="w-full h-full object-cover" style={{ backgroundRepeat: "no-repeat" }} /><div className="absolute inset-0 bg-black/60" /></div>;
+    return (
+      <div className="fixed inset-0 z-0">
+        <img src={bgValue} alt="" className="w-full h-full object-cover" />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(to bottom, ${accent}18 0%, rgba(0,0,0,0.55) 40%, rgba(0,0,0,0.75) 100%)` }} />
+      </div>
+    );
   }
   if (bgType === "collage" && bgImages && bgImages.length > 0) {
     const tiles = Array.from({ length: 12 }, (_, i) => bgImages[i % bgImages.length]);
