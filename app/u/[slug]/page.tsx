@@ -133,6 +133,39 @@ export default async function LinkInBioPage({ params, searchParams }: { params: 
   // Check claimed_profiles first for auto-generated unclaimed profiles
   const autoProfile = await getAutoProfile(params.slug);
 
+  // Check if logged-in user owns this unclaimed auto-profile
+  if (autoProfile && !autoProfile.claimed_by) {
+    const sessionUserId = await getSessionUserId();
+    if (sessionUserId) {
+      try {
+        const sql = getDb();
+        // Check if user has matching social connection OR slug matches
+        const socialMatch = await sql`
+          SELECT 1 FROM social_connections
+          WHERE user_id = ${sessionUserId}
+          AND platform = ${(autoProfile.platform as string)}
+          AND LOWER(handle) = LOWER(${(autoProfile.platform_handle as string)})
+          LIMIT 1
+        `;
+        const slugMatch = await sql`SELECT slug FROM users WHERE id = ${sessionUserId} AND LOWER(slug) = ${params.slug.toLowerCase()} LIMIT 1`;
+        
+        if (socialMatch.length > 0 || slugMatch.length > 0) {
+          // Auto-claim and redirect to owner view
+          await sql`UPDATE claimed_profiles SET claimed_by = ${sessionUserId}, claimed_at = NOW() WHERE id = ${autoProfile.id}`;
+          const creator = await getCreatorBySlug(params.slug);
+          if (creator) {
+            return (
+              <>
+                {!isPreview && <OwnerEditBar slug={params.slug} />}
+                <LinkInBioContent creator={creator} />
+              </>
+            );
+          }
+        }
+      } catch {}
+    }
+  }
+
   if (autoProfile && !autoProfile.claimed_by) {
     // Use stored design fields or generate on-the-fly
     const hasStoredDesign = !!(autoProfile.link_bio_template);

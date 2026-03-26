@@ -882,12 +882,14 @@ function AdminFeaturedCreators() {
 }
 
 /* ═══ Sidebar nav items ═══ */
-type Section = "overview" | "offers" | "services" | "settings";
+type Section = "overview" | "offers" | "services" | "templates" | "testimonials" | "settings";
 
 const NAV_MAIN = [
   { id: "overview" as Section, label: "Overview", icon: icons.overview },
   { id: "offers" as Section, label: "Offers", icon: icons.offers },
   { id: "services" as Section, label: "Services", icon: icons.services },
+  { id: "templates" as Section, label: "Reply Templates", icon: icons.messages },
+  { id: "testimonials" as Section, label: "Testimonials", icon: icons.sparkle },
 ];
 
 const NAV_BOTTOM = [
@@ -1898,42 +1900,6 @@ export function DashboardContent() {
 
                   {/* Verification */}
                   <VerificationManager />
-
-                  {/* Reply Templates */}
-                  <div className="bg-white rounded-2xl border border-neutral-200/60 overflow-hidden">
-                    <button onClick={() => setShowTemplates(!showTemplates)} className="w-full flex items-center justify-between p-5 hover:bg-neutral-50 transition-colors">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-neutral-100 flex items-center justify-center text-neutral-500">
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" strokeLinecap="round" strokeLinejoin="round"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                        </div>
-                        <h2 className="text-sm font-bold text-neutral-900">Reply Templates</h2>
-                      </div>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={`text-neutral-400 transition-transform ${showTemplates ? "rotate-180" : ""}`}><path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                    </button>
-                    {showTemplates && (
-                      <div className="px-5 pb-5 border-t border-neutral-100">
-                        <ReplyTemplatesManager />
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Testimonials */}
-                  <div className="bg-white rounded-2xl border border-neutral-200/60 overflow-hidden">
-                    <button onClick={() => setShowTestimonials(!showTestimonials)} className="w-full flex items-center justify-between p-5 hover:bg-neutral-50 transition-colors">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-neutral-100 flex items-center justify-center text-neutral-500">
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                        </div>
-                        <h2 className="text-sm font-bold text-neutral-900">Manage Testimonials</h2>
-                      </div>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={`text-neutral-400 transition-transform ${showTestimonials ? "rotate-180" : ""}`}><path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                    </button>
-                    {showTestimonials && (
-                      <div className="px-5 pb-5 border-t border-neutral-100">
-                        <TestimonialsManager />
-                      </div>
-                    )}
-                  </div>
                 </div>
 
                 {/* Right — Quick Actions (desktop only) */}
@@ -1988,6 +1954,20 @@ export function DashboardContent() {
             {/* OFFERS */}
             {section === "offers" && (
               <OffersManager user={user} />
+            )}
+
+            {/* REPLY TEMPLATES */}
+            {section === "templates" && (
+              <div className="bg-white rounded-2xl border border-neutral-200/60 p-5">
+                <h2 className="text-lg font-bold text-neutral-900 mb-1">Reply Templates</h2>
+                <p className="text-xs text-neutral-400 mb-5">Pre-saved responses for common enquiries</p>
+                <ReplyTemplatesManager />
+              </div>
+            )}
+
+            {/* TESTIMONIALS */}
+            {section === "testimonials" && (
+              <TestimonialsManager />
             )}
 
             {/* SETTINGS */}
