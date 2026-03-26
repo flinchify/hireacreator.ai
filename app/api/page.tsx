@@ -28,7 +28,7 @@ function CodeBlock({ children }: { children: React.ReactNode }) {
   );
 }
 
-async function handleApiCheckout(openSignup: (role?: string) => void) {
+async function handleApiCheckout(openSignup: (role?: any) => void) {
   const res = await fetch("/api/checkout/subscription", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
