@@ -21,7 +21,7 @@ export async function POST(request: Request) {
 
   const formData = await request.formData();
   const file = formData.get("file") as File | null;
-  const type = formData.get("type") as string; // "avatar" or "cover"
+  const type = formData.get("type") as string; // "avatar", "cover", "logo", or "header"
 
   if (!file) {
     return NextResponse.json({ error: "no_file" }, { status: 400 });
@@ -53,6 +53,10 @@ export async function POST(request: Request) {
       await sql2`UPDATE users SET avatar_url = ${blob.url}, updated_at = NOW() WHERE id = ${user.id}`;
     } else if (type === "cover") {
       await sql2`UPDATE users SET cover_url = ${blob.url}, updated_at = NOW() WHERE id = ${user.id}`;
+    } else if (type === "logo") {
+      await sql2`UPDATE users SET logo_url = ${blob.url}, updated_at = NOW() WHERE id = ${user.id}`;
+    } else if (type === "header") {
+      await sql2`UPDATE users SET header_image_url = ${blob.url}, updated_at = NOW() WHERE id = ${user.id}`;
     }
 
     return NextResponse.json({ url: blob.url });

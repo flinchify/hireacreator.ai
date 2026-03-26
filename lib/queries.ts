@@ -25,6 +25,8 @@ function assembleCreator(
     slug: user.slug as string,
     avatar: (user.avatar_url as string) || null,
     cover: (user.cover_url as string) || null,
+    logoUrl: (user.logo_url as string) || null,
+    headerImageUrl: (user.header_image_url as string) || null,
     headline: (user.headline as string) || null,
     bio: (user.bio as string) || null,
     location: (user.location as string) || null,
@@ -94,6 +96,7 @@ function assembleCreator(
         description: (s.description as string) || "",
         price: s.price as number,
         deliveryDays: (s.delivery_days as number) || 7,
+        thumbnailUrl: (s.thumbnail_url as string) || null,
       };
       if (pkgs.length > 0) {
         mapped.packages = pkgs.map((p) => ({

@@ -921,8 +921,54 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
 
 
 
+  const [logoUrl, setLogoUrl] = useState<string | null>(user.logo_url || null);
+  const [headerImageUrl, setHeaderImageUrl] = useState<string | null>(user.header_image_url || null);
+  const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [uploadingHeader, setUploadingHeader] = useState(false);
+  const logoInputRef = useRef<HTMLInputElement>(null);
+  const headerInputRef = useRef<HTMLInputElement>(null);
+
+  async function uploadBranding(file: File, type: "logo" | "header") {
+    const setUploading = type === "logo" ? setUploadingLogo : setUploadingHeader;
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("type", type);
+      const res = await fetch("/api/upload", { method: "POST", body: formData });
+      if (!res.ok) throw new Error("Upload failed");
+      const data = await res.json();
+      if (type === "logo") {
+        setLogoUrl(data.url);
+        await fetch("/api/profile", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ logo_url: data.url }) });
+      } else {
+        setHeaderImageUrl(data.url);
+        await fetch("/api/profile", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ header_image_url: data.url }) });
+      }
+    } catch (e) {
+      console.error("Upload error:", e);
+      setSaveError("Upload failed — try again");
+    }
+    setUploading(false);
+  }
+
+  async function removeBranding(type: "logo" | "header") {
+    try {
+      if (type === "logo") {
+        setLogoUrl(null);
+        await fetch("/api/profile", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ logo_url: null }) });
+      } else {
+        setHeaderImageUrl(null);
+        await fetch("/api/profile", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ header_image_url: null }) });
+      }
+    } catch (e) {
+      console.error("Remove error:", e);
+    }
+  }
+
   const sections = [
     { id: "links", name: "Links" },
+    { id: "branding", name: "Branding" },
     { id: "template", name: "Template" },
     { id: "buttons", name: "Buttons" },
     { id: "animation", name: "Animation" },
@@ -998,6 +1044,61 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
                   </div>
                 </div>
                 <LinkManager />
+              </div>
+            )}
+
+            {/* ─── BRANDING ─── */}
+            {section === "branding" && (
+              <div className="bg-white rounded-2xl border border-neutral-200/60 p-5 space-y-6">
+                <div>
+                  <h2 className="text-sm font-bold text-neutral-900 mb-1">Brand Logo</h2>
+                  <p className="text-[11px] text-neutral-400 mb-3">Replaces circular avatar. Shown large, not cropped to circle.</p>
+                  <input ref={logoInputRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadBranding(f, "logo"); }} />
+                  {logoUrl ? (
+                    <div className="flex items-center gap-4">
+                      <div className="w-24 h-24 rounded-xl border border-neutral-200 bg-neutral-50 flex items-center justify-center overflow-hidden">
+                        <img src={logoUrl} alt="" className="max-w-full max-h-full object-contain" />
+                      </div>
+                      <div className="space-y-2">
+                        <button onClick={() => logoInputRef.current?.click()} disabled={uploadingLogo} className="block text-xs font-semibold text-blue-600 hover:text-blue-700">
+                          {uploadingLogo ? "Uploading..." : "Replace"}
+                        </button>
+                        <button onClick={() => removeBranding("logo")} className="block text-xs font-semibold text-red-500 hover:text-red-600">Remove</button>
+                      </div>
+                    </div>
+                  ) : (
+                    <button onClick={() => logoInputRef.current?.click()} disabled={uploadingLogo} className="w-full py-8 border-2 border-dashed border-neutral-300 rounded-xl text-sm text-neutral-400 hover:border-neutral-400 hover:text-neutral-500 transition-colors">
+                      {uploadingLogo ? (
+                        <span className="flex items-center justify-center gap-2"><div className="w-4 h-4 border-2 border-neutral-300 border-t-neutral-600 rounded-full animate-spin" />Uploading...</span>
+                      ) : "Click to upload logo"}
+                    </button>
+                  )}
+                </div>
+
+                <div>
+                  <h2 className="text-sm font-bold text-neutral-900 mb-1">Header Image</h2>
+                  <p className="text-[11px] text-neutral-400 mb-3">Banner image shown above the fold, full-width.</p>
+                  <input ref={headerInputRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadBranding(f, "header"); }} />
+                  {headerImageUrl ? (
+                    <div className="space-y-3">
+                      <div className="w-full h-32 rounded-xl border border-neutral-200 bg-neutral-50 overflow-hidden">
+                        <img src={headerImageUrl} alt="" className="w-full h-full object-cover" />
+                      </div>
+                      <div className="flex gap-3">
+                        <button onClick={() => headerInputRef.current?.click()} disabled={uploadingHeader} className="text-xs font-semibold text-blue-600 hover:text-blue-700">
+                          {uploadingHeader ? "Uploading..." : "Replace"}
+                        </button>
+                        <button onClick={() => removeBranding("header")} className="text-xs font-semibold text-red-500 hover:text-red-600">Remove</button>
+                      </div>
+                    </div>
+                  ) : (
+                    <button onClick={() => headerInputRef.current?.click()} disabled={uploadingHeader} className="w-full py-8 border-2 border-dashed border-neutral-300 rounded-xl text-sm text-neutral-400 hover:border-neutral-400 hover:text-neutral-500 transition-colors">
+                      {uploadingHeader ? (
+                        <span className="flex items-center justify-center gap-2"><div className="w-4 h-4 border-2 border-neutral-300 border-t-neutral-600 rounded-full animate-spin" />Uploading...</span>
+                      ) : "Click to upload header image"}
+                    </button>
+                  )}
+                </div>
               </div>
             )}
 

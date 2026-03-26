@@ -10,6 +10,8 @@ async function ensureColumns() {
   try {
     const sql = getDb();
     await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS hide_branding BOOLEAN DEFAULT false`;
+    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS logo_url TEXT`;
+    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS header_image_url TEXT`;
     migrated = true;
   } catch {}
 }
@@ -85,6 +87,8 @@ export async function PATCH(request: Request) {
         business_url = ${body.business_url !== undefined ? body.business_url : user.business_url},
         avatar_url = ${body.avatar_url !== undefined ? body.avatar_url : user.avatar_url},
         cover_url = ${body.cover_url !== undefined ? body.cover_url : user.cover_url},
+        logo_url = ${body.logo_url !== undefined ? body.logo_url : user.logo_url},
+        header_image_url = ${body.header_image_url !== undefined ? body.header_image_url : user.header_image_url},
         is_online = COALESCE(${body.is_online ?? null}, is_online),
         visible_in_marketplace = COALESCE(${body.visible_in_marketplace ?? null}, visible_in_marketplace),
         link_bio_template = COALESCE(${body.link_bio_template ?? null}, link_bio_template),

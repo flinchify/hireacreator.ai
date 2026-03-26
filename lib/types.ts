@@ -40,6 +40,7 @@ export type Service = {
   description: string;
   price: number;
   deliveryDays: number;
+  thumbnailUrl?: string | null;
   category?: string;
   packages?: ServicePackage[];
 };
@@ -103,6 +104,8 @@ export type Creator = {
   slug: string;
   avatar: string | null;
   cover: string | null;
+  logoUrl: string | null;
+  headerImageUrl: string | null;
   headline: string | null;
   bio: string | null;
   location: string | null;

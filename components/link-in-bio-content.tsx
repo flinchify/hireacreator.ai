@@ -362,6 +362,28 @@ function EmptyState({ light }: { light?: boolean }) {
 }
 
 /* ══════════════════════════════════════════════════════
+   LogoHeader component — shows logo/header image when available
+   ══════════════════════════════════════════════════════ */
+function LogoHeader({ creator, light, accentBorder }: {
+  creator: Creator; light?: boolean; accentBorder?: string;
+}) {
+  return (
+    <>
+      {creator.headerImageUrl && (
+        <div className="w-full mb-4 rounded-2xl overflow-hidden">
+          <img src={creator.headerImageUrl} alt="" className="w-full h-auto object-cover max-h-[200px]" />
+        </div>
+      )}
+      {creator.logoUrl ? (
+        <img src={creator.logoUrl} alt="" className="h-[120px] w-auto max-w-[200px] object-contain" style={accentBorder ? { border: `3px solid ${accentBorder}`, borderRadius: '16px', padding: '4px' } : {}} />
+      ) : (
+        <Avatar creator={creator} light={light} accentBorder={accentBorder} />
+      )}
+    </>
+  );
+}
+
+/* ══════════════════════════════════════════════════════
    Avatar component — shared across templates
    ══════════════════════════════════════════════════════ */
 function Avatar({ creator, size = "md", shape = "circle", light, accentBorder }: {
@@ -424,6 +446,26 @@ function ServiceCard({ service, creator, light, accent }: { service: any; creato
   const btn = btnClass(creator.linkBioButtonShape);
   const bs = BUTTON_SIZES[creator.linkBioButtonSize || "medium"] || BUTTON_SIZES.medium;
   const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
+  const ac = accent || creator.linkBioAccent || "#6366f1";
+
+  if (service.thumbnailUrl) {
+    return (
+      <a href={`/creators/${creator.slug}`} className={`group block w-full ${btn} overflow-hidden transition-all duration-200 hover:scale-[1.02] hover:shadow-lg ${light
+        ? "bg-white/[0.06] backdrop-blur-md border border-white/[0.10] hover:bg-white/[0.12]"
+        : "bg-white border border-neutral-200/80 shadow-sm hover:border-neutral-300"
+      }`}>
+        <div className="relative w-full aspect-[16/9] overflow-hidden">
+          <img src={service.thumbnailUrl} alt="" className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+        </div>
+        <div className="p-4">
+          <div className={`font-semibold ${ts.link} ${light ? "text-white" : "text-neutral-900"}`}>{service.title}</div>
+          {service.description && <div className={`text-[11px] mt-0.5 line-clamp-2 ${light ? "text-white/30" : "text-neutral-400"}`}>{service.description}</div>}
+          <div className="text-sm font-bold mt-2" style={{ color: ac }}>{priceLabel(service.price, service.deliveryDays)}</div>
+        </div>
+      </a>
+    );
+  }
+
   return (
     <a href={`/creators/${creator.slug}`} className={`group block w-full ${btn} ${bs} transition-all duration-200 hover:scale-[1.02] hover:shadow-lg ${light
       ? "bg-white/[0.06] backdrop-blur-md border border-white/[0.10] hover:bg-white/[0.12]"
@@ -437,6 +479,28 @@ function ServiceCard({ service, creator, light, accent }: { service: any; creato
         <div className={`text-sm font-bold shrink-0 ml-3 ${light ? "text-white" : "text-neutral-900"}`}>{priceLabel(service.price, service.deliveryDays)}</div>
       </div>
     </a>
+  );
+}
+
+/* ══════════════════════════════════════════════════════
+   Services section — grid for thumbnail services, list for plain
+   ══════════════════════════════════════════════════════ */
+function ServicesSection({ creator, light, accent }: { creator: Creator; light?: boolean; accent?: string }) {
+  if (creator.services.length === 0) return null;
+  const hasThumb = creator.services.some(s => s.thumbnailUrl);
+  return (
+    <>
+      <SectionLabel light={light}>Services</SectionLabel>
+      {hasThumb ? (
+        <div className="grid grid-cols-2 gap-2.5">
+          {creator.services.map(s => <ServiceCard key={s.id} service={s} creator={creator} light={light} accent={accent} />)}
+        </div>
+      ) : (
+        <div className="space-y-2.5">
+          {creator.services.map(s => <ServiceCard key={s.id} service={s} creator={creator} light={light} accent={accent} />)}
+        </div>
+      )}
+    </>
   );
 }
 
@@ -475,6 +539,12 @@ function TemplateMinimal({ creator, isUnclaimed }: { creator: Creator; isUnclaim
     <div className={`min-h-screen flex ${items} justify-center lg:py-10 lg:px-4`} style={{ background: hasCustomBg ? "transparent" : defaultBg }}>
       {hasCustomBg && <BgLayer creator={creator} fallback={<div className="fixed inset-0 z-0" style={{ background: defaultBg }} />} />}
       <div className={`w-full lg:max-w-[460px] lg:rounded-[2.5rem] lg:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.1)] bg-white min-h-screen lg:min-h-0 relative z-10 overflow-hidden ${hasCustomBg ? "lg:bg-white/95 lg:backdrop-blur-sm" : ""}`}>
+        {/* Header banner */}
+        {creator.headerImageUrl && (
+          <div className="w-full overflow-hidden lg:rounded-t-[2.5rem]">
+            <img src={creator.headerImageUrl} alt="" className="w-full h-auto max-h-[180px] object-cover" />
+          </div>
+        )}
         {/* Cover */}
         <div className="relative">
           {creator.cover ? (
@@ -489,14 +559,21 @@ function TemplateMinimal({ creator, isUnclaimed }: { creator: Creator; isUnclaim
             </div>
           )}
           <div className="absolute top-3 right-4 z-10"><ShareBtn slug={creator.slug} /></div>
-          <div className="absolute -bottom-14 left-1/2 -translate-x-1/2">
-            <div className="p-1.5 bg-white rounded-full shadow-xl shadow-black/10">
-              <Avatar creator={creator} size="lg" />
+          {!creator.logoUrl && (
+            <div className="absolute -bottom-14 left-1/2 -translate-x-1/2">
+              <div className="p-1.5 bg-white rounded-full shadow-xl shadow-black/10">
+                <Avatar creator={creator} size="lg" />
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
-        <div className={`px-6 sm:px-8 pb-10 pt-[4.5rem] ${align}`}>
+        <div className={`px-6 sm:px-8 pb-10 ${creator.logoUrl ? 'pt-6' : 'pt-[4.5rem]'} ${align}`}>
+          {creator.logoUrl && (
+            <div className="flex justify-center mb-4">
+              <img src={creator.logoUrl} alt="" className="h-[80px] w-auto max-w-[180px] object-contain" />
+            </div>
+          )}
           <div className="flex items-center justify-center gap-1.5">
             <h1 className={`font-display ${ts.name} font-bold text-neutral-900 tracking-tight`}>{creator.name || "Your Name"}</h1>
             {creator.isVerified && <VerifiedBadge />}{creator.isPro && <ProBadge />}
@@ -516,15 +593,7 @@ function TemplateMinimal({ creator, isUnclaimed }: { creator: Creator; isUnclaim
           {creator.bio && <p className={`${ts.bio} text-neutral-500 mb-4 leading-relaxed`}>{creator.bio}</p>}
           <BioLinksSection creator={creator} />
           <ProductsSection creator={creator} />
-
-          {creator.services.length > 0 && (
-            <>
-              <SectionLabel>Services</SectionLabel>
-              <div className="space-y-2.5">
-                {creator.services.map(s => <ServiceCard key={s.id} service={s} creator={creator} />)}
-              </div>
-            </>
-          )}
+          <ServicesSection creator={creator} />
 
           {creator.portfolio.length > 0 && (
             <>
@@ -578,20 +647,32 @@ function TemplateGlass({ creator, isUnclaimed }: { creator: Creator; isUnclaimed
       <div className="absolute top-4 right-4 z-20"><ShareBtn slug={creator.slug} light /></div>
 
       <div className={`relative z-10 w-full lg:max-w-[480px] mx-auto px-5 lg:px-6 pt-12 pb-10 min-h-screen flex flex-col ${justify}`}>
+        {/* Header banner */}
+        {creator.headerImageUrl && (
+          <div className="w-full mb-4 rounded-2xl overflow-hidden">
+            <img src={creator.headerImageUrl} alt="" className="w-full h-auto max-h-[180px] object-cover" />
+          </div>
+        )}
         {/* Main glass identity card */}
         <div className={`${align} mb-6 bg-white/[0.06] backdrop-blur-2xl rounded-[2rem] p-8 sm:p-10 border border-white/[0.08] shadow-[0_8px_32px_rgba(0,0,0,0.3)]`}>
-          {/* Avatar with accent glow ring */}
-          <div className="relative inline-block mb-5">
-            <div className="absolute -inset-4 rounded-full opacity-30 blur-2xl" style={{ background: accent }} />
-            {creator.avatar ? (
-              <img src={creator.avatar} alt="" className={`relative ${avatarSz} rounded-full object-cover ring-[3px] ring-white/15 shadow-2xl`} />
-            ) : (
-              <div className={`relative ${avatarSz} rounded-full bg-white/[0.08] backdrop-blur-xl flex items-center justify-center ring-[3px] ring-white/15 shadow-2xl`}>
-                <span className="text-4xl font-bold text-white/50">{(creator.name || "?")[0]}</span>
-              </div>
-            )}
-            {creator.isOnline && <span className="absolute bottom-1 right-1 flex h-4 w-4"><span className="animate-ping absolute h-full w-full rounded-full bg-emerald-400 opacity-75" /><span className="relative rounded-full h-4 w-4 bg-emerald-500 ring-2 ring-[#150d30]" /></span>}
-          </div>
+          {/* Logo or Avatar with accent glow ring */}
+          {creator.logoUrl ? (
+            <div className="mb-5">
+              <img src={creator.logoUrl} alt="" className="h-[100px] w-auto max-w-[180px] object-contain mx-auto" />
+            </div>
+          ) : (
+            <div className="relative inline-block mb-5">
+              <div className="absolute -inset-4 rounded-full opacity-30 blur-2xl" style={{ background: accent }} />
+              {creator.avatar ? (
+                <img src={creator.avatar} alt="" className={`relative ${avatarSz} rounded-full object-cover ring-[3px] ring-white/15 shadow-2xl`} />
+              ) : (
+                <div className={`relative ${avatarSz} rounded-full bg-white/[0.08] backdrop-blur-xl flex items-center justify-center ring-[3px] ring-white/15 shadow-2xl`}>
+                  <span className="text-4xl font-bold text-white/50">{(creator.name || "?")[0]}</span>
+                </div>
+              )}
+              {creator.isOnline && <span className="absolute bottom-1 right-1 flex h-4 w-4"><span className="animate-ping absolute h-full w-full rounded-full bg-emerald-400 opacity-75" /><span className="relative rounded-full h-4 w-4 bg-emerald-500 ring-2 ring-[#150d30]" /></span>}
+            </div>
+          )}
 
           <div className="flex items-center justify-center gap-1.5">
             <h1 className={`font-display ${ts.name} font-bold text-white tracking-tight`}>{creator.name || "Your Name"}</h1>
@@ -624,12 +705,7 @@ function TemplateGlass({ creator, isUnclaimed }: { creator: Creator; isUnclaimed
         <ProductsSection creator={creator} light accent={accent} />
 
         <div className="space-y-3">
-          {creator.services.length > 0 && (
-            <>
-              <SectionLabel light>Services</SectionLabel>
-              {creator.services.map(s => <ServiceCard key={s.id} service={s} creator={creator} light />)}
-            </>
-          )}
+          <ServicesSection creator={creator} light accent={accent} />
 
           {creator.portfolio.length > 0 && (
             <>
@@ -673,14 +749,27 @@ function TemplateBold({ creator, isUnclaimed }: { creator: Creator; isUnclaimed?
         {/* Accent stripe at top */}
         <div className="h-[2px] w-full" style={{ background: `linear-gradient(90deg, transparent, ${accent}, transparent)` }} />
 
+        {/* Header banner */}
+        {creator.headerImageUrl && (
+          <div className="w-full overflow-hidden">
+            <img src={creator.headerImageUrl} alt="" className="w-full h-auto max-h-[160px] object-cover" />
+          </div>
+        )}
+
         <div className="absolute top-5 right-5 z-10"><ShareBtn slug={creator.slug} light /></div>
 
         <div className={`px-6 sm:px-8 pb-10 pt-10 ${align}`}>
-          {/* Square avatar with accent border and glow */}
-          <div className="relative inline-block">
-            <div className="absolute -inset-3 rounded-2xl opacity-20 blur-xl" style={{ background: accent }} />
-            <Avatar creator={creator} size="md" shape="square" light accentBorder={accent} />
-          </div>
+          {/* Logo or Square avatar with accent border and glow */}
+          {creator.logoUrl ? (
+            <div className="mb-2">
+              <img src={creator.logoUrl} alt="" className="h-[90px] w-auto max-w-[180px] object-contain mx-auto" />
+            </div>
+          ) : (
+            <div className="relative inline-block">
+              <div className="absolute -inset-3 rounded-2xl opacity-20 blur-xl" style={{ background: accent }} />
+              <Avatar creator={creator} size="md" shape="square" light accentBorder={accent} />
+            </div>
+          )}
 
           <div className="mt-6 flex items-center justify-center gap-2">
             <h1 className={`font-display ${ts.name} font-black text-white tracking-tight`}>{creator.name || "Your Name"}</h1>
@@ -764,6 +853,12 @@ function TemplateShowcase({ creator, isUnclaimed }: { creator: Creator; isUnclai
     <div className={`min-h-screen flex ${items} justify-center lg:py-10 lg:px-4`} style={{ background: hasCustomBg ? "transparent" : "linear-gradient(160deg, #f8f9fa 0%, #e9ecef 100%)" }}>
       {hasCustomBg && <BgLayer creator={creator} fallback={<div className="fixed inset-0 z-0" style={{ background: "linear-gradient(160deg, #f8f9fa 0%, #e9ecef 100%)" }} />} />}
       <div className="w-full lg:max-w-[480px] lg:rounded-[2rem] lg:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] bg-white min-h-screen lg:min-h-0 relative z-10 overflow-hidden">
+        {/* Header banner */}
+        {creator.headerImageUrl && (
+          <div className="w-full overflow-hidden sm:rounded-t-[2rem]">
+            <img src={creator.headerImageUrl} alt="" className="w-full h-auto max-h-[180px] object-cover" />
+          </div>
+        )}
         {/* Prominent cover */}
         <div className="relative">
           {creator.cover ? (
@@ -781,7 +876,11 @@ function TemplateShowcase({ creator, isUnclaimed }: { creator: Creator; isUnclai
           {/* Profile row — left-aligned editorial */}
           <div className="flex items-end gap-4 mb-5">
             <div className="shrink-0 p-1 bg-white rounded-2xl shadow-lg">
-              <Avatar creator={creator} shape="square" />
+              {creator.logoUrl ? (
+                <img src={creator.logoUrl} alt="" className="h-[60px] w-auto max-w-[140px] object-contain" />
+              ) : (
+                <Avatar creator={creator} shape="square" />
+              )}
             </div>
             <div className="pb-1 min-w-0">
               <div className="flex items-center gap-1.5 flex-wrap">
@@ -1351,17 +1450,29 @@ function TemplateCustom({ creator, isUnclaimed }: { creator: Creator; isUnclaime
         </div>
       )}
       <div className={`relative z-10 w-full lg:max-w-[480px] mx-auto px-5 pt-14 pb-10 min-h-screen flex flex-col ${justify}`}>
-        <div className={`${align} mb-8`}>
-          {/* Avatar with glow ring on dark bg */}
-          <div className="relative inline-block">
-            {isDarkBg && <div className="absolute inset-0 rounded-full opacity-30 blur-xl" style={{ background: accent }} />}
-            {creator.avatar ? (
-              <img src={creator.avatar} alt="" className={`relative ${avatarSz} rounded-full object-cover shadow-2xl ${isDarkBg ? "ring-2 ring-white/20" : "ring-2 ring-neutral-200"}`} />
-            ) : (
-              <div className={`relative ${avatarSz} rounded-full flex items-center justify-center shadow-2xl ${isDarkBg ? "bg-white/10 backdrop-blur-xl ring-2 ring-white/20" : "bg-neutral-100 ring-2 ring-neutral-200"}`}><span className={`text-3xl font-bold ${isDarkBg ? "text-white/60" : "text-neutral-400"}`}>{(creator.name || "?")[0]}</span></div>
-            )}
-            {creator.isOnline && <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4"><span className="animate-ping absolute h-full w-full rounded-full bg-emerald-400 opacity-75" /><span className={`relative rounded-full h-4 w-4 bg-emerald-500 ring-2 ${isDarkBg ? "ring-[#1a1040]" : "ring-white"}`} /></span>}
+        {/* Header banner */}
+        {creator.headerImageUrl && (
+          <div className="w-full mb-4 rounded-2xl overflow-hidden -mt-6">
+            <img src={creator.headerImageUrl} alt="" className="w-full h-auto max-h-[180px] object-cover" />
           </div>
+        )}
+        <div className={`${align} mb-8`}>
+          {/* Logo or Avatar with glow ring on dark bg */}
+          {creator.logoUrl ? (
+            <div className="mb-2">
+              <img src={creator.logoUrl} alt="" className="h-[100px] w-auto max-w-[200px] object-contain mx-auto" />
+            </div>
+          ) : (
+            <div className="relative inline-block">
+              {isDarkBg && <div className="absolute inset-0 rounded-full opacity-30 blur-xl" style={{ background: accent }} />}
+              {creator.avatar ? (
+                <img src={creator.avatar} alt="" className={`relative ${avatarSz} rounded-full object-cover shadow-2xl ${isDarkBg ? "ring-2 ring-white/20" : "ring-2 ring-neutral-200"}`} />
+              ) : (
+                <div className={`relative ${avatarSz} rounded-full flex items-center justify-center shadow-2xl ${isDarkBg ? "bg-white/10 backdrop-blur-xl ring-2 ring-white/20" : "bg-neutral-100 ring-2 ring-neutral-200"}`}><span className={`text-3xl font-bold ${isDarkBg ? "text-white/60" : "text-neutral-400"}`}>{(creator.name || "?")[0]}</span></div>
+              )}
+              {creator.isOnline && <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4"><span className="animate-ping absolute h-full w-full rounded-full bg-emerald-400 opacity-75" /><span className={`relative rounded-full h-4 w-4 bg-emerald-500 ring-2 ${isDarkBg ? "ring-[#1a1040]" : "ring-white"}`} /></span>}
+            </div>
+          )}
 
           <div className="mt-5 flex items-center justify-center gap-1.5">
             <h1 className={`font-display ${ts.name} font-bold tracking-tight ${isDarkBg ? "text-white" : "text-neutral-900"}`}>{creator.name || "Your Name"}</h1>
