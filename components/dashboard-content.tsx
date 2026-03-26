@@ -1227,6 +1227,18 @@ function OffersManager({ user }: { user: User }) {
                             </button>
                           </>
                         )}
+                        {["pending", "viewed", "countered"].includes(offer.status) && (
+                          <button
+                            onClick={() => {
+                              if (confirm("Are you sure you want to withdraw this offer?")) {
+                                handleOfferAction(offer.id, "cancel");
+                              }
+                            }}
+                            className="px-3 py-1.5 text-xs font-medium text-neutral-400 hover:text-red-600 transition-colors"
+                          >
+                            Cancel
+                          </button>
+                        )}
                       </div>
                     )}
 

@@ -50,6 +50,78 @@ function Toggle({ checked, onChange, label, desc }: { checked: boolean; onChange
   );
 }
 
+/* ───── Delete Account Section ───── */
+function DeleteAccountSection() {
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [confirmText, setConfirmText] = useState("");
+  const [deleting, setDeleting] = useState(false);
+
+  async function handleDelete() {
+    if (confirmText !== "DELETE") return;
+    setDeleting(true);
+    try {
+      const res = await fetch("/api/account/delete", { method: "POST" });
+      const data = await res.json();
+      if (data.success) {
+        window.location.href = "/";
+      } else {
+        alert(data.error || "Failed to delete account");
+        setDeleting(false);
+      }
+    } catch {
+      alert("Failed to delete account");
+      setDeleting(false);
+    }
+  }
+
+  if (!showConfirm) {
+    return (
+      <Button
+        variant="outline"
+        size="sm"
+        className="text-red-600 border-red-200 hover:bg-red-50"
+        onClick={() => setShowConfirm(true)}
+      >
+        Delete Account
+      </Button>
+    );
+  }
+
+  return (
+    <div className="space-y-3">
+      <p className="text-xs text-red-600 font-medium">
+        This will permanently delete your account, cancel all pending offers, and remove your sessions. This action cannot be undone.
+      </p>
+      <div>
+        <label className="text-xs text-neutral-500 block mb-1">Type DELETE to confirm</label>
+        <Input
+          value={confirmText}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setConfirmText(e.target.value)}
+          placeholder="DELETE"
+          className="max-w-xs text-sm"
+        />
+      </div>
+      <div className="flex gap-2">
+        <Button
+          size="sm"
+          className="bg-red-600 hover:bg-red-700 text-white"
+          onClick={handleDelete}
+          disabled={confirmText !== "DELETE" || deleting}
+        >
+          {deleting ? "Deleting..." : "Permanently Delete Account"}
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => { setShowConfirm(false); setConfirmText(""); }}
+        >
+          Cancel
+        </Button>
+      </div>
+    </div>
+  );
+}
+
 /* ───── Account Tab ───── */
 function AccountTab({ settings, refresh }: { settings: Settings; refresh: () => void }) {
   const [verifying, setVerifying] = useState(false);
@@ -126,9 +198,7 @@ function AccountTab({ settings, refresh }: { settings: Settings; refresh: () => 
       <Card className="p-4 sm:p-6 border-red-100">
         <h3 className="font-display font-bold text-red-600 mb-1">Danger Zone</h3>
         <p className="text-xs text-neutral-500 mb-4">Irreversible actions</p>
-        <Button variant="outline" size="sm" className="text-red-600 border-red-200 hover:bg-red-50">
-          Delete Account
-        </Button>
+        <DeleteAccountSection />
       </Card>
     </div>
   );

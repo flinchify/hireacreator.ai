@@ -351,7 +351,7 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: "Missing offer_id or action" }, { status: 400 });
     }
 
-    const validActions = ["view", "accept", "decline", "counter", "deliver", "approve", "dispute"];
+    const validActions = ["view", "accept", "decline", "counter", "deliver", "approve", "dispute", "cancel"];
     if (!validActions.includes(action)) {
       return NextResponse.json({ error: "Invalid action" }, { status: 400 });
     }
@@ -566,6 +566,25 @@ export async function PATCH(req: NextRequest) {
       `;
 
       return NextResponse.json({ success: true, status: "disputed" });
+    }
+
+    if (action === "cancel") {
+      // Only the brand who created the offer can cancel it
+      if (offer.brand_user_id !== user.id) {
+        return NextResponse.json({ error: "Not your offer" }, { status: 403 });
+      }
+      // Can only cancel pending, viewed, or countered offers
+      if (!["pending", "viewed", "countered"].includes(offer.status)) {
+        return NextResponse.json({ error: "Cannot cancel an offer that is already paid, delivered, or completed" }, { status: 400 });
+      }
+
+      await sql`
+        UPDATE offers
+        SET status = 'cancelled', updated_at = NOW()
+        WHERE id = ${offer_id}
+      `;
+
+      return NextResponse.json({ success: true, status: "cancelled" });
     }
 
   } catch (err) {
