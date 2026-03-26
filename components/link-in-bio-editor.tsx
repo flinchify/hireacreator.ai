@@ -18,7 +18,156 @@ type Settings = {
   buttonAnim: string;
   introAnim: string;
   hideBranding: boolean;
+  /* v2 – style */
+  fontSize: string;
+  fontWeight: number;
+  letterSpacing: string;
+  nameColor: string;
+  bgGradientDir: string;
+  bgGradientFrom: string;
+  bgGradientTo: string;
+  bgImageUrl: string;
+  bgVideoUrl: string;
+  overlayType: string;
+  overlayOpacity: number;
+  blurIntensity: number;
+  pagePadding: number;
+  sectionGap: number;
+  containerWidth: string;
+  /* v2 – avatar */
+  avatarShape: string;
+  avatarSize: number;
+  avatarBorderWidth: number;
+  avatarBorderColor: string;
+  avatarShadow: string;
+  avatarMode: string;
+  avatarRing: boolean;
+  avatarRingColor: string;
+  /* v2 – buttons */
+  buttonFill: string;
+  buttonBorder: boolean;
+  buttonBorderWidth: number;
+  buttonBorderColor: string;
+  buttonShadow: string;
+  buttonWidth: string;
+  buttonHeight: string;
+  buttonTextColor: string;
+  buttonIconPos: string;
+  buttonHoverEffect: string;
+  /* v2 – animation */
+  animTiming: number;
+  animStagger: number;
 };
+
+type Block = {
+  id: string;
+  type: string;
+  config: Record<string, any>;
+  visible: boolean;
+  order: number;
+};
+
+const BLOCK_TYPES = [
+  { type: "hero", name: "Hero Header", icon: "H" },
+  { type: "cta", name: "CTA Button", icon: "!" },
+  { type: "links", name: "Links List", icon: "≡" },
+  { type: "socials", name: "Social Grid", icon: "@" },
+  { type: "video", name: "Video Embed", icon: "▶" },
+  { type: "testimonial", name: "Testimonial Quote", icon: "❝" },
+  { type: "contact", name: "Contact Card", icon: "✉" },
+  { type: "gallery", name: "Gallery Grid", icon: "▦" },
+  { type: "product", name: "Product Card", icon: "$" },
+  { type: "booking", name: "Booking Section", icon: "📅" },
+  { type: "divider", name: "Divider", icon: "—" },
+  { type: "text", name: "Text Block", icon: "T" },
+  { type: "newsletter", name: "Newsletter Signup", icon: "📧" },
+] as const;
+
+const DEFAULT_BLOCKS: Block[] = [
+  { id: "blk_hero", type: "hero", config: {}, visible: true, order: 0 },
+  { id: "blk_links", type: "links", config: {}, visible: true, order: 1 },
+  { id: "blk_socials", type: "socials", config: {}, visible: true, order: 2 },
+  { id: "blk_cta", type: "cta", config: { label: "Book Now" }, visible: true, order: 3 },
+];
+
+const BLOCK_ANIMS = [
+  { id: "none", name: "None" },
+  { id: "fade-up", name: "Fade Up" },
+  { id: "fade-down", name: "Fade Down" },
+  { id: "slide-left", name: "Slide Left" },
+  { id: "slide-right", name: "Slide Right" },
+  { id: "scale-in", name: "Scale In" },
+  { id: "blur-in", name: "Blur In" },
+];
+
+const ANIM_TIMINGS = [
+  { value: 0, name: "Instant" },
+  { value: 200, name: "Fast" },
+  { value: 400, name: "Normal" },
+  { value: 800, name: "Slow" },
+];
+
+const STAGGER_DELAYS = [0, 50, 100, 200];
+
+const HOVER_EFFECTS = [
+  { id: "none", name: "None" },
+  { id: "lift", name: "Lift" },
+  { id: "glow", name: "Glow" },
+  { id: "scale", name: "Scale" },
+  { id: "shadow", name: "Shadow" },
+];
+
+const GRADIENT_DIRECTIONS = [
+  { id: "to top", name: "↑", deg: "0deg" },
+  { id: "to top right", name: "↗", deg: "45deg" },
+  { id: "to right", name: "→", deg: "90deg" },
+  { id: "to bottom right", name: "↘", deg: "135deg" },
+  { id: "to bottom", name: "↓", deg: "180deg" },
+  { id: "to bottom left", name: "↙", deg: "225deg" },
+  { id: "to left", name: "←", deg: "270deg" },
+  { id: "to top left", name: "↖", deg: "315deg" },
+];
+
+const BG_PRESETS = [
+  "#ffffff", "#f5f5f5", "#fafafa", "#171717", "#0a0a0a", "#1a1a2e",
+  "#0b0e11", "#f2ebe3", "#fef3c7", "#1a1b26", "#0a1628",
+];
+
+const FONT_SIZES = [
+  { id: "small", name: "Small", scale: 0.85 },
+  { id: "medium", name: "Medium", scale: 1 },
+  { id: "large", name: "Large", scale: 1.15 },
+  { id: "xl", name: "XL", scale: 1.3 },
+];
+
+const FONT_WEIGHTS = [300, 400, 500, 600, 700];
+
+const LETTER_SPACINGS = [
+  { id: "tight", name: "Tight", value: "-0.025em" },
+  { id: "normal", name: "Normal", value: "0em" },
+  { id: "wide", name: "Wide", value: "0.05em" },
+];
+
+const AVATAR_SHAPES = [
+  { id: "circle", name: "Circle" },
+  { id: "rounded-square", name: "Rounded" },
+  { id: "square", name: "Square" },
+  { id: "hexagon", name: "Hexagon" },
+];
+
+const AVATAR_SHADOWS = [
+  { id: "none", name: "None", css: "none" },
+  { id: "soft", name: "Soft", css: "0 2px 8px rgba(0,0,0,0.1)" },
+  { id: "medium", name: "Medium", css: "0 4px 16px rgba(0,0,0,0.15)" },
+  { id: "dramatic", name: "Dramatic", css: "0 8px 32px rgba(0,0,0,0.25)" },
+];
+
+const BUTTON_SHADOWS = [
+  { id: "none", name: "None", css: "none" },
+  { id: "subtle", name: "Subtle", css: "0 1px 3px rgba(0,0,0,0.08)" },
+  { id: "medium", name: "Medium", css: "0 4px 12px rgba(0,0,0,0.12)" },
+  { id: "lifted", name: "Lifted", css: "0 8px 24px rgba(0,0,0,0.18)" },
+];
 
 /* ── Constants ── */
 const TEMPLATES = [
@@ -154,6 +303,12 @@ const INTRO_ANIMS = [
   { id: "cinema", name: "Cinema", desc: "Cinematic letterbox reveal", free: false },
   { id: "morph", name: "Morph", desc: "Shapes morph into your profile", free: false },
   { id: "trading-candles", name: "Trading Candles", desc: "Candlestick chart rises up", free: false },
+  { id: "slide-left", name: "Slide Left", desc: "Content slides in from the left", free: true },
+  { id: "slide-right", name: "Slide Right", desc: "Content slides in from the right", free: true },
+  { id: "blur-in", name: "Blur In", desc: "Blurred content sharpens into focus", free: true },
+  { id: "cascade", name: "Cascade", desc: "Elements fall in one by one", free: false },
+  { id: "bounce-in", name: "Bounce In", desc: "Content bounces into place", free: false },
+  { id: "rotate-in", name: "Rotate In", desc: "Elements rotate and scale in", free: false },
 ];
 
 const CARD_STYLES = [
@@ -165,7 +320,7 @@ const CARD_STYLES = [
 ];
 
 /* ── Mini Preview ── */
-function MiniPreview({ settings, creator }: { settings: Settings; creator: any }) {
+function MiniPreview({ settings, creator, blocks: blocksProp }: { settings: Settings; creator: any; blocks?: Block[] }) {
   const dark = TEMPLATES.find(t => t.id === settings.template)?.dark ?? false;
   const accent = settings.accent || "#6366f1";
   const btnRadius = BUTTON_SHAPES.find(s => s.id === settings.buttonShape)?.radius || "16px";
@@ -246,6 +401,100 @@ function MiniPreview({ settings, creator }: { settings: Settings; creator: any }
   }
 
   const tpl = settings.template;
+
+  /* ═══ BLOCK-BASED RENDERING ═══ */
+  const visibleBlocks = (blocksProp || []).filter(b => b.visible).sort((a, b) => a.order - b.order);
+  const hasCustomBlocks = blocksProp && blocksProp.length > 0 && !(blocksProp.length === 4 && blocksProp[0].id === "blk_hero" && blocksProp[1].id === "blk_links" && blocksProp[2].id === "blk_socials" && blocksProp[3].id === "blk_cta" && !blocksProp.some(b => Object.keys(b.config).length > 0 && b.type !== "cta"));
+
+  if (hasCustomBlocks && visibleBlocks.length > 0) {
+    return (
+      <div className="relative w-full min-h-full overflow-hidden" style={{ fontFamily, background: dark ? "#0a0a0a" : "#f5f5f5" }}>
+        <div className="relative z-10 flex flex-col items-center px-4 pb-8 max-w-[440px] mx-auto" style={{ paddingTop: "24px", gap: `${8}px` }}>
+          {visibleBlocks.map((block) => {
+            if (block.type === "hero") return (
+              <div key={block.id} className="flex flex-col items-center w-full">
+                <Avatar size="w-16 h-16" borderCol={accent} />
+                <h2 className="mt-2 text-sm font-bold" style={{ color: textCol }}>{name}</h2>
+                <p className="text-[10px]" style={{ color: textMuted }}>{headline}</p>
+                {block.config.subtitle && <p className="text-[9px] mt-0.5" style={{ color: textMuted }}>{block.config.subtitle}</p>}
+              </div>
+            );
+            if (block.type === "socials") return (
+              <div key={block.id}><Socials light={dark} /></div>
+            );
+            if (block.type === "links") return (
+              <div key={block.id} className="w-full space-y-2">{services.map((s: any, i: number) => <ServiceCard key={i} s={s} i={i} />)}</div>
+            );
+            if (block.type === "cta") return (
+              <div key={block.id} className="w-full"><CTAButton altStyle={block.config.label ? {} : undefined} /></div>
+            );
+            if (block.type === "text") return (
+              <div key={block.id} className="w-full px-1">
+                <p className="text-[11px]" style={{ color: textCol }}>{block.config.text || "Text block"}</p>
+              </div>
+            );
+            if (block.type === "divider") return (
+              <div key={block.id} className="w-full flex items-center justify-center py-1">
+                {(block.config.style === "dots") ? (
+                  <div className="flex gap-1">{[1,2,3].map(i => <div key={i} className="w-1 h-1 rounded-full" style={{ background: textMuted }} />)}</div>
+                ) : (block.config.style === "space") ? (
+                  <div className="h-4" />
+                ) : (
+                  <div className="w-full h-[1px]" style={{ background: dark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)" }} />
+                )}
+              </div>
+            );
+            if (block.type === "testimonial") return (
+              <div key={block.id} className="w-full p-3 rounded-xl" style={{ background: dark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.03)", border: `1px solid ${dark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)"}` }}>
+                <p className="text-[10px] italic" style={{ color: textCol }}>"{block.config.quote || "Great work!"}"</p>
+                {block.config.author && <p className="text-[9px] mt-1 font-semibold" style={{ color: textMuted }}>— {block.config.author}</p>}
+              </div>
+            );
+            if (block.type === "contact") return (
+              <div key={block.id} className="w-full p-3 rounded-xl text-[10px]" style={{ background: dark ? "rgba(255,255,255,0.05)" : "#fff", border: `1px solid ${dark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)"}`, color: textCol }}>
+                {block.config.email && <div>{block.config.email}</div>}
+                {block.config.phone && <div className="mt-0.5">{block.config.phone}</div>}
+                {!block.config.email && !block.config.phone && <div>Contact info</div>}
+              </div>
+            );
+            if (block.type === "video") return (
+              <div key={block.id} className="w-full aspect-video rounded-xl bg-neutral-800 flex items-center justify-center">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="white" opacity={0.5}><polygon points="5,3 19,12 5,21" /></svg>
+              </div>
+            );
+            if (block.type === "gallery") return (
+              <div key={block.id} className="w-full grid grid-cols-3 gap-1">
+                {[1,2,3].map(i => <div key={i} className="aspect-square rounded-lg" style={{ background: dark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)" }} />)}
+              </div>
+            );
+            if (block.type === "product") return (
+              <div key={block.id} className="w-full p-3 rounded-xl" style={{ background: dark ? "rgba(255,255,255,0.05)" : "#fff", border: `1px solid ${dark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)"}` }}>
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-semibold" style={{ color: textCol }}>{block.config.name || "Product"}</span>
+                  <span className="text-[10px] font-bold" style={{ color: accent }}>{block.config.price || "$0"}</span>
+                </div>
+              </div>
+            );
+            if (block.type === "booking") return (
+              <div key={block.id} className="w-full">
+                <button className="w-full py-2.5 text-[11px] font-semibold rounded-xl" style={{ background: `${accent}15`, color: accent, border: `1px solid ${accent}30` }}>Book a Session</button>
+              </div>
+            );
+            if (block.type === "newsletter") return (
+              <div key={block.id} className="w-full p-3 rounded-xl" style={{ background: dark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.03)", border: `1px solid ${dark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)"}` }}>
+                <div className="text-[10px] font-semibold mb-1.5" style={{ color: textCol }}>{block.config.heading || "Join my newsletter"}</div>
+                <div className="flex gap-1">
+                  <div className="flex-1 h-6 rounded-lg" style={{ background: dark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.04)" }} />
+                  <div className="px-3 h-6 rounded-lg flex items-center text-[9px] font-bold text-white" style={{ background: accent }}>Join</div>
+                </div>
+              </div>
+            );
+            return <div key={block.id} className="w-full h-8 rounded-lg" style={{ background: dark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.03)" }} />;
+          })}
+        </div>
+      </div>
+    );
+  }
 
   /* ═══ MINIMAL — White card on grey, cover, centered avatar ═══ */
   if (tpl === "minimal") return (
@@ -796,7 +1045,56 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
     buttonAnim: user.link_bio_button_anim || "none",
     introAnim: user.link_bio_intro_anim || "none",
     hideBranding: user.hide_branding || false,
+    /* v2 style */
+    fontSize: user.link_bio_font_size || "medium",
+    fontWeight: user.link_bio_font_weight || 500,
+    letterSpacing: user.link_bio_letter_spacing || "normal",
+    nameColor: user.link_bio_name_color || "",
+    bgGradientDir: user.link_bio_bg_gradient_dir || "135deg",
+    bgGradientFrom: user.link_bio_bg_gradient_from || "#667eea",
+    bgGradientTo: user.link_bio_bg_gradient_to || "#764ba2",
+    bgImageUrl: user.link_bio_bg_image_url || "",
+    bgVideoUrl: user.link_bio_bg_video || "",
+    overlayType: user.link_bio_overlay_type || "none",
+    overlayOpacity: user.link_bio_overlay_opacity ?? 40,
+    blurIntensity: user.link_bio_blur_intensity ?? 0,
+    pagePadding: user.link_bio_page_padding ?? 20,
+    sectionGap: user.link_bio_section_gap ?? 16,
+    containerWidth: user.link_bio_container_width || "standard",
+    /* v2 avatar */
+    avatarShape: user.link_bio_avatar_shape || "circle",
+    avatarSize: user.link_bio_avatar_size_px ?? 80,
+    avatarBorderWidth: user.link_bio_avatar_border_width ?? 3,
+    avatarBorderColor: user.link_bio_avatar_border_color || "#ffffff",
+    avatarShadow: user.link_bio_avatar_shadow || "none",
+    avatarMode: user.link_bio_avatar_mode || "photo",
+    avatarRing: user.link_bio_avatar_ring || false,
+    avatarRingColor: user.link_bio_avatar_ring_color || "#6366f1",
+    /* v2 buttons */
+    buttonFill: user.link_bio_button_fill || "",
+    buttonBorder: user.link_bio_button_border || false,
+    buttonBorderWidth: user.link_bio_button_border_width ?? 1,
+    buttonBorderColor: user.link_bio_button_border_color || "#e5e5e5",
+    buttonShadow: user.link_bio_button_shadow || "none",
+    buttonWidth: user.link_bio_button_width || "full-width",
+    buttonHeight: user.link_bio_button_height || "medium",
+    buttonTextColor: user.link_bio_button_text_color || "",
+    buttonIconPos: user.link_bio_button_icon_pos || "none",
+    buttonHoverEffect: user.link_bio_button_hover || "none",
+    /* v2 animation */
+    animTiming: user.link_bio_anim_timing ?? 400,
+    animStagger: user.link_bio_anim_stagger ?? 100,
   });
+
+  const [blocks, setBlocks] = useState<Block[]>(
+    user.link_bio_blocks ? JSON.parse(user.link_bio_blocks) : DEFAULT_BLOCKS
+  );
+  const [editMode, setEditMode] = useState<"quick" | "advanced">(
+    user.link_bio_edit_mode || "quick"
+  );
+  const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
+  const [aiReferenceUrl, setAiReferenceUrl] = useState("");
+
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [section, setSection] = useState("links");
@@ -816,7 +1114,8 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
     setAiDesigning(true);
     setAiDone(false);
     try {
-      const res = await fetch("/api/profile/ai-design");
+      const aiUrl = aiReferenceUrl ? `/api/profile/ai-design?referenceUrl=${encodeURIComponent(aiReferenceUrl)}` : "/api/profile/ai-design";
+      const res = await fetch(aiUrl);
       if (!res.ok) throw new Error("AI design failed");
       const data = await res.json();
       await save({
@@ -902,6 +1201,25 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
           link_bio_button_shape: next.buttonShape,
           link_bio_button_anim: next.buttonAnim,
           link_bio_intro_anim: next.introAnim,
+          /* v2 fields */
+          link_bio_blocks: JSON.stringify(blocks),
+          link_bio_font_size: next.fontSize,
+          link_bio_font_weight: next.fontWeight,
+          link_bio_letter_spacing: next.letterSpacing,
+          link_bio_page_padding: next.pagePadding,
+          link_bio_section_gap: next.sectionGap,
+          link_bio_container_width: next.containerWidth,
+          link_bio_avatar_shape: next.avatarShape,
+          link_bio_avatar_border_width: next.avatarBorderWidth,
+          link_bio_avatar_border_color: next.avatarBorderColor,
+          link_bio_avatar_shadow: next.avatarShadow,
+          link_bio_button_fill: next.buttonFill,
+          link_bio_button_border: next.buttonBorder,
+          link_bio_button_shadow: next.buttonShadow,
+          link_bio_button_width: next.buttonWidth,
+          link_bio_overlay_type: next.overlayType,
+          link_bio_overlay_opacity: next.overlayOpacity,
+          link_bio_blur_intensity: next.blurIntensity,
         }),
       });
       if (!res.ok) {
@@ -917,6 +1235,73 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
       setSaveError("Network error — check your connection");
     }
     setSaving(false);
+  }
+
+  async function saveBlocks(newBlocks: Block[]) {
+    setBlocks(newBlocks);
+    setSaving(true);
+    setSaveError("");
+    try {
+      const res = await fetch("/api/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ link_bio_blocks: JSON.stringify(newBlocks) }),
+      });
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        setSaveError(errData.error || `Save failed (${res.status})`);
+      } else {
+        setSaved(true);
+        setTimeout(() => setSaved(false), 1500);
+      }
+    } catch {
+      setSaveError("Network error — check your connection");
+    }
+    setSaving(false);
+  }
+
+  function addBlock(type: string) {
+    const newBlock: Block = {
+      id: `blk_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+      type,
+      config: type === "cta" ? { label: "Book Now" } : {},
+      visible: true,
+      order: blocks.length,
+    };
+    saveBlocks([...blocks, newBlock]);
+  }
+
+  function removeBlock(id: string) {
+    saveBlocks(blocks.filter(b => b.id !== id).map((b, i) => ({ ...b, order: i })));
+    if (selectedBlockId === id) setSelectedBlockId(null);
+  }
+
+  function duplicateBlock(id: string) {
+    const src = blocks.find(b => b.id === id);
+    if (!src) return;
+    const dup: Block = { ...src, id: `blk_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`, order: src.order + 1 };
+    const updated = [...blocks];
+    const idx = updated.findIndex(b => b.id === id);
+    updated.splice(idx + 1, 0, dup);
+    saveBlocks(updated.map((b, i) => ({ ...b, order: i })));
+  }
+
+  function moveBlock(id: string, dir: -1 | 1) {
+    const idx = blocks.findIndex(b => b.id === id);
+    if (idx < 0) return;
+    const target = idx + dir;
+    if (target < 0 || target >= blocks.length) return;
+    const updated = [...blocks];
+    [updated[idx], updated[target]] = [updated[target], updated[idx]];
+    saveBlocks(updated.map((b, i) => ({ ...b, order: i })));
+  }
+
+  function updateBlockConfig(id: string, config: Record<string, any>) {
+    saveBlocks(blocks.map(b => b.id === id ? { ...b, config: { ...b.config, ...config } } : b));
+  }
+
+  function toggleBlockVisibility(id: string) {
+    saveBlocks(blocks.map(b => b.id === id ? { ...b, visible: !b.visible } : b));
   }
 
 
@@ -966,13 +1351,21 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
     }
   }
 
-  const sections = [
+  const quickSections = [
     { id: "links", name: "Links" },
+    { id: "template", name: "Template" },
+    { id: "style", name: "Style" },
+  ];
+  const advancedSections = [
+    { id: "links", name: "Links" },
+    { id: "blocks", name: "Blocks" },
     { id: "branding", name: "Branding" },
     { id: "template", name: "Template" },
+    { id: "style", name: "Style" },
     { id: "buttons", name: "Buttons" },
     { id: "animation", name: "Animation" },
   ];
+  const sections = editMode === "quick" ? quickSections : advancedSections;
 
   return (
     <div className="min-h-screen bg-neutral-100">
@@ -1025,6 +1418,13 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
         <div className="flex flex-col lg:flex-row gap-5">
           {/* Left — Editor */}
           <div className="lg:w-[55%] space-y-4 pb-20 lg:pb-0">
+            {/* Quick / Advanced toggle */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 p-0.5 bg-white rounded-lg border border-neutral-200/60">
+                <button onClick={() => { setEditMode("quick"); if (!quickSections.find(s => s.id === section)) setSection("links"); }} className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${editMode === "quick" ? "bg-neutral-900 text-white" : "text-neutral-400 hover:text-neutral-600"}`}>Quick Edit</button>
+                <button onClick={() => setEditMode("advanced")} className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${editMode === "advanced" ? "bg-neutral-900 text-white" : "text-neutral-400 hover:text-neutral-600"}`}>Advanced</button>
+              </div>
+            </div>
             {/* Section tabs — scrollable */}
             <div className="flex gap-1 p-1 bg-white rounded-2xl border border-neutral-200/60 overflow-x-auto sticky top-14 z-40 scrollbar-hide">
               {sections.map(s => (
@@ -1049,54 +1449,121 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
 
             {/* ─── BRANDING ─── */}
             {section === "branding" && (
-              <div className="bg-white rounded-2xl border border-neutral-200/60 p-5 space-y-6">
-                <div>
-                  <h2 className="text-sm font-bold text-neutral-900 mb-1">Brand Logo</h2>
-                  <p className="text-[11px] text-neutral-400 mb-3">Replaces circular avatar. Shown large, not cropped to circle.</p>
-                  <input ref={logoInputRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadBranding(f, "logo"); }} />
-                  {logoUrl ? (
-                    <div className="flex items-center gap-4">
-                      <div className="w-24 h-24 rounded-xl border border-neutral-200 bg-neutral-50 flex items-center justify-center overflow-hidden">
-                        <img src={logoUrl} alt="" className="max-w-full max-h-full object-contain" />
+              <div className="space-y-4">
+                {/* Logo Upload */}
+                <div className="bg-white rounded-2xl border border-neutral-200/60 p-5 space-y-6">
+                  <div>
+                    <h2 className="text-sm font-bold text-neutral-900 mb-1">Brand Logo</h2>
+                    <p className="text-[11px] text-neutral-400 mb-3">Replaces circular avatar. Shown large, not cropped to circle.</p>
+                    <input ref={logoInputRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadBranding(f, "logo"); }} />
+                    {logoUrl ? (
+                      <div className="flex items-center gap-4">
+                        <div className="w-24 h-24 rounded-xl border border-neutral-200 bg-neutral-50 flex items-center justify-center overflow-hidden">
+                          <img src={logoUrl} alt="" className="max-w-full max-h-full object-contain" />
+                        </div>
+                        <div className="space-y-2">
+                          <button onClick={() => logoInputRef.current?.click()} disabled={uploadingLogo} className="block text-xs font-semibold text-blue-600 hover:text-blue-700">
+                            {uploadingLogo ? "Uploading..." : "Replace"}
+                          </button>
+                          <button onClick={() => removeBranding("logo")} className="block text-xs font-semibold text-red-500 hover:text-red-600">Remove</button>
+                        </div>
                       </div>
-                      <div className="space-y-2">
-                        <button onClick={() => logoInputRef.current?.click()} disabled={uploadingLogo} className="block text-xs font-semibold text-blue-600 hover:text-blue-700">
-                          {uploadingLogo ? "Uploading..." : "Replace"}
-                        </button>
-                        <button onClick={() => removeBranding("logo")} className="block text-xs font-semibold text-red-500 hover:text-red-600">Remove</button>
+                    ) : (
+                      <button onClick={() => logoInputRef.current?.click()} disabled={uploadingLogo} className="w-full py-8 border-2 border-dashed border-neutral-300 rounded-xl text-sm text-neutral-400 hover:border-neutral-400 hover:text-neutral-500 transition-colors">
+                        {uploadingLogo ? (
+                          <span className="flex items-center justify-center gap-2"><div className="w-4 h-4 border-2 border-neutral-300 border-t-neutral-600 rounded-full animate-spin" />Uploading...</span>
+                        ) : "Click to upload logo"}
+                      </button>
+                    )}
+                  </div>
+
+                  <div>
+                    <h2 className="text-sm font-bold text-neutral-900 mb-1">Header Image</h2>
+                    <p className="text-[11px] text-neutral-400 mb-3">Banner image shown above the fold, full-width.</p>
+                    <input ref={headerInputRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadBranding(f, "header"); }} />
+                    {headerImageUrl ? (
+                      <div className="space-y-3">
+                        <div className="w-full h-32 rounded-xl border border-neutral-200 bg-neutral-50 overflow-hidden">
+                          <img src={headerImageUrl} alt="" className="w-full h-full object-cover" />
+                        </div>
+                        <div className="flex gap-3">
+                          <button onClick={() => headerInputRef.current?.click()} disabled={uploadingHeader} className="text-xs font-semibold text-blue-600 hover:text-blue-700">
+                            {uploadingHeader ? "Uploading..." : "Replace"}
+                          </button>
+                          <button onClick={() => removeBranding("header")} className="text-xs font-semibold text-red-500 hover:text-red-600">Remove</button>
+                        </div>
                       </div>
-                    </div>
-                  ) : (
-                    <button onClick={() => logoInputRef.current?.click()} disabled={uploadingLogo} className="w-full py-8 border-2 border-dashed border-neutral-300 rounded-xl text-sm text-neutral-400 hover:border-neutral-400 hover:text-neutral-500 transition-colors">
-                      {uploadingLogo ? (
-                        <span className="flex items-center justify-center gap-2"><div className="w-4 h-4 border-2 border-neutral-300 border-t-neutral-600 rounded-full animate-spin" />Uploading...</span>
-                      ) : "Click to upload logo"}
-                    </button>
-                  )}
+                    ) : (
+                      <button onClick={() => headerInputRef.current?.click()} disabled={uploadingHeader} className="w-full py-8 border-2 border-dashed border-neutral-300 rounded-xl text-sm text-neutral-400 hover:border-neutral-400 hover:text-neutral-500 transition-colors">
+                        {uploadingHeader ? (
+                          <span className="flex items-center justify-center gap-2"><div className="w-4 h-4 border-2 border-neutral-300 border-t-neutral-600 rounded-full animate-spin" />Uploading...</span>
+                        ) : "Click to upload header image"}
+                      </button>
+                    )}
+                  </div>
                 </div>
 
-                <div>
-                  <h2 className="text-sm font-bold text-neutral-900 mb-1">Header Image</h2>
-                  <p className="text-[11px] text-neutral-400 mb-3">Banner image shown above the fold, full-width.</p>
-                  <input ref={headerInputRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadBranding(f, "header"); }} />
-                  {headerImageUrl ? (
-                    <div className="space-y-3">
-                      <div className="w-full h-32 rounded-xl border border-neutral-200 bg-neutral-50 overflow-hidden">
-                        <img src={headerImageUrl} alt="" className="w-full h-full object-cover" />
-                      </div>
-                      <div className="flex gap-3">
-                        <button onClick={() => headerInputRef.current?.click()} disabled={uploadingHeader} className="text-xs font-semibold text-blue-600 hover:text-blue-700">
-                          {uploadingHeader ? "Uploading..." : "Replace"}
-                        </button>
-                        <button onClick={() => removeBranding("header")} className="text-xs font-semibold text-red-500 hover:text-red-600">Remove</button>
-                      </div>
+                {/* Profile Image / Avatar Controls */}
+                <div className="bg-white rounded-2xl border border-neutral-200/60 p-5 space-y-5">
+                  <h2 className="text-sm font-bold text-neutral-900">Profile Image Controls</h2>
+                  {/* Mode toggle */}
+                  <div>
+                    <label className="block text-[11px] font-semibold text-neutral-600 mb-2">Display Mode</label>
+                    <div className="flex gap-2">
+                      <button onClick={() => save({ avatarMode: "photo" })} className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all ${settings.avatarMode === "photo" ? "bg-neutral-900 text-white" : "bg-neutral-50 text-neutral-500 hover:bg-neutral-100"}`}>Profile Photo</button>
+                      <button onClick={() => save({ avatarMode: "logo" })} className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all ${settings.avatarMode === "logo" ? "bg-neutral-900 text-white" : "bg-neutral-50 text-neutral-500 hover:bg-neutral-100"}`}>Brand Logo</button>
                     </div>
-                  ) : (
-                    <button onClick={() => headerInputRef.current?.click()} disabled={uploadingHeader} className="w-full py-8 border-2 border-dashed border-neutral-300 rounded-xl text-sm text-neutral-400 hover:border-neutral-400 hover:text-neutral-500 transition-colors">
-                      {uploadingHeader ? (
-                        <span className="flex items-center justify-center gap-2"><div className="w-4 h-4 border-2 border-neutral-300 border-t-neutral-600 rounded-full animate-spin" />Uploading...</span>
-                      ) : "Click to upload header image"}
+                  </div>
+                  {/* Shape */}
+                  <div>
+                    <label className="block text-[11px] font-semibold text-neutral-600 mb-2">Shape</label>
+                    <div className="flex gap-2">
+                      {AVATAR_SHAPES.map(s => (
+                        <button key={s.id} onClick={() => save({ avatarShape: s.id })} className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all ${settings.avatarShape === s.id ? "bg-neutral-900 text-white" : "bg-neutral-50 text-neutral-500 hover:bg-neutral-100"}`}>{s.name}</button>
+                      ))}
+                    </div>
+                  </div>
+                  {/* Size slider */}
+                  <div>
+                    <label className="block text-[11px] font-semibold text-neutral-600 mb-1">Size: {settings.avatarSize}px</label>
+                    <input type="range" min={48} max={200} value={settings.avatarSize} onChange={e => save({ avatarSize: parseInt(e.target.value) } as any)} className="w-full accent-neutral-900" />
+                  </div>
+                  {/* Border */}
+                  <div>
+                    <label className="block text-[11px] font-semibold text-neutral-600 mb-1">Border Width: {settings.avatarBorderWidth}px</label>
+                    <input type="range" min={0} max={8} value={settings.avatarBorderWidth} onChange={e => save({ avatarBorderWidth: parseInt(e.target.value) })} className="w-full accent-neutral-900" />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-semibold text-neutral-600 mb-1">Border Color</label>
+                    <div className="flex items-center gap-2">
+                      <input type="color" value={settings.avatarBorderColor} onChange={e => save({ avatarBorderColor: e.target.value })} className="w-8 h-8 rounded-lg border border-neutral-200 cursor-pointer" />
+                      <input type="text" value={settings.avatarBorderColor} onChange={e => save({ avatarBorderColor: e.target.value })} className="flex-1 px-3 py-1.5 text-xs border border-neutral-200 rounded-lg font-mono" />
+                    </div>
+                  </div>
+                  {/* Shadow */}
+                  <div>
+                    <label className="block text-[11px] font-semibold text-neutral-600 mb-2">Shadow</label>
+                    <div className="flex gap-2">
+                      {AVATAR_SHADOWS.map(s => (
+                        <button key={s.id} onClick={() => save({ avatarShadow: s.id })} className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all ${settings.avatarShadow === s.id ? "bg-neutral-900 text-white" : "bg-neutral-50 text-neutral-500 hover:bg-neutral-100"}`}>{s.name}</button>
+                      ))}
+                    </div>
+                  </div>
+                  {/* Ring */}
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="text-xs font-semibold text-neutral-600">Ring / Outline</div>
+                      <div className="text-[10px] text-neutral-400">Add a colored ring around avatar</div>
+                    </div>
+                    <button onClick={() => save({ avatarRing: !settings.avatarRing })} role="switch" aria-checked={settings.avatarRing} className={`relative w-11 h-6 rounded-full transition-colors ${settings.avatarRing ? "bg-neutral-900" : "bg-neutral-300"}`}>
+                      <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${settings.avatarRing ? "translate-x-5" : ""}`} />
                     </button>
+                  </div>
+                  {settings.avatarRing && (
+                    <div className="flex items-center gap-2">
+                      <input type="color" value={settings.avatarRingColor} onChange={e => save({ avatarRingColor: e.target.value })} className="w-7 h-7 rounded border border-neutral-200 cursor-pointer" />
+                      <input type="text" value={settings.avatarRingColor} onChange={e => save({ avatarRingColor: e.target.value })} className="flex-1 px-3 py-1.5 text-xs border border-neutral-200 rounded-lg font-mono" />
+                    </div>
                   )}
                 </div>
               </div>
@@ -1105,20 +1572,32 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
             {/* ─── TEMPLATE ─── */}
             {section === "template" && (
               <>
-              {/* AI Design CTA */}
-              <button
-                onClick={() => setAiModalOpen(true)}
-                className="w-full flex items-center gap-4 p-5 rounded-2xl border border-blue-100 bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 transition-all group"
-              >
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 text-white" style={{ background: "linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)" }}>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83" /></svg>
-                </div>
-                <div className="flex-1 text-left">
-                  <div className="text-sm font-bold text-neutral-900">AI Design My Page</div>
-                  <div className="text-xs text-neutral-500 mt-0.5">Add your brand links and let AI create a custom design</div>
-                </div>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-neutral-300 shrink-0 group-hover:text-neutral-500 transition-colors"><path d="M9 18l6-6-6-6" strokeLinecap="round" /></svg>
-              </button>
+              {/* AI Reference URL + Design CTA */}
+              <div className="bg-white rounded-2xl border border-neutral-200/60 p-5 space-y-3">
+                <label className="block">
+                  <span className="text-xs font-semibold text-neutral-600">Paste your website or social URL for AI to match your brand</span>
+                  <input
+                    type="url"
+                    placeholder="https://yoursite.com or @handle"
+                    value={aiReferenceUrl}
+                    onChange={e => setAiReferenceUrl(e.target.value)}
+                    className="mt-1.5 w-full px-3 py-2 text-sm border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 bg-neutral-50"
+                  />
+                </label>
+                <button
+                  onClick={() => setAiModalOpen(true)}
+                  className="w-full flex items-center gap-4 p-4 rounded-xl border border-blue-100 bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 transition-all group"
+                >
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 text-white" style={{ background: "linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)" }}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83" /></svg>
+                  </div>
+                  <div className="flex-1 text-left">
+                    <div className="text-sm font-bold text-neutral-900">AI Design My Page</div>
+                    <div className="text-xs text-neutral-500 mt-0.5">{aiReferenceUrl ? "AI will match your brand from the URL above" : "Add your brand links and let AI create a custom design"}</div>
+                  </div>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-neutral-300 shrink-0 group-hover:text-neutral-500 transition-colors"><path d="M9 18l6-6-6-6" strokeLinecap="round" /></svg>
+                </button>
+              </div>
 
               <div className="bg-white rounded-2xl border border-neutral-200/60 p-5">
                 <h2 className="text-sm font-bold text-neutral-900 mb-4">Choose Template</h2>
@@ -1141,8 +1620,348 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
               </>
             )}
 
+            {/* ─── BLOCKS ─── */}
+            {section === "blocks" && (
+              <div className="space-y-4">
+                {/* Current blocks */}
+                <div className="bg-white rounded-2xl border border-neutral-200/60 p-5">
+                  <h2 className="text-sm font-bold text-neutral-900 mb-1">Page Blocks</h2>
+                  <p className="text-[11px] text-neutral-400 mb-4">Add, reorder, and configure sections of your page.</p>
+                  {blocks.length === 0 && <p className="text-xs text-neutral-400 py-6 text-center">No blocks yet. Add one below.</p>}
+                  <div className="space-y-2">
+                    {blocks.sort((a, b) => a.order - b.order).map((block, idx) => {
+                      const bt = BLOCK_TYPES.find(t => t.type === block.type);
+                      const isSelected = selectedBlockId === block.id;
+                      return (
+                        <div key={block.id}>
+                          <div
+                            className={`flex items-center gap-3 p-3 rounded-xl border transition-all cursor-pointer ${isSelected ? "border-neutral-900 bg-neutral-50" : "border-neutral-200 hover:border-neutral-300"} ${!block.visible ? "opacity-50" : ""}`}
+                            onClick={() => setSelectedBlockId(isSelected ? null : block.id)}
+                          >
+                            <span className="w-7 h-7 rounded-lg bg-neutral-100 flex items-center justify-center text-xs font-bold text-neutral-500 shrink-0">{bt?.icon || "?"}</span>
+                            <div className="flex-1 min-w-0">
+                              <div className="text-xs font-semibold text-neutral-900 truncate">{bt?.name || block.type}</div>
+                            </div>
+                            <div className="flex items-center gap-1 shrink-0">
+                              <button onClick={e => { e.stopPropagation(); moveBlock(block.id, -1); }} disabled={idx === 0} className="p-1 rounded hover:bg-neutral-100 disabled:opacity-30 text-neutral-400"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 15l-6-6-6 6" strokeLinecap="round"/></svg></button>
+                              <button onClick={e => { e.stopPropagation(); moveBlock(block.id, 1); }} disabled={idx === blocks.length - 1} className="p-1 rounded hover:bg-neutral-100 disabled:opacity-30 text-neutral-400"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 9l6 6 6-6" strokeLinecap="round"/></svg></button>
+                              <button onClick={e => { e.stopPropagation(); toggleBlockVisibility(block.id); }} className="p-1 rounded hover:bg-neutral-100 text-neutral-400"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">{block.visible ? <><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></> : <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24M1 1l22 22"/>}</svg></button>
+                              <button onClick={e => { e.stopPropagation(); duplicateBlock(block.id); }} className="p-1 rounded hover:bg-neutral-100 text-neutral-400"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button>
+                              <button onClick={e => { e.stopPropagation(); removeBlock(block.id); }} className="p-1 rounded hover:bg-red-50 text-red-400"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" strokeLinecap="round"/></svg></button>
+                            </div>
+                          </div>
+                          {/* Block config panel */}
+                          {isSelected && (
+                            <div className="mt-2 p-4 bg-neutral-50 rounded-xl border border-neutral-200 space-y-3">
+                              {block.type === "hero" && (
+                                <div className="space-y-2">
+                                  <label className="block text-[11px] font-semibold text-neutral-600">Subtitle</label>
+                                  <input type="text" value={block.config.subtitle || ""} onChange={e => updateBlockConfig(block.id, { subtitle: e.target.value })} className="w-full px-3 py-2 text-sm border border-neutral-200 rounded-lg" placeholder="Optional subtitle" />
+                                </div>
+                              )}
+                              {block.type === "cta" && (
+                                <div className="space-y-2">
+                                  <label className="block text-[11px] font-semibold text-neutral-600">Button Label</label>
+                                  <input type="text" value={block.config.label || ""} onChange={e => updateBlockConfig(block.id, { label: e.target.value })} className="w-full px-3 py-2 text-sm border border-neutral-200 rounded-lg" placeholder="Book Now" />
+                                  <label className="block text-[11px] font-semibold text-neutral-600">URL</label>
+                                  <input type="url" value={block.config.url || ""} onChange={e => updateBlockConfig(block.id, { url: e.target.value })} className="w-full px-3 py-2 text-sm border border-neutral-200 rounded-lg" placeholder="https://" />
+                                </div>
+                              )}
+                              {block.type === "text" && (
+                                <div className="space-y-2">
+                                  <label className="block text-[11px] font-semibold text-neutral-600">Text Content</label>
+                                  <textarea value={block.config.text || ""} onChange={e => updateBlockConfig(block.id, { text: e.target.value })} className="w-full px-3 py-2 text-sm border border-neutral-200 rounded-lg resize-none" rows={3} placeholder="Your text here..." />
+                                </div>
+                              )}
+                              {block.type === "video" && (
+                                <div className="space-y-2">
+                                  <label className="block text-[11px] font-semibold text-neutral-600">Video URL</label>
+                                  <input type="url" value={block.config.videoUrl || ""} onChange={e => updateBlockConfig(block.id, { videoUrl: e.target.value })} className="w-full px-3 py-2 text-sm border border-neutral-200 rounded-lg" placeholder="YouTube or direct URL" />
+                                </div>
+                              )}
+                              {block.type === "testimonial" && (
+                                <div className="space-y-2">
+                                  <label className="block text-[11px] font-semibold text-neutral-600">Quote</label>
+                                  <textarea value={block.config.quote || ""} onChange={e => updateBlockConfig(block.id, { quote: e.target.value })} className="w-full px-3 py-2 text-sm border border-neutral-200 rounded-lg resize-none" rows={2} placeholder="What they said..." />
+                                  <label className="block text-[11px] font-semibold text-neutral-600">Author</label>
+                                  <input type="text" value={block.config.author || ""} onChange={e => updateBlockConfig(block.id, { author: e.target.value })} className="w-full px-3 py-2 text-sm border border-neutral-200 rounded-lg" placeholder="Name" />
+                                </div>
+                              )}
+                              {block.type === "contact" && (
+                                <div className="space-y-2">
+                                  <label className="block text-[11px] font-semibold text-neutral-600">Email</label>
+                                  <input type="email" value={block.config.email || ""} onChange={e => updateBlockConfig(block.id, { email: e.target.value })} className="w-full px-3 py-2 text-sm border border-neutral-200 rounded-lg" placeholder="you@email.com" />
+                                  <label className="block text-[11px] font-semibold text-neutral-600">Phone</label>
+                                  <input type="text" value={block.config.phone || ""} onChange={e => updateBlockConfig(block.id, { phone: e.target.value })} className="w-full px-3 py-2 text-sm border border-neutral-200 rounded-lg" placeholder="+1 (555) 000-0000" />
+                                </div>
+                              )}
+                              {block.type === "product" && (
+                                <div className="space-y-2">
+                                  <label className="block text-[11px] font-semibold text-neutral-600">Product Name</label>
+                                  <input type="text" value={block.config.name || ""} onChange={e => updateBlockConfig(block.id, { name: e.target.value })} className="w-full px-3 py-2 text-sm border border-neutral-200 rounded-lg" />
+                                  <label className="block text-[11px] font-semibold text-neutral-600">Price</label>
+                                  <input type="text" value={block.config.price || ""} onChange={e => updateBlockConfig(block.id, { price: e.target.value })} className="w-full px-3 py-2 text-sm border border-neutral-200 rounded-lg" placeholder="$99" />
+                                  <label className="block text-[11px] font-semibold text-neutral-600">Link</label>
+                                  <input type="url" value={block.config.link || ""} onChange={e => updateBlockConfig(block.id, { link: e.target.value })} className="w-full px-3 py-2 text-sm border border-neutral-200 rounded-lg" placeholder="https://" />
+                                </div>
+                              )}
+                              {block.type === "booking" && (
+                                <div className="space-y-2">
+                                  <label className="block text-[11px] font-semibold text-neutral-600">Booking URL (Calendly, Cal.com, etc)</label>
+                                  <input type="url" value={block.config.bookingUrl || ""} onChange={e => updateBlockConfig(block.id, { bookingUrl: e.target.value })} className="w-full px-3 py-2 text-sm border border-neutral-200 rounded-lg" placeholder="https://calendly.com/you" />
+                                </div>
+                              )}
+                              {block.type === "newsletter" && (
+                                <div className="space-y-2">
+                                  <label className="block text-[11px] font-semibold text-neutral-600">Heading</label>
+                                  <input type="text" value={block.config.heading || ""} onChange={e => updateBlockConfig(block.id, { heading: e.target.value })} className="w-full px-3 py-2 text-sm border border-neutral-200 rounded-lg" placeholder="Join my newsletter" />
+                                  <label className="block text-[11px] font-semibold text-neutral-600">Form Action URL</label>
+                                  <input type="url" value={block.config.formAction || ""} onChange={e => updateBlockConfig(block.id, { formAction: e.target.value })} className="w-full px-3 py-2 text-sm border border-neutral-200 rounded-lg" placeholder="https://" />
+                                </div>
+                              )}
+                              {block.type === "divider" && (
+                                <div className="space-y-2">
+                                  <label className="block text-[11px] font-semibold text-neutral-600">Style</label>
+                                  <div className="flex gap-2">
+                                    {["line", "dots", "space"].map(s => (
+                                      <button key={s} onClick={() => updateBlockConfig(block.id, { style: s })} className={`px-3 py-1.5 text-xs font-semibold rounded-lg ${block.config.style === s ? "bg-neutral-900 text-white" : "bg-neutral-100 text-neutral-500"}`}>{s}</button>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                              {/* Per-block animation */}
+                              <div>
+                                <label className="block text-[11px] font-semibold text-neutral-600 mb-1">Block Animation</label>
+                                <div className="flex flex-wrap gap-1">
+                                  {BLOCK_ANIMS.map(a => (
+                                    <button key={a.id} onClick={() => updateBlockConfig(block.id, { animation: a.id })} className={`px-2 py-1 text-[10px] font-semibold rounded-lg ${(block.config.animation || "none") === a.id ? "bg-neutral-900 text-white" : "bg-neutral-100 text-neutral-500"}`}>{a.name}</button>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+                {/* Add block library */}
+                <div className="bg-white rounded-2xl border border-neutral-200/60 p-5">
+                  <h2 className="text-sm font-bold text-neutral-900 mb-3">Add Block</h2>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    {BLOCK_TYPES.map(bt => (
+                      <button key={bt.type} onClick={() => addBlock(bt.type)} className="flex items-center gap-2 p-3 rounded-xl border border-neutral-200 hover:border-neutral-400 hover:bg-neutral-50 transition-all text-left">
+                        <span className="w-7 h-7 rounded-lg bg-neutral-100 flex items-center justify-center text-xs font-bold text-neutral-500 shrink-0">{bt.icon}</span>
+                        <span className="text-xs font-semibold text-neutral-700">{bt.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
 
+            {/* ─── STYLE ─── */}
+            {section === "style" && (
+              <div className="space-y-4">
+                {/* Typography */}
+                <div className="bg-white rounded-2xl border border-neutral-200/60 p-5 space-y-5">
+                  <h2 className="text-sm font-bold text-neutral-900">Typography</h2>
+                  {/* Font family */}
+                  <div>
+                    <label className="block text-[11px] font-semibold text-neutral-600 mb-2">Font Family</label>
+                    <div className="grid grid-cols-4 gap-1.5">
+                      {FONTS.map(f => (
+                        <button key={f.id} onClick={() => save({ font: f.id })} className={`py-2 text-[10px] font-semibold rounded-lg transition-all ${settings.font === f.id ? "bg-neutral-900 text-white" : "bg-neutral-50 text-neutral-500 hover:bg-neutral-100"}`} style={{ fontFamily: f.css }}>{f.name}</button>
+                      ))}
+                    </div>
+                  </div>
+                  {/* Font size */}
+                  <div>
+                    <label className="block text-[11px] font-semibold text-neutral-600 mb-2">Font Size</label>
+                    <div className="flex gap-2">
+                      {FONT_SIZES.map(s => (
+                        <button key={s.id} onClick={() => save({ fontSize: s.id })} className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all ${settings.fontSize === s.id ? "bg-neutral-900 text-white" : "bg-neutral-50 text-neutral-500 hover:bg-neutral-100"}`}>{s.name}</button>
+                      ))}
+                    </div>
+                  </div>
+                  {/* Font weight */}
+                  <div>
+                    <label className="block text-[11px] font-semibold text-neutral-600 mb-2">Font Weight</label>
+                    <div className="flex gap-2">
+                      {FONT_WEIGHTS.map(w => (
+                        <button key={w} onClick={() => save({ fontWeight: w })} className={`flex-1 py-2 text-xs rounded-lg transition-all ${settings.fontWeight === w ? "bg-neutral-900 text-white font-bold" : "bg-neutral-50 text-neutral-500 hover:bg-neutral-100"}`}>{w}</button>
+                      ))}
+                    </div>
+                  </div>
+                  {/* Letter spacing */}
+                  <div>
+                    <label className="block text-[11px] font-semibold text-neutral-600 mb-2">Letter Spacing</label>
+                    <div className="flex gap-2">
+                      {LETTER_SPACINGS.map(s => (
+                        <button key={s.id} onClick={() => save({ letterSpacing: s.id })} className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all ${settings.letterSpacing === s.id ? "bg-neutral-900 text-white" : "bg-neutral-50 text-neutral-500 hover:bg-neutral-100"}`}>{s.name}</button>
+                      ))}
+                    </div>
+                  </div>
+                  {/* Accent color */}
+                  <div>
+                    <label className="block text-[11px] font-semibold text-neutral-600 mb-2">Accent Color</label>
+                    <div className="flex gap-2 flex-wrap">
+                      {ACCENT_COLORS.map(c => (
+                        <button key={c} onClick={() => save({ accent: c })} className={`w-8 h-8 rounded-full border-2 transition-all ${settings.accent === c ? "border-neutral-900 scale-110" : "border-transparent hover:scale-105"}`} style={{ background: c }} />
+                      ))}
+                    </div>
+                  </div>
+                  {/* Text color */}
+                  <div>
+                    <label className="block text-[11px] font-semibold text-neutral-600 mb-2">Text Color</label>
+                    <div className="flex gap-2 flex-wrap">
+                      {TEXT_COLORS.map(c => (
+                        <button key={c.id} onClick={() => save({ textColor: c.id })} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-semibold transition-all ${settings.textColor === c.id ? "bg-neutral-900 text-white" : "bg-neutral-50 text-neutral-500 hover:bg-neutral-100"}`}>
+                          {c.color && <span className="w-3 h-3 rounded-full border border-neutral-200" style={{ background: c.color }} />}
+                          {c.name}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  {/* Name color */}
+                  <div>
+                    <label className="block text-[11px] font-semibold text-neutral-600 mb-2">Name/Headline Color</label>
+                    <div className="flex items-center gap-2">
+                      <input type="color" value={settings.nameColor || settings.textColor || "#171717"} onChange={e => save({ nameColor: e.target.value })} className="w-8 h-8 rounded-lg border border-neutral-200 cursor-pointer" />
+                      <input type="text" value={settings.nameColor || ""} onChange={e => save({ nameColor: e.target.value })} placeholder="Auto" className="flex-1 px-3 py-1.5 text-xs border border-neutral-200 rounded-lg" />
+                      {settings.nameColor && <button onClick={() => save({ nameColor: "" })} className="text-[10px] text-neutral-400 hover:text-neutral-600">Reset</button>}
+                    </div>
+                  </div>
+                </div>
 
+                {/* Background */}
+                <div className="bg-white rounded-2xl border border-neutral-200/60 p-5 space-y-5">
+                  <h2 className="text-sm font-bold text-neutral-900">Background</h2>
+                  {/* Type switcher */}
+                  <div className="flex gap-2">
+                    {(["solid", "gradient", "image", "video"] as const).map(t => (
+                      <button key={t} onClick={() => save({ bgType: t })} className={`flex-1 py-2 text-xs font-semibold rounded-lg capitalize transition-all ${settings.bgType === t ? "bg-neutral-900 text-white" : "bg-neutral-50 text-neutral-500 hover:bg-neutral-100"}`}>{t}</button>
+                    ))}
+                  </div>
+                  {/* Solid */}
+                  {settings.bgType === "solid" && (
+                    <div className="space-y-3">
+                      <div className="flex gap-2 flex-wrap">
+                        {BG_PRESETS.map(c => (
+                          <button key={c} onClick={() => save({ bgValue: c })} className={`w-8 h-8 rounded-lg border-2 transition-all ${settings.bgValue === c ? "border-neutral-900 scale-110" : "border-neutral-200 hover:scale-105"}`} style={{ background: c }} />
+                        ))}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <input type="color" value={settings.bgValue || "#ffffff"} onChange={e => save({ bgValue: e.target.value })} className="w-8 h-8 rounded-lg border border-neutral-200 cursor-pointer" />
+                        <input type="text" value={settings.bgValue} onChange={e => save({ bgValue: e.target.value })} className="flex-1 px-3 py-1.5 text-xs border border-neutral-200 rounded-lg font-mono" placeholder="#ffffff" />
+                      </div>
+                    </div>
+                  )}
+                  {/* Gradient */}
+                  {settings.bgType === "gradient" && (
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-[11px] font-semibold text-neutral-600 mb-2">Direction</label>
+                        <div className="flex gap-1.5">
+                          {GRADIENT_DIRECTIONS.map(d => (
+                            <button key={d.id} onClick={() => save({ bgGradientDir: d.deg })} className={`w-8 h-8 rounded-lg text-sm flex items-center justify-center transition-all ${settings.bgGradientDir === d.deg ? "bg-neutral-900 text-white" : "bg-neutral-50 text-neutral-400 hover:bg-neutral-100"}`}>{d.name}</button>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="flex gap-3">
+                        <div className="flex-1">
+                          <label className="block text-[11px] font-semibold text-neutral-600 mb-1">From</label>
+                          <div className="flex items-center gap-2">
+                            <input type="color" value={settings.bgGradientFrom} onChange={e => save({ bgGradientFrom: e.target.value, bgValue: `linear-gradient(${settings.bgGradientDir}, ${e.target.value} 0%, ${settings.bgGradientTo} 100%)` })} className="w-7 h-7 rounded border border-neutral-200 cursor-pointer" />
+                            <input type="text" value={settings.bgGradientFrom} onChange={e => save({ bgGradientFrom: e.target.value, bgValue: `linear-gradient(${settings.bgGradientDir}, ${e.target.value} 0%, ${settings.bgGradientTo} 100%)` })} className="flex-1 px-2 py-1.5 text-[10px] border border-neutral-200 rounded-lg font-mono" />
+                          </div>
+                        </div>
+                        <div className="flex-1">
+                          <label className="block text-[11px] font-semibold text-neutral-600 mb-1">To</label>
+                          <div className="flex items-center gap-2">
+                            <input type="color" value={settings.bgGradientTo} onChange={e => save({ bgGradientTo: e.target.value, bgValue: `linear-gradient(${settings.bgGradientDir}, ${settings.bgGradientFrom} 0%, ${e.target.value} 100%)` })} className="w-7 h-7 rounded border border-neutral-200 cursor-pointer" />
+                            <input type="text" value={settings.bgGradientTo} onChange={e => save({ bgGradientTo: e.target.value, bgValue: `linear-gradient(${settings.bgGradientDir}, ${settings.bgGradientFrom} 0%, ${e.target.value} 100%)` })} className="flex-1 px-2 py-1.5 text-[10px] border border-neutral-200 rounded-lg font-mono" />
+                          </div>
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-[11px] font-semibold text-neutral-600 mb-2">Presets</label>
+                        <div className="grid grid-cols-6 gap-1.5 max-h-32 overflow-y-auto">
+                          {GRADIENTS.map((g, i) => (
+                            <button key={i} onClick={() => save({ bgValue: g })} className={`h-8 rounded-lg border-2 transition-all ${settings.bgValue === g ? "border-neutral-900 scale-105" : "border-transparent hover:scale-105"}`} style={{ background: g }} />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  {/* Image */}
+                  {settings.bgType === "image" && (
+                    <div className="space-y-3">
+                      {settings.bgImageUrl && <div className="w-full h-24 rounded-xl bg-neutral-100 overflow-hidden"><img src={settings.bgImageUrl} alt="" className="w-full h-full object-cover" /></div>}
+                      <button onClick={() => { const input = document.createElement("input"); input.type = "file"; input.accept = "image/*"; input.onchange = async (e: any) => { const file = e.target.files[0]; if (!file) return; const fd = new FormData(); fd.append("file", file); fd.append("type", "background"); const res = await fetch("/api/upload", { method: "POST", body: fd }); if (res.ok) { const data = await res.json(); save({ bgImageUrl: data.url, bgValue: data.url }); } }; input.click(); }} className="w-full py-4 border-2 border-dashed border-neutral-300 rounded-xl text-xs text-neutral-400 hover:border-neutral-400 transition-colors">Upload Background Image</button>
+                      {/* Overlay */}
+                      <div>
+                        <label className="block text-[11px] font-semibold text-neutral-600 mb-2">Overlay</label>
+                        <div className="flex gap-2">
+                          {["none", "dark", "light", "colored"].map(o => (
+                            <button key={o} onClick={() => save({ overlayType: o })} className={`flex-1 py-1.5 text-[10px] font-semibold rounded-lg capitalize transition-all ${settings.overlayType === o ? "bg-neutral-900 text-white" : "bg-neutral-50 text-neutral-500"}`}>{o}</button>
+                          ))}
+                        </div>
+                        {settings.overlayType !== "none" && (
+                          <div className="mt-2">
+                            <label className="block text-[10px] text-neutral-500 mb-1">Opacity: {settings.overlayOpacity}%</label>
+                            <input type="range" min={0} max={100} value={settings.overlayOpacity} onChange={e => save({ overlayOpacity: parseInt(e.target.value) })} className="w-full accent-neutral-900" />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                  {/* Video */}
+                  {settings.bgType === "video" && (
+                    <div className="space-y-3">
+                      <input type="url" value={settings.bgVideoUrl} onChange={e => save({ bgVideoUrl: e.target.value })} className="w-full px-3 py-2 text-sm border border-neutral-200 rounded-xl" placeholder="YouTube or direct video URL" />
+                      <div>
+                        <label className="block text-[11px] font-semibold text-neutral-600 mb-2">Overlay</label>
+                        <div className="flex gap-2">
+                          {["none", "dark", "light"].map(o => (
+                            <button key={o} onClick={() => save({ overlayType: o })} className={`flex-1 py-1.5 text-[10px] font-semibold rounded-lg capitalize transition-all ${settings.overlayType === o ? "bg-neutral-900 text-white" : "bg-neutral-50 text-neutral-500"}`}>{o}</button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  {/* Blur / Glass */}
+                  <div>
+                    <label className="block text-[11px] font-semibold text-neutral-600 mb-2">Glass / Blur Effect</label>
+                    <div className="flex items-center gap-3">
+                      <span className="text-[10px] text-neutral-400">Intensity: {settings.blurIntensity}px</span>
+                      <input type="range" min={0} max={30} value={settings.blurIntensity} onChange={e => save({ blurIntensity: parseInt(e.target.value) })} className="flex-1 accent-neutral-900" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Spacing */}
+                <div className="bg-white rounded-2xl border border-neutral-200/60 p-5 space-y-5">
+                  <h2 className="text-sm font-bold text-neutral-900">Spacing</h2>
+                  <div>
+                    <label className="block text-[11px] font-semibold text-neutral-600 mb-1">Page Padding: {settings.pagePadding}px</label>
+                    <input type="range" min={0} max={48} value={settings.pagePadding} onChange={e => save({ pagePadding: parseInt(e.target.value) })} className="w-full accent-neutral-900" />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-semibold text-neutral-600 mb-1">Section Gap: {settings.sectionGap}px</label>
+                    <input type="range" min={0} max={32} value={settings.sectionGap} onChange={e => save({ sectionGap: parseInt(e.target.value) })} className="w-full accent-neutral-900" />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-semibold text-neutral-600 mb-2">Container Width</label>
+                    <div className="flex gap-2">
+                      {(["compact", "standard", "wide", "full"] as const).map(w => (
+                        <button key={w} onClick={() => save({ containerWidth: w })} className={`flex-1 py-2 text-xs font-semibold rounded-lg capitalize transition-all ${settings.containerWidth === w ? "bg-neutral-900 text-white" : "bg-neutral-50 text-neutral-500 hover:bg-neutral-100"}`}>{w}</button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
 
 
@@ -1160,6 +1979,105 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
                     ))}
                   </div>
                 </div>
+
+                {/* Fill color */}
+                <div>
+                  <h2 className="text-sm font-bold text-neutral-900 mb-3">Fill Color</h2>
+                  <div className="flex items-center gap-2">
+                    <input type="color" value={settings.buttonFill || settings.accent} onChange={e => save({ buttonFill: e.target.value })} className="w-8 h-8 rounded-lg border border-neutral-200 cursor-pointer" />
+                    <input type="text" value={settings.buttonFill} onChange={e => save({ buttonFill: e.target.value })} placeholder="Uses accent color" className="flex-1 px-3 py-1.5 text-xs border border-neutral-200 rounded-lg font-mono" />
+                    {settings.buttonFill && <button onClick={() => save({ buttonFill: "" })} className="text-[10px] text-neutral-400 hover:text-neutral-600">Reset</button>}
+                  </div>
+                  <div className="flex gap-1.5 mt-2">
+                    {ACCENT_COLORS.map(c => (
+                      <button key={c} onClick={() => save({ buttonFill: c })} className={`w-6 h-6 rounded-full border transition-all ${settings.buttonFill === c ? "border-neutral-900 scale-110" : "border-neutral-200 hover:scale-105"}`} style={{ background: c }} />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Text color */}
+                <div>
+                  <h2 className="text-sm font-bold text-neutral-900 mb-3">Text Color</h2>
+                  <div className="flex items-center gap-2">
+                    <input type="color" value={settings.buttonTextColor || "#ffffff"} onChange={e => save({ buttonTextColor: e.target.value })} className="w-8 h-8 rounded-lg border border-neutral-200 cursor-pointer" />
+                    <input type="text" value={settings.buttonTextColor} onChange={e => save({ buttonTextColor: e.target.value })} placeholder="Auto" className="flex-1 px-3 py-1.5 text-xs border border-neutral-200 rounded-lg font-mono" />
+                  </div>
+                </div>
+
+                {/* Border */}
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <h2 className="text-sm font-bold text-neutral-900">Border</h2>
+                    <button onClick={() => save({ buttonBorder: !settings.buttonBorder })} role="switch" aria-checked={settings.buttonBorder} className={`relative w-11 h-6 rounded-full transition-colors ${settings.buttonBorder ? "bg-neutral-900" : "bg-neutral-300"}`}>
+                      <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${settings.buttonBorder ? "translate-x-5" : ""}`} />
+                    </button>
+                  </div>
+                  {settings.buttonBorder && (
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] text-neutral-500 w-12">Width</span>
+                        <input type="range" min={1} max={4} value={settings.buttonBorderWidth} onChange={e => save({ buttonBorderWidth: parseInt(e.target.value) })} className="flex-1 accent-neutral-900" />
+                        <span className="text-[10px] text-neutral-400 w-6">{settings.buttonBorderWidth}px</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] text-neutral-500 w-12">Color</span>
+                        <input type="color" value={settings.buttonBorderColor} onChange={e => save({ buttonBorderColor: e.target.value })} className="w-7 h-7 rounded border border-neutral-200 cursor-pointer" />
+                        <input type="text" value={settings.buttonBorderColor} onChange={e => save({ buttonBorderColor: e.target.value })} className="flex-1 px-2 py-1.5 text-[10px] border border-neutral-200 rounded-lg font-mono" />
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Shadow */}
+                <div>
+                  <h2 className="text-sm font-bold text-neutral-900 mb-3">Shadow</h2>
+                  <div className="flex gap-2">
+                    {BUTTON_SHADOWS.map(s => (
+                      <button key={s.id} onClick={() => save({ buttonShadow: s.id })} className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all ${settings.buttonShadow === s.id ? "bg-neutral-900 text-white" : "bg-neutral-50 text-neutral-500 hover:bg-neutral-100"}`}>{s.name}</button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Width */}
+                <div>
+                  <h2 className="text-sm font-bold text-neutral-900 mb-3">Width</h2>
+                  <div className="flex gap-2">
+                    {(["compact", "standard", "full-width"] as const).map(w => (
+                      <button key={w} onClick={() => save({ buttonWidth: w })} className={`flex-1 py-2 text-xs font-semibold rounded-lg capitalize transition-all ${settings.buttonWidth === w ? "bg-neutral-900 text-white" : "bg-neutral-50 text-neutral-500 hover:bg-neutral-100"}`}>{w.replace("-", " ")}</button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Height */}
+                <div>
+                  <h2 className="text-sm font-bold text-neutral-900 mb-3">Height</h2>
+                  <div className="flex gap-2">
+                    {(["small", "medium", "large"] as const).map(h => (
+                      <button key={h} onClick={() => save({ buttonHeight: h })} className={`flex-1 py-2 text-xs font-semibold rounded-lg capitalize transition-all ${settings.buttonHeight === h ? "bg-neutral-900 text-white" : "bg-neutral-50 text-neutral-500 hover:bg-neutral-100"}`}>{h}</button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Icon position */}
+                <div>
+                  <h2 className="text-sm font-bold text-neutral-900 mb-3">Icon Position</h2>
+                  <div className="flex gap-2">
+                    {(["none", "left", "right"] as const).map(p => (
+                      <button key={p} onClick={() => save({ buttonIconPos: p })} className={`flex-1 py-2 text-xs font-semibold rounded-lg capitalize transition-all ${settings.buttonIconPos === p ? "bg-neutral-900 text-white" : "bg-neutral-50 text-neutral-500 hover:bg-neutral-100"}`}>{p}</button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Hover effect */}
+                <div>
+                  <h2 className="text-sm font-bold text-neutral-900 mb-3">Hover Effect</h2>
+                  <div className="flex gap-2 flex-wrap">
+                    {HOVER_EFFECTS.map(h => (
+                      <button key={h.id} onClick={() => save({ buttonHoverEffect: h.id })} className={`px-3 py-2 text-xs font-semibold rounded-lg transition-all ${settings.buttonHoverEffect === h.id ? "bg-neutral-900 text-white" : "bg-neutral-50 text-neutral-500 hover:bg-neutral-100"}`}>{h.name}</button>
+                    ))}
+                  </div>
+                </div>
+
                 <div>
                   <h2 className="text-sm font-bold text-neutral-900 mb-3">Click Animation</h2>
                   <div className="grid grid-cols-3 gap-2">
@@ -1206,46 +2124,72 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
 
             {/* ─── ANIMATION ─── */}
             {section === "animation" && (
-              <div className="bg-white rounded-2xl border border-neutral-200/60 p-5">
-                <h2 className="text-sm font-bold text-neutral-900 mb-1">Intro Animation</h2>
-                <p className="text-[11px] text-neutral-400 mb-4">Plays once when someone visits your link in bio. Premium animations are $4.99 each from the <Link href="/animations" className="text-blue-600 hover:underline">animations store</Link>.</p>
-                <div className="space-y-1.5">
-                  {INTRO_ANIMS.map(a => {
-                    const owned = a.free || (user.owned_animations || []).includes?.(a.id) || user.role === "admin";
-                    const isActive = settings.introAnim === a.id;
-                    return (
-                      <button
-                        key={a.id}
-                        onClick={() => owned ? save({ introAnim: a.id }) : undefined}
-                        className={`flex items-center gap-3 p-4 min-h-[56px] rounded-xl text-left transition-all w-full ${
-                          isActive ? "bg-neutral-900 text-white" :
-                          owned ? "bg-neutral-50 text-neutral-600 hover:bg-neutral-100" :
-                          "bg-neutral-50/50 text-neutral-400 cursor-default"
-                        }`}
-                      >
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2">
-                            <span className="text-xs font-bold">{a.name}</span>
-                            {!a.free && !owned && (
-                              <span className="px-1.5 py-0.5 bg-amber-100 text-amber-700 text-[8px] font-bold rounded-full">$4.99</span>
-                            )}
-                            {!a.free && owned && (
-                              <span className="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-[8px] font-bold rounded-full">OWNED</span>
-                            )}
+              <div className="space-y-4">
+                <div className="bg-white rounded-2xl border border-neutral-200/60 p-5">
+                  <h2 className="text-sm font-bold text-neutral-900 mb-1">Intro Animation</h2>
+                  <p className="text-[11px] text-neutral-400 mb-4">Plays once when someone visits your link in bio. Premium animations are $4.99 each from the <Link href="/animations" className="text-blue-600 hover:underline">animations store</Link>.</p>
+                  <div className="space-y-1.5">
+                    {INTRO_ANIMS.map(a => {
+                      const owned = a.free || (user.owned_animations || []).includes?.(a.id) || user.role === "admin";
+                      const isActive = settings.introAnim === a.id;
+                      return (
+                        <button
+                          key={a.id}
+                          onClick={() => owned ? save({ introAnim: a.id }) : undefined}
+                          className={`flex items-center gap-3 p-4 min-h-[56px] rounded-xl text-left transition-all w-full ${
+                            isActive ? "bg-neutral-900 text-white" :
+                            owned ? "bg-neutral-50 text-neutral-600 hover:bg-neutral-100" :
+                            "bg-neutral-50/50 text-neutral-400 cursor-default"
+                          }`}
+                        >
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs font-bold">{a.name}</span>
+                              {!a.free && !owned && (
+                                <span className="px-1.5 py-0.5 bg-amber-100 text-amber-700 text-[8px] font-bold rounded-full">$4.99</span>
+                              )}
+                              {!a.free && owned && (
+                                <span className="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-[8px] font-bold rounded-full">OWNED</span>
+                              )}
+                            </div>
+                            <div className={`text-[10px] ${isActive ? "text-white/50" : "text-neutral-400"}`}>{a.desc}</div>
                           </div>
-                          <div className={`text-[10px] ${isActive ? "text-white/50" : "text-neutral-400"}`}>{a.desc}</div>
-                        </div>
-                        {isActive && (
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="shrink-0"><path d="M5 13l4 4L19 7" strokeLinecap="round" /></svg>
-                        )}
-                        {!a.free && !owned && (
-                          <Link href="/animations" className="px-3 py-1.5 bg-neutral-900 text-white text-[10px] font-bold rounded-full shrink-0 hover:bg-neutral-800" onClick={e => e.stopPropagation()}>
-                            Get
-                          </Link>
-                        )}
-                      </button>
-                    );
-                  })}
+                          {isActive && (
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="shrink-0"><path d="M5 13l4 4L19 7" strokeLinecap="round" /></svg>
+                          )}
+                          {!a.free && !owned && (
+                            <Link href="/animations" className="px-3 py-1.5 bg-neutral-900 text-white text-[10px] font-bold rounded-full shrink-0 hover:bg-neutral-800" onClick={e => e.stopPropagation()}>
+                              Get
+                            </Link>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Animation Timing */}
+                <div className="bg-white rounded-2xl border border-neutral-200/60 p-5 space-y-5">
+                  <h2 className="text-sm font-bold text-neutral-900">Animation Timing</h2>
+                  <div>
+                    <label className="block text-[11px] font-semibold text-neutral-600 mb-2">Speed</label>
+                    <div className="flex gap-2">
+                      {ANIM_TIMINGS.map(t => (
+                        <button key={t.value} onClick={() => save({ animTiming: t.value })} className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all ${settings.animTiming === t.value ? "bg-neutral-900 text-white" : "bg-neutral-50 text-neutral-500 hover:bg-neutral-100"}`}>
+                          {t.name}
+                          <span className="block text-[9px] opacity-60">{t.value}ms</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-semibold text-neutral-600 mb-2">Stagger Delay (between items)</label>
+                    <div className="flex gap-2">
+                      {STAGGER_DELAYS.map(d => (
+                        <button key={d} onClick={() => save({ animStagger: d })} className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all ${settings.animStagger === d ? "bg-neutral-900 text-white" : "bg-neutral-50 text-neutral-500 hover:bg-neutral-100"}`}>{d}ms</button>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
@@ -1270,7 +2214,7 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
               {previewMode === "mobile" && (
                 <div className="mx-auto w-[280px] h-[560px] bg-black rounded-[2.5rem] shadow-2xl border-[6px] border-neutral-800 overflow-hidden relative">
                   <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[90px] h-[22px] bg-black rounded-b-2xl z-50" />
-                  <div className="w-full h-full overflow-y-auto rounded-[2rem]"><MiniPreview key={`${settings.template}-${settings.buttonShape}-${settings.accent}`} settings={settings} creator={user} /></div>
+                  <div className="w-full h-full overflow-y-auto rounded-[2rem]"><MiniPreview key={`${settings.template}-${settings.buttonShape}-${settings.accent}`} settings={settings} creator={user} blocks={blocks} /></div>
                   <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-[100px] h-[4px] bg-white/30 rounded-full z-50" />
                 </div>
               )}
@@ -1282,7 +2226,7 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
                   </div>
                   <div className="w-full h-[450px] border border-t-0 border-neutral-200 rounded-b-xl overflow-y-auto bg-neutral-100">
                     <div className="flex items-start justify-center py-6 min-h-full">
-                      <div className="w-[400px] bg-white rounded-2xl shadow-lg overflow-hidden"><MiniPreview key={`d-${settings.template}-${settings.buttonShape}-${settings.accent}`} settings={settings} creator={user} /></div>
+                      <div className="w-[400px] bg-white rounded-2xl shadow-lg overflow-hidden"><MiniPreview key={`d-${settings.template}-${settings.buttonShape}-${settings.accent}`} settings={settings} creator={user} blocks={blocks} /></div>
                     </div>
                   </div>
                 </div>
@@ -1322,7 +2266,7 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
             <div className="w-[320px] h-[640px] bg-black rounded-[2.5rem] shadow-2xl border-[6px] border-neutral-800 overflow-hidden relative">
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[90px] h-[22px] bg-black rounded-b-2xl z-50" />
               <div className="w-full h-full overflow-y-auto rounded-[2rem]">
-                <MiniPreview key={`m-${settings.template}-${settings.buttonShape}-${settings.accent}`} settings={settings} creator={user} />
+                <MiniPreview key={`m-${settings.template}-${settings.buttonShape}-${settings.accent}`} settings={settings} creator={user} blocks={blocks} />
               </div>
               <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-[100px] h-[4px] bg-white/30 rounded-full z-50" />
             </div>
