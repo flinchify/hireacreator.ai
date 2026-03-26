@@ -108,6 +108,29 @@ export async function GET(request: Request) {
       }
     }
 
+    // Link pending offers by social handle (brand or creator)
+    try {
+      const userSocials = await sql`
+        SELECT platform, handle FROM social_connections WHERE user_id = ${userId}
+      `;
+      for (const sc of userSocials) {
+        await sql`
+          UPDATE offers SET brand_user_id = ${userId}, updated_at = NOW()
+          WHERE brand_user_id IS NULL
+          AND brand_platform = ${sc.platform}
+          AND LOWER(brand_handle) = LOWER(${sc.handle})
+        `.catch(() => {});
+        await sql`
+          UPDATE offers SET creator_user_id = ${userId}, updated_at = NOW()
+          WHERE creator_user_id IS NULL
+          AND creator_platform = ${sc.platform}
+          AND LOWER(creator_handle) = LOWER(${sc.handle})
+        `.catch(() => {});
+      }
+    } catch (linkErr) {
+      console.error("Offer linking error (non-fatal):", linkErr);
+    }
+
     // Create session
     const token = crypto.randomUUID();
     const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days

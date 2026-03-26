@@ -97,6 +97,11 @@ export async function POST(request: Request) {
                 if (parsed.hasOffer && parsed.creatorHandle) {
                   // Create offer in DB
                   try {
+                    // Ensure brand tracking columns exist
+                    await sql`ALTER TABLE offers ADD COLUMN IF NOT EXISTS brand_platform TEXT`.catch(() => {});
+                    await sql`ALTER TABLE offers ADD COLUMN IF NOT EXISTS brand_handle TEXT`.catch(() => {});
+                    await sql`ALTER TABLE offers ALTER COLUMN brand_user_id DROP NOT NULL`.catch(() => {});
+
                     let brandUserId: string | null = null;
                     const brandRows = await sql`
                       SELECT u.id FROM users u
@@ -118,17 +123,18 @@ export async function POST(request: Request) {
                     const budgetCents = Math.round(parsed.budget! * 100);
                     const feeCents = Math.round(budgetCents * 0.15);
 
-                    if (brandUserId) {
-                      await sql`
-                        INSERT INTO offers (
-                          brand_user_id, creator_handle, creator_platform, creator_user_id,
-                          budget_cents, fee_cents, brief, deliverables, status
-                        ) VALUES (
-                          ${brandUserId}, ${parsed.creatorHandle.toLowerCase()}, 'instagram', ${creatorUserId},
-                          ${budgetCents}, ${feeCents}, ${text}, ${parsed.deliverables || 'social media offer'}, 'pending'
-                        )
-                      `.catch((e: any) => console.error("[IG Webhook] Offer insert error:", e));
-                    }
+                    // Always create offer - even if brand not signed up yet
+                    await sql`
+                      INSERT INTO offers (
+                        brand_user_id, brand_platform, brand_handle,
+                        creator_handle, creator_platform, creator_user_id,
+                        budget_cents, fee_cents, brief, deliverables, status
+                      ) VALUES (
+                        ${brandUserId}, 'instagram', ${from.username.toLowerCase()},
+                        ${parsed.creatorHandle.toLowerCase()}, 'instagram', ${creatorUserId},
+                        ${budgetCents}, ${feeCents}, ${text}, ${parsed.deliverables || 'social media offer'}, 'pending'
+                      )
+                    `.catch((e: any) => console.error("[IG Webhook] Offer insert error:", e));
                   } catch (e) {
                     console.error("[IG Webhook] Offer creation failed:", e);
                   }

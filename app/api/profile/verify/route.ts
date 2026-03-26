@@ -27,12 +27,12 @@ export async function POST() {
       missing.push("Verify your email address");
     }
 
-    // 2. At least 1 social with 100+ followers
+    // 2. At least 1 verified social connection (bio verification only, no follower minimum)
     const socials = await sql`
-      SELECT * FROM social_connections WHERE user_id = ${user.id} AND follower_count >= 100
+      SELECT * FROM social_connections WHERE user_id = ${user.id} AND is_verified = true
     `;
     if (socials.length === 0) {
-      missing.push("Connect at least 1 social account with 100+ followers");
+      missing.push("Verify at least 1 social account by adding a code to your bio");
     }
 
     // 3. Profile photo

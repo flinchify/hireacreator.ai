@@ -81,6 +81,34 @@ export async function POST(request: Request) {
 
     const user = users[0];
 
+    // Link pending offers by social handle (brand or creator)
+    if (isNewUser || !user.full_name) {
+      try {
+        // Check if this user has social connections we can match offers against
+        const userSocials = await sql`
+          SELECT platform, handle FROM social_connections WHERE user_id = ${user.id}
+        `;
+        for (const sc of userSocials) {
+          // Link as brand: match offers where brand_platform + brand_handle match
+          await sql`
+            UPDATE offers SET brand_user_id = ${user.id}, updated_at = NOW()
+            WHERE brand_user_id IS NULL
+            AND brand_platform = ${sc.platform}
+            AND LOWER(brand_handle) = LOWER(${sc.handle})
+          `.catch(() => {});
+          // Link as creator: match offers where creator_platform + creator_handle match
+          await sql`
+            UPDATE offers SET creator_user_id = ${user.id}, updated_at = NOW()
+            WHERE creator_user_id IS NULL
+            AND creator_platform = ${sc.platform}
+            AND LOWER(creator_handle) = LOWER(${sc.handle})
+          `.catch(() => {});
+        }
+      } catch (linkErr) {
+        console.error("Offer linking error (non-fatal):", linkErr);
+      }
+    }
+
     // Check if banned
     if (user.is_banned) {
       return NextResponse.json({ error: "banned", message: "Your account has been suspended." }, { status: 403 });

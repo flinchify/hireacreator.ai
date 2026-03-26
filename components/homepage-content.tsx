@@ -430,12 +430,12 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
           </div>
           <StaggerChildren className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {[
-              { icon: featureIcons.portfolio, title: "AI-Built Portfolio", desc: "We auto-generate a stunning portfolio page from your social profiles." },
-              { icon: featureIcons.score, title: "Transparency Rating", desc: "A clear rating that shows brands your reach, engagement, and value." },
-              { icon: featureIcons.matching, title: "Brand Deal Matching", desc: "Get matched with campaigns that fit your niche and audience." },
-              { icon: featureIcons.link, title: "Link-in-Bio", desc: "One link for all your platforms, content, and brand deal rates." },
+              { icon: featureIcons.portfolio, title: "AI-Designed Pages", desc: "Our AI builds your page from your brand. Upload a logo, paste your website, and get a fully themed link-in-bio in seconds." },
+              { icon: featureIcons.score, title: "Brand-Level Design", desc: "Logo headers, banner images, product grids, custom color schemes. Pages that look like they cost thousands to build." },
+              { icon: featureIcons.matching, title: "Comment to Payment", desc: "Brands tag you on Instagram or X with a budget. We handle the offer, escrow, and payout automatically." },
+              { icon: featureIcons.link, title: "Link-in-Bio", desc: "One link for all your platforms, services, and brand deal rates. 24+ premium templates." },
               { icon: featureIcons.cross, title: "Cross-Platform Profile", desc: "Combine stats from 15+ platforms into one unified creator profile." },
-              { icon: featureIcons.payments, title: "Direct Payments", desc: "Get paid securely through the platform. No invoicing headaches." },
+              { icon: featureIcons.payments, title: "Secure Escrow Payments", desc: "Funds held in escrow. Released only when the brand approves your deliverables. No chasing invoices." },
             ].map((feature) => (
               <div
                 key={feature.title}

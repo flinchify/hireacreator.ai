@@ -901,6 +901,7 @@ function OffersManager({ user }: { user: User }) {
   const [offers, setOffers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showSendModal, setShowSendModal] = useState(false);
+  const [creatorVerified, setCreatorVerified] = useState(false);
 
   const loadOffers = useCallback(async () => {
     try {
@@ -908,6 +909,7 @@ function OffersManager({ user }: { user: User }) {
       if (res.ok) {
         const data = await res.json();
         setOffers(data.offers || []);
+        if (data.is_verified !== undefined) setCreatorVerified(data.is_verified);
       }
     } catch (err) {
       console.error("Failed to load offers:", err);
@@ -916,8 +918,6 @@ function OffersManager({ user }: { user: User }) {
   }, []);
 
   useEffect(() => { loadOffers(); }, [loadOffers]);
-
-
 
   const handleOfferAction = async (offerId: string, action: string, counterBudget?: string, counterMessage?: string) => {
     try {
@@ -1042,8 +1042,8 @@ function OffersManager({ user }: { user: User }) {
   }
 
   function formatDate(dateStr: string) {
-    return new Date(dateStr).toLocaleDateString("en-AU", { 
-      day: "numeric", 
+    return new Date(dateStr).toLocaleDateString("en-AU", {
+      day: "numeric",
       month: "short",
       year: "numeric"
     });
@@ -1056,10 +1056,10 @@ function OffersManager({ user }: { user: User }) {
       <div className="flex items-center justify-between mb-5">
         <div>
           <h2 className="text-lg font-bold text-neutral-900">
-            {isBrand ? "Offers Sent" : "Offers Received"}
+            {isBrand ? "Invoices / Offers Sent" : "Offers Received"}
           </h2>
           <p className="text-xs text-neutral-400 mt-0.5">
-            {isBrand ? "Brand deals you've sent to creators" : "Brand deal offers sent to you"}
+            {isBrand ? "Offers you have made -- complete payment to proceed" : "Brand deal offers sent to you"}
           </p>
         </div>
         {isBrand && (
@@ -1072,6 +1072,14 @@ function OffersManager({ user }: { user: User }) {
         )}
       </div>
 
+      {/* Creator not verified banner */}
+      {!isBrand && !creatorVerified && offers.length > 0 && (
+        <div className="mb-4 p-4 bg-amber-50 border border-amber-200 rounded-xl">
+          <h4 className="text-sm font-semibold text-amber-800 mb-1">Verify to see offer details</h4>
+          <p className="text-xs text-amber-700">You have {offers.length} offer{offers.length !== 1 ? "s" : ""} waiting. Verify your social account to see amounts, briefs, and take action.</p>
+        </div>
+      )}
+
       {loading ? (
         <div className="space-y-3">
           {[...Array(3)].map((_, i) => (
@@ -1083,7 +1091,6 @@ function OffersManager({ user }: { user: User }) {
           {offers.map((offer: any) => (
             <div key={offer.id} className="bg-white rounded-2xl border border-neutral-200/60 p-5 hover:border-neutral-300 transition-colors">
               <div className="flex items-start gap-4">
-                {/* Creator/Brand avatar and info */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2 mb-2">
                     <div className="min-w-0">
@@ -1106,32 +1113,70 @@ function OffersManager({ user }: { user: User }) {
                         )}
                         {statusBadge(offer.status)}
                       </div>
-                      <div className="flex items-center gap-4 mt-1 text-xs text-neutral-400">
-                        {isBrand ? (
-                          <span>
-                            Budget: ${(offer.budget_cents / 100).toFixed(2)}
-                            {offer.fee_cents > 0 && (
-                              <> + ${(offer.fee_cents / 100).toFixed(2)} service fee = ${((offer.budget_cents + offer.fee_cents) / 100).toFixed(2)} total</>
-                            )}
-                          </span>
-                        ) : (
-                          <span>You will receive: ${(offer.budget_cents / 100).toFixed(2)}</span>
-                        )}
-                        <span>{offer.timeline_days} days</span>
-                        <span>{formatDate(offer.created_at)}</span>
-                      </div>
+
+                      {/* Masked view for unverified creators */}
+                      {!isBrand && offer.is_masked ? (
+                        <div className="flex items-center gap-4 mt-1 text-xs text-neutral-400">
+                          <span className="blur-sm select-none">You will receive: $----.--</span>
+                          <span>{offer.timeline_days} days</span>
+                          <span>{formatDate(offer.created_at)}</span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-4 mt-1 text-xs text-neutral-400">
+                          {isBrand ? (
+                            <span>
+                              Budget: ${(offer.budget_cents / 100).toFixed(2)}
+                              {offer.fee_cents > 0 && (
+                                <> + ${(offer.fee_cents / 100).toFixed(2)} service fee = ${((offer.budget_cents + offer.fee_cents) / 100).toFixed(2)} total</>
+                              )}
+                            </span>
+                          ) : (
+                            <span>You will receive: ${(offer.budget_cents / 100).toFixed(2)}</span>
+                          )}
+                          <span>{offer.timeline_days} days</span>
+                          <span>{formatDate(offer.created_at)}</span>
+                        </div>
+                      )}
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <div>
-                      <h4 className="text-xs font-semibold text-neutral-600 mb-1">Brief</h4>
-                      <p className="text-xs text-neutral-500 leading-relaxed">{offer.brief}</p>
-                    </div>
-                    <div>
-                      <h4 className="text-xs font-semibold text-neutral-600 mb-1">Deliverables</h4>
-                      <p className="text-xs text-neutral-500 leading-relaxed">{offer.deliverables}</p>
-                    </div>
+                    {/* Brand invoice message for pending offers */}
+                    {isBrand && ["pending", "viewed"].includes(offer.status) && !offer.stripe_checkout_id && (
+                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                        <p className="text-xs text-blue-800 font-medium">
+                          You offered ${(offer.budget_cents / 100).toFixed(2)} to @{offer.creator_handle} -- Complete Payment
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Masked content for unverified creators */}
+                    {!isBrand && offer.is_masked ? (
+                      <>
+                        <div>
+                          <h4 className="text-xs font-semibold text-neutral-600 mb-1">Brief</h4>
+                          <p className="text-xs text-neutral-400 blur-sm select-none leading-relaxed">This offer contains details that will be visible after verification.</p>
+                        </div>
+                        <div>
+                          <h4 className="text-xs font-semibold text-neutral-600 mb-1">Deliverables</h4>
+                          <p className="text-xs text-neutral-400 blur-sm select-none leading-relaxed">Deliverables hidden until verified.</p>
+                        </div>
+                        {offer.status === "pending" && (
+                          <div className="mt-2 text-xs text-neutral-400">Pending -- Waiting for brand to pay</div>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        <div>
+                          <h4 className="text-xs font-semibold text-neutral-600 mb-1">Brief</h4>
+                          <p className="text-xs text-neutral-500 leading-relaxed">{offer.brief}</p>
+                        </div>
+                        <div>
+                          <h4 className="text-xs font-semibold text-neutral-600 mb-1">Deliverables</h4>
+                          <p className="text-xs text-neutral-500 leading-relaxed">{offer.deliverables}</p>
+                        </div>
+                      </>
+                    )}
 
                     {offer.counter_budget_cents && offer.counter_message && (
                       <div className="bg-violet-50 border border-violet-200 rounded-lg p-3 mt-3">
@@ -1148,10 +1193,17 @@ function OffersManager({ user }: { user: User }) {
                       </div>
                     )}
 
+                    {/* Pending payment status for creators */}
+                    {!isBrand && !offer.is_masked && ["pending", "viewed"].includes(offer.status) && (
+                      <div className="mt-2 px-3 py-2 bg-neutral-50 border border-neutral-200 rounded-lg">
+                        <p className="text-xs text-neutral-500">Pending -- Waiting for brand to pay</p>
+                      </div>
+                    )}
+
                     {/* Brand action buttons */}
                     {isBrand && (
                       <div className="flex flex-wrap gap-2 mt-4 pt-3 border-t border-neutral-100">
-                        {offer.status === "accepted" && (
+                        {["pending", "accepted"].includes(offer.status) && (
                           <button
                             onClick={() => handlePayOffer(offer.id)}
                             className="px-4 py-1.5 text-xs font-semibold bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
@@ -1178,8 +1230,8 @@ function OffersManager({ user }: { user: User }) {
                       </div>
                     )}
 
-                    {/* Creator action buttons */}
-                    {!isBrand && offer.verified_at && (
+                    {/* Creator action buttons - only if verified */}
+                    {!isBrand && creatorVerified && offer.verified_at && (
                       <div className="flex flex-wrap gap-2 mt-4 pt-3 border-t border-neutral-100">
                         {offer.status === "pending" && (
                           <button
@@ -1230,9 +1282,9 @@ function OffersManager({ user }: { user: User }) {
                       </div>
                     )}
 
-                    {!isBrand && !offer.verified_at && (
+                    {!isBrand && !creatorVerified && (
                       <div className="mt-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                        <p className="text-xs text-amber-700">Verify your {offer.creator_platform} account to view offer details and take action.</p>
+                        <p className="text-xs text-amber-700">Verify your {offer.creator_platform} account to see full details and take action.</p>
                       </div>
                     )}
                   </div>
@@ -1250,7 +1302,7 @@ function OffersManager({ user }: { user: User }) {
             {isBrand ? "No offers sent yet" : "No offers received yet"}
           </p>
           <p className="text-xs text-neutral-300">
-            {isBrand 
+            {isBrand
               ? "Send your first offer to start collaborating with creators."
               : "When brands send you offers, they'll appear here."}
           </p>

@@ -51,9 +51,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "not_your_offer" }, { status: 403 });
   }
 
-  // Verify status is accepted
-  if (offer.status !== "accepted") {
-    return NextResponse.json({ error: "offer_not_accepted", message: "Offer must be accepted before payment" }, { status: 400 });
+  // Allow payment for pending or accepted offers
+  if (!["pending", "accepted"].includes(offer.status)) {
+    return NextResponse.json({ error: "offer_not_payable", message: "Offer must be pending or accepted before payment" }, { status: 400 });
   }
 
   const stripe = getStripe();

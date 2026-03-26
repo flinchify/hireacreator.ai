@@ -196,7 +196,7 @@ export async function GET(req: NextRequest) {
     const sql = getDb();
 
     if (user.role === "brand" || user.role === "admin") {
-      // Return offers they sent
+      // Return offers they sent (including pending ones that need payment)
       const offers = await sql`
         SELECT o.*, u.full_name as creator_name, u.slug as creator_slug, u.avatar_url as creator_avatar
         FROM offers o
@@ -230,19 +230,20 @@ export async function GET(req: NextRequest) {
         }))
       });
     } else {
-      // Creator - return offers matching their verified social handles
+      // Creator - return ALL offers matching their social handles (verified or not)
       const socialConnections = await sql`
-        SELECT platform, handle FROM social_connections
-        WHERE user_id = ${user.id} AND is_verified = true
+        SELECT platform, handle, is_verified FROM social_connections
+        WHERE user_id = ${user.id}
       `;
 
       if (socialConnections.length === 0) {
         return NextResponse.json({
           offers: [],
-          message: "Verify your social media accounts to view offers"
+          message: "Connect a social account to see offers"
         });
       }
 
+      const isVerified = user.is_verified === true;
       let offers: any[] = [];
 
       // For each social connection, get offers
@@ -251,7 +252,7 @@ export async function GET(req: NextRequest) {
           SELECT o.*, u.full_name as brand_name, u.avatar_url as brand_avatar
           FROM offers o
           LEFT JOIN users u ON u.id = o.brand_user_id
-          WHERE o.creator_platform = ${sc.platform} 
+          WHERE o.creator_platform = ${sc.platform}
           AND o.creator_handle = ${sc.handle.toLowerCase()}
           ORDER BY o.created_at DESC
         `;
@@ -261,39 +262,71 @@ export async function GET(req: NextRequest) {
       // Sort by created_at descending
       offers.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
-      // Check if verified_at should be set for any offers
-      const offersToUpdate = offers.filter((o: any) => !o.verified_at);
-      if (offersToUpdate.length > 0) {
-        const offerIds = offersToUpdate.map((o: any) => o.id);
-        await sql`
-          UPDATE offers 
-          SET verified_at = NOW(), creator_user_id = ${user.id}
-          WHERE id = ANY(${offerIds})
-        `;
+      // For verified social connections, auto-set verified_at on offers
+      const verifiedHandles = socialConnections
+        .filter((sc: any) => sc.is_verified)
+        .map((sc: any) => ({ platform: sc.platform, handle: sc.handle.toLowerCase() }));
+
+      if (verifiedHandles.length > 0) {
+        const offersToUpdate = offers.filter((o: any) =>
+          !o.verified_at &&
+          verifiedHandles.some((vh: any) => vh.platform === o.creator_platform && vh.handle === o.creator_handle)
+        );
+        if (offersToUpdate.length > 0) {
+          const offerIds = offersToUpdate.map((o: any) => o.id);
+          await sql`
+            UPDATE offers
+            SET verified_at = NOW(), creator_user_id = ${user.id}
+            WHERE id = ANY(${offerIds})
+          `;
+        }
       }
 
       return NextResponse.json({
-        offers: offers.map(offer => ({
-          id: offer.id,
-          creator_handle: offer.creator_handle,
-          creator_platform: offer.creator_platform,
-          brand_name: offer.brand_name,
-          brand_avatar: offer.brand_avatar,
-          budget_cents: offer.budget_cents,
-          fee_cents: offer.fee_cents || 0,
-          brief: offer.brief,
-          deliverables: offer.deliverables,
-          timeline_days: offer.timeline_days,
-          status: offer.status,
-          counter_budget_cents: offer.counter_budget_cents,
-          counter_message: offer.counter_message,
-          delivery_notes: offer.delivery_notes,
-          delivered_at: offer.delivered_at,
-          completed_at: offer.completed_at,
-          expires_at: offer.expires_at,
-          verified_at: offer.verified_at,
-          created_at: offer.created_at,
-        }))
+        is_verified: isVerified,
+        offers: offers.map(offer => {
+          const base: any = {
+            id: offer.id,
+            creator_handle: offer.creator_handle,
+            creator_platform: offer.creator_platform,
+            status: offer.status,
+            verified_at: offer.verified_at,
+            created_at: offer.created_at,
+            expires_at: offer.expires_at,
+          };
+
+          // If verified, show full details; if not, show limited info
+          if (isVerified) {
+            return {
+              ...base,
+              brand_name: offer.brand_name,
+              brand_avatar: offer.brand_avatar,
+              budget_cents: offer.budget_cents,
+              fee_cents: offer.fee_cents || 0,
+              brief: offer.brief,
+              deliverables: offer.deliverables,
+              timeline_days: offer.timeline_days,
+              counter_budget_cents: offer.counter_budget_cents,
+              counter_message: offer.counter_message,
+              delivery_notes: offer.delivery_notes,
+              delivered_at: offer.delivered_at,
+              completed_at: offer.completed_at,
+            };
+          }
+
+          // Not verified - mask sensitive details
+          return {
+            ...base,
+            brand_name: null,
+            brand_avatar: null,
+            budget_cents: null,
+            fee_cents: null,
+            brief: null,
+            deliverables: null,
+            timeline_days: offer.timeline_days,
+            is_masked: true,
+          };
+        })
       });
     }
 

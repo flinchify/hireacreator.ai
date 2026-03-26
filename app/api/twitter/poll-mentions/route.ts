@@ -196,6 +196,11 @@ export async function GET(request: Request) {
       if (parsed.hasOffer && parsed.creatorHandle) {
         // Create offer in DB
         try {
+          // Ensure brand tracking columns exist
+          await sql`ALTER TABLE offers ADD COLUMN IF NOT EXISTS brand_platform TEXT`.catch(() => {});
+          await sql`ALTER TABLE offers ADD COLUMN IF NOT EXISTS brand_handle TEXT`.catch(() => {});
+          await sql`ALTER TABLE offers ALTER COLUMN brand_user_id DROP NOT NULL`.catch(() => {});
+
           // Find or note the brand (tweet author) by X handle
           let brandUserId: string | null = null;
           const brandRows = await sql`
@@ -219,17 +224,18 @@ export async function GET(request: Request) {
           const budgetCents = Math.round(parsed.budget! * 100);
           const feeCents = Math.round(budgetCents * 0.15);
 
-          if (brandUserId) {
-            await sql`
-              INSERT INTO offers (
-                brand_user_id, creator_handle, creator_platform, creator_user_id,
-                budget_cents, fee_cents, brief, deliverables, status
-              ) VALUES (
-                ${brandUserId}, ${parsed.creatorHandle.toLowerCase()}, 'x', ${creatorUserId},
-                ${budgetCents}, ${feeCents}, ${tweet.text}, ${parsed.deliverables || 'social media offer'}, 'pending'
-              )
-            `.catch((e: any) => console.error("[X Poll] Offer insert error:", e));
-          }
+          // Always create offer - even if brand not signed up yet
+          await sql`
+            INSERT INTO offers (
+              brand_user_id, brand_platform, brand_handle,
+              creator_handle, creator_platform, creator_user_id,
+              budget_cents, fee_cents, brief, deliverables, status
+            ) VALUES (
+              ${brandUserId}, 'x', ${username.toLowerCase()},
+              ${parsed.creatorHandle.toLowerCase()}, 'x', ${creatorUserId},
+              ${budgetCents}, ${feeCents}, ${tweet.text}, ${parsed.deliverables || 'social media offer'}, 'pending'
+            )
+          `.catch((e: any) => console.error("[X Poll] Offer insert error:", e));
 
           offerCreated = true;
         } catch (e) {
