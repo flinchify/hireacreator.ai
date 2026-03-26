@@ -882,7 +882,7 @@ function AdminFeaturedCreators() {
 }
 
 /* ═══ Sidebar nav items ═══ */
-type Section = "overview" | "offers" | "services" | "templates" | "testimonials" | "settings";
+type Section = "overview" | "offers" | "services" | "templates" | "testimonials" | "api" | "settings";
 
 const NAV_MAIN = [
   { id: "overview" as Section, label: "Overview", icon: icons.overview },
@@ -890,6 +890,7 @@ const NAV_MAIN = [
   { id: "services" as Section, label: "Services", icon: icons.services },
   { id: "templates" as Section, label: "Reply Templates", icon: icons.messages },
   { id: "testimonials" as Section, label: "Testimonials", icon: icons.sparkle },
+  { id: "api" as Section, label: "API", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" strokeLinecap="round" strokeLinejoin="round"/></svg> },
 ];
 
 const NAV_BOTTOM = [
@@ -2128,6 +2129,72 @@ export function DashboardContent() {
             {/* TESTIMONIALS */}
             {section === "testimonials" && (
               <TestimonialsManager />
+            )}
+
+            {/* API */}
+            {section === "api" && (
+              <div className="space-y-6">
+                <div className="bg-white rounded-2xl border border-neutral-200/60 p-6">
+                  <h2 className="text-lg font-bold text-neutral-900 mb-1">API Access</h2>
+                  <p className="text-sm text-neutral-500 mb-6">Build integrations and let AI agents hire creators programmatically.</p>
+
+                  <div className="grid sm:grid-cols-3 gap-4 mb-8">
+                    <div className="bg-neutral-50 rounded-xl p-4 text-center">
+                      <div className="text-2xl font-bold text-neutral-900">REST</div>
+                      <div className="text-xs text-neutral-500 mt-1">Full API</div>
+                    </div>
+                    <div className="bg-neutral-50 rounded-xl p-4 text-center">
+                      <div className="text-2xl font-bold text-neutral-900">MCP</div>
+                      <div className="text-xs text-neutral-500 mt-1">AI Agent Protocol</div>
+                    </div>
+                    <div className="bg-neutral-50 rounded-xl p-4 text-center">
+                      <div className="text-2xl font-bold text-neutral-900">Webhooks</div>
+                      <div className="text-xs text-neutral-500 mt-1">Real-time events</div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between bg-neutral-50 rounded-xl p-4">
+                      <div>
+                        <div className="text-sm font-semibold text-neutral-900">API Pro Plan</div>
+                        <div className="text-xs text-neutral-500 mt-0.5">$49/mo — 10,000 requests/day, full read + write, MCP server</div>
+                      </div>
+                      <button
+                        onClick={async () => {
+                          const res = await fetch("/api/checkout/subscription", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ plan: "api_pro" }),
+                          });
+                          const data = await res.json();
+                          if (data.url) window.location.href = data.url;
+                        }}
+                        className="px-4 py-2 text-xs font-semibold bg-neutral-900 text-white rounded-lg hover:bg-neutral-800 transition-colors shrink-0"
+                      >
+                        {user.subscriptionTier === "api_pro" ? "Manage Plan" : "Subscribe"}
+                      </button>
+                    </div>
+
+                    <Link href="/api" className="flex items-center justify-between bg-neutral-50 rounded-xl p-4 hover:bg-neutral-100 transition-colors group">
+                      <div>
+                        <div className="text-sm font-semibold text-neutral-900">Documentation</div>
+                        <div className="text-xs text-neutral-500 mt-0.5">REST endpoints, MCP setup, authentication, rate limits</div>
+                      </div>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-neutral-300 shrink-0 group-hover:text-neutral-500 transition-colors"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                    </Link>
+                  </div>
+                </div>
+
+                {/* API Keys Section */}
+                <div className="bg-white rounded-2xl border border-neutral-200/60 p-6">
+                  <h3 className="text-base font-bold text-neutral-900 mb-1">API Keys</h3>
+                  <p className="text-xs text-neutral-500 mb-4">Generate and manage your API keys. Keys are scoped to your account.</p>
+                  <Link href="/dashboard/settings" className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold bg-neutral-100 text-neutral-700 rounded-lg hover:bg-neutral-200 transition-colors">
+                    Manage Keys in Settings
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18l6-6-6-6" strokeLinecap="round" /></svg>
+                  </Link>
+                </div>
+              </div>
             )}
 
             {/* SETTINGS */}

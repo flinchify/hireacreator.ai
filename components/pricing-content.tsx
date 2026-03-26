@@ -23,7 +23,7 @@ function XIcon() {
   );
 }
 
-async function handleCheckout(plan: string) {
+async function handleCheckout(plan: string, openSignup?: (role?: string) => void) {
   const res = await fetch("/api/checkout/subscription", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -32,8 +32,9 @@ async function handleCheckout(plan: string) {
   const data = await res.json();
   if (data.url) {
     window.location.href = data.url;
-  } else if (data.error === "unauthorized") {
-    // Will be caught by the openSignup fallback
+  } else if (data.error === "unauthorized" && openSignup) {
+    const role = plan.startsWith("brand") ? "brand" : plan.startsWith("api") ? "agent" : "creator";
+    openSignup(role);
   }
 }
 
@@ -303,7 +304,7 @@ export function PricingContent() {
                     </p>
                   )}
                   <button
-                    onClick={() => handleCheckout("creator_pro")}
+                    onClick={() => handleCheckout("creator_pro", openSignup)}
                     className="w-full py-3 text-sm font-medium rounded-lg bg-neutral-900 text-white hover:bg-neutral-800 active:scale-[0.98] transition-all"
                   >
                     Upgrade to Pro
@@ -355,7 +356,7 @@ export function PricingContent() {
                     </p>
                   )}
                   <button
-                    onClick={() => handleCheckout("creator_biz")}
+                    onClick={() => handleCheckout("creator_biz", openSignup)}
                     className="w-full py-3 text-sm font-medium rounded-lg border border-neutral-300 text-neutral-700 hover:bg-neutral-50 active:scale-[0.98] transition-all"
                   >
                     Upgrade to Business
@@ -491,7 +492,7 @@ export function PricingContent() {
                     </p>
                   )}
                   <button
-                    onClick={() => handleCheckout("brand_pro")}
+                    onClick={() => handleCheckout("brand_pro", openSignup)}
                     className="w-full py-3 text-sm font-medium rounded-lg bg-neutral-900 text-white hover:bg-neutral-800 active:scale-[0.98] transition-all"
                   >
                     Upgrade to Pro
@@ -540,7 +541,7 @@ export function PricingContent() {
                     </p>
                   )}
                   <button
-                    onClick={() => handleCheckout("brand_enterprise")}
+                    onClick={() => handleCheckout("brand_enterprise", openSignup)}
                     className="w-full py-3 text-sm font-medium rounded-lg border border-neutral-300 text-neutral-700 hover:bg-neutral-50 active:scale-[0.98] transition-all"
                   >
                     Upgrade to Enterprise
@@ -635,7 +636,7 @@ export function PricingContent() {
                   </p>
                 )}
                 <button
-                  onClick={() => handleCheckout("api_pro")}
+                  onClick={() => handleCheckout("api_pro", openSignup)}
                   className="w-full py-3 text-sm font-medium rounded-lg bg-neutral-900 text-white hover:bg-neutral-800 active:scale-[0.98] transition-all"
                 >
                   Get API Access
@@ -659,7 +660,7 @@ export function PricingContent() {
                   </p>
                   <div className="font-display text-2xl font-bold text-neutral-900 mb-4">$10<span className="text-base font-normal text-neutral-500">/week</span></div>
                   <button
-                    onClick={() => handleCheckout("boosted")}
+                    onClick={() => handleCheckout("boosted", openSignup)}
                     className="px-6 py-2.5 text-sm font-medium rounded-lg bg-neutral-900 text-white hover:bg-neutral-800 active:scale-[0.98] transition-all"
                   >
                     Boost Your Profile

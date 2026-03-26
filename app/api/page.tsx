@@ -28,6 +28,20 @@ function CodeBlock({ children }: { children: React.ReactNode }) {
   );
 }
 
+async function handleApiCheckout(openSignup: (role?: string) => void) {
+  const res = await fetch("/api/checkout/subscription", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ plan: "api_pro" }),
+  });
+  const data = await res.json();
+  if (data.url) {
+    window.location.href = data.url;
+  } else if (data.error === "unauthorized") {
+    openSignup("agent");
+  }
+}
+
 export default function ApiPage() {
   const { openSignup } = useAuth();
 
@@ -48,7 +62,7 @@ export default function ApiPage() {
           </p>
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
             <button
-              onClick={() => openSignup("agent")}
+              onClick={() => handleApiCheckout(openSignup)}
               className="px-8 py-3.5 text-base font-medium text-neutral-900 bg-white rounded-full hover:bg-neutral-100 transition-colors shadow-lg shadow-white/10 w-full sm:w-auto"
             >
               Get API Access
@@ -428,7 +442,7 @@ export default function ApiPage() {
             Free tier available, no credit card required.
           </p>
           <button
-            onClick={() => openSignup("agent")}
+            onClick={() => handleApiCheckout(openSignup)}
             className="px-8 py-3.5 text-base font-medium text-neutral-900 bg-white rounded-full hover:bg-neutral-100 transition-colors shadow-lg shadow-white/10"
           >
             Get API Access
