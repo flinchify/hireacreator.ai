@@ -44,6 +44,7 @@ type BrandData = {
   style: string;
   ogImage: string | null;
   favicon: string | null;
+  logo: string | null;
   metaDescription: string;
   siteTitle: string;
 };
@@ -52,7 +53,7 @@ type BrandData = {
 async function extractBrandFromUrl(url: string): Promise<BrandData> {
   const result: BrandData = {
     colors: [], fonts: [], isDark: false, style: "modern",
-    ogImage: null, favicon: null, metaDescription: "", siteTitle: "",
+    ogImage: null, favicon: null, logo: null, metaDescription: "", siteTitle: "",
   };
   try {
     const res = await fetch(url, {
@@ -78,6 +79,29 @@ async function extractBrandFromUrl(url: string): Promise<BrandData> {
     const iconLink = html.match(/<link[^>]*rel=["'](?:icon|shortcut icon|apple-touch-icon)["'][^>]*href=["']([^"']+)["']/i)
       || html.match(/<link[^>]*href=["']([^"']+)["'][^>]*rel=["'](?:icon|shortcut icon|apple-touch-icon)["']/i);
     if (iconLink) result.favicon = resolveUrl(iconLink[1], url);
+
+    // ── Logo extraction ──
+    // 1. <img> tags with 'logo' in src, alt, class, or id
+    const logoImgMatch = html.match(/<img[^>]*(?:src|alt|class|id)=["'][^"']*logo[^"']*["'][^>]*>/gi);
+    if (logoImgMatch) {
+      for (const tag of logoImgMatch) {
+        const srcMatch = tag.match(/src=["']([^"']+)["']/i);
+        if (srcMatch) { result.logo = resolveUrl(srcMatch[1], url); break; }
+      }
+    }
+    // 2. <a> wrapping logo images (header > a > img pattern)
+    if (!result.logo) {
+      const headerLogoMatch = html.match(/<(?:header|nav)[^>]*>[\s\S]*?<a[^>]*>[\s\S]*?<img[^>]*src=["']([^"']+)["'][^>]*>[\s\S]*?<\/a>/i);
+      if (headerLogoMatch) result.logo = resolveUrl(headerLogoMatch[1], url);
+    }
+    // 3. apple-touch-icon as fallback logo
+    if (!result.logo) {
+      const appleTouchIcon = html.match(/<link[^>]*rel=["']apple-touch-icon["'][^>]*href=["']([^"']+)["']/i)
+        || html.match(/<link[^>]*href=["']([^"']+)["'][^>]*rel=["']apple-touch-icon["']/i);
+      if (appleTouchIcon) result.logo = resolveUrl(appleTouchIcon[1], url);
+    }
+    // 4. Fallback to favicon
+    if (!result.logo && result.favicon) result.logo = result.favicon;
 
     // ── Meta description + title for business type detection ──
     const metaDesc = html.match(/<meta[^>]*name=["']description["'][^>]*content=["']([^"']+)["']/i)
@@ -487,11 +511,14 @@ export async function POST(req: NextRequest) {
     if (brandData.length === 0) {
       brandData.push({
         colors: ["#3b82f6"], fonts: [], isDark: false, style: "modern",
-        ogImage: null, favicon: null, metaDescription: "", siteTitle: "",
+        ogImage: null, favicon: null, logo: null, metaDescription: "", siteTitle: "",
       });
     }
 
     const design = generateDesignFromBrand(brandData, brandDescription, niche);
+
+    // Find best logo URL from all extractions
+    const suggestedLogo = brandData.map(b => b.logo).filter(Boolean)[0] || null;
 
     // Save the design to user's profile (including accent)
     await sql`
@@ -509,7 +536,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      design,
+      design: { ...design, suggestedLogo },
       extractedFrom: urls.length,
       niche,
     });

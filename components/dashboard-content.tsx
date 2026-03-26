@@ -2079,7 +2079,7 @@ export function DashboardContent() {
                       </a>
                     )}
                     {user.slug && (
-                      <a href={`/dashboard/link-in-bio`} className="flex items-center gap-3 bg-white rounded-2xl border border-neutral-200/60 p-4 hover:border-neutral-300 hover:shadow-sm transition-all group">
+                      <a href={`/u/${user.slug}/edit`} className="flex items-center gap-3 bg-white rounded-2xl border border-neutral-200/60 p-4 hover:border-neutral-300 hover:shadow-sm transition-all group">
                         <div className="w-10 h-10 rounded-xl bg-neutral-100 flex items-center justify-center shrink-0 text-neutral-500 group-hover:bg-neutral-200 transition-colors">{icons.sparkle}</div>
                         <div className="flex-1 min-w-0"><div className="text-sm font-semibold text-neutral-900">Edit Bio Link</div><div className="text-xs text-neutral-400 mt-0.5">Templates, links, design</div></div>
                       </a>
@@ -2137,7 +2137,7 @@ export function DashboardContent() {
                   { href: "/dashboard/settings", label: "Account & Security", desc: "Email, password, 2FA, sessions", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg> },
                   { href: "/dashboard/settings?tab=privacy", label: "Privacy", desc: "Profile visibility, messaging, content warnings", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg> },
                   { href: "/dashboard/settings?tab=plan", label: "Plan & Billing", desc: "Subscription, upgrade, payment history", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="1" y="4" width="22" height="16" rx="2" /><path d="M1 10h22" /></svg> },
-                  { href: "/dashboard/link-in-bio", label: "Link in Bio Editor", desc: "Templates, links, design, animations", icon: icons.pencil },
+                  { href: `/u/${user.slug}/edit`, label: "Link in Bio Editor", desc: "Templates, links, design, animations", icon: icons.pencil },
                 ].map(item => (
                   <Link key={item.href} href={item.href} className="flex items-center gap-4 bg-white rounded-2xl border border-neutral-200/60 p-4 hover:border-neutral-300 hover:shadow-sm transition-all group">
                     <div className="w-10 h-10 rounded-xl bg-neutral-100 flex items-center justify-center shrink-0 text-neutral-500 group-hover:bg-neutral-200 transition-colors">{item.icon}</div>
