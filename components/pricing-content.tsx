@@ -23,7 +23,7 @@ function XIcon() {
   );
 }
 
-async function handleCheckout(plan: string, openSignup?: (role?: string) => void) {
+async function handleCheckout(plan: string, openSignup?: (role?: any) => void) {
   const res = await fetch("/api/checkout/subscription", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
