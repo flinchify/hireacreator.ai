@@ -7,50 +7,45 @@ import { calculateAndSaveScore } from "@/lib/creator-score";
 let migrated = false;
 async function ensureColumns() {
   if (migrated) return;
-  try {
-    const sql = getDb();
-    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS hide_branding BOOLEAN DEFAULT false`;
-    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS logo_url TEXT`;
-    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS header_image_url TEXT`;
-    // Typography
-    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_font_size TEXT DEFAULT 'medium'`;
-    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_font_weight INTEGER DEFAULT 400`;
-    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_letter_spacing TEXT DEFAULT 'normal'`;
-    // Spacing & Layout
-    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_page_padding INTEGER DEFAULT 16`;
-    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_section_gap INTEGER DEFAULT 16`;
-    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_container_width TEXT DEFAULT 'standard'`;
-    // Avatar
-    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_avatar_shape TEXT DEFAULT 'circle'`;
-    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_avatar_border_width INTEGER DEFAULT 0`;
-    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_avatar_border_color TEXT DEFAULT ''`;
-    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_avatar_shadow TEXT DEFAULT 'none'`;
-    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_avatar_mode TEXT DEFAULT 'photo'`;
-    // Button styling
-    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_button_fill TEXT DEFAULT ''`;
-    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_button_text_color TEXT DEFAULT ''`;
-    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_button_border BOOLEAN DEFAULT FALSE`;
-    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_button_border_width INTEGER DEFAULT 1`;
-    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_button_border_color TEXT DEFAULT ''`;
-    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_button_shadow TEXT DEFAULT 'none'`;
-    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_button_width TEXT DEFAULT 'standard'`;
-    // Gradient
-    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_gradient_direction TEXT DEFAULT '135deg'`;
-    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_gradient_color1 TEXT DEFAULT ''`;
-    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_gradient_color2 TEXT DEFAULT ''`;
-    // Background overlay
-    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_bg_overlay TEXT DEFAULT 'dark'`;
-    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_bg_overlay_opacity INTEGER DEFAULT 40`;
-    // Glass / Blur
-    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_glass_enabled BOOLEAN DEFAULT FALSE`;
-    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_glass_intensity INTEGER DEFAULT 8`;
-    // Animation
-    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_hover_effect TEXT DEFAULT 'none'`;
-    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_anim_speed TEXT DEFAULT 'normal'`;
-    // Blocks
-    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_blocks TEXT DEFAULT ''`;
-    migrated = true;
-  } catch {}
+  const sql = getDb();
+  const cols = [
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS hide_branding BOOLEAN DEFAULT false`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS logo_url TEXT`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS header_image_url TEXT`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_font_size TEXT DEFAULT 'medium'`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_font_weight INTEGER DEFAULT 400`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_letter_spacing TEXT DEFAULT 'normal'`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_page_padding INTEGER DEFAULT 16`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_section_gap INTEGER DEFAULT 16`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_container_width TEXT DEFAULT 'standard'`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_avatar_shape TEXT DEFAULT 'circle'`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_avatar_border_width INTEGER DEFAULT 0`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_avatar_border_color TEXT DEFAULT ''`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_avatar_shadow TEXT DEFAULT 'none'`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_avatar_mode TEXT DEFAULT 'photo'`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_button_fill TEXT DEFAULT ''`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_button_text_color TEXT DEFAULT ''`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_button_border BOOLEAN DEFAULT FALSE`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_button_border_width INTEGER DEFAULT 1`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_button_border_color TEXT DEFAULT ''`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_button_shadow TEXT DEFAULT 'none'`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_button_width TEXT DEFAULT 'standard'`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_gradient_direction TEXT DEFAULT '135deg'`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_gradient_color1 TEXT DEFAULT ''`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_gradient_color2 TEXT DEFAULT ''`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_bg_overlay TEXT DEFAULT 'dark'`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_bg_overlay_opacity INTEGER DEFAULT 40`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_glass_enabled BOOLEAN DEFAULT FALSE`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_glass_intensity INTEGER DEFAULT 8`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_hover_effect TEXT DEFAULT 'none'`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_anim_speed TEXT DEFAULT 'normal'`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_blocks TEXT DEFAULT ''`,
+  ];
+  // Run each ALTER individually so one failure doesn't block the rest
+  for (const ddl of cols) {
+    try { await sql.unsafe(ddl); } catch (e) { console.error("[ensureColumns] Failed:", ddl.slice(0, 80), e); }
+  }
+  migrated = true;
 }
 
 async function getUser() {
@@ -109,6 +104,7 @@ export async function PATCH(request: Request) {
       body.slug = slugStr;
     }
 
+    // Core fields (always exist) — must succeed
     await sql`
       UPDATE users SET
         full_name = COALESCE(${body.full_name ?? null}, full_name),
@@ -147,37 +143,60 @@ export async function PATCH(request: Request) {
         link_bio_content_position = COALESCE(${body.link_bio_content_position ?? null}, link_bio_content_position),
         link_bio_content_align = COALESCE(${body.link_bio_content_align ?? null}, link_bio_content_align),
         hide_branding = COALESCE(${body.hide_branding ?? null}, hide_branding),
-        link_bio_font_size = COALESCE(${body.link_bio_font_size ?? null}, link_bio_font_size),
-        link_bio_font_weight = ${body.link_bio_font_weight !== undefined ? body.link_bio_font_weight : user.link_bio_font_weight},
-        link_bio_letter_spacing = COALESCE(${body.link_bio_letter_spacing ?? null}, link_bio_letter_spacing),
-        link_bio_page_padding = ${body.link_bio_page_padding !== undefined ? body.link_bio_page_padding : user.link_bio_page_padding},
-        link_bio_section_gap = ${body.link_bio_section_gap !== undefined ? body.link_bio_section_gap : user.link_bio_section_gap},
-        link_bio_container_width = COALESCE(${body.link_bio_container_width ?? null}, link_bio_container_width),
-        link_bio_avatar_shape = COALESCE(${body.link_bio_avatar_shape ?? null}, link_bio_avatar_shape),
-        link_bio_avatar_border_width = ${body.link_bio_avatar_border_width !== undefined ? body.link_bio_avatar_border_width : user.link_bio_avatar_border_width},
-        link_bio_avatar_border_color = ${body.link_bio_avatar_border_color !== undefined ? body.link_bio_avatar_border_color : user.link_bio_avatar_border_color},
-        link_bio_avatar_shadow = COALESCE(${body.link_bio_avatar_shadow ?? null}, link_bio_avatar_shadow),
-        link_bio_avatar_mode = COALESCE(${body.link_bio_avatar_mode ?? null}, link_bio_avatar_mode),
-        link_bio_button_fill = ${body.link_bio_button_fill !== undefined ? body.link_bio_button_fill : user.link_bio_button_fill},
-        link_bio_button_text_color = ${body.link_bio_button_text_color !== undefined ? body.link_bio_button_text_color : user.link_bio_button_text_color},
-        link_bio_button_border = ${body.link_bio_button_border !== undefined ? body.link_bio_button_border : user.link_bio_button_border},
-        link_bio_button_border_width = ${body.link_bio_button_border_width !== undefined ? body.link_bio_button_border_width : user.link_bio_button_border_width},
-        link_bio_button_border_color = ${body.link_bio_button_border_color !== undefined ? body.link_bio_button_border_color : user.link_bio_button_border_color},
-        link_bio_button_shadow = COALESCE(${body.link_bio_button_shadow ?? null}, link_bio_button_shadow),
-        link_bio_button_width = COALESCE(${body.link_bio_button_width ?? null}, link_bio_button_width),
-        link_bio_gradient_direction = COALESCE(${body.link_bio_gradient_direction ?? null}, link_bio_gradient_direction),
-        link_bio_gradient_color1 = ${body.link_bio_gradient_color1 !== undefined ? body.link_bio_gradient_color1 : user.link_bio_gradient_color1},
-        link_bio_gradient_color2 = ${body.link_bio_gradient_color2 !== undefined ? body.link_bio_gradient_color2 : user.link_bio_gradient_color2},
-        link_bio_bg_overlay = COALESCE(${body.link_bio_bg_overlay ?? null}, link_bio_bg_overlay),
-        link_bio_bg_overlay_opacity = ${body.link_bio_bg_overlay_opacity !== undefined ? body.link_bio_bg_overlay_opacity : user.link_bio_bg_overlay_opacity},
-        link_bio_glass_enabled = ${body.link_bio_glass_enabled !== undefined ? body.link_bio_glass_enabled : user.link_bio_glass_enabled},
-        link_bio_glass_intensity = ${body.link_bio_glass_intensity !== undefined ? body.link_bio_glass_intensity : user.link_bio_glass_intensity},
-        link_bio_hover_effect = COALESCE(${body.link_bio_hover_effect ?? null}, link_bio_hover_effect),
-        link_bio_anim_speed = COALESCE(${body.link_bio_anim_speed ?? null}, link_bio_anim_speed),
-        link_bio_blocks = ${body.link_bio_blocks !== undefined ? body.link_bio_blocks : user.link_bio_blocks},
         updated_at = NOW()
       WHERE id = ${user.id}
     `;
+
+    // Extended editor fields — save individually so missing columns don't break core saves
+    const extFields: [string, any][] = [
+      ["link_bio_font_size", body.link_bio_font_size],
+      ["link_bio_font_weight", body.link_bio_font_weight],
+      ["link_bio_letter_spacing", body.link_bio_letter_spacing],
+      ["link_bio_page_padding", body.link_bio_page_padding],
+      ["link_bio_section_gap", body.link_bio_section_gap],
+      ["link_bio_container_width", body.link_bio_container_width],
+      ["link_bio_avatar_shape", body.link_bio_avatar_shape],
+      ["link_bio_avatar_border_width", body.link_bio_avatar_border_width],
+      ["link_bio_avatar_border_color", body.link_bio_avatar_border_color],
+      ["link_bio_avatar_shadow", body.link_bio_avatar_shadow],
+      ["link_bio_avatar_mode", body.link_bio_avatar_mode],
+      ["link_bio_button_fill", body.link_bio_button_fill],
+      ["link_bio_button_text_color", body.link_bio_button_text_color],
+      ["link_bio_button_border", body.link_bio_button_border],
+      ["link_bio_button_border_width", body.link_bio_button_border_width],
+      ["link_bio_button_border_color", body.link_bio_button_border_color],
+      ["link_bio_button_shadow", body.link_bio_button_shadow],
+      ["link_bio_button_width", body.link_bio_button_width],
+      ["link_bio_gradient_direction", body.link_bio_gradient_direction],
+      ["link_bio_gradient_color1", body.link_bio_gradient_color1],
+      ["link_bio_gradient_color2", body.link_bio_gradient_color2],
+      ["link_bio_bg_overlay", body.link_bio_bg_overlay],
+      ["link_bio_bg_overlay_opacity", body.link_bio_bg_overlay_opacity],
+      ["link_bio_glass_enabled", body.link_bio_glass_enabled],
+      ["link_bio_glass_intensity", body.link_bio_glass_intensity],
+      ["link_bio_hover_effect", body.link_bio_hover_effect],
+      ["link_bio_anim_speed", body.link_bio_anim_speed],
+      ["link_bio_blocks", body.link_bio_blocks],
+    ];
+    // Build a single UPDATE for all provided extended fields
+    const setters: string[] = [];
+    const values: any[] = [];
+    for (const [col, val] of extFields) {
+      if (val !== undefined) {
+        setters.push(`${col} = $${values.length + 1}`);
+        values.push(val);
+      }
+    }
+    if (setters.length > 0) {
+      values.push(user.id);
+      const query = `UPDATE users SET ${setters.join(", ")} WHERE id = $${values.length}`;
+      try {
+        await sql.unsafe(query, values);
+      } catch (e) {
+        console.error("[PATCH] Extended fields save failed:", e);
+        // Don't fail the request — core fields already saved
+      }
+    }
 
     // Fire-and-forget score recalculation
     calculateAndSaveScore(user.id).catch((err) =>
