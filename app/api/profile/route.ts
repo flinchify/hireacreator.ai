@@ -43,7 +43,15 @@ async function ensureColumns() {
   ];
   // Run each ALTER individually so one failure doesn't block the rest
   for (const ddl of cols) {
-    try { await sql.unsafe(ddl); } catch (e) { console.error("[ensureColumns] Failed:", ddl.slice(0, 80), e); }
+    try {
+      // Neon serverless uses tagged templates; use template literal workaround for raw DDL
+      await sql(ddl as any, [] as any);
+    } catch (e: any) {
+      // Ignore "column already exists" errors, log others
+      if (!e?.message?.includes("already exists")) {
+        console.error("[ensureColumns] Failed:", ddl.slice(0, 80), e?.message);
+      }
+    }
   }
   migrated = true;
 }
@@ -188,13 +196,18 @@ export async function PATCH(request: Request) {
       }
     }
     if (setters.length > 0) {
-      values.push(user.id);
-      const query = `UPDATE users SET ${setters.join(", ")} WHERE id = $${values.length}`;
-      try {
-        await sql.unsafe(query, values);
-      } catch (e) {
-        console.error("[PATCH] Extended fields save failed:", e);
-        // Don't fail the request — core fields already saved
+      // Save extended fields individually to avoid missing column errors
+      for (const [col, val] of extFields) {
+        if (val !== undefined) {
+          try {
+            await sql(`UPDATE users SET ${col} = $1 WHERE id = $2` as any, [val, user.id] as any);
+          } catch (e: any) {
+            // Column might not exist yet — don't fail the whole request
+            if (!e?.message?.includes("does not exist")) {
+              console.error(`[PATCH] Failed to save ${col}:`, e?.message);
+            }
+          }
+        }
       }
     }
 

@@ -15,14 +15,6 @@ interface EditorData {
 
 type SaveStatus = "idle" | "saving" | "saved" | "error";
 
-interface Block {
-  id: string;
-  type: string;
-  config: Record<string, any>;
-  visible: boolean;
-  order: number;
-}
-
 /* ══════════════════════════════════════════════════════
    AUTOSAVE HOOK
    ══════════════════════════════════════════════════════ */
@@ -188,7 +180,7 @@ function EditorToolbar({ status, errorMsg, slug, onSave }: {
 const LABEL = "text-[10px] font-bold text-neutral-400 uppercase tracking-wider";
 const SECTION_LABEL = "text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-2";
 
-function ColorPickerRow({ label, value, onChange, swatches }: { label: string; value: string; onChange: (v: string) => void; swatches?: string[] }) {
+function ColorPicker({ label, value, onChange, swatches }: { label: string; value: string; onChange: (v: string) => void; swatches?: string[] }) {
   return (
     <div>
       <h4 className={SECTION_LABEL}>{label}</h4>
@@ -203,21 +195,9 @@ function ColorPickerRow({ label, value, onChange, swatches }: { label: string; v
   );
 }
 
-function SliderRow({ label, value, onChange, min, max, unit = "px" }: { label: string; value: number; onChange: (v: number) => void; min: number; max: number; unit?: string }) {
+function OptionGrid({ value, options, onChange, cols = 4 }: { value: string; options: { id: string; name: string }[]; onChange: (v: string) => void; cols?: number }) {
   return (
-    <div>
-      <div className="flex items-center justify-between mb-1">
-        <h4 className={LABEL}>{label}</h4>
-        <span className="text-[10px] text-neutral-400">{value}{unit}</span>
-      </div>
-      <input type="range" min={min} max={max} value={value} onChange={e => onChange(Number(e.target.value))} className="w-full h-1.5 bg-neutral-200 rounded-full appearance-none cursor-pointer accent-neutral-900" />
-    </div>
-  );
-}
-
-function OptionButtons({ value, options, onChange }: { value: string; options: { id: string; name: string }[]; onChange: (v: string) => void }) {
-  return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-1.5">
+    <div className={`grid gap-1.5`} style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
       {options.map(o => (
         <button key={o.id} onClick={() => onChange(o.id)} className={`py-2 text-[10px] font-medium rounded-lg transition-all ${value === o.id ? "bg-neutral-900 text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"}`}>{o.name}</button>
       ))}
@@ -225,38 +205,43 @@ function OptionButtons({ value, options, onChange }: { value: string; options: {
   );
 }
 
+function UploadBox({ label, accept, uploadType, onUploaded }: { label: string; accept: string; uploadType: string; onUploaded: (url: string) => void }) {
+  const [uploading, setUploading] = useState(false);
+  return (
+    <label className={`flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-dashed border-neutral-200 cursor-pointer text-xs font-medium text-neutral-500 hover:border-neutral-400 transition-colors ${uploading ? "opacity-50 pointer-events-none" : ""}`}>
+      <input type="file" accept={accept} className="hidden" onChange={async e => {
+        const file = e.target.files?.[0]; if (!file) return;
+        setUploading(true);
+        try {
+          const fd = new FormData(); fd.append("file", file); fd.append("type", uploadType);
+          const res = await fetch("/api/upload", { method: "POST", body: fd });
+          if (res.ok) { const d = await res.json(); if (d.url) onUploaded(d.url); }
+        } finally { setUploading(false); }
+      }} />
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" strokeLinecap="round" strokeLinejoin="round" /></svg>
+      {uploading ? "Uploading..." : label}
+    </label>
+  );
+}
+
 /* ══════════════════════════════════════════════════════
    CONSTANTS
    ══════════════════════════════════════════════════════ */
-const FREE_ANIMS = ["none", "fade-up", "scale-in"];
-const PREMIUM_ANIMS = [
-  { id: "spotlight", name: "Spotlight" },
-  { id: "glitch", name: "Glitch" },
-  { id: "particle-burst", name: "Particle Burst" },
-  { id: "typewriter", name: "Typewriter" },
-  { id: "wave", name: "Wave" },
-  { id: "neon", name: "Neon" },
-  { id: "cinema", name: "Cinema" },
-  { id: "morph", name: "Morph" },
-  { id: "trading-candles", name: "Trading Candles" },
-];
-
 const TEMPLATES = [
-  { id: "minimal", name: "Minimal" }, { id: "glass", name: "Glass" },
-  { id: "bold", name: "Bold" }, { id: "showcase", name: "Showcase" },
-  { id: "neon", name: "Neon" }, { id: "collage", name: "Collage" },
-  { id: "bento", name: "Bento" }, { id: "split", name: "Split" },
-  { id: "aurora", name: "Aurora" }, { id: "brutalist", name: "Brutalist" },
-  { id: "sunset", name: "Sunset" }, { id: "terminal", name: "Terminal" },
-  { id: "pastel", name: "Pastel" }, { id: "magazine", name: "Magazine" },
-  { id: "retro", name: "Retro" }, { id: "midnight", name: "Midnight" },
-  { id: "clay", name: "Clay" }, { id: "gradient-mesh", name: "Gradient Mesh" },
-  { id: "trader", name: "Trader" }, { id: "educator", name: "Educator" },
-  { id: "developer", name: "Developer" }, { id: "executive", name: "Executive" },
+  { id: "minimal", name: "Minimal", color: "#f5f5f5" }, { id: "glass", name: "Glass", color: "#e0e7ff" },
+  { id: "bold", name: "Bold", color: "#171717" }, { id: "showcase", name: "Showcase", color: "#fef3c7" },
+  { id: "neon", name: "Neon", color: "#0f172a" }, { id: "collage", name: "Collage", color: "#fce7f3" },
+  { id: "bento", name: "Bento", color: "#ecfccb" }, { id: "split", name: "Split", color: "#e0f2fe" },
+  { id: "aurora", name: "Aurora", color: "#1e1b4b" }, { id: "brutalist", name: "Brutalist", color: "#fef08a" },
+  { id: "sunset", name: "Sunset", color: "#fed7aa" }, { id: "terminal", name: "Terminal", color: "#022c22" },
+  { id: "pastel", name: "Pastel", color: "#fae8ff" }, { id: "magazine", name: "Magazine", color: "#f1f5f9" },
+  { id: "retro", name: "Retro", color: "#fef9c3" }, { id: "midnight", name: "Midnight", color: "#0f172a" },
+  { id: "clay", name: "Clay", color: "#fde68a" }, { id: "gradient-mesh", name: "Gradient Mesh", color: "#c4b5fd" },
+  { id: "trader", name: "Trader", color: "#064e3b" }, { id: "educator", name: "Educator", color: "#dbeafe" },
+  { id: "developer", name: "Developer", color: "#1e293b" }, { id: "executive", name: "Executive", color: "#f8fafc" },
 ];
 
 const GRADIENT_PRESETS = [
-  { label: "None", value: "" },
   { label: "Sunset", value: "linear-gradient(135deg, #fa709a 0%, #fee140 100%)" },
   { label: "Ocean", value: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" },
   { label: "Forest", value: "linear-gradient(135deg, #11998e 0%, #38ef7d 100%)" },
@@ -268,6 +253,7 @@ const GRADIENT_PRESETS = [
   { label: "Mint", value: "linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%)" },
   { label: "Dark", value: "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)" },
   { label: "Coral", value: "linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)" },
+  { label: "Aurora", value: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)" },
 ];
 
 const FONTS = [
@@ -277,649 +263,302 @@ const FONTS = [
   { id: "manrope", name: "Manrope" }, { id: "dm-sans", name: "DM Sans" },
 ];
 
-const ACCENT_SWATCHES = ["#6366f1", "#22d3ee", "#ef4444", "#f97316", "#22c55e", "#a855f7", "#ec4899", "#eab308", "#14b8a6", "#171717"];
-const TEXT_COLOR_PRESETS = [
-  { id: "#ffffff", name: "White" }, { id: "#e5e5e5", name: "Light" },
-  { id: "#404040", name: "Dark" }, { id: "#000000", name: "Black" },
-  { id: "#6366f1", name: "Indigo" }, { id: "#ec4899", name: "Pink" }, { id: "#22d3ee", name: "Cyan" },
-];
-
+const ACCENT_SWATCHES = ["#6366f1", "#22d3ee", "#ef4444", "#f97316", "#22c55e", "#a855f7", "#ec4899", "#eab308"];
 const BG_SWATCHES = ["#ffffff", "#f5f5f5", "#171717", "#0a0a0a", "#1e1b4b", "#0c4a6e", "#14532d", "#7c2d12"];
 
-const GRADIENT_DIRECTIONS = [
-  { deg: "0deg", label: "Up" }, { deg: "45deg", label: "Up-Right" },
-  { deg: "90deg", label: "Right" }, { deg: "135deg", label: "Down-Right" },
-  { deg: "180deg", label: "Down" }, { deg: "225deg", label: "Down-Left" },
-  { deg: "270deg", label: "Left" }, { deg: "315deg", label: "Up-Left" },
-];
+/* ══════════════════════════════════════════════════════
+   TAB DEFINITIONS
+   ══════════════════════════════════════════════════════ */
+type TabId = "header" | "theme" | "wallpaper" | "text" | "buttons" | "colors" | "footer" | "links" | "profile";
 
-const BUTTON_SHAPES = [
-  { id: "rounded", name: "Rounded" }, { id: "pill", name: "Pill" },
-  { id: "square", name: "Square" }, { id: "soft", name: "Soft" },
-];
-
-const SHADOW_OPTIONS = [
-  { id: "none", name: "None" }, { id: "subtle", name: "Subtle" },
-  { id: "medium", name: "Medium" }, { id: "lifted", name: "Lifted" },
-];
-
-const BUTTON_WIDTH_OPTIONS = [
-  { id: "compact", name: "Compact" }, { id: "standard", name: "Standard" }, { id: "full", name: "Full Width" },
-];
-
-const BUTTON_ANIM_OPTIONS = [
-  { id: "none", name: "None" }, { id: "bounce", name: "Bounce" },
-  { id: "pulse", name: "Pulse" }, { id: "shake", name: "Shake" },
-  { id: "scale", name: "Scale" }, { id: "glow", name: "Glow" },
-];
-
-const PROFILE_SHAPES = [
-  { id: "circle", name: "Circle" }, { id: "rounded", name: "Rounded" },
-  { id: "square", name: "Square" }, { id: "hexagon", name: "Hexagon" },
-];
-
-const CONTAINER_OPTIONS = [
-  { id: "compact", name: "Compact" }, { id: "standard", name: "Standard" },
-  { id: "wide", name: "Wide" }, { id: "full", name: "Full" },
-];
-
-const HOVER_OPTIONS = [
-  { id: "none", name: "None" }, { id: "lift", name: "Lift" },
-  { id: "glow", name: "Glow" }, { id: "scale", name: "Scale" }, { id: "shadow", name: "Shadow" },
-];
-
-const ANIM_SPEED_OPTIONS = [
-  { id: "instant", name: "Instant" }, { id: "fast", name: "Fast" },
-  { id: "normal", name: "Normal" }, { id: "slow", name: "Slow" },
-];
-
-const BLOCK_TYPES = [
-  { type: "hero", name: "Hero", desc: "Hero header section" },
-  { type: "cta", name: "CTA", desc: "Call-to-action button" },
-  { type: "links", name: "Links", desc: "Bio links list" },
-  { type: "socials", name: "Socials", desc: "Social icons grid" },
-  { type: "video", name: "Video", desc: "Video embed" },
-  { type: "testimonial", name: "Testimonial", desc: "Quote block" },
-  { type: "contact", name: "Contact", desc: "Contact card" },
-  { type: "gallery", name: "Gallery", desc: "Image gallery" },
-  { type: "product", name: "Product", desc: "Product card" },
-  { type: "booking", name: "Booking", desc: "Booking section" },
-  { type: "divider", name: "Divider", desc: "Visual separator" },
-  { type: "text", name: "Text", desc: "Custom text block" },
-];
-
-const DEFAULT_BLOCKS: Block[] = [
-  { id: "hero", type: "hero", config: {}, visible: true, order: 0 },
-  { id: "links", type: "links", config: {}, visible: true, order: 1 },
-  { id: "socials", type: "socials", config: {}, visible: true, order: 2 },
-  { id: "cta", type: "cta", config: {}, visible: true, order: 3 },
+const TABS: { id: TabId; label: string; icon: string }[] = [
+  { id: "header", label: "Header", icon: "M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" },
+  { id: "theme", label: "Theme", icon: "M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" },
+  { id: "wallpaper", label: "Wallpaper", icon: "M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" },
+  { id: "text", label: "Text", icon: "M4 6h16M4 12h8m-8 6h16" },
+  { id: "buttons", label: "Buttons", icon: "M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5" },
+  { id: "colors", label: "Colors", icon: "M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485" },
+  { id: "footer", label: "Footer", icon: "M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v14a2 2 0 01-2 2zM3 17h18" },
+  { id: "links", label: "Links", icon: "M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" },
+  { id: "profile", label: "Profile", icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" },
 ];
 
 /* ══════════════════════════════════════════════════════
-   AI DESIGN SECTION
+   SECTION: HEADER
    ══════════════════════════════════════════════════════ */
-function AIDesignSection({ onDesignApplied }: { onDesignApplied: () => void }) {
-  const [url, setUrl] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<string>("");
-
-  async function runAIDesign() {
-    if (!url.trim()) return;
-    setLoading(true);
-    setResult("");
-    try {
-      const res = await fetch("/api/profile/ai-design-v2", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ referenceUrls: [url.trim()] }),
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setResult("Design applied!");
-        onDesignApplied();
-        if (data.design?.suggestedLogo) {
-          setResult("Design applied! Logo suggestion found.");
-        }
-      } else {
-        setResult("Failed to generate design");
-      }
-    } catch {
-      setResult("Network error");
-    }
-    setLoading(false);
-  }
-
+function HeaderSection({ data, onUpdate, onSaveNow }: { data: Record<string, any>; onUpdate: (f: Record<string, any>) => void; onSaveNow: () => void }) {
   return (
-    <div className="bg-gradient-to-br from-indigo-50 to-violet-50 rounded-xl p-3 border border-indigo-100">
-      <h4 className="text-[10px] font-bold text-indigo-600 uppercase tracking-wider mb-2">AI Design</h4>
-      <p className="text-[10px] text-neutral-500 mb-2">Paste a website or social URL to match your brand</p>
-      <div className="flex gap-1.5">
-        <input value={url} onChange={e => setUrl(e.target.value)} placeholder="https://example.com" className="flex-1 px-2.5 py-2 rounded-lg border border-indigo-200 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-400/30 bg-white" onKeyDown={e => e.key === "Enter" && runAIDesign()} />
-        <button onClick={runAIDesign} disabled={loading || !url.trim()} className="px-3 py-2 text-[10px] font-bold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50 whitespace-nowrap">
-          {loading ? <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin mx-2" /> : "AI Design"}
-        </button>
+    <div className="space-y-5">
+      <div>
+        <h4 className={SECTION_LABEL}>Profile Image</h4>
+        <UploadBox label="Upload Photo" accept="image/*" uploadType="avatar" onUploaded={url => { onUpdate({ avatar_url: url }); onSaveNow(); }} />
+        {data.avatar_url && <div className="mt-2 flex items-center gap-2"><img src={data.avatar_url} className="w-10 h-10 rounded-full object-cover" alt="" /><span className="text-[10px] text-neutral-400">Current photo</span></div>}
       </div>
-      {result && <p className="text-[10px] mt-1.5 text-indigo-600 font-medium">{result}</p>}
+
+      <div>
+        <h4 className={SECTION_LABEL}>Logo</h4>
+        <UploadBox label="Upload Logo" accept="image/*" uploadType="logo" onUploaded={url => { onUpdate({ logo_url: url }); onSaveNow(); }} />
+        {data.logo_url && <div className="mt-2 flex items-center gap-2"><img src={data.logo_url} className="h-8 object-contain" alt="" /><span className="text-[10px] text-neutral-400">Current logo</span></div>}
+      </div>
+
+      <div>
+        <h4 className={SECTION_LABEL}>Display Mode</h4>
+        <OptionGrid value={data.link_bio_avatar_mode || "photo"} options={[{ id: "photo", name: "Profile Photo" }, { id: "logo", name: "Logo" }]} onChange={v => onUpdate({ link_bio_avatar_mode: v })} cols={2} />
+      </div>
+
+      <div>
+        <h4 className={SECTION_LABEL}>Image Shape</h4>
+        <OptionGrid value={data.link_bio_avatar_shape || "circle"} options={[{ id: "circle", name: "Circle" }, { id: "rounded", name: "Rounded" }, { id: "square", name: "Square" }]} onChange={v => onUpdate({ link_bio_avatar_shape: v })} cols={3} />
+      </div>
+
+      <div>
+        <h4 className={SECTION_LABEL}>Image Size</h4>
+        <OptionGrid value={data.link_bio_avatar_size || "medium"} options={[{ id: "small", name: "Small" }, { id: "medium", name: "Medium" }, { id: "large", name: "Large" }]} onChange={v => onUpdate({ link_bio_avatar_size: v })} cols={3} />
+      </div>
     </div>
   );
 }
 
 /* ══════════════════════════════════════════════════════
-   DESIGN PANEL — FULL (Advanced)
+   SECTION: THEME
    ══════════════════════════════════════════════════════ */
-function DesignPanelFull({ data, onUpdate, ownedAnimations, onRefreshPreview }: {
-  data: Record<string, any>;
-  onUpdate: (fields: Record<string, any>) => void;
-  ownedAnimations: string[];
-  onRefreshPreview: () => void;
-}) {
-  const [bgTab, setBgTab] = useState<string>(data.link_bio_bg_type || "solid");
-  const [openSection, setOpenSection] = useState<string>("template");
-
-  function Section({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
-    const isOpen = openSection === id;
-    return (
-      <div className="border border-neutral-200 rounded-xl overflow-hidden">
-        <button onClick={() => setOpenSection(isOpen ? "" : id)} className="w-full flex items-center justify-between px-3 py-2.5 text-xs font-semibold text-neutral-700 hover:bg-neutral-50 transition-colors">
-          {title}
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={`transition-transform ${isOpen ? "rotate-180" : ""}`}><path d="M6 9l6 6 6-6" strokeLinecap="round" /></svg>
-        </button>
-        {isOpen && <div className="px-3 pb-3 space-y-4">{children}</div>}
-      </div>
-    );
-  }
-
+function ThemeSection({ data, onUpdate }: { data: Record<string, any>; onUpdate: (f: Record<string, any>) => void }) {
+  const current = data.link_bio_template || "minimal";
   return (
     <div className="space-y-3">
-      {/* AI Design */}
-      <AIDesignSection onDesignApplied={onRefreshPreview} />
-
-      {/* Template */}
-      <Section id="template" title="Template">
-        <div className="grid grid-cols-3 md:grid-cols-4 gap-1.5 max-h-[280px] overflow-y-auto pr-1">
-          {TEMPLATES.map(t => (
-            <button key={t.id} onClick={() => onUpdate({ link_bio_template: t.id })} className={`py-2 text-[10px] font-medium rounded-lg transition-all ${data.link_bio_template === t.id ? "bg-neutral-900 text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"}`}>{t.name}</button>
-          ))}
-        </div>
-      </Section>
-
-      {/* Typography */}
-      <Section id="typography" title="Typography">
-        <div>
-          <h4 className={SECTION_LABEL}>Font Family</h4>
-          <div className="grid grid-cols-2 gap-1.5">
-            {FONTS.map(f => (
-              <button key={f.id} onClick={() => onUpdate({ link_bio_font: f.id })} className={`py-2 text-[10px] font-medium rounded-lg transition-all ${data.link_bio_font === f.id ? "bg-neutral-900 text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"}`}>{f.name}</button>
-            ))}
-          </div>
-        </div>
-        <div>
-          <h4 className={SECTION_LABEL}>Font Size</h4>
-          <OptionButtons value={data.link_bio_font_size || "medium"} options={[{ id: "small", name: "Small" }, { id: "medium", name: "Medium" }, { id: "large", name: "Large" }, { id: "xl", name: "XL" }]} onChange={v => onUpdate({ link_bio_font_size: v })} />
-        </div>
-        <div>
-          <h4 className={SECTION_LABEL}>Font Weight</h4>
-          <OptionButtons value={String(data.link_bio_font_weight || "400")} options={[{ id: "300", name: "Light" }, { id: "400", name: "Regular" }, { id: "500", name: "Medium" }, { id: "600", name: "Semi" }, { id: "700", name: "Bold" }]} onChange={v => onUpdate({ link_bio_font_weight: Number(v) })} />
-        </div>
-        <div>
-          <h4 className={SECTION_LABEL}>Letter Spacing</h4>
-          <OptionButtons value={data.link_bio_letter_spacing || "normal"} options={[{ id: "tight", name: "Tight" }, { id: "normal", name: "Normal" }, { id: "wide", name: "Wide" }]} onChange={v => onUpdate({ link_bio_letter_spacing: v })} />
-        </div>
-        <ColorPickerRow label="Accent Color" value={data.link_bio_accent || "#171717"} onChange={v => onUpdate({ link_bio_accent: v })} swatches={ACCENT_SWATCHES} />
-        <div>
-          <h4 className={SECTION_LABEL}>Text Color</h4>
-          <div className="flex items-center gap-2 flex-wrap">
-            <input type="color" value={data.link_bio_text_color || "#171717"} onChange={e => onUpdate({ link_bio_text_color: e.target.value })} className="w-7 h-7 rounded-lg border border-neutral-200 cursor-pointer shrink-0" />
-            {TEXT_COLOR_PRESETS.map(p => (
-              <button key={p.id} onClick={() => onUpdate({ link_bio_text_color: p.id })} className={`px-2 py-1 text-[9px] font-medium rounded-md transition-all ${data.link_bio_text_color === p.id ? "bg-neutral-900 text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"}`}>{p.name}</button>
-            ))}
-          </div>
-        </div>
-      </Section>
-
-      {/* Background */}
-      <Section id="background" title="Background">
-        <div className="flex gap-1 bg-neutral-100 rounded-lg p-0.5">
-          {["solid", "gradient", "image", "video"].map(t => (
-            <button key={t} onClick={() => { setBgTab(t); onUpdate({ link_bio_bg_type: t }); }} className={`flex-1 py-1.5 text-[10px] font-medium rounded-md transition-all capitalize ${bgTab === t ? "bg-white text-neutral-900 shadow-sm" : "text-neutral-500"}`}>{t}</button>
-          ))}
-        </div>
-
-        {bgTab === "solid" && (
-          <ColorPickerRow label="Color" value={data.link_bio_bg_value || "#ffffff"} onChange={v => onUpdate({ link_bio_bg_value: v })} swatches={BG_SWATCHES} />
-        )}
-
-        {bgTab === "gradient" && (
-          <div className="space-y-3">
-            <div>
-              <h4 className={SECTION_LABEL}>Direction</h4>
-              <div className="grid grid-cols-4 gap-1">
-                {GRADIENT_DIRECTIONS.map(d => {
-                  const current = data.link_bio_gradient_direction || "135deg";
-                  return (
-                    <button key={d.deg} onClick={() => {
-                      const c1 = data.link_bio_gradient_color1 || "#6366f1";
-                      const c2 = data.link_bio_gradient_color2 || "#a855f7";
-                      onUpdate({ link_bio_gradient_direction: d.deg, link_bio_bg_value: `linear-gradient(${d.deg}, ${c1} 0%, ${c2} 100%)` });
-                    }} title={d.label}
-                      className={`py-1.5 text-[9px] font-medium rounded-md transition-all ${current === d.deg ? "bg-neutral-900 text-white" : "bg-neutral-100 text-neutral-500 hover:bg-neutral-200"}`}>
-                      {d.label.split("-").map(w => w[0]).join("")}
-                    </button>
-                  );
-                })}
-              </div>
+      <h4 className={SECTION_LABEL}>Choose Template</h4>
+      <div className="grid grid-cols-3 gap-2 max-h-[calc(100vh-220px)] overflow-y-auto pr-1">
+        {TEMPLATES.map(t => (
+          <button key={t.id} onClick={() => onUpdate({ link_bio_template: t.id })}
+            className={`relative rounded-xl overflow-hidden border-2 transition-all ${current === t.id ? "border-neutral-900 ring-2 ring-neutral-900/20" : "border-neutral-200 hover:border-neutral-400"}`}>
+            <div className="h-14 w-full" style={{ background: t.color }} />
+            <div className="px-1.5 py-1.5 bg-white">
+              <span className="text-[9px] font-semibold text-neutral-700 leading-none">{t.name}</span>
             </div>
-            <div className="flex gap-2">
+            {current === t.id && (
+              <div className="absolute top-1 right-1 w-4 h-4 bg-neutral-900 rounded-full flex items-center justify-center">
+                <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3"><path d="M5 13l4 4L19 7" strokeLinecap="round" /></svg>
+              </div>
+            )}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════
+   SECTION: WALLPAPER (Background)
+   ══════════════════════════════════════════════════════ */
+function WallpaperSection({ data, onUpdate, onSaveNow }: { data: Record<string, any>; onUpdate: (f: Record<string, any>) => void; onSaveNow: () => void }) {
+  const [bgTab, setBgTab] = useState<string>(data.link_bio_bg_type || "solid");
+
+  return (
+    <div className="space-y-4">
+      <div className="flex gap-1 bg-neutral-100 rounded-lg p-0.5">
+        {["solid", "gradient", "image", "video"].map(t => (
+          <button key={t} onClick={() => { setBgTab(t); onUpdate({ link_bio_bg_type: t }); }} className={`flex-1 py-1.5 text-[10px] font-medium rounded-md transition-all capitalize ${bgTab === t ? "bg-white text-neutral-900 shadow-sm" : "text-neutral-500"}`}>{t}</button>
+        ))}
+      </div>
+
+      {bgTab === "solid" && (
+        <div className="space-y-3">
+          <ColorPicker label="Background Color" value={data.link_bio_bg_value || "#ffffff"} onChange={v => onUpdate({ link_bio_bg_value: v })} swatches={BG_SWATCHES} />
+        </div>
+      )}
+
+      {bgTab === "gradient" && (
+        <div className="space-y-3">
+          <div>
+            <h4 className={SECTION_LABEL}>Presets</h4>
+            <div className="grid grid-cols-3 gap-1.5">
+              {GRADIENT_PRESETS.map(g => (
+                <button key={g.label} onClick={() => onUpdate({ link_bio_bg_value: g.value })}
+                  className={`h-10 rounded-lg border-2 transition-all text-[8px] font-medium text-white/80 flex items-end justify-center pb-0.5 ${data.link_bio_bg_value === g.value ? "border-neutral-900 ring-1 ring-neutral-900/20" : "border-transparent hover:border-neutral-400"}`}
+                  style={{ background: g.value }}>
+                  {g.label}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div>
+            <h4 className={SECTION_LABEL}>Custom Gradient</h4>
+            <div className="flex gap-3">
               <div className="flex-1">
-                <h4 className={SECTION_LABEL}>Color 1</h4>
+                <label className="text-[9px] text-neutral-400 mb-1 block">Color 1</label>
                 <input type="color" value={data.link_bio_gradient_color1 || "#6366f1"} onChange={e => {
                   const dir = data.link_bio_gradient_direction || "135deg";
                   const c2 = data.link_bio_gradient_color2 || "#a855f7";
                   onUpdate({ link_bio_gradient_color1: e.target.value, link_bio_bg_value: `linear-gradient(${dir}, ${e.target.value} 0%, ${c2} 100%)` });
-                }} className="w-full h-7 rounded-lg border border-neutral-200 cursor-pointer" />
+                }} className="w-full h-8 rounded-lg border border-neutral-200 cursor-pointer" />
               </div>
               <div className="flex-1">
-                <h4 className={SECTION_LABEL}>Color 2</h4>
+                <label className="text-[9px] text-neutral-400 mb-1 block">Color 2</label>
                 <input type="color" value={data.link_bio_gradient_color2 || "#a855f7"} onChange={e => {
                   const dir = data.link_bio_gradient_direction || "135deg";
                   const c1 = data.link_bio_gradient_color1 || "#6366f1";
                   onUpdate({ link_bio_gradient_color2: e.target.value, link_bio_bg_value: `linear-gradient(${dir}, ${c1} 0%, ${e.target.value} 100%)` });
-                }} className="w-full h-7 rounded-lg border border-neutral-200 cursor-pointer" />
-              </div>
-            </div>
-            <div>
-              <h4 className={SECTION_LABEL}>Presets</h4>
-              <div className="grid grid-cols-4 gap-1.5">
-                {GRADIENT_PRESETS.map(g => (
-                  <button key={g.label} onClick={() => onUpdate({ link_bio_bg_value: g.value })} className="h-8 rounded-lg border border-neutral-200 hover:border-neutral-400 transition-all text-[8px] font-medium text-neutral-500" style={{ background: g.value || "#fff" }} title={g.label} />
-                ))}
+                }} className="w-full h-8 rounded-lg border border-neutral-200 cursor-pointer" />
               </div>
             </div>
           </div>
-        )}
+        </div>
+      )}
 
-        {bgTab === "image" && (
-          <div className="space-y-3">
-            <label className="flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-dashed border-neutral-200 cursor-pointer text-xs font-medium text-neutral-500 hover:border-neutral-400 transition-colors">
-              <input type="file" accept="image/*" className="hidden" onChange={async e => {
-                const file = e.target.files?.[0]; if (!file) return;
-                const fd = new FormData(); fd.append("file", file); fd.append("type", "background");
-                const res = await fetch("/api/upload", { method: "POST", body: fd });
-                if (res.ok) { const d = await res.json(); if (d.url) onUpdate({ link_bio_bg_value: d.url }); }
-              }} />
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" strokeLinecap="round" strokeLinejoin="round" /></svg>
-              Upload Background
-            </label>
-            <div>
-              <div className="flex items-center justify-between mb-1">
-                <h4 className={LABEL}>Overlay</h4>
-                <button onClick={() => onUpdate({ link_bio_bg_overlay: data.link_bio_bg_overlay === "dark" ? "light" : "dark" })} className="text-[10px] text-neutral-500 font-medium">{data.link_bio_bg_overlay === "light" ? "Light" : "Dark"}</button>
-              </div>
-              <SliderRow label="Overlay Opacity" value={data.link_bio_bg_overlay_opacity ?? 40} onChange={v => onUpdate({ link_bio_bg_overlay_opacity: v })} min={0} max={100} unit="%" />
-            </div>
-          </div>
-        )}
+      {bgTab === "image" && (
+        <div className="space-y-3">
+          <UploadBox label="Upload Background" accept="image/*" uploadType="background" onUploaded={url => { onUpdate({ link_bio_bg_value: url }); onSaveNow(); }} />
+          {data.link_bio_bg_value && data.link_bio_bg_type === "image" && (
+            <div className="h-20 rounded-lg bg-cover bg-center border border-neutral-200" style={{ backgroundImage: `url(${data.link_bio_bg_value})` }} />
+          )}
+        </div>
+      )}
 
-        {bgTab === "video" && (
-          <div className="space-y-3">
-            <div>
-              <h4 className={SECTION_LABEL}>Video URL</h4>
-              <input value={data.link_bio_bg_video || ""} onChange={e => onUpdate({ link_bio_bg_video: e.target.value })} placeholder="https://..." className="w-full px-2.5 py-2 rounded-lg border border-neutral-200 text-xs focus:outline-none focus:ring-2 focus:ring-neutral-900/10" />
-            </div>
-            <div>
-              <div className="flex items-center justify-between mb-1">
-                <h4 className={LABEL}>Overlay</h4>
-                <button onClick={() => onUpdate({ link_bio_bg_overlay: data.link_bio_bg_overlay === "dark" ? "light" : "dark" })} className="text-[10px] text-neutral-500 font-medium">{data.link_bio_bg_overlay === "light" ? "Light" : "Dark"}</button>
-              </div>
-              <SliderRow label="Overlay Opacity" value={data.link_bio_bg_overlay_opacity ?? 40} onChange={v => onUpdate({ link_bio_bg_overlay_opacity: v })} min={0} max={100} unit="%" />
-            </div>
-          </div>
-        )}
-
-        {/* Blur / Glass */}
+      {bgTab === "video" && (
         <div>
+          <h4 className={SECTION_LABEL}>Video URL</h4>
+          <input value={data.link_bio_bg_video || ""} onChange={e => onUpdate({ link_bio_bg_video: e.target.value })} placeholder="https://..." className="w-full px-2.5 py-2 rounded-lg border border-neutral-200 text-xs focus:outline-none focus:ring-2 focus:ring-neutral-900/10" />
+        </div>
+      )}
+
+      {(bgTab === "image" || bgTab === "video") && (
+        <div className="space-y-3 pt-2 border-t border-neutral-100">
           <div className="flex items-center justify-between">
-            <h4 className={LABEL}>Glass / Blur</h4>
-            <button onClick={() => onUpdate({ link_bio_glass_enabled: !data.link_bio_glass_enabled })} className={`relative w-8 h-4.5 rounded-full transition-colors ${data.link_bio_glass_enabled ? "bg-emerald-500" : "bg-neutral-300"}`}>
-              <div className={`absolute top-0.5 w-3.5 h-3.5 bg-white rounded-full shadow transition-transform ${data.link_bio_glass_enabled ? "translate-x-4" : "translate-x-0.5"}`} />
-            </button>
+            <h4 className={LABEL}>Overlay</h4>
+            <OptionGrid value={data.link_bio_bg_overlay || "dark"} options={[{ id: "dark", name: "Dark" }, { id: "light", name: "Light" }]} onChange={v => onUpdate({ link_bio_bg_overlay: v })} cols={2} />
           </div>
-          {data.link_bio_glass_enabled && (
-            <SliderRow label="Blur Intensity" value={data.link_bio_glass_intensity ?? 8} onChange={v => onUpdate({ link_bio_glass_intensity: v })} min={0} max={20} />
-          )}
-        </div>
-      </Section>
-
-      {/* Buttons */}
-      <Section id="buttons" title="Buttons">
-        <div>
-          <h4 className={SECTION_LABEL}>Shape</h4>
-          <OptionButtons value={data.link_bio_button_shape || "rounded"} options={BUTTON_SHAPES} onChange={v => onUpdate({ link_bio_button_shape: v })} />
-        </div>
-        <ColorPickerRow label="Fill Color" value={data.link_bio_button_fill || "#171717"} onChange={v => onUpdate({ link_bio_button_fill: v })} swatches={ACCENT_SWATCHES} />
-        <ColorPickerRow label="Text Color" value={data.link_bio_button_text_color || "#ffffff"} onChange={v => onUpdate({ link_bio_button_text_color: v })} />
-        <div>
-          <div className="flex items-center justify-between">
-            <h4 className={LABEL}>Border</h4>
-            <button onClick={() => onUpdate({ link_bio_button_border: !data.link_bio_button_border })} className={`relative w-8 h-4.5 rounded-full transition-colors ${data.link_bio_button_border ? "bg-emerald-500" : "bg-neutral-300"}`}>
-              <div className={`absolute top-0.5 w-3.5 h-3.5 bg-white rounded-full shadow transition-transform ${data.link_bio_button_border ? "translate-x-4" : "translate-x-0.5"}`} />
-            </button>
-          </div>
-          {data.link_bio_button_border && (
-            <div className="space-y-2 mt-2">
-              <SliderRow label="Width" value={data.link_bio_button_border_width ?? 1} onChange={v => onUpdate({ link_bio_button_border_width: v })} min={1} max={4} />
-              <ColorPickerRow label="Border Color" value={data.link_bio_button_border_color || "#e5e5e5"} onChange={v => onUpdate({ link_bio_button_border_color: v })} />
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <h4 className={LABEL}>Opacity</h4>
+              <span className="text-[10px] text-neutral-400">{data.link_bio_bg_overlay_opacity ?? 40}%</span>
             </div>
-          )}
-        </div>
-        <div>
-          <h4 className={SECTION_LABEL}>Shadow</h4>
-          <OptionButtons value={data.link_bio_button_shadow || "none"} options={SHADOW_OPTIONS} onChange={v => onUpdate({ link_bio_button_shadow: v })} />
-        </div>
-        <div>
-          <h4 className={SECTION_LABEL}>Width</h4>
-          <OptionButtons value={data.link_bio_button_width || "standard"} options={BUTTON_WIDTH_OPTIONS} onChange={v => onUpdate({ link_bio_button_width: v })} />
-        </div>
-        <div>
-          <h4 className={SECTION_LABEL}>Animation</h4>
-          <OptionButtons value={data.link_bio_button_anim || "none"} options={BUTTON_ANIM_OPTIONS} onChange={v => onUpdate({ link_bio_button_anim: v })} />
-        </div>
-      </Section>
-
-      {/* Spacing */}
-      <Section id="spacing" title="Spacing">
-        <SliderRow label="Page Padding" value={data.link_bio_page_padding ?? 16} onChange={v => onUpdate({ link_bio_page_padding: v })} min={0} max={48} />
-        <SliderRow label="Section Gap" value={data.link_bio_section_gap ?? 16} onChange={v => onUpdate({ link_bio_section_gap: v })} min={0} max={32} />
-        <div>
-          <h4 className={SECTION_LABEL}>Container Width</h4>
-          <OptionButtons value={data.link_bio_container_width || "standard"} options={CONTAINER_OPTIONS} onChange={v => onUpdate({ link_bio_container_width: v })} />
-        </div>
-      </Section>
-
-      {/* Profile Image */}
-      <Section id="profile-image" title="Profile Image">
-        <div>
-          <h4 className={SECTION_LABEL}>Mode</h4>
-          <OptionButtons value={data.link_bio_avatar_mode || "photo"} options={[{ id: "photo", name: "Photo" }, { id: "logo", name: "Logo" }]} onChange={v => onUpdate({ link_bio_avatar_mode: v })} />
-        </div>
-        <div>
-          <h4 className={SECTION_LABEL}>Shape</h4>
-          <OptionButtons value={data.link_bio_avatar_shape || "circle"} options={PROFILE_SHAPES} onChange={v => onUpdate({ link_bio_avatar_shape: v })} />
-        </div>
-        <SliderRow label="Size" value={data.link_bio_avatar_size ?? 96} onChange={v => onUpdate({ link_bio_avatar_size: v })} min={48} max={200} />
-        <SliderRow label="Border Width" value={data.link_bio_avatar_border_width ?? 0} onChange={v => onUpdate({ link_bio_avatar_border_width: v })} min={0} max={8} />
-        {(data.link_bio_avatar_border_width ?? 0) > 0 && (
-          <ColorPickerRow label="Border Color" value={data.link_bio_avatar_border_color || "#e5e5e5"} onChange={v => onUpdate({ link_bio_avatar_border_color: v })} />
-        )}
-        <div>
-          <h4 className={SECTION_LABEL}>Shadow</h4>
-          <OptionButtons value={data.link_bio_avatar_shadow || "none"} options={[{ id: "none", name: "None" }, { id: "soft", name: "Soft" }, { id: "medium", name: "Medium" }, { id: "dramatic", name: "Dramatic" }]} onChange={v => onUpdate({ link_bio_avatar_shadow: v })} />
-        </div>
-      </Section>
-
-      {/* Animation */}
-      <Section id="animation" title="Animation">
-        <div>
-          <h4 className={SECTION_LABEL}>Intro Animation</h4>
-          <p className="text-[10px] text-neutral-400 mb-2">Plays when someone visits your page</p>
-          <div className="space-y-1.5 mb-3">
-            {[
-              { id: "none", name: "None" },
-              { id: "fade-up", name: "Fade Up" },
-              { id: "scale-in", name: "Scale In" },
-            ].map(a => (
-              <button key={a.id} onClick={() => onUpdate({ link_bio_intro_anim: a.id })}
-                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${data.link_bio_intro_anim === a.id ? "bg-neutral-900 text-white" : "bg-neutral-50 text-neutral-600 hover:bg-neutral-100 border border-neutral-200/60"}`}>
-                <span>{a.name}</span>
-                <span className="text-[9px] text-emerald-500 font-semibold">FREE</span>
-              </button>
-            ))}
-          </div>
-          <div className="space-y-1.5">
-            {PREMIUM_ANIMS.map(a => {
-              const owned = ownedAnimations.includes(a.id);
-              return (
-                <div key={a.id}>
-                  {owned ? (
-                    <button onClick={() => onUpdate({ link_bio_intro_anim: a.id })}
-                      className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${data.link_bio_intro_anim === a.id ? "bg-neutral-900 text-white" : "bg-neutral-50 text-neutral-600 hover:bg-neutral-100 border border-neutral-200/60"}`}>
-                      <span>{a.name}</span>
-                      <span className="text-[9px] text-emerald-500 font-semibold">OWNED</span>
-                    </button>
-                  ) : (
-                    <a href="/animations" className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium bg-neutral-50 text-neutral-400 border border-neutral-200/60 hover:border-neutral-300 transition-all">
-                      <span>{a.name}</span>
-                      <span className="text-[9px] font-bold text-amber-500">$4.99</span>
-                    </a>
-                  )}
-                </div>
-              );
-            })}
+            <input type="range" min={0} max={100} value={data.link_bio_bg_overlay_opacity ?? 40} onChange={e => onUpdate({ link_bio_bg_overlay_opacity: Number(e.target.value) })} className="w-full h-1.5 bg-neutral-200 rounded-full appearance-none cursor-pointer accent-neutral-900" />
           </div>
         </div>
-        <div>
-          <h4 className={SECTION_LABEL}>Hover Effect</h4>
-          <OptionButtons value={data.link_bio_hover_effect || "none"} options={HOVER_OPTIONS} onChange={v => onUpdate({ link_bio_hover_effect: v })} />
-        </div>
-        <div>
-          <h4 className={SECTION_LABEL}>Animation Speed</h4>
-          <OptionButtons value={data.link_bio_anim_speed || "normal"} options={ANIM_SPEED_OPTIONS} onChange={v => onUpdate({ link_bio_anim_speed: v })} />
-        </div>
-      </Section>
-    </div>
-  );
-}
-
-/* ══════════════════════════════════════════════════════
-   DESIGN PANEL — QUICK (Simplified)
-   ══════════════════════════════════════════════════════ */
-function DesignPanelQuick({ data, onUpdate, onRefreshPreview }: {
-  data: Record<string, any>;
-  onUpdate: (fields: Record<string, any>) => void;
-  onRefreshPreview: () => void;
-}) {
-  return (
-    <div className="space-y-5">
-      <AIDesignSection onDesignApplied={onRefreshPreview} />
-
-      <div>
-        <h3 className={SECTION_LABEL}>Template</h3>
-        <div className="grid grid-cols-3 md:grid-cols-4 gap-1.5 max-h-[280px] overflow-y-auto pr-1">
-          {TEMPLATES.map(t => (
-            <button key={t.id} onClick={() => onUpdate({ link_bio_template: t.id })} className={`py-2 text-[10px] font-medium rounded-lg transition-all ${data.link_bio_template === t.id ? "bg-neutral-900 text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"}`}>{t.name}</button>
-          ))}
-        </div>
-      </div>
-
-      <ColorPickerRow label="Accent Color" value={data.link_bio_accent || "#171717"} onChange={v => onUpdate({ link_bio_accent: v })} swatches={ACCENT_SWATCHES} />
-
-      <div>
-        <h3 className={SECTION_LABEL}>Font</h3>
-        <div className="grid grid-cols-2 gap-1.5">
-          {FONTS.map(f => (
-            <button key={f.id} onClick={() => onUpdate({ link_bio_font: f.id })} className={`py-2 text-[10px] font-medium rounded-lg transition-all ${data.link_bio_font === f.id ? "bg-neutral-900 text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"}`}>{f.name}</button>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ══════════════════════════════════════════════════════
-   BLOCKS PANEL
-   ══════════════════════════════════════════════════════ */
-function BlocksPanel({ blocks, onBlocksChange }: { blocks: Block[]; onBlocksChange: (blocks: Block[]) => void }) {
-  const [showAdd, setShowAdd] = useState(false);
-  const [editingBlock, setEditingBlock] = useState<string | null>(null);
-  const [dragIdx, setDragIdx] = useState<number | null>(null);
-
-  function addBlock(type: string) {
-    const id = type + "-" + Date.now();
-    const newBlock: Block = { id, type, config: {}, visible: true, order: blocks.length };
-    onBlocksChange([...blocks, newBlock]);
-    setShowAdd(false);
-  }
-
-  function removeBlock(id: string) {
-    onBlocksChange(blocks.filter(b => b.id !== id));
-  }
-
-  function duplicateBlock(id: string) {
-    const block = blocks.find(b => b.id === id);
-    if (!block) return;
-    const dup: Block = { ...block, id: block.type + "-" + Date.now(), order: blocks.length };
-    onBlocksChange([...blocks, dup]);
-  }
-
-  function toggleVisibility(id: string) {
-    onBlocksChange(blocks.map(b => b.id === id ? { ...b, visible: !b.visible } : b));
-  }
-
-  function moveBlock(from: number, to: number) {
-    const next = [...blocks];
-    const [moved] = next.splice(from, 1);
-    next.splice(to, 0, moved);
-    onBlocksChange(next.map((b, i) => ({ ...b, order: i })));
-  }
-
-  function updateBlockConfig(id: string, config: Record<string, any>) {
-    onBlocksChange(blocks.map(b => b.id === id ? { ...b, config: { ...b.config, ...config } } : b));
-  }
-
-  const blockName = (type: string) => BLOCK_TYPES.find(bt => bt.type === type)?.name || type;
-
-  return (
-    <div className="space-y-3">
-      <p className="text-[10px] text-neutral-400">Manage content blocks on your page. Drag to reorder.</p>
-
-      {blocks.map((block, i) => (
-        <div key={block.id} draggable onDragStart={() => setDragIdx(i)} onDragOver={e => e.preventDefault()} onDrop={() => { if (dragIdx !== null && dragIdx !== i) moveBlock(dragIdx, i); setDragIdx(null); }}
-          className="border border-neutral-200 rounded-xl overflow-hidden">
-          <div className="flex items-center gap-2 px-3 py-2.5 bg-neutral-50">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" className="text-neutral-300 cursor-grab shrink-0"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg>
-            <button onClick={() => setEditingBlock(editingBlock === block.id ? null : block.id)} className="flex-1 text-left text-xs font-medium text-neutral-700">{blockName(block.type)}</button>
-            <div className="flex items-center gap-1">
-              {i > 0 && <button onClick={() => moveBlock(i, i - 1)} className="p-1 text-neutral-400 hover:text-neutral-600"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 15l-6-6-6 6" strokeLinecap="round"/></svg></button>}
-              {i < blocks.length - 1 && <button onClick={() => moveBlock(i, i + 1)} className="p-1 text-neutral-400 hover:text-neutral-600"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 9l6 6 6-6" strokeLinecap="round"/></svg></button>}
-              <button onClick={() => duplicateBlock(block.id)} className="p-1 text-neutral-400 hover:text-neutral-600" title="Duplicate"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button>
-              <button onClick={() => toggleVisibility(block.id)} className={`p-1 transition-colors ${block.visible ? "text-emerald-500" : "text-neutral-300"}`} title={block.visible ? "Hide" : "Show"}>
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-              </button>
-              <button onClick={() => removeBlock(block.id)} className="p-1 text-neutral-400 hover:text-red-500" title="Delete"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" strokeLinecap="round"/></svg></button>
-            </div>
-          </div>
-
-          {/* Inline config */}
-          {editingBlock === block.id && (
-            <div className="px-3 py-2.5 border-t border-neutral-200 space-y-2">
-              {block.type === "video" && (
-                <div>
-                  <label className="text-[10px] font-semibold text-neutral-500 uppercase">Video URL</label>
-                  <input value={block.config.url || ""} onChange={e => updateBlockConfig(block.id, { url: e.target.value })} placeholder="https://youtube.com/..." className="w-full px-2.5 py-2 rounded-lg border border-neutral-200 text-xs mt-1" />
-                </div>
-              )}
-              {block.type === "testimonial" && (
-                <>
-                  <div>
-                    <label className="text-[10px] font-semibold text-neutral-500 uppercase">Quote</label>
-                    <textarea value={block.config.text || ""} onChange={e => updateBlockConfig(block.id, { text: e.target.value })} rows={2} className="w-full px-2.5 py-2 rounded-lg border border-neutral-200 text-xs mt-1 resize-y" />
-                  </div>
-                  <div>
-                    <label className="text-[10px] font-semibold text-neutral-500 uppercase">Author</label>
-                    <input value={block.config.author || ""} onChange={e => updateBlockConfig(block.id, { author: e.target.value })} className="w-full px-2.5 py-2 rounded-lg border border-neutral-200 text-xs mt-1" />
-                  </div>
-                </>
-              )}
-              {block.type === "contact" && (
-                <>
-                  <div>
-                    <label className="text-[10px] font-semibold text-neutral-500 uppercase">Email</label>
-                    <input value={block.config.email || ""} onChange={e => updateBlockConfig(block.id, { email: e.target.value })} className="w-full px-2.5 py-2 rounded-lg border border-neutral-200 text-xs mt-1" />
-                  </div>
-                  <div>
-                    <label className="text-[10px] font-semibold text-neutral-500 uppercase">Phone</label>
-                    <input value={block.config.phone || ""} onChange={e => updateBlockConfig(block.id, { phone: e.target.value })} className="w-full px-2.5 py-2 rounded-lg border border-neutral-200 text-xs mt-1" />
-                  </div>
-                </>
-              )}
-              {block.type === "product" && (
-                <>
-                  <div>
-                    <label className="text-[10px] font-semibold text-neutral-500 uppercase">Title</label>
-                    <input value={block.config.title || ""} onChange={e => updateBlockConfig(block.id, { title: e.target.value })} className="w-full px-2.5 py-2 rounded-lg border border-neutral-200 text-xs mt-1" />
-                  </div>
-                  <div>
-                    <label className="text-[10px] font-semibold text-neutral-500 uppercase">Price</label>
-                    <input value={block.config.price || ""} onChange={e => updateBlockConfig(block.id, { price: e.target.value })} placeholder="$29.99" className="w-full px-2.5 py-2 rounded-lg border border-neutral-200 text-xs mt-1" />
-                  </div>
-                  <div>
-                    <label className="text-[10px] font-semibold text-neutral-500 uppercase">URL</label>
-                    <input value={block.config.url || ""} onChange={e => updateBlockConfig(block.id, { url: e.target.value })} className="w-full px-2.5 py-2 rounded-lg border border-neutral-200 text-xs mt-1" />
-                  </div>
-                </>
-              )}
-              {block.type === "text" && (
-                <div>
-                  <label className="text-[10px] font-semibold text-neutral-500 uppercase">Content</label>
-                  <textarea value={block.config.content || ""} onChange={e => updateBlockConfig(block.id, { content: e.target.value })} rows={3} className="w-full px-2.5 py-2 rounded-lg border border-neutral-200 text-xs mt-1 resize-y" />
-                </div>
-              )}
-              {["hero", "cta", "links", "socials", "gallery", "booking", "divider"].includes(block.type) && (
-                <p className="text-[10px] text-neutral-400">This block uses your profile data automatically.</p>
-              )}
-            </div>
-          )}
-        </div>
-      ))}
-
-      {/* Add Block */}
-      {showAdd ? (
-        <div className="border border-neutral-200 rounded-xl p-3">
-          <div className="flex items-center justify-between mb-2">
-            <h4 className="text-xs font-semibold text-neutral-700">Add Block</h4>
-            <button onClick={() => setShowAdd(false)} className="text-neutral-400 hover:text-neutral-600"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" strokeLinecap="round"/></svg></button>
-          </div>
-          <div className="grid grid-cols-2 gap-1.5">
-            {BLOCK_TYPES.map(bt => (
-              <button key={bt.type} onClick={() => addBlock(bt.type)} className="text-left px-2.5 py-2 rounded-lg bg-neutral-50 hover:bg-neutral-100 border border-neutral-200 transition-colors">
-                <div className="text-[10px] font-semibold text-neutral-700">{bt.name}</div>
-                <div className="text-[9px] text-neutral-400">{bt.desc}</div>
-              </button>
-            ))}
-          </div>
-        </div>
-      ) : (
-        <button onClick={() => setShowAdd(true)} className="w-full py-2.5 text-xs font-semibold text-neutral-500 bg-neutral-50 border border-dashed border-neutral-300 rounded-xl hover:bg-neutral-100 hover:border-neutral-400 transition-colors">
-          + Add Block
-        </button>
       )}
     </div>
   );
 }
 
 /* ══════════════════════════════════════════════════════
-   SECTIONS PANEL
+   SECTION: TEXT
    ══════════════════════════════════════════════════════ */
-function SectionsPanel({ sections, onToggle, onReorder }: {
-  sections: { id: string; label: string; enabled: boolean }[];
-  onToggle: (id: string) => void;
-  onReorder: (from: number, to: number) => void;
-}) {
-  const [dragIdx, setDragIdx] = useState<number | null>(null);
-
+function TextSection({ data, onUpdate }: { data: Record<string, any>; onUpdate: (f: Record<string, any>) => void }) {
   return (
-    <div className="space-y-2">
-      <p className="text-[10px] text-neutral-400 mb-3">Toggle sections on/off. Drag to reorder.</p>
-      {sections.map((s, i) => (
-        <div key={s.id} draggable onDragStart={() => setDragIdx(i)} onDragOver={e => e.preventDefault()} onDrop={() => { if (dragIdx !== null && dragIdx !== i) onReorder(dragIdx, i); setDragIdx(null); }}
-          className="flex items-center gap-3 bg-neutral-50 rounded-xl px-3 py-2.5 border border-neutral-200">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" className="text-neutral-300 cursor-grab"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg>
-          <span className="flex-1 text-xs font-medium text-neutral-700">{s.label}</span>
-          <button onClick={() => onToggle(s.id)} className={`relative w-8 h-4.5 rounded-full transition-colors ${s.enabled ? "bg-emerald-500" : "bg-neutral-300"}`}>
-            <div className={`absolute top-0.5 w-3.5 h-3.5 bg-white rounded-full shadow transition-transform ${s.enabled ? "translate-x-4" : "translate-x-0.5"}`} />
-          </button>
+    <div className="space-y-5">
+      <div>
+        <h4 className={SECTION_LABEL}>Page Font</h4>
+        <div className="grid grid-cols-2 gap-1.5">
+          {FONTS.map(f => (
+            <button key={f.id} onClick={() => onUpdate({ link_bio_font: f.id })} className={`py-2.5 text-[10px] font-medium rounded-lg transition-all ${data.link_bio_font === f.id ? "bg-neutral-900 text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"}`}>{f.name}</button>
+          ))}
         </div>
-      ))}
+      </div>
+
+      <ColorPicker label="Page Text Color" value={data.link_bio_text_color || ""} onChange={v => onUpdate({ link_bio_text_color: v })} swatches={["#ffffff", "#e5e5e5", "#404040", "#000000", "#6366f1", "#ec4899"]} />
+
+      <div>
+        <h4 className={SECTION_LABEL}>Font Size</h4>
+        <OptionGrid value={data.link_bio_font_size || "medium"} options={[{ id: "small", name: "Small" }, { id: "medium", name: "Medium" }, { id: "large", name: "Large" }, { id: "xl", name: "XL" }]} onChange={v => onUpdate({ link_bio_font_size: v })} cols={4} />
+      </div>
+
+      <div>
+        <h4 className={SECTION_LABEL}>Font Weight</h4>
+        <OptionGrid value={String(data.link_bio_font_weight || 400)} options={[{ id: "300", name: "Light" }, { id: "400", name: "Regular" }, { id: "500", name: "Medium" }, { id: "600", name: "Semi" }, { id: "700", name: "Bold" }]} onChange={v => onUpdate({ link_bio_font_weight: Number(v) })} cols={3} />
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════
+   SECTION: BUTTONS
+   ══════════════════════════════════════════════════════ */
+function ButtonsSection({ data, onUpdate }: { data: Record<string, any>; onUpdate: (f: Record<string, any>) => void }) {
+  return (
+    <div className="space-y-5">
+      <div>
+        <h4 className={SECTION_LABEL}>Style</h4>
+        <OptionGrid value={data.link_bio_button_style || "solid"} options={[{ id: "solid", name: "Solid" }, { id: "outline", name: "Outline" }, { id: "glass", name: "Glass" }]} onChange={v => onUpdate({ link_bio_button_style: v })} cols={3} />
+      </div>
+
+      <div>
+        <h4 className={SECTION_LABEL}>Shape</h4>
+        <OptionGrid value={data.link_bio_button_shape || "rounded"} options={[{ id: "rounded", name: "Rounded" }, { id: "pill", name: "Pill" }, { id: "square", name: "Square" }, { id: "soft", name: "Soft" }]} onChange={v => onUpdate({ link_bio_button_shape: v })} cols={4} />
+      </div>
+
+      <ColorPicker label="Button Color" value={data.link_bio_button_fill || "#171717"} onChange={v => onUpdate({ link_bio_button_fill: v })} swatches={ACCENT_SWATCHES} />
+      <ColorPicker label="Button Text Color" value={data.link_bio_button_text_color || "#ffffff"} onChange={v => onUpdate({ link_bio_button_text_color: v })} swatches={["#ffffff", "#000000", "#171717", "#f5f5f5"]} />
+
+      <div>
+        <h4 className={SECTION_LABEL}>Shadow</h4>
+        <OptionGrid value={data.link_bio_button_shadow || "none"} options={[{ id: "none", name: "None" }, { id: "subtle", name: "Subtle" }, { id: "medium", name: "Medium" }, { id: "lifted", name: "Lifted" }]} onChange={v => onUpdate({ link_bio_button_shadow: v })} cols={4} />
+      </div>
+
+      <div>
+        <h4 className={SECTION_LABEL}>Animation</h4>
+        <OptionGrid value={data.link_bio_button_anim || "none"} options={[{ id: "none", name: "None" }, { id: "bounce", name: "Bounce" }, { id: "pulse", name: "Pulse" }, { id: "scale", name: "Scale" }, { id: "glow", name: "Glow" }]} onChange={v => onUpdate({ link_bio_button_anim: v })} cols={3} />
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════
+   SECTION: COLORS (centralized shortcut)
+   ══════════════════════════════════════════════════════ */
+function ColorsSection({ data, onUpdate }: { data: Record<string, any>; onUpdate: (f: Record<string, any>) => void }) {
+  return (
+    <div className="space-y-5">
+      <p className="text-[10px] text-neutral-400">Quick access to all color settings in one place.</p>
+      <ColorPicker label="Accent Color" value={data.link_bio_accent || "#171717"} onChange={v => onUpdate({ link_bio_accent: v })} swatches={ACCENT_SWATCHES} />
+      <ColorPicker label="Page Text Color" value={data.link_bio_text_color || ""} onChange={v => onUpdate({ link_bio_text_color: v })} swatches={["#ffffff", "#e5e5e5", "#404040", "#000000", "#6366f1", "#ec4899"]} />
+      <ColorPicker label="Button Color" value={data.link_bio_button_fill || "#171717"} onChange={v => onUpdate({ link_bio_button_fill: v })} swatches={ACCENT_SWATCHES} />
+      <ColorPicker label="Button Text Color" value={data.link_bio_button_text_color || "#ffffff"} onChange={v => onUpdate({ link_bio_button_text_color: v })} swatches={["#ffffff", "#000000", "#171717", "#f5f5f5"]} />
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════
+   SECTION: FOOTER
+   ══════════════════════════════════════════════════════ */
+function FooterSection({ data, onUpdate }: { data: Record<string, any>; onUpdate: (f: Record<string, any>) => void }) {
+  const hidden = !!data.hide_branding;
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between bg-neutral-50 rounded-xl px-4 py-3 border border-neutral-200">
+        <div>
+          <h4 className="text-xs font-semibold text-neutral-700">Show HireACreator Branding</h4>
+          <p className="text-[10px] text-neutral-400 mt-0.5">Display &quot;Powered by HireACreator&quot; in your page footer</p>
+        </div>
+        <button onClick={() => onUpdate({ hide_branding: !hidden })} className={`relative w-10 h-5 rounded-full transition-colors shrink-0 ${!hidden ? "bg-emerald-500" : "bg-neutral-300"}`}>
+          <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${!hidden ? "translate-x-5" : "translate-x-0.5"}`} />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════
+   SECTION: PROFILE
+   ══════════════════════════════════════════════════════ */
+function ProfileSection({ data, onUpdate }: { data: Record<string, any>; onUpdate: (f: Record<string, any>) => void }) {
+  return (
+    <div className="space-y-4">
+      <div>
+        <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Name</label>
+        <input value={data.full_name || ""} onChange={e => onUpdate({ full_name: e.target.value })} placeholder="Your Name" className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900/10 text-neutral-900 bg-white mt-1" />
+      </div>
+      <div>
+        <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Headline</label>
+        <input value={data.headline || ""} onChange={e => onUpdate({ headline: e.target.value })} placeholder="UGC Creator & Photographer" className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900/10 text-neutral-900 bg-white mt-1" />
+      </div>
+      <div>
+        <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Bio</label>
+        <textarea value={data.bio || ""} onChange={e => onUpdate({ bio: e.target.value })} placeholder="Tell people about yourself..." rows={3} className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900/10 text-neutral-900 bg-white mt-1 resize-y" />
+      </div>
+      <div>
+        <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Location</label>
+        <input value={data.location || ""} onChange={e => onUpdate({ location: e.target.value })} placeholder="Sydney, AU" className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900/10 text-neutral-900 bg-white mt-1" />
+      </div>
     </div>
   );
 }
@@ -930,73 +569,12 @@ function SectionsPanel({ sections, onToggle, onReorder }: {
 export function WysiwygEditor({ initialData, slug }: { initialData: EditorData; slug: string }) {
   const { status, errorMsg, save, saveNow } = useAutosave();
   const [data, setData] = useState(initialData.user);
-  const [panel, setPanel] = useState<string>("design");
-  const [ownedAnimations, setOwnedAnimations] = useState<string[]>([]);
-  const [editorMode, setEditorMode] = useState<"quick" | "advanced">(() => {
-    if (typeof window !== "undefined") {
-      return (localStorage.getItem("wysiwyg_mode") as "quick" | "advanced") || "quick";
-    }
-    return "quick";
-  });
-  const [blocks, setBlocks] = useState<Block[]>(() => {
-    try {
-      const saved = initialData.user.link_bio_blocks;
-      if (saved) return typeof saved === "string" ? JSON.parse(saved) : saved;
-    } catch {}
-    return DEFAULT_BLOCKS;
-  });
-  const [sections, setSections] = useState([
-    { id: "profile", label: "Profile", enabled: true },
-    { id: "socials", label: "Social Links", enabled: true },
-    { id: "bio", label: "Bio", enabled: true },
-    { id: "links", label: "Links", enabled: true },
-    { id: "services", label: "Services", enabled: initialData.services.length > 0 },
-    { id: "calendar", label: "Calendar", enabled: !!initialData.user.calendar_enabled },
-  ]);
-
-  // Fetch owned animations
-  useEffect(() => {
-    fetch("/api/animations/owned").then(r => r.json()).then(d => {
-      if (d.animations) setOwnedAnimations(d.animations);
-    }).catch(() => {});
-  }, []);
-
-  // Persist editor mode
-  function toggleEditorMode() {
-    const next = editorMode === "quick" ? "advanced" : "quick";
-    setEditorMode(next);
-    localStorage.setItem("wysiwyg_mode", next);
-  }
+  const [activeTab, setActiveTab] = useState<TabId>("theme");
 
   // Update field + autosave
   function updateField(fields: Record<string, any>) {
     setData((prev: any) => ({ ...prev, ...fields }));
     save(fields);
-  }
-
-  // Update text fields (from inline editing)
-  function updateText(field: string, value: string) {
-    setData((prev: any) => ({ ...prev, [field]: value }));
-    save({ [field]: value });
-  }
-
-  // Update blocks + autosave
-  function handleBlocksChange(newBlocks: Block[]) {
-    setBlocks(newBlocks);
-    save({ link_bio_blocks: JSON.stringify(newBlocks) });
-  }
-
-  function toggleSection(id: string) {
-    setSections(prev => prev.map(s => s.id === id ? { ...s, enabled: !s.enabled } : s));
-  }
-
-  function reorderSections(from: number, to: number) {
-    setSections(prev => {
-      const next = [...prev];
-      const [moved] = next.splice(from, 1);
-      next.splice(to, 0, moved);
-      return next;
-    });
   }
 
   // Refresh iframe after save
@@ -1013,93 +591,41 @@ export function WysiwygEditor({ initialData, slug }: { initialData: EditorData; 
     if (iframeRef.current) iframeRef.current.src = `/u/${slug}?t=${Date.now()}&preview=true`;
   }
 
-  // Panel tabs depend on mode
-  const panelTabs = editorMode === "quick"
-    ? [{ id: "design", label: "Design" }, { id: "links", label: "Links" }, { id: "profile", label: "Profile" }]
-    : [{ id: "design", label: "Design" }, { id: "links", label: "Links" }, { id: "blocks", label: "Blocks" }, { id: "profile", label: "Profile" }];
-
   return (
     <div className="min-h-screen bg-[#f8f8fa]">
       <EditorToolbar status={status} errorMsg={errorMsg} slug={slug} onSave={saveNow} />
 
       <div className="flex flex-col md:flex-row pt-14 min-h-screen">
-        {/* ═══ LEFT SIDEBAR — Controls ═══ */}
+        {/* LEFT SIDEBAR */}
         <div className="w-full md:w-80 shrink-0 bg-white md:border-r border-neutral-200 overflow-y-auto pb-20 md:pb-0 md:sticky md:top-[56px] md:max-h-[calc(100vh-56px)]">
-          <div className="p-4 md:p-5">
-            {/* Quick / Advanced toggle */}
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">{editorMode === "quick" ? "Quick Edit" : "Advanced Edit"}</span>
-              <button onClick={toggleEditorMode} className="text-[10px] font-semibold text-indigo-600 hover:text-indigo-700 transition-colors">
-                {editorMode === "quick" ? "Advanced" : "Quick"} Mode
-              </button>
-            </div>
-
-            {/* Panel selector tabs */}
-            <div className="flex gap-1 mb-4 md:mb-5 bg-neutral-100 rounded-xl p-1 overflow-x-auto">
-              {panelTabs.map(p => (
-                <button key={p.id} onClick={() => setPanel(p.id)}
-                  className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap ${panel === p.id ? "bg-white text-neutral-900 shadow-sm" : "text-neutral-500 hover:text-neutral-700"}`}>
-                  {p.label}
+          <div className="flex md:flex-row h-full">
+            {/* Vertical tab list */}
+            <div className="md:w-[52px] shrink-0 bg-neutral-50 border-r border-neutral-200 overflow-x-auto md:overflow-y-auto flex md:flex-col">
+              {TABS.map(tab => (
+                <button key={tab.id} onClick={() => setActiveTab(tab.id)}
+                  className={`flex flex-col items-center justify-center gap-0.5 px-2 py-2.5 md:py-3 min-w-[52px] transition-all ${activeTab === tab.id ? "bg-white text-neutral-900 border-b-2 md:border-b-0 md:border-r-2 border-neutral-900" : "text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100"}`}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d={tab.icon} /></svg>
+                  <span className="text-[8px] font-semibold leading-none mt-0.5">{tab.label}</span>
                 </button>
               ))}
             </div>
 
-            {/* Panel content */}
-            {panel === "design" && editorMode === "quick" && <DesignPanelQuick data={data} onUpdate={updateField} onRefreshPreview={refreshPreview} />}
-            {panel === "design" && editorMode === "advanced" && <DesignPanelFull data={data} onUpdate={updateField} ownedAnimations={ownedAnimations} onRefreshPreview={refreshPreview} />}
-            {panel === "links" && <LinkManager />}
-            {panel === "blocks" && <BlocksPanel blocks={blocks} onBlocksChange={handleBlocksChange} />}
-            {panel === "profile" && (
-              <div className="space-y-4">
-                <h3 className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Profile Info</h3>
-                <div>
-                  <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Name</label>
-                  <input value={data.full_name || ""} onChange={e => updateText("full_name", e.target.value)} placeholder="Your Name" className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900/10 text-neutral-900 bg-white mt-1" />
-                </div>
-                <div>
-                  <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Headline</label>
-                  <input value={data.headline || ""} onChange={e => updateText("headline", e.target.value)} placeholder="UGC Creator & Photographer" className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900/10 text-neutral-900 bg-white mt-1" />
-                </div>
-                <div>
-                  <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Bio</label>
-                  <textarea value={data.bio || ""} onChange={e => updateText("bio", e.target.value)} placeholder="Tell people about yourself..." rows={3} className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900/10 text-neutral-900 bg-white mt-1 resize-y" />
-                </div>
-                <div>
-                  <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Location</label>
-                  <input value={data.location || ""} onChange={e => updateText("location", e.target.value)} placeholder="Sydney, AU" className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900/10 text-neutral-900 bg-white mt-1" />
-                </div>
-                <div>
-                  <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Avatar</label>
-                  <label className="flex items-center justify-center gap-2 py-2.5 mt-1 rounded-xl border-2 border-dashed border-neutral-200 cursor-pointer text-xs font-medium text-neutral-500 hover:border-neutral-400 transition-colors">
-                    <input type="file" accept="image/*" className="hidden" onChange={async e => {
-                      const file = e.target.files?.[0]; if (!file) return;
-                      const fd = new FormData(); fd.append("file", file); fd.append("type", "avatar");
-                      const res = await fetch("/api/upload", { method: "POST", body: fd });
-                      if (res.ok) { const d = await res.json(); if (d.url) { setData((prev: any) => ({ ...prev, avatar_url: d.url })); saveNow(); } }
-                    }} />
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                    Upload Photo
-                  </label>
-                </div>
-                <div>
-                  <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Cover Image</label>
-                  <label className="flex items-center justify-center gap-2 py-2.5 mt-1 rounded-xl border-2 border-dashed border-neutral-200 cursor-pointer text-xs font-medium text-neutral-500 hover:border-neutral-400 transition-colors">
-                    <input type="file" accept="image/*" className="hidden" onChange={async e => {
-                      const file = e.target.files?.[0]; if (!file) return;
-                      const fd = new FormData(); fd.append("file", file); fd.append("type", "cover");
-                      const res = await fetch("/api/upload", { method: "POST", body: fd });
-                      if (res.ok) { const d = await res.json(); if (d.url) { setData((prev: any) => ({ ...prev, cover_url: d.url })); saveNow(); } }
-                    }} />
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                    Upload Cover
-                  </label>
-                </div>
-              </div>
-            )}
+            {/* Section content */}
+            <div className="flex-1 p-4 md:p-5 overflow-y-auto">
+              {activeTab === "header" && <HeaderSection data={data} onUpdate={updateField} onSaveNow={saveNow} />}
+              {activeTab === "theme" && <ThemeSection data={data} onUpdate={updateField} />}
+              {activeTab === "wallpaper" && <WallpaperSection data={data} onUpdate={updateField} onSaveNow={saveNow} />}
+              {activeTab === "text" && <TextSection data={data} onUpdate={updateField} />}
+              {activeTab === "buttons" && <ButtonsSection data={data} onUpdate={updateField} />}
+              {activeTab === "colors" && <ColorsSection data={data} onUpdate={updateField} />}
+              {activeTab === "footer" && <FooterSection data={data} onUpdate={updateField} />}
+              {activeTab === "links" && <LinkManager />}
+              {activeTab === "profile" && <ProfileSection data={data} onUpdate={updateField} />}
+            </div>
           </div>
         </div>
 
-        {/* ═══ RIGHT — Live Preview (iframe, hidden on mobile) ═══ */}
+        {/* RIGHT — Live Preview (iframe, hidden on mobile) */}
         <div className="hidden md:flex flex-1 items-start justify-center py-8 px-4">
           <div className="w-full max-w-[420px]">
             <div className="flex items-center justify-between mb-3">
@@ -1122,7 +648,7 @@ export function WysiwygEditor({ initialData, slug }: { initialData: EditorData; 
         </div>
       </div>
 
-      {/* ═══ MOBILE BOTTOM BAR ═══ */}
+      {/* MOBILE BOTTOM BAR */}
       <div className="fixed bottom-0 inset-x-0 z-50 md:hidden bg-white/95 backdrop-blur-xl border-t border-neutral-200 p-3">
         <a href={`/u/${slug}`} target="_blank" className="flex items-center justify-center gap-2 w-full py-3 bg-neutral-900 text-white text-sm font-semibold rounded-xl hover:bg-neutral-800 transition-colors">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" strokeLinecap="round" strokeLinejoin="round" /></svg>
