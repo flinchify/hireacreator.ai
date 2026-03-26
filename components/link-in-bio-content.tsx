@@ -121,7 +121,8 @@ function ShareBtn({ slug, light }: { slug: string; light?: boolean }) {
   const [copied, setCopied] = useState(false);
   return <button onClick={() => { navigator.clipboard?.writeText(`https://hireacreator.ai/u/${slug}`); setCopied(true); setTimeout(() => setCopied(false), 1500); }} className={`px-3 py-1.5 rounded-full text-[10px] font-medium transition-all ${light ? "bg-white/10 text-white/70 hover:bg-white/20" : "bg-neutral-100 text-neutral-500 hover:bg-neutral-200"}`}>{copied ? "Copied!" : "Share"}</button>;
 }
-function Branding({ light }: { light?: boolean }) {
+function Branding({ light, hidden }: { light?: boolean; hidden?: boolean }) {
+  if (hidden) return null;
   return <div className={`text-center mt-8 pb-2`}><a href="https://hireacreator.ai" className={`text-[10px] ${light ? "text-white/20" : "text-neutral-300"} hover:underline`}>hireacreator.ai</a></div>;
 }
 function SectionLabel({ children, light }: { children: React.ReactNode; light?: boolean }) {
@@ -535,7 +536,7 @@ function TemplateMinimal({ creator, isUnclaimed }: { creator: Creator; isUnclaim
           {creator.calendarEnabled && <div className="my-6"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
           {isEmpty && <EmptyState />}
           {!isEmpty && <CTAButton creator={creator} accent={accent} isUnclaimed={isUnclaimed} />}
-          <Branding />
+          <Branding hidden={creator.hideBranding} />
         </div>
       </div>
     </div>
@@ -641,7 +642,7 @@ function TemplateGlass({ creator, isUnclaimed }: { creator: Creator; isUnclaimed
           {isEmpty && <EmptyState light />}
           {!isEmpty && <CTAButton creator={creator} light accent={accent} isUnclaimed={isUnclaimed} />}
         </div>
-        <Branding light />
+        <Branding light hidden={creator.hideBranding} />
       </div>
     </div>
   );
@@ -734,7 +735,7 @@ function TemplateBold({ creator, isUnclaimed }: { creator: Creator; isUnclaimed?
           {creator.calendarEnabled && <div className="my-6"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
           {isEmpty && <EmptyState light />}
           {!isEmpty && <CTAButton creator={creator} light accent={accent} isUnclaimed={isUnclaimed} />}
-          <Branding light />
+          <Branding light hidden={creator.hideBranding} />
         </div>
       </div>
     </div>
@@ -832,7 +833,7 @@ function TemplateShowcase({ creator, isUnclaimed }: { creator: Creator; isUnclai
           {creator.calendarEnabled && <div className="my-6"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
           {isEmpty && <EmptyState />}
           {!isEmpty && <CTAButton creator={creator} accent={accent} isUnclaimed={isUnclaimed} />}
-          <Branding />
+          <Branding hidden={creator.hideBranding} />
         </div>
       </div>
     </div>
@@ -940,7 +941,7 @@ function TemplateNeon({ creator, isUnclaimed }: { creator: Creator; isUnclaimed?
           {creator.calendarEnabled && <div className="my-6"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
           {isEmpty && <EmptyState light />}
           {!isEmpty && <CTAButton creator={creator} light accent={accent} isUnclaimed={isUnclaimed} />}
-          <Branding light />
+          <Branding light hidden={creator.hideBranding} />
         </div>
       </div>
     </div>
@@ -1039,7 +1040,7 @@ function TemplateCollage({ creator, isUnclaimed }: { creator: Creator; isUnclaim
           {isEmpty && <EmptyState light />}
           {!isEmpty && <CTAButton creator={creator} light isUnclaimed={isUnclaimed} />}
         </div>
-        <Branding light />
+        <Branding light hidden={creator.hideBranding} />
       </div>
     </div>
   );
@@ -1171,7 +1172,7 @@ function TemplateBento({ creator, isUnclaimed }: { creator: Creator; isUnclaimed
             </a>
           )}
         </div>
-        <Branding light />
+        <Branding light hidden={creator.hideBranding} />
       </div>
     </div>
   );
@@ -1308,7 +1309,7 @@ function TemplateSplit({ creator, isUnclaimed }: { creator: Creator; isUnclaimed
 
             {isEmpty && <EmptyState />}
             {!isEmpty && <CTAButton creator={creator} accent={accent} isUnclaimed={isUnclaimed} />}
-            <Branding />
+            <Branding hidden={creator.hideBranding} />
           </div>
         </div>
       </div>
@@ -1385,7 +1386,7 @@ function TemplateCustom({ creator, isUnclaimed }: { creator: Creator; isUnclaime
           {isEmpty && <EmptyState light={isDarkBg} />}
           {!isEmpty && <CTAButton creator={creator} light={isDarkBg} accent={accent} isUnclaimed={isUnclaimed} />}
         </div>
-        <Branding light={isDarkBg} />
+        <Branding light={isDarkBg} hidden={creator.hideBranding} />
       </div>
     </div>
   );
@@ -1600,7 +1601,7 @@ function TemplateFounder({ creator, isUnclaimed }: { creator: Creator; isUnclaim
 
         {isEmpty && <EmptyState light />}
         {!isEmpty && <CTAButton creator={creator} light accent={accent} isUnclaimed={isUnclaimed} />}
-        <Branding light />
+        <Branding light hidden={creator.hideBranding} />
       </div>
     </div>
   );
@@ -1699,7 +1700,7 @@ function TemplateBrutalist({ creator, isUnclaimed }: { creator: Creator; isUncla
             VIEW FULL PROFILE
           </a>
         )}
-        <Branding light />
+        <Branding light hidden={creator.hideBranding} />
       </div>
     </div>
   );
@@ -1788,7 +1789,7 @@ function TemplateAurora({ creator, isUnclaimed }: { creator: Creator; isUnclaime
         {creator.calendarEnabled && <div className="my-6"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
         {isEmpty && <EmptyState light />}
         {!isEmpty && <CTAButton creator={creator} light accent={accent} isUnclaimed={isUnclaimed} />}
-        <Branding light />
+        <Branding light hidden={creator.hideBranding} />
       </div>
     </div>
   );
@@ -1867,7 +1868,7 @@ function TemplateSunset({ creator, isUnclaimed }: { creator: Creator; isUnclaime
             {isUnclaimed ? "Claim & Customize" : "View Full Profile"}
           </a>
         )}
-        <Branding light />
+        <Branding light hidden={creator.hideBranding} />
       </div>
     </div>
   );
@@ -1984,7 +1985,7 @@ function TemplateTerminal({ creator, isUnclaimed }: { creator: Creator; isUnclai
             &gt; VIEW_FULL_PROFILE
           </a>
         )}
-        <Branding light />
+        <Branding light hidden={creator.hideBranding} />
       </div>
     </div>
   );
@@ -2077,7 +2078,7 @@ function TemplatePastel({ creator, isUnclaimed }: { creator: Creator; isUnclaime
             {isUnclaimed ? "Claim & Customize" : "View Full Profile"}
           </a>
         )}
-        <Branding />
+        <Branding hidden={creator.hideBranding} />
       </div>
     </div>
   );
@@ -2163,7 +2164,7 @@ function TemplateMagazine({ creator, isUnclaimed }: { creator: Creator; isUnclai
         {creator.calendarEnabled && <div className="my-6"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
         {isEmpty && <EmptyState />}
         {!isEmpty && <CTAButton creator={creator} accent={accent} isUnclaimed={isUnclaimed} />}
-        <Branding />
+        <Branding hidden={creator.hideBranding} />
       </div>
     </div>
   );
@@ -2267,7 +2268,7 @@ function TemplateRetro({ creator, isUnclaimed }: { creator: Creator; isUnclaimed
             {isUnclaimed ? "Claim & Customize" : "View Full Profile"}
           </a>
         )}
-        <Branding />
+        <Branding hidden={creator.hideBranding} />
       </div>
     </div>
   );
@@ -2351,7 +2352,7 @@ function TemplateMidnight({ creator, isUnclaimed }: { creator: Creator; isUnclai
         {creator.calendarEnabled && <div className="my-6"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
         {isEmpty && <EmptyState light />}
         {!isEmpty && <CTAButton creator={creator} light accent={accent} isUnclaimed={isUnclaimed} />}
-        <Branding light />
+        <Branding light hidden={creator.hideBranding} />
       </div>
     </div>
   );
@@ -2447,7 +2448,7 @@ function TemplateClay({ creator, isUnclaimed }: { creator: Creator; isUnclaimed?
             {isUnclaimed ? "Claim & Customize" : "View Full Profile"}
           </a>
         )}
-        <Branding />
+        <Branding hidden={creator.hideBranding} />
       </div>
     </div>
   );
@@ -2541,7 +2542,7 @@ function TemplateGradientMesh({ creator, isUnclaimed }: { creator: Creator; isUn
               {isUnclaimed ? "Claim & Customize" : "View Full Profile"}
             </a>
           )}
-          <Branding />
+          <Branding hidden={creator.hideBranding} />
         </div>
       </div>
     </div>
@@ -2661,7 +2662,7 @@ function TemplateTrader({ creator, isUnclaimed }: { creator: Creator; isUnclaime
             VIEW FULL PROFILE
           </a>
         )}
-        <Branding light />
+        <Branding light hidden={creator.hideBranding} />
       </div>
     </div>
   );
@@ -2758,7 +2759,7 @@ function TemplateEducator({ creator, isUnclaimed }: { creator: Creator; isUnclai
             {isUnclaimed ? "Claim & Customize" : "View Full Profile"}
           </a>
         )}
-        <Branding />
+        <Branding hidden={creator.hideBranding} />
       </div>
     </div>
   );
@@ -2881,7 +2882,7 @@ function TemplateDeveloper({ creator, isUnclaimed }: { creator: Creator; isUncla
             $ view --full-profile
           </a>
         )}
-        <Branding light />
+        <Branding light hidden={creator.hideBranding} />
       </div>
     </div>
   );
@@ -2977,7 +2978,7 @@ function TemplateExecutive({ creator, isUnclaimed }: { creator: Creator; isUncla
             {isUnclaimed ? "Claim & Customize" : "View Full Profile"}
           </a>
         )}
-        <Branding />
+        <Branding hidden={creator.hideBranding} />
       </div>
     </div>
   );

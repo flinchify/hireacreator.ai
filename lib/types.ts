@@ -139,6 +139,7 @@ export type Creator = {
   linkBioButtonSize: string;
   linkBioContentPosition: string;
   linkBioContentAlign: string;
+  hideBranding: boolean;
   hasStripeAccount: boolean;
   calendarEnabled: boolean;
   profileViews: number;

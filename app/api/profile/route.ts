@@ -3,7 +3,19 @@ import { cookies } from "next/headers";
 import { getDb } from "@/lib/db";
 import { calculateAndSaveScore } from "@/lib/creator-score";
 
+// Ensure hide_branding column exists
+let migrated = false;
+async function ensureColumns() {
+  if (migrated) return;
+  try {
+    const sql = getDb();
+    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS hide_branding BOOLEAN DEFAULT false`;
+    migrated = true;
+  } catch {}
+}
+
 async function getUser() {
+  await ensureColumns();
   const token = cookies().get("session_token")?.value;
   if (!token) return null;
   const sql = getDb();
@@ -93,6 +105,7 @@ export async function PATCH(request: Request) {
         link_bio_button_size = COALESCE(${body.link_bio_button_size ?? null}, link_bio_button_size),
         link_bio_content_position = COALESCE(${body.link_bio_content_position ?? null}, link_bio_content_position),
         link_bio_content_align = COALESCE(${body.link_bio_content_align ?? null}, link_bio_content_align),
+        hide_branding = COALESCE(${body.hide_branding ?? null}, hide_branding),
         updated_at = NOW()
       WHERE id = ${user.id}
     `;

@@ -17,6 +17,7 @@ type Settings = {
   buttonShape: string;
   buttonAnim: string;
   introAnim: string;
+  hideBranding: boolean;
 };
 
 /* ── Constants ── */
@@ -794,6 +795,7 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
     buttonShape: user.link_bio_button_shape || "rounded",
     buttonAnim: user.link_bio_button_anim || "none",
     introAnim: user.link_bio_intro_anim || "none",
+    hideBranding: user.hide_branding || false,
   });
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -1002,6 +1004,22 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
 
             {/* ─── TEMPLATE ─── */}
             {section === "template" && (
+              <>
+              {/* AI Design CTA */}
+              <button
+                onClick={() => setAiModalOpen(true)}
+                className="w-full flex items-center gap-4 p-5 rounded-2xl border border-blue-100 bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 transition-all group"
+              >
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 text-white" style={{ background: "linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)" }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83" /></svg>
+                </div>
+                <div className="flex-1 text-left">
+                  <div className="text-sm font-bold text-neutral-900">AI Design My Page</div>
+                  <div className="text-xs text-neutral-500 mt-0.5">Add your brand links and let AI create a custom design</div>
+                </div>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-neutral-300 shrink-0 group-hover:text-neutral-500 transition-colors"><path d="M9 18l6-6-6-6" strokeLinecap="round" /></svg>
+              </button>
+
               <div className="bg-white rounded-2xl border border-neutral-200/60 p-5">
                 <h2 className="text-sm font-bold text-neutral-900 mb-4">Choose Template</h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 max-h-[70vh] overflow-y-auto pr-1">
@@ -1020,6 +1038,7 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
                   ))}
                 </div>
               </div>
+              </>
             )}
 
 
@@ -1054,6 +1073,31 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
                 <div className="p-4 bg-neutral-50 rounded-xl text-center">
                   <p className="text-[10px] text-neutral-400 mb-2">Tap to preview</p>
                   <AnimTestButton shape={settings.buttonShape} anim={settings.buttonAnim} />
+                </div>
+
+                {/* Display Toggles */}
+                <div className="border-t border-neutral-100 pt-5">
+                  <h2 className="text-sm font-bold text-neutral-900 mb-3">Display</h2>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="text-sm text-neutral-900 font-medium">HireACreator badge</div>
+                        <div className="text-xs text-neutral-400">Show "hireacreator.ai" branding at the bottom</div>
+                      </div>
+                      <button
+                        onClick={async () => {
+                          const newVal = !settings.hideBranding;
+                          setSettings(prev => ({ ...prev, hideBranding: newVal }));
+                          await fetch("/api/profile", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ hide_branding: newVal }) });
+                        }}
+                        role="switch"
+                        aria-checked={!settings.hideBranding}
+                        className={`relative w-11 h-6 rounded-full transition-colors ${!settings.hideBranding ? "bg-emerald-500" : "bg-neutral-300"}`}
+                      >
+                        <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${!settings.hideBranding ? "translate-x-5" : ""}`} />
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
