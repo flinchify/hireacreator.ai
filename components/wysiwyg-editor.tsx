@@ -497,7 +497,11 @@ function DesignPanelFull({ data, onUpdate, ownedAnimations, onRefreshPreview }: 
                 {GRADIENT_DIRECTIONS.map(d => {
                   const current = data.link_bio_gradient_direction || "135deg";
                   return (
-                    <button key={d.deg} onClick={() => onUpdate({ link_bio_gradient_direction: d.deg })} title={d.label}
+                    <button key={d.deg} onClick={() => {
+                      const c1 = data.link_bio_gradient_color1 || "#6366f1";
+                      const c2 = data.link_bio_gradient_color2 || "#a855f7";
+                      onUpdate({ link_bio_gradient_direction: d.deg, link_bio_bg_value: `linear-gradient(${d.deg}, ${c1} 0%, ${c2} 100%)` });
+                    }} title={d.label}
                       className={`py-1.5 text-[9px] font-medium rounded-md transition-all ${current === d.deg ? "bg-neutral-900 text-white" : "bg-neutral-100 text-neutral-500 hover:bg-neutral-200"}`}>
                       {d.label.split("-").map(w => w[0]).join("")}
                     </button>
@@ -508,11 +512,19 @@ function DesignPanelFull({ data, onUpdate, ownedAnimations, onRefreshPreview }: 
             <div className="flex gap-2">
               <div className="flex-1">
                 <h4 className={SECTION_LABEL}>Color 1</h4>
-                <input type="color" value={data.link_bio_gradient_color1 || "#6366f1"} onChange={e => onUpdate({ link_bio_gradient_color1: e.target.value })} className="w-full h-7 rounded-lg border border-neutral-200 cursor-pointer" />
+                <input type="color" value={data.link_bio_gradient_color1 || "#6366f1"} onChange={e => {
+                  const dir = data.link_bio_gradient_direction || "135deg";
+                  const c2 = data.link_bio_gradient_color2 || "#a855f7";
+                  onUpdate({ link_bio_gradient_color1: e.target.value, link_bio_bg_value: `linear-gradient(${dir}, ${e.target.value} 0%, ${c2} 100%)` });
+                }} className="w-full h-7 rounded-lg border border-neutral-200 cursor-pointer" />
               </div>
               <div className="flex-1">
                 <h4 className={SECTION_LABEL}>Color 2</h4>
-                <input type="color" value={data.link_bio_gradient_color2 || "#a855f7"} onChange={e => onUpdate({ link_bio_gradient_color2: e.target.value })} className="w-full h-7 rounded-lg border border-neutral-200 cursor-pointer" />
+                <input type="color" value={data.link_bio_gradient_color2 || "#a855f7"} onChange={e => {
+                  const dir = data.link_bio_gradient_direction || "135deg";
+                  const c1 = data.link_bio_gradient_color1 || "#6366f1";
+                  onUpdate({ link_bio_gradient_color2: e.target.value, link_bio_bg_value: `linear-gradient(${dir}, ${c1} 0%, ${e.target.value} 100%)` });
+                }} className="w-full h-7 rounded-lg border border-neutral-200 cursor-pointer" />
               </div>
             </div>
             <div>
@@ -552,7 +564,7 @@ function DesignPanelFull({ data, onUpdate, ownedAnimations, onRefreshPreview }: 
           <div className="space-y-3">
             <div>
               <h4 className={SECTION_LABEL}>Video URL</h4>
-              <input value={data.link_bio_bg_video_url || ""} onChange={e => onUpdate({ link_bio_bg_video_url: e.target.value })} placeholder="https://..." className="w-full px-2.5 py-2 rounded-lg border border-neutral-200 text-xs focus:outline-none focus:ring-2 focus:ring-neutral-900/10" />
+              <input value={data.link_bio_bg_video || ""} onChange={e => onUpdate({ link_bio_bg_video: e.target.value })} placeholder="https://..." className="w-full px-2.5 py-2 rounded-lg border border-neutral-200 text-xs focus:outline-none focus:ring-2 focus:ring-neutral-900/10" />
             </div>
             <div>
               <div className="flex items-center justify-between mb-1">

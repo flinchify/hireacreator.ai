@@ -55,6 +55,96 @@ const CONTENT_ALIGN: Record<string, string> = {
   right: 'text-right items-end',
 };
 
+/* ── Font size CSS values ── */
+const FONT_SIZE_CSS: Record<string, string> = {
+  small: "0.875rem",
+  medium: "1rem",
+  large: "1.125rem",
+  xl: "1.25rem",
+};
+
+/* ── Letter spacing CSS values ── */
+const LETTER_SPACING_CSS: Record<string, string> = {
+  tight: "-0.025em",
+  normal: "0em",
+  wide: "0.05em",
+};
+
+/* ── Container width values ── */
+const CONTAINER_WIDTH_CSS: Record<string, string> = {
+  compact: "380px",
+  standard: "480px",
+  wide: "560px",
+  full: "100%",
+};
+
+/* ── Button shadow CSS ── */
+const BUTTON_SHADOW_CSS: Record<string, string> = {
+  none: "none",
+  subtle: "0 1px 3px rgba(0,0,0,0.12)",
+  medium: "0 4px 12px rgba(0,0,0,0.15)",
+  lifted: "0 8px 24px rgba(0,0,0,0.2)",
+};
+
+/* ── Avatar shadow CSS ── */
+const AVATAR_SHADOW_CSS: Record<string, string> = {
+  none: "none",
+  soft: "0 4px 12px rgba(0,0,0,0.1)",
+  medium: "0 8px 24px rgba(0,0,0,0.15)",
+  dramatic: "0 12px 40px rgba(0,0,0,0.25)",
+};
+
+/* ── Avatar shape CSS ── */
+function avatarShapeClass(shape: string): string {
+  switch (shape) {
+    case "rounded": return "rounded-2xl";
+    case "square": return "rounded-lg";
+    case "hexagon": return "rounded-2xl"; // CSS clip-path applied via style
+    default: return "rounded-full";
+  }
+}
+
+function avatarShapeStyle(shape: string): React.CSSProperties {
+  if (shape === "hexagon") return { clipPath: "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)" };
+  return {};
+}
+
+/* ── Hover effect classes ── */
+function hoverEffectClass(effect: string): string {
+  switch (effect) {
+    case "lift": return "hover:-translate-y-1 hover:shadow-lg";
+    case "glow": return "hover:shadow-[0_0_20px_rgba(99,102,241,0.3)]";
+    case "scale": return "hover:scale-[1.05]";
+    case "shadow": return "hover:shadow-xl";
+    default: return "hover:scale-[1.02]";
+  }
+}
+
+/* ── Button width classes ── */
+function buttonWidthClass(width: string): string {
+  switch (width) {
+    case "compact": return "w-auto min-w-[200px]";
+    case "full": return "w-full";
+    default: return "w-full";
+  }
+}
+
+/* ── Compute button inline styles from creator fields ── */
+function getButtonStyles(creator: Creator, light?: boolean): React.CSSProperties {
+  const styles: React.CSSProperties = {};
+  if (creator.linkBioButtonFill) styles.background = creator.linkBioButtonFill;
+  if (creator.linkBioButtonTextColor) styles.color = creator.linkBioButtonTextColor;
+  if (creator.linkBioButtonShadow && creator.linkBioButtonShadow !== "none") {
+    styles.boxShadow = BUTTON_SHADOW_CSS[creator.linkBioButtonShadow] || "none";
+  }
+  if (creator.linkBioButtonBorder) {
+    styles.borderWidth = `${creator.linkBioButtonBorderWidth || 1}px`;
+    styles.borderStyle = "solid";
+    styles.borderColor = creator.linkBioButtonBorderColor || (light ? "rgba(255,255,255,0.2)" : "#e5e5e5");
+  }
+  return styles;
+}
+
 /* ── Button shape classes ── */
 function btnClass(shape: string): string {
   switch (shape) {
@@ -84,15 +174,38 @@ function cardCls(style: string, light: boolean): string {
 function BgLayer({ creator, fallback }: { creator: Creator; fallback?: React.ReactNode }) {
   const { linkBioBgType: bgType, linkBioBgValue: bgValue, linkBioBgVideo: bgVideo, linkBioBgImages: bgImages } = creator;
   const accent = creator.linkBioAccent || "#6366f1";
+  const overlayType = creator.linkBioBgOverlay || "dark";
+  const overlayOpacity = (creator.linkBioBgOverlayOpacity ?? 40) / 100;
+  const overlayColor = overlayType === "light" ? `rgba(255,255,255,${overlayOpacity})` : `rgba(0,0,0,${overlayOpacity})`;
+  const glassEnabled = creator.linkBioGlassEnabled;
+  const glassIntensity = creator.linkBioGlassIntensity ?? 8;
+
+  // Compose gradient from custom controls if no preset bg_value
+  let effectiveBgValue = bgValue;
+  if (bgType === "gradient" && creator.linkBioGradientColor1 && creator.linkBioGradientColor2) {
+    const dir = creator.linkBioGradientDirection || "135deg";
+    effectiveBgValue = `linear-gradient(${dir}, ${creator.linkBioGradientColor1} 0%, ${creator.linkBioGradientColor2} 100%)`;
+  }
+
+  const glassOverlay = glassEnabled ? (
+    <div className="absolute inset-0" style={{ backdropFilter: `blur(${glassIntensity}px)`, WebkitBackdropFilter: `blur(${glassIntensity}px)` }} />
+  ) : null;
 
   if (bgType === "video" && bgVideo) {
-    return <div className="fixed inset-0 z-0"><video autoPlay muted loop playsInline className="w-full h-full object-cover"><source src={bgVideo} type="video/mp4" /></video><div className="absolute inset-0 bg-black/60" /></div>;
+    return (
+      <div className="fixed inset-0 z-0">
+        <video autoPlay muted loop playsInline className="w-full h-full object-cover"><source src={bgVideo} type="video/mp4" /></video>
+        <div className="absolute inset-0" style={{ background: overlayColor }} />
+        {glassOverlay}
+      </div>
+    );
   }
   if (bgType === "image" && bgValue) {
     return (
       <div className="fixed inset-0 z-0">
         <img src={bgValue} alt="" className="w-full h-full object-cover" />
-        <div className="absolute inset-0" style={{ background: `linear-gradient(to bottom, ${accent}18 0%, rgba(0,0,0,0.55) 40%, rgba(0,0,0,0.75) 100%)` }} />
+        <div className="absolute inset-0" style={{ background: overlayColor }} />
+        {glassOverlay}
       </div>
     );
   }
@@ -104,8 +217,8 @@ function BgLayer({ creator, fallback }: { creator: Creator; fallback?: React.Rea
       </div>
     );
   }
-  if (bgType === "gradient" && bgValue) {
-    return <div className="fixed inset-0 z-0" style={{ background: bgValue }} />;
+  if (bgType === "gradient" && (effectiveBgValue || bgValue)) {
+    return <div className="fixed inset-0 z-0" style={{ background: effectiveBgValue || bgValue }} />;
   }
   if (bgType === "solid" && bgValue) {
     return <div className="fixed inset-0 z-0" style={{ background: bgValue }} />;
@@ -170,6 +283,11 @@ function BioLinksSection({ creator, light }: { creator: Creator; light?: boolean
   const shape = btnClass(creator.linkBioButtonShape);
   const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
   const bs = BUTTON_SIZES[creator.linkBioButtonSize || "medium"] || BUTTON_SIZES.medium;
+  const btnStyles = getButtonStyles(creator, light);
+  const hoverCls = hoverEffectClass(creator.linkBioHoverEffect);
+  const widthCls = buttonWidthClass(creator.linkBioButtonWidth);
+  const hasCustomFill = !!creator.linkBioButtonFill;
+  const hasCustomTextColor = !!creator.linkBioButtonTextColor;
 
   const visibleLinks = creator.bioLinks.filter(l => l.isVisible);
   const standalone = visibleLinks.filter(l => !l.sectionName);
@@ -192,10 +310,11 @@ function BioLinksSection({ creator, light }: { creator: Creator; light?: boolean
           target="_blank"
           rel="noopener noreferrer"
           onClick={() => trackClick(link.id)}
-          className={`group block w-full overflow-hidden transition-all duration-200 hover:scale-[1.02] hover:shadow-lg ${shape} ${light
+          className={`group block ${widthCls} overflow-hidden transition-all duration-200 ${hoverCls} ${shape} ${!hasCustomFill ? (light
             ? "bg-white/[0.08] backdrop-blur-md border border-white/[0.12] hover:bg-white/[0.14]"
             : "bg-white border border-neutral-200/80 hover:border-neutral-300 shadow-sm"
-          }`}
+          ) : ""}`}
+          style={btnStyles}
         >
           <div className="relative w-full aspect-[2/1] overflow-hidden">
             <img src={link.thumbnailUrl} alt="" className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
@@ -229,25 +348,26 @@ function BioLinksSection({ creator, light }: { creator: Creator; light?: boolean
         target="_blank"
         rel="noopener noreferrer"
         onClick={() => trackClick(link.id)}
-        className={`group flex items-center gap-3 w-full ${bs} transition-all duration-200 hover:scale-[1.02] hover:shadow-lg ${shape} ${light
+        className={`group flex items-center gap-3 ${widthCls} ${bs} transition-all duration-200 ${hoverCls} ${shape} ${!hasCustomFill ? (light
           ? "bg-white/[0.08] backdrop-blur-md border border-white/[0.12] hover:bg-white/[0.14]"
           : "bg-white border border-neutral-200/80 hover:border-neutral-300 shadow-sm"
-        }`}
+        ) : ""}`}
+        style={btnStyles}
       >
         {platform ? (
-          <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${light ? "bg-white/10" : "bg-neutral-100"}`}>
+          <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${hasCustomFill ? "bg-black/10" : (light ? "bg-white/10" : "bg-neutral-100")}`}>
             {platform === "calendar" ? (
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={light ? "white" : "#555"} strokeWidth="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18" strokeLinecap="round"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={hasCustomTextColor ? creator.linkBioButtonTextColor : (light ? "white" : "#555")} strokeWidth="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18" strokeLinecap="round"/></svg>
             ) : (
-              <PlatformIcon platform={platform} size={18} className={light ? "text-white/70" : "text-neutral-500"} />
+              <PlatformIcon platform={platform} size={18} className={hasCustomTextColor ? "" : (light ? "text-white/70" : "text-neutral-500")} />
             )}
           </div>
         ) : null}
         <div className="flex-1 min-w-0">
-          <div className={`font-semibold ${ts.link} ${light ? "text-white" : "text-neutral-900"}`}>{link.title}</div>
-          <div className={`text-[11px] mt-0.5 truncate ${light ? "text-white/30" : "text-neutral-400"}`}>{link.url.replace(/^https?:\/\/(www\.)?/, '').split('/')[0]}</div>
+          <div className={`font-semibold ${ts.link} ${hasCustomTextColor ? "" : (light ? "text-white" : "text-neutral-900")}`}>{link.title}</div>
+          <div className={`text-[11px] mt-0.5 truncate ${hasCustomTextColor ? "opacity-50" : (light ? "text-white/30" : "text-neutral-400")}`}>{link.url.replace(/^https?:\/\/(www\.)?/, '').split('/')[0]}</div>
         </div>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={`shrink-0 transition-all duration-200 ${light ? "text-white/20 group-hover:text-white/50" : "text-neutral-300 group-hover:text-neutral-500"} group-hover:translate-x-0.5`}>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={`shrink-0 transition-all duration-200 ${hasCustomTextColor ? "opacity-30" : (light ? "text-white/20 group-hover:text-white/50" : "text-neutral-300 group-hover:text-neutral-500")} group-hover:translate-x-0.5`}>
           <path d="M7 17L17 7M17 7H7M17 7v10" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </a>
@@ -386,16 +506,37 @@ function LogoHeader({ creator, light, accentBorder }: {
 /* ══════════════════════════════════════════════════════
    Avatar component — shared across templates
    ══════════════════════════════════════════════════════ */
-function Avatar({ creator, size = "md", shape = "circle", light, accentBorder }: {
+function Avatar({ creator, size = "md", shape: propShape, light, accentBorder }: {
   creator: Creator; size?: "sm" | "md" | "lg"; shape?: "circle" | "square"; light?: boolean; accentBorder?: string;
 }) {
   const avatarSz = creator.linkBioAvatarSize || "medium";
   const sizeMap = { sm: "small", md: "medium", lg: "large" } as const;
-  const s = AVATAR_SIZES[sizeMap[size] === "medium" ? avatarSz : sizeMap[size]] || AVATAR_SIZES.medium;
-  const r = shape === "square" ? "rounded-2xl" : "rounded-full";
-  const border = accentBorder ? { border: `3px solid ${accentBorder}` } : {};
-  if (creator.avatar) return <img src={creator.avatar} alt="" className={`${s} ${r} object-cover shadow-lg`} style={border} />;
-  return <div className={`${s} ${r} flex items-center justify-center shadow-lg ${light ? "bg-white/10" : "bg-neutral-100"}`} style={border}><span className={`text-3xl font-bold ${light ? "text-white/60" : "text-neutral-400"}`}>{(creator.name || "?")[0]}</span></div>;
+  // Support numeric avatar size from advanced editor
+  const numericSize = typeof avatarSz === "number" || (typeof avatarSz === "string" && /^\d+$/.test(avatarSz)) ? Number(avatarSz) : 0;
+  const sizeClass = numericSize > 0 ? "" : (AVATAR_SIZES[sizeMap[size] === "medium" ? avatarSz : sizeMap[size]] || AVATAR_SIZES.medium);
+  const sizeStyle: React.CSSProperties = numericSize > 0 ? { width: numericSize, height: numericSize } : {};
+
+  // Use creator's avatar shape setting, fall back to prop, fall back to circle
+  const effectiveShape = creator.linkBioAvatarShape || (propShape === "square" ? "square" : "circle");
+  const r = avatarShapeClass(effectiveShape);
+  const shapeStyle = avatarShapeStyle(effectiveShape);
+
+  // Border from creator settings or accent border
+  const borderStyle: React.CSSProperties = {};
+  if (creator.linkBioAvatarBorderWidth > 0) {
+    borderStyle.border = `${creator.linkBioAvatarBorderWidth}px solid ${creator.linkBioAvatarBorderColor || (light ? "rgba(255,255,255,0.3)" : "#e5e5e5")}`;
+  } else if (accentBorder) {
+    borderStyle.border = `3px solid ${accentBorder}`;
+  }
+
+  // Shadow
+  const shadow = AVATAR_SHADOW_CSS[creator.linkBioAvatarShadow] || AVATAR_SHADOW_CSS.none;
+  const shadowStyle: React.CSSProperties = shadow !== "none" ? { boxShadow: shadow } : {};
+
+  const combinedStyle = { ...sizeStyle, ...borderStyle, ...shadowStyle, ...shapeStyle };
+
+  if (creator.avatar) return <img src={creator.avatar} alt="" className={`${sizeClass} ${r} object-cover shadow-lg`} style={combinedStyle} />;
+  return <div className={`${sizeClass} ${r} flex items-center justify-center shadow-lg ${light ? "bg-white/10" : "bg-neutral-100"}`} style={combinedStyle}><span className={`text-3xl font-bold ${light ? "text-white/60" : "text-neutral-400"}`}>{(creator.name || "?")[0]}</span></div>;
 }
 
 /* ══════════════════════════════════════════════════════
@@ -508,15 +649,17 @@ function ServicesSection({ creator, light, accent }: { creator: Creator; light?:
    CTA button — shared
    ══════════════════════════════════════════════════════ */
 function CTAButton({ creator, light, accent, isUnclaimed }: { creator: Creator; light?: boolean; accent?: string; isUnclaimed?: boolean }) {
-  const ac = accent || creator.linkBioAccent || "#171717";
+  const ac = creator.linkBioButtonFill || accent || creator.linkBioAccent || "#171717";
+  const textColor = creator.linkBioButtonTextColor || "#ffffff";
   const bs = BUTTON_SIZES[creator.linkBioButtonSize || "medium"] || BUTTON_SIZES.medium;
   const btn = btnClass(creator.linkBioButtonShape);
+  const shadow = BUTTON_SHADOW_CSS[creator.linkBioButtonShadow] || "0 10px 15px -3px rgba(0,0,0,0.1)";
   const ctaHref = isUnclaimed ? `/u/${creator.slug}/claim` : `/creators/${creator.slug}`;
   const ctaText = isUnclaimed ? "Claim & Customize" : "View Full Profile";
   return (
     <a href={ctaHref}
-      className={`block w-full mt-4 font-semibold text-center ${btn} ${bs} transition-all duration-200 hover:scale-[1.02] hover:shadow-xl shadow-lg text-white`}
-      style={{ background: ac }}>
+      className={`block w-full mt-4 font-semibold text-center ${btn} ${bs} transition-all duration-200 hover:scale-[1.02] hover:shadow-xl`}
+      style={{ background: ac, color: textColor, boxShadow: shadow }}>
       {ctaText}
     </a>
   );
@@ -538,7 +681,7 @@ function TemplateMinimal({ creator, isUnclaimed }: { creator: Creator; isUnclaim
   return (
     <div className={`min-h-screen flex ${items} justify-center lg:py-10 lg:px-4`} style={{ background: hasCustomBg ? "transparent" : defaultBg }}>
       {hasCustomBg && <BgLayer creator={creator} fallback={<div className="fixed inset-0 z-0" style={{ background: defaultBg }} />} />}
-      <div className={`w-full lg:max-w-[460px] lg:rounded-[2.5rem] lg:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.1)] bg-white min-h-screen lg:min-h-0 relative z-10 overflow-hidden ${hasCustomBg ? "lg:bg-white/95 lg:backdrop-blur-sm" : ""}`}>
+      <div className={`w-full lg:rounded-[2.5rem] lg:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.1)] bg-white min-h-screen lg:min-h-0 relative z-10 overflow-hidden ${hasCustomBg ? "lg:bg-white/95 lg:backdrop-blur-sm" : ""}`} style={{ maxWidth: `var(--bio-container-width, 460px)` }}>
         {/* Header banner */}
         {creator.headerImageUrl && (
           <div className="w-full overflow-hidden lg:rounded-t-[2.5rem]">
@@ -568,7 +711,7 @@ function TemplateMinimal({ creator, isUnclaimed }: { creator: Creator; isUnclaim
           )}
         </div>
 
-        <div className={`px-6 sm:px-8 pb-10 ${creator.logoUrl ? 'pt-6' : 'pt-[4.5rem]'} ${align}`}>
+        <div className={`pb-10 ${creator.logoUrl ? 'pt-6' : 'pt-[4.5rem]'} ${align}`} style={{ padding: `var(--bio-page-padding, 24px)`, paddingTop: creator.logoUrl ? '24px' : '4.5rem', gap: `var(--bio-section-gap, 16px)`, display: 'flex', flexDirection: 'column' }}>
           {creator.logoUrl && (
             <div className="flex justify-center mb-4">
               <img src={creator.logoUrl} alt="" className="h-[80px] w-auto max-w-[180px] object-contain" />
@@ -646,7 +789,7 @@ function TemplateGlass({ creator, isUnclaimed }: { creator: Creator; isUnclaimed
 
       <div className="absolute top-4 right-4 z-20"><ShareBtn slug={creator.slug} light /></div>
 
-      <div className={`relative z-10 w-full lg:max-w-[480px] mx-auto px-5 lg:px-6 pt-12 pb-10 min-h-screen flex flex-col ${justify}`}>
+      <div className={`relative z-10 w-full mx-auto pt-12 pb-10 min-h-screen flex flex-col ${justify}`} style={{ maxWidth: `var(--bio-container-width, 480px)`, padding: `var(--bio-page-padding, 20px)`, paddingTop: '3rem' }}>
         {/* Header banner */}
         {creator.headerImageUrl && (
           <div className="w-full mb-4 rounded-2xl overflow-hidden">
@@ -3426,8 +3569,21 @@ export function LinkInBioContent({ creator, isUnclaimed }: { creator: Creator; i
 
   const TemplateComponent = TEMPLATES[template] || TemplateCustom;
 
+  // Build wrapper styles from new fields
+  const wrapperStyle: React.CSSProperties = {
+    fontFamily: font,
+    color: textColor || undefined,
+    fontWeight: creator.linkBioFontWeight || undefined,
+    letterSpacing: LETTER_SPACING_CSS[creator.linkBioLetterSpacing] || undefined,
+    // CSS custom properties for templates to consume
+    "--bio-page-padding": `${creator.linkBioPagePadding ?? 16}px`,
+    "--bio-section-gap": `${creator.linkBioSectionGap ?? 16}px`,
+    "--bio-container-width": CONTAINER_WIDTH_CSS[creator.linkBioContainerWidth] || "480px",
+    "--bio-font-size": FONT_SIZE_CSS[creator.linkBioFontSize] || "1rem",
+  } as React.CSSProperties;
+
   return (
-    <div className="pt-0" style={{ fontFamily: font, color: textColor || undefined }}>
+    <div className="pt-0" style={wrapperStyle}>
       {!animDone && (
         <IntroAnimation
           animType={animType}
