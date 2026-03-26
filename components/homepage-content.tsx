@@ -5,6 +5,7 @@ import { ScoreChecker } from "./score-checker";
 import { AnimateOnScroll, StaggerChildren } from "./animate-on-scroll";
 import { PlatformTicker } from "./platform-ticker";
 import { CreatorCard } from "./creator-card";
+import { TesseractCreators } from "./tesseract-creators";
 
 import type { Creator } from "@/lib/types";
 
@@ -523,25 +524,7 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
 
       {/* ═══ Section 8: Featured Creators ═══ */}
       {featured.length > 0 && (
-        <section className="my-4">
-          <div className="bg-blue-50 py-16 rounded-3xl mx-4 sm:mx-6">
-            <div className="max-w-5xl mx-auto px-5">
-              <h2
-                className="text-2xl sm:text-3xl text-neutral-800 text-center mb-12 font-serif"
-                style={{ fontFamily: "var(--font-serif)" }}
-              >
-                Featured this week
-              </h2>
-              <StaggerChildren className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {featured.map((creator) => (
-                  <div key={creator.id} className="aos-stagger-item">
-                    <CreatorCard creator={creator} />
-                  </div>
-                ))}
-              </StaggerChildren>
-            </div>
-          </div>
-        </section>
+        <TesseractCreators featured={featured} />
       )}
 
       {/* ═══ Section 9: FAQ ═══ */}
