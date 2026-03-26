@@ -269,9 +269,10 @@ const BG_SWATCHES = ["#ffffff", "#f5f5f5", "#171717", "#0a0a0a", "#1e1b4b", "#0c
 /* ══════════════════════════════════════════════════════
    TAB DEFINITIONS
    ══════════════════════════════════════════════════════ */
-type TabId = "header" | "theme" | "wallpaper" | "text" | "buttons" | "colors" | "footer" | "links" | "profile";
+type TabId = "ai-design" | "header" | "theme" | "wallpaper" | "text" | "buttons" | "colors" | "footer" | "links" | "profile";
 
 const TABS: { id: TabId; label: string; icon: string }[] = [
+  { id: "ai-design", label: "AI Design", icon: "M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" },
   { id: "header", label: "Header", icon: "M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" },
   { id: "theme", label: "Theme", icon: "M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" },
   { id: "wallpaper", label: "Wallpaper", icon: "M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" },
@@ -564,12 +565,277 @@ function ProfileSection({ data, onUpdate }: { data: Record<string, any>; onUpdat
 }
 
 /* ══════════════════════════════════════════════════════
+   SECTION: AI DESIGN
+   ══════════════════════════════════════════════════════ */
+function AIDesignSection({ data, onUpdate, onSaveNow, refreshPreview }: {
+  data: Record<string, any>;
+  onUpdate: (f: Record<string, any>) => void;
+  onSaveNow: () => void;
+  refreshPreview: () => void;
+}) {
+  const [urls, setUrls] = useState("");
+  const [brandName, setBrandName] = useState("");
+  const [brandDesc, setBrandDesc] = useState("");
+  const [audience, setAudience] = useState("");
+  const [goal, setGoal] = useState("");
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [step, setStep] = useState("");
+  const [variations, setVariations] = useState<any[]>([]);
+  const [error, setError] = useState("");
+  const [applied, setApplied] = useState<string | null>(null);
+
+  async function handleGenerate() {
+    const urlList = urls.split(/[,\n]/).map(u => u.trim()).filter(u => u.startsWith("http"));
+    if (urlList.length === 0) { setError("Enter at least 1 URL"); return; }
+    if (urlList.length > 5) { setError("Maximum 5 URLs"); return; }
+
+    setLoading(true);
+    setError("");
+    setVariations([]);
+    setApplied(null);
+
+    try {
+      // Step 1: Analyze
+      setStep("Analyzing reference sites...");
+      const analyzeRes = await fetch("/api/ai-designer/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          referenceUrls: urlList,
+          brandName: brandName || undefined,
+          brandDescription: brandDesc || undefined,
+          audience: audience || undefined,
+          goal: goal || undefined,
+        }),
+      });
+
+      if (!analyzeRes.ok) {
+        const err = await analyzeRes.json().catch(() => ({}));
+        throw new Error(err.error || "Analysis failed");
+      }
+
+      const { brandDna } = await analyzeRes.json();
+
+      // Step 2: Generate
+      setStep("Generating design variations...");
+      const generateRes = await fetch("/api/ai-designer/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          brandDna,
+          mode: "hireacreator",
+          variationCount: 3,
+        }),
+      });
+
+      if (!generateRes.ok) {
+        const err = await generateRes.json().catch(() => ({}));
+        throw new Error(err.error || "Generation failed");
+      }
+
+      const result = await generateRes.json();
+      setVariations(result.variations);
+      setStep("");
+    } catch (e: any) {
+      setError(e.message || "Something went wrong");
+      setStep("");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleApply(pageSpec: any) {
+    setLoading(true);
+    setStep("Applying design...");
+    try {
+      const res = await fetch("/api/ai-designer/apply", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pageSpec }),
+      });
+      if (!res.ok) throw new Error("Apply failed");
+      setApplied(pageSpec.pageId);
+      // Force a full data refresh by updating local state with the design tokens
+      const t = pageSpec.designTokens;
+      onUpdate({
+        link_bio_template: t.layout.template,
+        link_bio_font: t.typography.family,
+        link_bio_text_color: t.colors.textPrimary,
+        link_bio_accent: t.colors.accent,
+        link_bio_bg_type: t.background.type,
+        link_bio_bg_value: t.background.value,
+        link_bio_button_shape: t.components.button.shape,
+        link_bio_button_fill: t.colors.buttonBg,
+        link_bio_button_text_color: t.colors.buttonText,
+        link_bio_button_shadow: t.components.button.shadow,
+        link_bio_avatar_shape: t.avatar.shape,
+        link_bio_avatar_size: t.avatar.size,
+        link_bio_intro_anim: t.motion.introAnimation,
+        link_bio_hover_effect: t.motion.hoverEffect,
+      });
+      onSaveNow();
+      setTimeout(() => refreshPreview(), 500);
+    } catch (e: any) {
+      setError(e.message);
+    } finally {
+      setLoading(false);
+      setStep("");
+    }
+  }
+
+  // Variation name mapping
+  const variationNames = ["Clean", "Bold", "Premium", "Playful", "Corporate"];
+  const variationDescs = ["Minimal & elegant", "Energetic & vibrant", "Dark & luxurious", "Fun & colorful", "Professional & polished"];
+
+  return (
+    <div className="space-y-4">
+      {/* Header with gradient */}
+      <div className="relative -mx-4 md:-mx-5 -mt-4 md:-mt-5 px-4 md:px-5 pt-4 md:pt-5 pb-4 bg-gradient-to-br from-violet-500/10 via-blue-500/5 to-transparent border-b border-violet-100">
+        <div className="flex items-center gap-2 mb-1">
+          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-500 to-blue-500 flex items-center justify-center">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
+            </svg>
+          </div>
+          <div>
+            <h3 className="text-sm font-bold text-neutral-900">AI Page Designer</h3>
+            <p className="text-[10px] text-neutral-500">Match any brand in seconds</p>
+          </div>
+        </div>
+      </div>
+
+      {/* URL Input */}
+      <div>
+        <h4 className={SECTION_LABEL}>Reference URLs</h4>
+        <textarea
+          value={urls}
+          onChange={e => setUrls(e.target.value)}
+          placeholder={"Paste 1-5 URLs for brand matching\nhttps://example.com\nhttps://another-site.com"}
+          rows={3}
+          className="w-full px-3 py-2.5 rounded-xl border border-neutral-200 text-xs focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-300 text-neutral-900 bg-white resize-y placeholder:text-neutral-400"
+        />
+      </div>
+
+      {/* Advanced options (collapsible) */}
+      <button onClick={() => setShowAdvanced(!showAdvanced)} className="flex items-center gap-1.5 text-[10px] font-medium text-neutral-500 hover:text-neutral-700 transition-colors">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ transform: showAdvanced ? "rotate(90deg)" : "none", transition: "transform 0.2s" }}><path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+        Advanced Options
+      </button>
+
+      {showAdvanced && (
+        <div className="space-y-3 bg-neutral-50 rounded-xl p-3 border border-neutral-100">
+          <div>
+            <label className="text-[9px] font-semibold text-neutral-500 uppercase tracking-wider">Brand Name</label>
+            <input value={brandName} onChange={e => setBrandName(e.target.value)} placeholder="Your brand" className="w-full px-2.5 py-2 rounded-lg border border-neutral-200 text-xs focus:outline-none focus:ring-2 focus:ring-violet-500/20 mt-1" />
+          </div>
+          <div>
+            <label className="text-[9px] font-semibold text-neutral-500 uppercase tracking-wider">Description</label>
+            <input value={brandDesc} onChange={e => setBrandDesc(e.target.value)} placeholder="What you do" className="w-full px-2.5 py-2 rounded-lg border border-neutral-200 text-xs focus:outline-none focus:ring-2 focus:ring-violet-500/20 mt-1" />
+          </div>
+          <div>
+            <label className="text-[9px] font-semibold text-neutral-500 uppercase tracking-wider">Target Audience</label>
+            <input value={audience} onChange={e => setAudience(e.target.value)} placeholder="Who you serve" className="w-full px-2.5 py-2 rounded-lg border border-neutral-200 text-xs focus:outline-none focus:ring-2 focus:ring-violet-500/20 mt-1" />
+          </div>
+          <div>
+            <label className="text-[9px] font-semibold text-neutral-500 uppercase tracking-wider">Goal</label>
+            <select value={goal} onChange={e => setGoal(e.target.value)} className="w-full px-2.5 py-2 rounded-lg border border-neutral-200 text-xs focus:outline-none focus:ring-2 focus:ring-violet-500/20 mt-1 bg-white">
+              <option value="">Select goal...</option>
+              <option value="book-calls">Book calls</option>
+              <option value="sell-products">Sell products</option>
+              <option value="collect-emails">Collect emails</option>
+              <option value="build-audience">Build audience</option>
+            </select>
+          </div>
+        </div>
+      )}
+
+      {/* Generate button */}
+      <button
+        onClick={handleGenerate}
+        disabled={loading}
+        className="w-full py-3 rounded-xl font-semibold text-sm text-white bg-gradient-to-r from-violet-500 to-blue-500 hover:from-violet-600 hover:to-blue-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-violet-500/20"
+      >
+        {loading ? (
+          <span className="flex items-center justify-center gap-2">
+            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            {step || "Processing..."}
+          </span>
+        ) : "Generate Designs"}
+      </button>
+
+      {/* Error */}
+      {error && (
+        <div className="px-3 py-2 rounded-lg bg-red-50 border border-red-100 text-xs text-red-600">{error}</div>
+      )}
+
+      {/* Results */}
+      {variations.length > 0 && (
+        <div className="space-y-3">
+          <h4 className={SECTION_LABEL}>Design Variations</h4>
+          {variations.map((v: any, i: number) => {
+            const t = v.designTokens;
+            const isApplied = applied === v.pageId;
+            const colors = t?.colors || {};
+            const paletteColors = [colors.background, colors.accent, colors.buttonBg, colors.textPrimary, colors.surface].filter(Boolean);
+
+            return (
+              <div key={v.pageId || i} className={`rounded-xl border-2 overflow-hidden transition-all ${isApplied ? "border-emerald-500 ring-2 ring-emerald-500/20" : "border-neutral-200 hover:border-neutral-300"}`}>
+                {/* Preview strip */}
+                <div className="h-16 relative" style={{ background: t?.background?.value || colors.background || "#f5f5f5" }}>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="text-center">
+                      <div className="text-[10px] font-bold" style={{ color: colors.textPrimary || "#171717" }}>{variationNames[i] || `Variation ${i + 1}`}</div>
+                      <div className="text-[8px] opacity-60" style={{ color: colors.textSecondary || "#666" }}>{variationDescs[i] || ""}</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="px-3 py-2.5 bg-white">
+                  {/* Info row */}
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      {/* Color palette dots */}
+                      <div className="flex gap-0.5">
+                        {paletteColors.slice(0, 5).map((c: string, ci: number) => (
+                          <div key={ci} className="w-3.5 h-3.5 rounded-full border border-neutral-200" style={{ background: c }} />
+                        ))}
+                      </div>
+                    </div>
+                    <div className="text-[9px] text-neutral-400">
+                      {t?.layout?.template || "minimal"} &middot; {t?.typography?.family || "inter"}
+                    </div>
+                  </div>
+
+                  {/* Apply button */}
+                  <button
+                    onClick={() => handleApply(v)}
+                    disabled={loading || isApplied}
+                    className={`w-full py-2 rounded-lg text-xs font-semibold transition-all ${
+                      isApplied
+                        ? "bg-emerald-50 text-emerald-600 border border-emerald-200"
+                        : "bg-neutral-900 text-white hover:bg-neutral-800"
+                    }`}
+                  >
+                    {isApplied ? "Applied!" : "Apply This Design"}
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════
    MAIN WYSIWYG EDITOR
    ══════════════════════════════════════════════════════ */
 export function WysiwygEditor({ initialData, slug }: { initialData: EditorData; slug: string }) {
   const { status, errorMsg, save, saveNow } = useAutosave();
   const [data, setData] = useState(initialData.user);
-  const [activeTab, setActiveTab] = useState<TabId>("theme");
+  const [activeTab, setActiveTab] = useState<TabId>("ai-design");
 
   // Update field + autosave
   function updateField(fields: Record<string, any>) {
@@ -612,6 +878,7 @@ export function WysiwygEditor({ initialData, slug }: { initialData: EditorData; 
 
             {/* Section content */}
             <div className="flex-1 p-4 md:p-5 overflow-y-auto">
+              {activeTab === "ai-design" && <AIDesignSection data={data} onUpdate={updateField} onSaveNow={saveNow} refreshPreview={refreshPreview} />}
               {activeTab === "header" && <HeaderSection data={data} onUpdate={updateField} onSaveNow={saveNow} />}
               {activeTab === "theme" && <ThemeSection data={data} onUpdate={updateField} />}
               {activeTab === "wallpaper" && <WallpaperSection data={data} onUpdate={updateField} onSaveNow={saveNow} />}
