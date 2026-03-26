@@ -52,25 +52,30 @@ export async function POST(req: NextRequest) {
     let userId: string | null = null;
     let userCreated = false;
 
-    // 4. If email provided, create or find the user and link the profile
-    if (email) {
-      const existingUser = await sql`SELECT id FROM users WHERE email = ${email} LIMIT 1`;
+    // 4. If email provided OR createUser requested, create or find the user and link the profile
+    const { createUser } = body;
+    if (email || createUser) {
+      if (email) {
+        const existingUser = await sql`SELECT id FROM users WHERE email = ${email} LIMIT 1`;
+        if (existingUser.length > 0) {
+          userId = existingUser[0].id as string;
+        }
+      }
 
-      if (existingUser.length > 0) {
-        userId = existingUser[0].id as string;
-      } else {
-        // Create new user
+      if (!userId) {
+        // Create new user (email optional — use placeholder if not provided)
         let slug = normalizedHandle.replace(/[^a-z0-9]/gi, "").slice(0, 30);
         const slugExists = await sql`SELECT id FROM users WHERE slug = ${slug}`;
         if (slugExists.length > 0) slug = slug + Date.now().toString(36).slice(-4);
 
+        const userEmail = email || `${normalizedHandle}@placeholder.hireacreator.ai`;
         const refCode = crypto.randomBytes(6).toString("hex");
         const result = await sql`
           INSERT INTO users (email, full_name, slug, avatar_url, bio, category, headline, role, referral_code,
             link_bio_template, link_bio_bg_type, link_bio_bg_value, link_bio_text_color, link_bio_font, link_bio_button_shape,
             visible_in_marketplace)
           VALUES (
-            ${email},
+            ${userEmail},
             ${autoProfile.profile.displayName || normalizedHandle},
             ${slug},
             ${autoProfile.profile.avatarUrl || null},
@@ -97,14 +102,6 @@ export async function POST(req: NextRequest) {
           INSERT INTO social_connections (user_id, platform, handle, url, follower_count, is_verified)
           VALUES (${userId}, ${platform}, ${normalizedHandle}, ${autoProfile.profile.profileUrl || ''}, ${autoProfile.profile.followerCount || 0}, false)
           ON CONFLICT DO NOTHING
-        `;
-
-        // Create session token for admin to share
-        const sessionToken = crypto.randomUUID();
-        const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
-        await sql`
-          INSERT INTO auth_sessions (user_id, token, expires_at)
-          VALUES (${userId}, ${sessionToken}, ${expiresAt.toISOString()})
         `;
       }
 

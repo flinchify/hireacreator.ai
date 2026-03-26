@@ -2008,8 +2008,12 @@ export function DashboardContent() {
                                   body: JSON.stringify({ platform: importPlatform, handle: importHandle.replace(/^@/, ""), email: importEmail || undefined }),
                                 });
                                 const data = await res.json();
-                                setImportResult({ ok: res.ok, message: data.message || (res.ok ? "Profile imported successfully" : data.error || "Import failed") });
-                                if (res.ok) { setImportHandle(""); setImportEmail(""); }
+                                if (res.ok) {
+                                  setImportResult({ ok: true, message: `Imported @${data.profile?.handle || importHandle} — Score: ${data.profile?.score || '?'}, Followers: ${Number(data.profile?.followerCount || 0).toLocaleString()}` });
+                                  setImportHandle(""); setImportEmail("");
+                                } else {
+                                  setImportResult({ ok: false, message: data.error || "Import failed" });
+                                }
                               } catch { setImportResult({ ok: false, message: "Network error" }); }
                               setImportLoading(false);
                             }}
@@ -2017,30 +2021,34 @@ export function DashboardContent() {
                           >
                             {importLoading ? "Importing..." : "Import Profile"}
                           </button>
-                          {importEmail.trim() && (
-                            <button
-                              disabled={importLoading || !importHandle.trim()}
-                              onClick={async () => {
-                                setImportLoading(true);
-                                setImportResult(null);
-                                try {
-                                  const res = await fetch("/api/admin/import-profile", {
-                                    method: "POST",
-                                    headers: { "Content-Type": "application/json" },
-                                    body: JSON.stringify({ platform: importPlatform, handle: importHandle.replace(/^@/, ""), email: importEmail, createUser: true }),
-                                  });
-                                  const data = await res.json();
-                                  setImportResult({ ok: res.ok, message: data.message || (res.ok ? "Profile created for user" : data.error || "Creation failed") });
-                                  if (res.ok) { setImportHandle(""); setImportEmail(""); }
-                                } catch { setImportResult({ ok: false, message: "Network error" }); }
-                                setImportLoading(false);
-                              }}
-                              className="flex-1 py-2 text-xs font-medium text-center bg-neutral-900 text-white rounded-lg hover:bg-neutral-800 transition-colors disabled:opacity-50"
-                            >
-                              {importLoading ? "Creating..." : "Create For User"}
-                            </button>
-                          )}
+                          <button
+                            disabled={importLoading || !importHandle.trim()}
+                            onClick={async () => {
+                              setImportLoading(true);
+                              setImportResult(null);
+                              try {
+                                const res = await fetch("/api/admin/import-profile", {
+                                  method: "POST",
+                                  headers: { "Content-Type": "application/json" },
+                                  body: JSON.stringify({ platform: importPlatform, handle: importHandle.replace(/^@/, ""), email: importEmail || undefined, createUser: true }),
+                                });
+                                const data = await res.json();
+                                if (res.ok) {
+                                  const slug = data.profile?.slug || importHandle;
+                                  setImportResult({ ok: true, message: `Created account for @${data.profile?.handle || importHandle} — Page: /u/${slug}${data.user?.created ? ' (new user)' : ''}` });
+                                  setImportHandle(""); setImportEmail("");
+                                } else {
+                                  setImportResult({ ok: false, message: data.error || "Creation failed" });
+                                }
+                              } catch { setImportResult({ ok: false, message: "Network error" }); }
+                              setImportLoading(false);
+                            }}
+                            className="flex-1 py-2 text-xs font-medium text-center bg-neutral-900 text-white rounded-lg hover:bg-neutral-800 transition-colors disabled:opacity-50"
+                          >
+                            {importLoading ? "Creating..." : "Create Account"}
+                          </button>
                         </div>
+                        <p className="text-[10px] text-neutral-400 mt-1.5">Import = scrape only. Create Account = full user with page at /u/handle</p>
                         {importResult && (
                           <p className={`text-xs mt-2 ${importResult.ok ? "text-green-600" : "text-red-500"}`}>{importResult.message}</p>
                         )}
