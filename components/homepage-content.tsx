@@ -294,7 +294,7 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
       {creatorCount > 0 && (
         <section className="py-8 border-y border-neutral-100">
           <p className="text-sm text-neutral-400 text-center">
-            Trusted by {creatorCount.toLocaleString()}+ creators
+            Join {creatorCount.toLocaleString()}+ creators already on the platform
           </p>
         </section>
       )}

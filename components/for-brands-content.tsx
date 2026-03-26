@@ -413,7 +413,7 @@ export function ForBrandsContent() {
               { title: "Real brand reviews", desc: "Only brands that completed a booking can leave reviews. No fake testimonials — just honest feedback." },
               { title: "Contract management", desc: "Contracts are generated automatically with clear terms, usage rights, and deliverable specs." },
               { title: "Dispute resolution", desc: "If something goes wrong, our team steps in. Funds remain in escrow until the dispute is resolved — money is never released without your approval." },
-              { title: "Data privacy", desc: "SOC 2 compliant infrastructure. Your data and creator communications are encrypted at rest and in transit." },
+              { title: "Data privacy", desc: "Your data and creator communications are encrypted at rest and in transit. Payments processed securely via Stripe." },
             ].map((item) => (
               <div key={item.title} className="aos-stagger-item flex items-start gap-3 bg-white border border-neutral-200 rounded-2xl p-5 sm:p-6 hover:border-neutral-300 shadow-md shadow-blue-500/5 transition-all duration-200">
                 <ShieldIcon />
