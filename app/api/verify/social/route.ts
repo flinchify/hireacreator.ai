@@ -140,7 +140,7 @@ export async function PUT(req: NextRequest) {
       });
     }
 
-    // Scrape the user's bio
+    // Scrape the user's bio — try multiple methods
     let bio: string | null = null;
 
     try {
@@ -152,10 +152,16 @@ export async function PUT(req: NextRequest) {
       console.error(`Failed to scrape ${platform} bio for @${normalizedHandle}:`, err);
     }
 
+    // If user provided their bio text as a fallback (for private accounts)
+    if (!bio && body.bioText) {
+      bio = body.bioText;
+    }
+
     if (!bio) {
       return NextResponse.json({
         verified: false,
-        message: `Could not fetch your ${platform} bio. Make sure your account is public and try again in a moment.`,
+        needsBioText: true,
+        message: `We couldn't read your ${platform} bio automatically. This can happen with private or personal accounts. Please paste your bio text below so we can check for the code.`,
       });
     }
 

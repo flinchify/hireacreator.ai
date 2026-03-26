@@ -63,7 +63,33 @@ export function AuthModal() {
     return () => { document.body.style.overflow = ""; };
   }, [isOpen]);
 
+  const [resendCooldown, setResendCooldown] = useState(0);
+
+  useEffect(() => {
+    if (resendCooldown <= 0) return;
+    const t = setTimeout(() => setResendCooldown(resendCooldown - 1), 1000);
+    return () => clearTimeout(t);
+  }, [resendCooldown]);
+
   if (!isOpen) return null;
+
+  async function resendCode() {
+    if (resendCooldown > 0 || !email) return;
+    setSending(true);
+    setError("");
+    const res = await fetch("/api/auth/email/send", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, role }),
+    });
+    const data = await res.json();
+    if (data.success) {
+      setResendCooldown(60);
+    } else {
+      setError(data.message || "Failed to resend code.");
+    }
+    setSending(false);
+  }
 
   async function sendCode(e: React.FormEvent) {
     e.preventDefault();
@@ -234,9 +260,15 @@ export function AuthModal() {
                   {verifying ? "Verifying..." : "Sign In"}
                 </button>
               </form>
-              <button onClick={() => { setStep("choose"); setCode(""); setError(""); }} className="mt-4 text-sm text-neutral-500 hover:text-neutral-900 transition-colors w-full text-center">
-                Use a different email
-              </button>
+              <div className="flex items-center justify-center gap-3 mt-4">
+                <button onClick={resendCode} disabled={sending || resendCooldown > 0} className="text-sm text-neutral-500 hover:text-neutral-900 transition-colors disabled:opacity-40">
+                  {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : "Resend code"}
+                </button>
+                <span className="text-neutral-300">|</span>
+                <button onClick={() => { setStep("choose"); setCode(""); setError(""); setResendCooldown(0); }} className="text-sm text-neutral-500 hover:text-neutral-900 transition-colors">
+                  Different email
+                </button>
+              </div>
             </>
           )}
 
@@ -330,9 +362,15 @@ export function AuthModal() {
                   {verifying ? "Verifying..." : "Create Account"}
                 </button>
               </form>
-              <button onClick={() => { setStep("choose"); setCode(""); setError(""); }} className="mt-4 text-sm text-neutral-500 hover:text-neutral-900 transition-colors w-full text-center">
-                Use a different email
-              </button>
+              <div className="flex items-center justify-center gap-3 mt-4">
+                <button onClick={resendCode} disabled={sending || resendCooldown > 0} className="text-sm text-neutral-500 hover:text-neutral-900 transition-colors disabled:opacity-40">
+                  {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : "Resend code"}
+                </button>
+                <span className="text-neutral-300">|</span>
+                <button onClick={() => { setStep("choose"); setCode(""); setError(""); setResendCooldown(0); }} className="text-sm text-neutral-500 hover:text-neutral-900 transition-colors">
+                  Different email
+                </button>
+              </div>
             </>
           )}
 

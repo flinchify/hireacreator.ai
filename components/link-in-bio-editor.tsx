@@ -823,8 +823,18 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
         buttonShape: data.buttonShape,
         font: data.font,
       });
+      // Also update headline if AI suggested one and user doesn't have one
+      if (data.suggestedHeadline) {
+        try {
+          await fetch("/api/profile", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ headline: data.suggestedHeadline }),
+          });
+        } catch {}
+      }
       setAiDone(true);
-      setTimeout(() => setAiDone(false), 3000);
+      setTimeout(() => setAiDone(false), 5000);
     } catch (e) {
       console.error("AI design error:", e);
       setSaveError("AI design failed — try again");
