@@ -44,42 +44,52 @@ const tabLabels: Record<Tab, string> = {
 };
 
 const creatorComparisonFeatures = [
-  { label: "AI-customized profile", free: true, pro: true, biz: true },
-  { label: "Premium templates", free: "18 templates", pro: "18 + custom builder", biz: "18 + custom builder" },
+  { label: "AI-designed link-in-bio page", free: true, pro: true, biz: true },
+  { label: "Premium templates", free: "18 + customization", pro: "All + custom CSS builder", biz: "All + custom CSS builder" },
   { label: "Receive brand offers", free: "Unlimited", pro: "Unlimited", biz: "Unlimited" },
-  { label: "Services in marketplace", free: "Up to 3", pro: "Unlimited", biz: "Unlimited" },
+  { label: "Services listed", free: "Up to 3", pro: "Unlimited", biz: "Unlimited" },
+  { label: "Social links", free: "15+ platforms", pro: "15+ platforms", biz: "15+ platforms" },
+  { label: "Bio links with click tracking", free: true, pro: true, biz: true },
+  { label: "Calendar booking", free: "Free sessions", pro: "Free sessions", biz: "Paid sessions (Stripe)" },
   { label: "Intro animations", free: "2 included", pro: "All unlocked", biz: "All unlocked" },
-  { label: "AI bio writer", free: false, pro: true, biz: true },
+  { label: "Analytics", free: "Basic", pro: "Advanced dashboard", biz: "Advanced dashboard" },
+  { label: "QR code", free: true, pro: true, biz: true },
+  { label: "AI bio writer + page designer", free: false, pro: true, biz: true },
   { label: "Reply templates", free: false, pro: true, biz: true },
-  { label: "Analytics", free: "Basic", pro: "Advanced", biz: "Advanced" },
-  { label: "Boosted listing in search", free: false, pro: true, biz: true },
+  { label: "Boosted listing in search", free: false, pro: true, biz: "Priority" },
   { label: "Pro badge on profile", free: false, pro: true, biz: true },
   { label: "Remove branding", free: false, pro: true, biz: true },
-  { label: "Calendar paid sessions", free: false, pro: false, biz: true },
+  { label: "Logo and header image upload", free: false, pro: true, biz: true },
+  { label: "Paid calendar sessions", free: false, pro: false, biz: true },
   { label: "Link products and courses", free: false, pro: false, biz: true },
   { label: "Earnings dashboard", free: false, pro: false, biz: true },
   { label: "Verification manager", free: false, pro: false, biz: true },
   { label: "Creator spotlights", free: false, pro: false, biz: true },
+  { label: "Comment-to-payment flow", free: false, pro: false, biz: true },
+  { label: "Community templates", free: false, pro: false, biz: true },
   { label: "Priority support", free: false, pro: true, biz: "Dedicated" },
   { label: "Commission on earnings", free: "0%", pro: "0%", biz: "0%" },
 ];
 
 const brandComparisonFeatures = [
   { label: "Search and discover creators", free: true, pro: true, enterprise: true },
-  { label: "Send offers to any creator", free: true, pro: true, enterprise: true },
+  { label: "Send offers via @mention or dashboard", free: true, pro: true, enterprise: true },
   { label: "Browse by niche and platform", free: true, pro: true, enterprise: true },
   { label: "Secure Stripe escrow payments", free: true, pro: true, enterprise: true },
-  { label: "Creator profiles with follower data", free: true, pro: true, enterprise: true },
+  { label: "Creator profiles with follower data and scores", free: true, pro: true, enterprise: true },
+  { label: "Comment-to-offer flow", free: true, pro: true, enterprise: true },
   { label: "Service fee on deals", free: "15%", pro: "10%", enterprise: "5%" },
   { label: "Creator shortlists", free: false, pro: true, enterprise: true },
   { label: "Offer templates", free: false, pro: true, enterprise: true },
   { label: "Brand profile page", free: false, pro: true, enterprise: true },
   { label: "Offer analytics", free: false, pro: true, enterprise: true },
   { label: "Verified Brand badge", free: false, pro: true, enterprise: true },
+  { label: "Invoice management", free: false, pro: true, enterprise: true },
   { label: "Priority in creator inboxes", free: false, pro: false, enterprise: true },
   { label: "Bulk offer sends", free: false, pro: false, enterprise: true },
   { label: "Custom invoicing", free: false, pro: false, enterprise: true },
-  { label: "Priority support", free: false, pro: true, enterprise: "Dedicated" },
+  { label: "API access", free: false, pro: false, enterprise: true },
+  { label: "Priority support", free: false, pro: true, enterprise: "Dedicated account manager" },
 ];
 
 const faqItems = [
@@ -101,11 +111,15 @@ const faqItems = [
   },
   {
     q: "What's included in the free creator plan?",
-    a: "Everything you need to get discovered: an AI-customized link-in-bio page with 18 premium templates, up to 3 services, unlimited brand offers, 2 intro animations, social links, bio links with click tracking, calendar booking, basic analytics, a QR code, and 0% commission on all earnings.",
+    a: "Everything you need to get discovered: an AI-designed link-in-bio page auto-designed from your socials, 18 premium templates with full customization, up to 3 services, unlimited brand offers, comment-to-payment flow, 2 intro animations, social links, bio links with click tracking, free calendar booking sessions, basic analytics, a QR code, and 0% commission on all earnings.",
   },
   {
     q: "What's included in the free brand plan?",
-    a: "Everything you need to find and hire creators: search and discovery, offers to any creator, marketplace browsing by niche and platform, secure Stripe escrow payments, and creator profiles with real follower data. The only cost is a 15% service fee on completed deals.",
+    a: "Everything you need to find and hire creators: search and discovery, offers to any creator via @mention or dashboard, the comment-to-offer flow (mention creators on X or Instagram to auto-create offers), marketplace browsing by niche and platform, secure Stripe escrow payments, and creator profiles with real follower data and scores. The only cost is a 15% service fee on completed deals.",
+  },
+  {
+    q: "What is the comment-to-payment flow?",
+    a: "Brands can mention creators on X or Instagram, and our bot creates an offer automatically. The brand pays through their dashboard, the creator delivers, and funds are released. It turns social media comments into real paid collaborations.",
   },
   {
     q: "Do you offer annual billing?",
@@ -213,17 +227,17 @@ export function PricingContent() {
                   </p>
                   <ul className="space-y-3 mb-8 flex-1">
                     {[
-                      "AI-customized link-in-bio page",
-                      "18 premium templates",
+                      "AI-designed link-in-bio page (auto-designed from your socials)",
+                      "18 premium templates + full customization",
                       "Receive unlimited brand offers",
-                      "Up to 3 services in marketplace",
+                      "Up to 3 services listed",
                       "Social links (15+ platforms)",
                       "Bio links with click tracking",
-                      "Calendar booking (free sessions)",
-                      "2 intro animations",
+                      "Free calendar booking sessions",
+                      "2 intro animations included",
                       "Basic analytics",
-                      "QR code",
-                      "0% commission — keep everything you earn",
+                      "QR code for your page",
+                      "0% commission — keep everything",
                     ].map((f) => (
                       <li key={f} className="flex items-start gap-2.5 text-sm text-neutral-600">
                         <span className="mt-0.5"><CheckIcon /></span>
@@ -265,15 +279,16 @@ export function PricingContent() {
                   <ul className="space-y-3 mb-8 flex-1">
                     {[
                       "Everything in Free",
-                      "Unlimited services in marketplace",
-                      "All 18 templates + custom builder",
+                      "Unlimited services",
+                      "All templates + custom CSS builder",
                       "All intro animations unlocked",
-                      "AI bio writer",
-                      "Reply templates",
-                      "Boosted listing in search",
-                      "Advanced analytics",
+                      "AI bio writer + AI page designer",
+                      "Reply templates for brand inquiries",
+                      "Boosted listing in search results",
+                      "Advanced analytics dashboard",
                       "Pro badge on profile",
                       "Remove HireACreator branding",
+                      "Logo and header image upload",
                       "Priority support",
                     ].map((f) => (
                       <li key={f} className="flex items-start gap-2.5 text-sm text-neutral-600">
@@ -318,12 +333,14 @@ export function PricingContent() {
                   <ul className="space-y-3 mb-8 flex-1">
                     {[
                       "Everything in Pro",
-                      "Calendar paid sessions",
+                      "Paid calendar sessions (Stripe checkout)",
                       "Link your own products and courses",
                       "Earnings dashboard with payout tracking",
                       "Verification manager",
                       "Featured in weekly creator spotlights",
                       "Priority in all search results",
+                      "Comment-to-payment flow (brands pay through social comments)",
+                      "Community templates (share and use custom designs)",
                       "Dedicated support",
                     ].map((f) => (
                       <li key={f} className="flex items-start gap-2.5 text-sm text-neutral-600">
@@ -406,10 +423,11 @@ export function PricingContent() {
                   <ul className="space-y-3 mb-8 flex-1">
                     {[
                       "Search and discover creators",
-                      "Send offers to any creator",
+                      "Send offers to any creator via @mention or dashboard",
                       "Browse marketplace by niche and platform",
-                      "Secure payment escrow",
-                      "Creator profiles with real follower data",
+                      "Secure Stripe escrow payments",
+                      "Creator profiles with real follower data and scores",
+                      "Comment-to-offer flow (mention creators on X/Instagram)",
                       "15% service fee on completed deals",
                     ].map((f) => (
                       <li key={f} className="flex items-start gap-2.5 text-sm text-neutral-600">
@@ -434,13 +452,13 @@ export function PricingContent() {
                   <div className="text-sm font-medium text-neutral-900 uppercase tracking-wider mb-2">Brand Pro</div>
                   <div className="flex items-baseline gap-1 mb-1">
                     <span className="font-display text-4xl font-bold text-neutral-900">
-                      {formatPrice(99, annual)}
+                      {formatPrice(199, annual)}
                     </span>
                     <span className="text-sm text-neutral-500">/mo</span>
                   </div>
                   {annual ? (
                     <div className="text-sm text-neutral-500 mb-6">
-                      <span className="line-through text-neutral-400">$99/mo</span>
+                      <span className="line-through text-neutral-400">$199/mo</span>
                       <span className="ml-1.5 text-green-700 font-medium">billed annually</span>
                     </div>
                   ) : (
@@ -452,12 +470,13 @@ export function PricingContent() {
                   <ul className="space-y-3 mb-8 flex-1">
                     {[
                       "Everything in Free",
-                      "Reduced 10% service fee (save 33%)",
-                      "Creator shortlists (save favorites)",
+                      "Reduced 10% service fee",
+                      "Creator shortlists",
                       "Offer templates (reusable briefs)",
                       "Brand profile page",
                       "Offer analytics (views, response rate)",
-                      "Verified Brand badge on offers",
+                      "Verified Brand badge",
+                      "Invoice management dashboard",
                       "Priority support",
                     ].map((f) => (
                       <li key={f} className="flex items-start gap-2.5 text-sm text-neutral-600">
@@ -502,11 +521,12 @@ export function PricingContent() {
                   <ul className="space-y-3 mb-8 flex-1">
                     {[
                       "Everything in Brand Pro",
-                      "Reduced 5% service fee (save 67%)",
+                      "Reduced 5% service fee",
                       "Priority in creator inboxes",
                       "Bulk offer sends",
-                      "Dedicated support",
                       "Custom invoicing",
+                      "API access included",
+                      "Dedicated account manager",
                     ].map((f) => (
                       <li key={f} className="flex items-start gap-2.5 text-sm text-neutral-600">
                         <span className="mt-0.5"><CheckIcon /></span>

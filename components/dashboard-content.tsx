@@ -1582,6 +1582,13 @@ export function DashboardContent() {
   const [claimBannerVisible, setClaimBannerVisible] = useState(searchParams.get("claimed") === "true");
   const [claimVerifyPending, setClaimVerifyPending] = useState(false);
 
+  // Admin import profile
+  const [importPlatform, setImportPlatform] = useState("instagram");
+  const [importHandle, setImportHandle] = useState("");
+  const [importEmail, setImportEmail] = useState("");
+  const [importLoading, setImportLoading] = useState(false);
+  const [importResult, setImportResult] = useState<{ ok: boolean; message: string } | null>(null);
+
   // Auto-open verification modal when redirected from claim flow
   useEffect(() => {
     const verifyParam = searchParams.get("verify");
@@ -1958,6 +1965,87 @@ export function DashboardContent() {
                         <Link href="/dashboard/settings?tab=admin" className="flex-1 py-2.5 text-xs font-medium text-center bg-purple-50 text-purple-700 rounded-xl hover:bg-purple-100 transition-colors">Users & Orders</Link>
                         <Link href="/dashboard/settings?tab=admin" className="flex-1 py-2.5 text-xs font-medium text-center bg-purple-50 text-purple-700 rounded-xl hover:bg-purple-100 transition-colors">Marketplace Toggle</Link>
                       </div>
+
+                      {/* Import / Create Profile */}
+                      <div className="border border-neutral-200/60 rounded-xl p-4 mb-3">
+                        <h3 className="text-xs font-bold text-neutral-900 mb-3">Import / Create Profile</h3>
+                        <div className="grid grid-cols-2 gap-2 mb-2">
+                          <select
+                            value={importPlatform}
+                            onChange={e => setImportPlatform(e.target.value)}
+                            className="text-sm border border-neutral-200 rounded-lg px-3 py-2 bg-white text-neutral-900 focus:outline-none focus:ring-1 focus:ring-purple-300"
+                          >
+                            <option value="instagram">Instagram</option>
+                            <option value="x">X (Twitter)</option>
+                            <option value="tiktok">TikTok</option>
+                            <option value="youtube">YouTube</option>
+                          </select>
+                          <input
+                            type="text"
+                            placeholder="Handle (e.g. @creator)"
+                            value={importHandle}
+                            onChange={e => setImportHandle(e.target.value)}
+                            className="text-sm border border-neutral-200 rounded-lg px-3 py-2 bg-white text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-1 focus:ring-purple-300"
+                          />
+                        </div>
+                        <input
+                          type="email"
+                          placeholder="Email (optional — enables Create For User)"
+                          value={importEmail}
+                          onChange={e => setImportEmail(e.target.value)}
+                          className="w-full text-sm border border-neutral-200 rounded-lg px-3 py-2 mb-2 bg-white text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-1 focus:ring-purple-300"
+                        />
+                        <div className="flex gap-2">
+                          <button
+                            disabled={importLoading || !importHandle.trim()}
+                            onClick={async () => {
+                              setImportLoading(true);
+                              setImportResult(null);
+                              try {
+                                const res = await fetch("/api/admin/import-profile", {
+                                  method: "POST",
+                                  headers: { "Content-Type": "application/json" },
+                                  body: JSON.stringify({ platform: importPlatform, handle: importHandle.replace(/^@/, ""), email: importEmail || undefined }),
+                                });
+                                const data = await res.json();
+                                setImportResult({ ok: res.ok, message: data.message || (res.ok ? "Profile imported successfully" : data.error || "Import failed") });
+                                if (res.ok) { setImportHandle(""); setImportEmail(""); }
+                              } catch { setImportResult({ ok: false, message: "Network error" }); }
+                              setImportLoading(false);
+                            }}
+                            className="flex-1 py-2 text-xs font-medium text-center bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50"
+                          >
+                            {importLoading ? "Importing..." : "Import Profile"}
+                          </button>
+                          {importEmail.trim() && (
+                            <button
+                              disabled={importLoading || !importHandle.trim()}
+                              onClick={async () => {
+                                setImportLoading(true);
+                                setImportResult(null);
+                                try {
+                                  const res = await fetch("/api/admin/import-profile", {
+                                    method: "POST",
+                                    headers: { "Content-Type": "application/json" },
+                                    body: JSON.stringify({ platform: importPlatform, handle: importHandle.replace(/^@/, ""), email: importEmail, createUser: true }),
+                                  });
+                                  const data = await res.json();
+                                  setImportResult({ ok: res.ok, message: data.message || (res.ok ? "Profile created for user" : data.error || "Creation failed") });
+                                  if (res.ok) { setImportHandle(""); setImportEmail(""); }
+                                } catch { setImportResult({ ok: false, message: "Network error" }); }
+                                setImportLoading(false);
+                              }}
+                              className="flex-1 py-2 text-xs font-medium text-center bg-neutral-900 text-white rounded-lg hover:bg-neutral-800 transition-colors disabled:opacity-50"
+                            >
+                              {importLoading ? "Creating..." : "Create For User"}
+                            </button>
+                          )}
+                        </div>
+                        {importResult && (
+                          <p className={`text-xs mt-2 ${importResult.ok ? "text-green-600" : "text-red-500"}`}>{importResult.message}</p>
+                        )}
+                      </div>
+
                       <AdminFeaturedCreators />
                     </div>
                   )}
