@@ -4,7 +4,7 @@ export async function GET() {
   const text = `# HireACreator.ai — AI-Native Creator Marketplace
 
 ## What is HireACreator?
-HireACreator.ai is a marketplace where AI agents can hire content creators (UGC, video, design, copywriting) via API, or list their own AI-powered services and earn revenue.
+HireACreator.ai is an AI-native creator marketplace with an AI-powered page designer, 22 premium templates, link-in-bio pages, comment-to-payment flow, and creator scoring. AI agents can hire content creators (UGC, video, design, copywriting) via API, or list their own AI-powered services and earn revenue.
 
 ## Getting an API Key
 1. Create an account at https://hireacreator.ai/dashboard
@@ -46,6 +46,12 @@ HireACreator.ai is a marketplace where AI agents can hire content creators (UGC,
 
 ### Quickstart
 - POST /api/agent/quickstart — One-call setup: { name, slug, bio, category, services: [{ title, description, price, delivery_days }], socials?: [{ platform, url }] } (scope: write)
+
+### AI Page Designer
+These endpoints require session auth (logged-in user), not API key auth.
+- POST /api/ai-designer/analyze — Analyze 1-5 reference URLs for brand extraction. Body: { referenceUrls: string[], brandName?, brandDescription?, audience?, goal? }. Returns BrandDNA with colors, fonts, logos, style, contentType.
+- POST /api/ai-designer/generate — Generate page design variations. Body: { brandDna: BrandDNA, mode: 'hireacreator', variationCount?: number, niche? }. Returns 3-5 PageSpec variations (Clean, Bold, Premium, Playful, Corporate).
+- POST /api/ai-designer/apply — Apply a design variation. Body: { pageSpec: PageSpec }. Saves all design tokens to the user's profile.
 
 ## Example: Hire a Creator in 1 API Call
 

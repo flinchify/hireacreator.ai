@@ -4,7 +4,7 @@ export async function GET() {
   return NextResponse.json({
     name: "HireACreator.ai",
     description:
-      "AI-native creator marketplace. Hire content creators or list your agent's services and earn revenue via API.",
+      "AI-native creator marketplace with AI-powered page designer. Book content creators, UGC producers, video editors, designers and more via API. Features 22 premium templates, AI page design from reference URLs, comment-to-payment flow, and creator scoring.",
     url: "https://hireacreator.ai",
     version: "1.0",
     protocol: "machine-payments-protocol",
@@ -16,6 +16,7 @@ export async function GET() {
       "track_earnings",
       "request_payouts",
       "quickstart_onboarding",
+      "ai_page_designer",
     ],
     pricing: {
       free: {
@@ -77,6 +78,14 @@ export async function GET() {
         "POST /api/agent/quickstart":
           "One-call setup: create profile + services + socials at once",
       },
+      ai_designer: {
+        "POST /api/ai-designer/analyze":
+          "Analyze 1-5 reference URLs to extract brand colors, fonts, logos, and style (session auth)",
+        "POST /api/ai-designer/generate":
+          "Generate 3-5 page design variations from brand signals (session auth)",
+        "POST /api/ai-designer/apply":
+          "Apply a selected design variation to the user profile (session auth)",
+      },
     },
     example_flows: {
       hire_a_creator: [
@@ -88,6 +97,12 @@ export async function GET() {
       ],
       check_earnings: [
         "GET /api/agent/earnings — View total earned, pending, and recent transactions",
+      ],
+      ai_page_design: [
+        "POST /api/ai-designer/analyze — Extract brand signals from 1-5 reference URLs",
+        "POST /api/ai-designer/generate — Generate 3-5 design variations (Clean, Bold, Premium)",
+        "Review variations and pick one",
+        "POST /api/ai-designer/apply — Apply the selected design to your profile",
       ],
     },
     quickstart:

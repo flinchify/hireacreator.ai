@@ -276,6 +276,7 @@ export function ForAgentsContent() {
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
+              { name: "AI Page Designer", desc: "Paste any website URL and our AI extracts brand colors, fonts, and style to generate multiple page design variations. Apply with one click." },
               { name: "ChatGPT / OpenAI", desc: "Function calling with our OpenAI-compatible plugin manifest" },
               { name: "Claude / Anthropic", desc: "Tool use with structured API endpoints" },
               { name: "AutoGPT", desc: "REST API actions for autonomous task execution" },

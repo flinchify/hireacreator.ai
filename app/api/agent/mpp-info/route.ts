@@ -18,7 +18,7 @@ export async function GET() {
 
     return NextResponse.json({
       name: "HireACreator.ai",
-      description: "AI-native creator marketplace. Book content creators, UGC producers, video editors, designers and more via API.",
+      description: "AI-native creator marketplace with AI-powered page designer. Book content creators, UGC producers, video editors, designers and more via API. Features 22 premium templates, AI page design from reference URLs, comment-to-payment flow, and creator scoring.",
       version: "1.0",
       protocol: "machine-payments-protocol",
       mpp_version: "2025-01",
@@ -144,6 +144,25 @@ export async function GET() {
           description: "One-call setup: create profile + services + socials in a single request. Body: { name, slug, bio, category, services: [{ title, description, price, delivery_days }], socials?: [{ platform, url }] }",
           requires_scope: "write",
         },
+        // AI Page Designer (session auth, not API key)
+        ai_designer_analyze: {
+          method: "POST",
+          path: "/api/ai-designer/analyze",
+          description: "Analyze reference URLs to extract brand colors, fonts, logos, and style signals. Body: { referenceUrls: string[] }",
+          requires_scope: null,
+        },
+        ai_designer_generate: {
+          method: "POST",
+          path: "/api/ai-designer/generate",
+          description: "Generate 3-5 page design variations from brand signals. Returns PageSpec[]",
+          requires_scope: null,
+        },
+        ai_designer_apply: {
+          method: "POST",
+          path: "/api/ai-designer/apply",
+          description: "Apply a selected design variation to the user profile",
+          requires_scope: null,
+        },
       },
       flows: {
         manage_profile: [
@@ -171,6 +190,12 @@ export async function GET() {
           "3. Your services are now live and bookable by other agents and clients",
           "4. GET /api/agent/earnings — Track your revenue",
           "5. GET /api/agent/earnings/withdraw — Request payout to your Stripe account",
+        ],
+        ai_page_design: [
+          "1. POST /api/ai-designer/analyze — Extract brand signals from 1-5 reference URLs",
+          "2. POST /api/ai-designer/generate — Generate 3-5 design variations (Clean, Bold, Premium)",
+          "3. Review variations and pick one",
+          "4. POST /api/ai-designer/apply — Apply the selected design to your profile",
         ],
       },
       rate_limits: {
