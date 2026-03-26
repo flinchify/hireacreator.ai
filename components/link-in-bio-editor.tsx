@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import Link from "next/link";
 import { PlatformIcon } from "./icons/platforms";
 import { LinkManager } from "./link-manager";
+import { AiDesignModal, type AIDesignResult } from "./ai-design-modal";
 
 /* ── Types ── */
 type Settings = {
@@ -807,6 +808,7 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
   const [saveError, setSaveError] = useState("");
   const [aiDesigning, setAiDesigning] = useState(false);
   const [aiDone, setAiDone] = useState(false);
+  const [aiModalOpen, setAiModalOpen] = useState(false);
 
   async function aiDesign() {
     setAiDesigning(true);
@@ -840,6 +842,33 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
       setSaveError("AI design failed — try again");
     }
     setAiDesigning(false);
+  }
+
+  async function handleAiModalApply(design: AIDesignResult) {
+    try {
+      await save({
+        template: design.template,
+        bgType: design.bgType,
+        bgValue: design.bgValue,
+        textColor: design.textColor,
+        buttonShape: design.buttonShape,
+        font: design.font,
+      });
+      if (design.suggestedHeadline) {
+        try {
+          await fetch("/api/profile", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ headline: design.suggestedHeadline }),
+          });
+        } catch {}
+      }
+      setAiDone(true);
+      setTimeout(() => setAiDone(false), 5000);
+    } catch (e) {
+      console.error("AI design apply error:", e);
+      setSaveError("Failed to apply AI design");
+    }
   }
 
   async function save(updates: Partial<Settings>) {
@@ -917,17 +946,24 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
             {aiDone && <span className="text-xs text-blue-600 font-medium flex items-center gap-1 px-3 py-1.5 bg-blue-50 rounded-full"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 13l4 4L19 7" strokeLinecap="round" /></svg>Page designed by AI</span>}
             {saveError && <span className="text-xs text-red-600 font-medium">{saveError}</span>}
             <button
-              onClick={aiDesign}
-              disabled={aiDesigning}
-              className="px-4 py-1.5 text-xs font-semibold text-white rounded-full transition-all flex items-center gap-1.5 disabled:opacity-60"
+              onClick={() => setAiModalOpen(true)}
+              className="px-4 py-1.5 text-xs font-semibold text-white rounded-full transition-all flex items-center gap-1.5"
               style={{ background: "linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)" }}
             >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 16.8l-6.2 4.5 2.4-7.4L2 9.4h7.6z" /></svg>
+              AI Design My Page
+            </button>
+            <button
+              onClick={aiDesign}
+              disabled={aiDesigning}
+              className="px-3 py-1.5 text-xs font-medium text-neutral-600 bg-neutral-100 rounded-full hover:bg-neutral-200 transition-all flex items-center gap-1.5 disabled:opacity-60"
+            >
               {aiDesigning ? (
-                <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <div className="w-3 h-3 border-2 border-neutral-300 border-t-neutral-600 rounded-full animate-spin" />
               ) : (
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 16.8l-6.2 4.5 2.4-7.4L2 9.4h7.6z" /></svg>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" /></svg>
               )}
-              {aiDesigning ? "Designing..." : "AI Design My Page"}
+              {aiDesigning ? "..." : "Quick"}
             </button>
             {user.slug && (
               <Link href={`/u/${user.slug}`} target="_blank" className="px-4 py-1.5 text-xs font-semibold bg-neutral-900 text-white rounded-full hover:bg-neutral-800 transition-colors">
@@ -1159,6 +1195,12 @@ export function LinkInBioEditorContent({ user }: { user: any }) {
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .scrollbar-hide::-webkit-scrollbar { display: none } .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none }
       `}</style>
+
+      <AiDesignModal
+        open={aiModalOpen}
+        onClose={() => setAiModalOpen(false)}
+        onApply={handleAiModalApply}
+      />
     </div>
   );
 }
