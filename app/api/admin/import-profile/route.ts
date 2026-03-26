@@ -11,13 +11,14 @@ async function getAdminUser() {
   if (!token) return null;
   const sql = getDb();
   const rows = await sql`
-    SELECT u.id, u.email FROM users u
+    SELECT u.id, u.email, u.role FROM users u
     JOIN auth_sessions s ON s.user_id = u.id
     WHERE s.token = ${token} AND s.expires_at > NOW()
     LIMIT 1
   `;
   if (rows.length === 0) return null;
-  if (!ADMIN_EMAILS.includes(rows[0].email as string)) return null;
+  // Allow access if email is in admin list OR user role is admin
+  if (!ADMIN_EMAILS.includes(rows[0].email as string) && rows[0].role !== "admin") return null;
   return rows[0];
 }
 
