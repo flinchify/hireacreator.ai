@@ -349,6 +349,82 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
         </div>
       </section>
 
+      {/* ═══ Section 4a: Niches leaving money on the table ═══ */}
+      <section className="py-16 sm:py-24 px-5">
+        <div className="max-w-5xl mx-auto">
+          <h2
+            className="text-2xl sm:text-3xl text-neutral-800 text-center mb-4 font-serif"
+            style={{ fontFamily: "var(--font-serif)" }}
+          >
+            Thousands of views. Zero dollars.
+          </h2>
+          <p className="text-neutral-500 text-sm text-center max-w-xl mx-auto mb-12">
+            These creators get millions of views but have no way to monetize beyond ads. HireACreator changes that.
+          </p>
+          <StaggerChildren className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {[
+              {
+                image: "/niches/4wd.jpg",
+                title: "4WD & Offroad",
+                stat: "70K+ likes per post",
+                desc: "Aussie 4WD builders getting massive reach but no brand deals. ARB, Ironman, and aftermarket shops should be paying them.",
+              },
+              {
+                image: "/niches/street-cars.jpg",
+                title: "Street & JDM",
+                stat: "20K+ likes per post",
+                desc: "Car meets, builds, and burnouts pulling huge engagement. Parts brands, detailers, and workshops need these creators.",
+              },
+              {
+                image: "/niches/product-reviews.jpg",
+                title: "Product Reviews",
+                stat: "650K+ likes per post",
+                desc: "Amazon finds and gadget reviews going viral daily. These creators move product but get paid nothing for it.",
+              },
+              {
+                image: "/niches/ugc.jpg",
+                title: "UGC Creators",
+                stat: "150K+ likes per post",
+                desc: "User-generated content is what every brand wants. These creators charge $200-2000 per video but have nowhere to get discovered.",
+              },
+            ].map((niche) => (
+              <div
+                key={niche.title}
+                className="aos-stagger-item group relative rounded-2xl overflow-hidden border border-neutral-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+              >
+                <div className="aspect-[4/3] overflow-hidden">
+                  <img
+                    src={niche.image}
+                    alt={niche.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                  <div className="absolute bottom-3 left-3 right-3">
+                    <span className="inline-block px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] font-semibold text-white mb-1.5">
+                      {niche.stat}
+                    </span>
+                    <h3 className="font-semibold text-white text-sm">{niche.title}</h3>
+                  </div>
+                </div>
+                <div className="p-4 bg-white">
+                  <p className="text-xs text-neutral-500 leading-relaxed">{niche.desc}</p>
+                </div>
+              </div>
+            ))}
+          </StaggerChildren>
+          <div className="text-center mt-10">
+            <a
+              href="/claim"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg px-8 py-3.5 font-semibold shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30 hover:scale-[1.02] transition-all text-sm"
+              style={{ fontFamily: "var(--font-display)" }}
+            >
+              Stop leaving money on the table
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* ═══ Section 4b: From Comment to Payment ═══ */}
       <section className="py-16 sm:py-24 px-5">
         <div className="max-w-5xl mx-auto">
