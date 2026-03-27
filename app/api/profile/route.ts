@@ -40,6 +40,10 @@ async function ensureColumns() {
     `ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_hover_effect TEXT DEFAULT 'none'`,
     `ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_anim_speed TEXT DEFAULT 'normal'`,
     `ALTER TABLE users ADD COLUMN IF NOT EXISTS link_bio_blocks TEXT DEFAULT ''`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS is_verified BOOLEAN DEFAULT FALSE`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS verification_method TEXT DEFAULT NULL`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS verification_checked_at TIMESTAMPTZ DEFAULT NULL`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS verification_platform TEXT DEFAULT NULL`,
   ];
   // Run each ALTER individually so one failure doesn't block the rest
   for (const ddl of cols) {

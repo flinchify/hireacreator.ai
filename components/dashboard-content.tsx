@@ -1771,6 +1771,38 @@ export function DashboardContent() {
               <div className="grid lg:grid-cols-[1fr,320px] gap-8">
                 {/* Left — stats + about + socials */}
                 <div className="space-y-6">
+                  {/* Link-in-bio verification card */}
+                  {!user.isVerified && (
+                    <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 mb-6">
+                      <div className="flex items-start gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-amber-600"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-amber-900 text-sm">Get Verified</h3>
+                          <p className="text-xs text-amber-700 mt-1">Add your HireACreator link to your social media bio to appear in the marketplace and get discovered by brands.</p>
+                          <div className="mt-3 flex items-center gap-2 bg-white rounded-lg border border-amber-200 px-3 py-2">
+                            <code className="text-xs text-amber-800 flex-1 truncate">hireacreator.ai/u/{user.slug}</code>
+                            <button onClick={() => { navigator.clipboard?.writeText(`https://hireacreator.ai/u/${user.slug}`); }} className="text-xs font-semibold text-amber-600 hover:text-amber-800 shrink-0">Copy</button>
+                          </div>
+                          <div className="mt-3 flex gap-2">
+                            <button onClick={async () => { const res = await fetch('/api/verification/check', { method: 'POST' }); const data = await res.json(); if (data.verified) { refreshUser(); } else if (data.pending) { alert('Verification pending — we will review shortly.'); } else { alert(data.message || 'Link not found in your bio yet. Add it and try again.'); } }} className="px-4 py-2 text-xs font-semibold bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors">Check Verification</button>
+                            <button onClick={async () => { await fetch('/api/verification/check', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ manual: true }) }); alert('Submitted for review. You will be verified shortly.'); }} className="px-4 py-2 text-xs font-semibold bg-white text-amber-700 border border-amber-300 rounded-lg hover:bg-amber-50 transition-colors">I{"'"}ve Added It</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Edit Link in Bio */}
+                  <Link href={`/u/${user.slug}/edit`} className="flex items-center gap-3 bg-white rounded-2xl border border-neutral-200/60 p-4 hover:border-neutral-300 hover:shadow-sm transition-all group">
+                    <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center shrink-0 text-blue-500 group-hover:bg-blue-100 transition-colors">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" /><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" /></svg>
+                    </div>
+                    <div className="flex-1 min-w-0"><div className="text-sm font-semibold text-neutral-900">Edit Link in Bio</div><div className="text-xs text-neutral-400 mt-0.5">Customize your page, templates, links, and design</div></div>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-neutral-300 shrink-0"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                  </Link>
+
                   {/* Eligibility banner — only show after data has loaded to prevent flash */}
                   {dataLoaded && (() => {
                     const missing: string[] = [];
