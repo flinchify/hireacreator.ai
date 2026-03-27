@@ -50,7 +50,7 @@ const BUTTON_SIZES: Record<string, string> = {
 
 /* ── Content position/alignment ── */
 const CONTENT_JUSTIFY: Record<string, string> = {
-  top: 'justify-start',
+  top: 'justify-center',
   center: 'justify-center',
   bottom: 'justify-end',
 };
