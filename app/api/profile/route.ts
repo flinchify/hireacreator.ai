@@ -44,6 +44,8 @@ async function ensureColumns() {
     `ALTER TABLE users ADD COLUMN IF NOT EXISTS verification_method TEXT DEFAULT NULL`,
     `ALTER TABLE users ADD COLUMN IF NOT EXISTS verification_checked_at TIMESTAMPTZ DEFAULT NULL`,
     `ALTER TABLE users ADD COLUMN IF NOT EXISTS verification_platform TEXT DEFAULT NULL`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS contact_email TEXT DEFAULT NULL`,
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS contact_phone TEXT DEFAULT NULL`,
   ];
   // Run each ALTER individually so one failure doesn't block the rest
   for (const ddl of cols) {
@@ -189,6 +191,8 @@ export async function PATCH(request: Request) {
       ["link_bio_hover_effect", body.link_bio_hover_effect],
       ["link_bio_anim_speed", body.link_bio_anim_speed],
       ["link_bio_blocks", body.link_bio_blocks],
+      ["contact_email", body.contact_email],
+      ["contact_phone", body.contact_phone],
     ];
     // Build a single UPDATE for all provided extended fields
     const setters: string[] = [];

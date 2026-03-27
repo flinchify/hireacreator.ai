@@ -1649,6 +1649,23 @@ function TemplateCustom({ creator, isUnclaimed }: { creator: Creator; isUnclaime
         </div>
         <Socials creator={creator} light={isDarkBg} />
         {creator.bio && <p className={`text-sm text-center mb-6 leading-relaxed ${isDarkBg ? "text-white/50" : "text-neutral-500"}`}>{creator.bio}</p>}
+        {/* Contact info */}
+        {(creator.contactEmail || creator.contactPhone) && (
+          <div className={`flex flex-wrap items-center justify-center gap-4 mb-6 text-xs ${isDarkBg ? "text-white/40" : "text-neutral-400"}`}>
+            {creator.contactEmail && (
+              <a href={`mailto:${creator.contactEmail}`} className={`flex items-center gap-1.5 hover:underline ${isDarkBg ? "hover:text-white/70" : "hover:text-neutral-600"} transition-colors`}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 7L2 7"/></svg>
+                {creator.contactEmail}
+              </a>
+            )}
+            {creator.contactPhone && (
+              <a href={`tel:${creator.contactPhone}`} className={`flex items-center gap-1.5 hover:underline ${isDarkBg ? "hover:text-white/70" : "hover:text-neutral-600"} transition-colors`}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+                {creator.contactPhone}
+              </a>
+            )}
+          </div>
+        )}
         <BioLinksSection creator={creator} light={isDarkBg} />
         <ProductsSection creator={creator} light={isDarkBg} accent={accent} />
         <div className="space-y-3">

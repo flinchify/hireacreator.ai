@@ -91,6 +91,8 @@ function assembleCreator(
     linkBioHoverEffect: (user.link_bio_hover_effect as string) || "none",
     linkBioAnimSpeed: (user.link_bio_anim_speed as string) || "normal",
     linkBioBlocks: (user.link_bio_blocks as string) || "",
+    contactEmail: (user.contact_email as string) || "",
+    contactPhone: (user.contact_phone as string) || "",
     hideBranding: (user.hide_branding as boolean) || false,
     hasStripeAccount: !!(user.stripe_account_id as string),
     calendarEnabled: (user.calendar_enabled as boolean) || false,

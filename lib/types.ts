@@ -170,6 +170,8 @@ export type Creator = {
   linkBioHoverEffect: string;
   linkBioAnimSpeed: string;
   linkBioBlocks: string;
+  contactEmail: string;
+  contactPhone: string;
   hideBranding: boolean;
   hasStripeAccount: boolean;
   calendarEnabled: boolean;

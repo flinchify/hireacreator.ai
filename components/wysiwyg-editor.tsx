@@ -560,6 +560,19 @@ function ProfileSection({ data, onUpdate }: { data: Record<string, any>; onUpdat
         <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Location</label>
         <input value={data.location || ""} onChange={e => onUpdate({ location: e.target.value })} placeholder="Sydney, AU" className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900/10 text-neutral-900 bg-white mt-1" />
       </div>
+      <div className="pt-2 border-t border-neutral-100">
+        <p className="text-[9px] text-neutral-400 mb-3">Optional — shown on your link-in-bio page if filled in</p>
+        <div className="space-y-3">
+          <div>
+            <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Contact Email</label>
+            <input value={data.contact_email || ""} onChange={e => onUpdate({ contact_email: e.target.value })} placeholder="you@email.com" type="email" className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900/10 text-neutral-900 bg-white mt-1" />
+          </div>
+          <div>
+            <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Phone Number</label>
+            <input value={data.contact_phone || ""} onChange={e => onUpdate({ contact_phone: e.target.value })} placeholder="+61 400 000 000" type="tel" className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900/10 text-neutral-900 bg-white mt-1" />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

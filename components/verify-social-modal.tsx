@@ -11,12 +11,11 @@ interface VerifySocialModalProps {
 }
 
 export function VerifySocialModal({ open, onClose, platform, handle, onVerified }: VerifySocialModalProps) {
-  const [step, setStep] = useState<"loading" | "code" | "checking" | "success" | "error" | "paste-bio">("loading");
+  const [step, setStep] = useState<"loading" | "code" | "checking" | "success" | "error">("loading");
   const [code, setCode] = useState("");
   const [expiresAt, setExpiresAt] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [copied, setCopied] = useState(false);
-  const [bioText, setBioText] = useState("");
 
   // Generate code when modal opens
   const generateCode = async () => {
@@ -50,21 +49,18 @@ export function VerifySocialModal({ open, onClose, platform, handle, onVerified 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
-  const handleVerify = async (pastedBio?: string) => {
+  const handleVerify = async () => {
     setStep("checking");
     try {
       const res = await fetch("/api/verify/social", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ platform, handle, code, bioText: pastedBio || undefined }),
+        body: JSON.stringify({ platform, handle, code }),
       });
       const data = await res.json();
       if (data.verified) {
         setStep("success");
         onVerified?.();
-      } else if (data.needsBioText) {
-        setErrorMessage(data.message || "We couldn't read your bio automatically.");
-        setStep("paste-bio");
       } else {
         setErrorMessage(data.message || "Code not found in your bio");
         setStep("error");
@@ -86,7 +82,6 @@ export function VerifySocialModal({ open, onClose, platform, handle, onVerified 
     setCode("");
     setErrorMessage("");
     setCopied(false);
-    setBioText("");
     onClose();
   };
 
@@ -180,42 +175,6 @@ export function VerifySocialModal({ open, onClose, platform, handle, onVerified 
               </svg>
               <p className="text-sm text-neutral-500">Checking your {platformName} bio...</p>
               <p className="text-xs text-neutral-400 mt-1">This may take a few seconds</p>
-            </div>
-          )}
-
-          {/* Paste Bio Fallback */}
-          {step === "paste-bio" && (
-            <div className="space-y-4">
-              <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl">
-                <p className="text-xs text-amber-700">{errorMessage}</p>
-              </div>
-              <div>
-                <label className="text-sm font-semibold text-neutral-900 block mb-2">Paste your {platformName} bio here</label>
-                <textarea
-                  value={bioText}
-                  onChange={(e) => setBioText(e.target.value)}
-                  placeholder={`Copy your ${platformName} bio and paste it here...`}
-                  rows={4}
-                  className="w-full px-4 py-3 rounded-xl border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900/10 resize-none"
-                />
-              </div>
-              <div className="bg-neutral-50 border border-neutral-200 rounded-xl p-3">
-                <p className="text-xs text-neutral-500 mb-1">Your verification code:</p>
-                <code className="text-base font-mono font-bold text-neutral-900">{code}</code>
-              </div>
-              <button
-                onClick={() => handleVerify(bioText)}
-                disabled={!bioText.trim()}
-                className="w-full py-3 bg-neutral-900 text-white text-sm font-semibold rounded-xl hover:bg-neutral-800 transition-colors disabled:opacity-40"
-              >
-                Verify with Pasted Bio
-              </button>
-              <button
-                onClick={() => { setStep("code"); setErrorMessage(""); setBioText(""); }}
-                className="w-full py-2 text-sm text-neutral-500 hover:text-neutral-900 transition-colors"
-              >
-                Try automatic check again
-              </button>
             </div>
           )}
 

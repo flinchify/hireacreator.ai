@@ -1,10 +1,10 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { getDb } from "@/lib/db";
 
 const ADMIN_EMAILS = ["inpromptyou@gmail.com", "flinchify@gmail.com"];
 
-async function getAdmin() {
+async function getAdminUser() {
   const token = cookies().get("session_token")?.value;
   if (!token) return null;
   const sql = getDb();
@@ -19,29 +19,46 @@ async function getAdmin() {
   return rows[0];
 }
 
-export async function PATCH(request: Request) {
+// PATCH — Admin manually verify a user
+export async function PATCH(req: NextRequest) {
   try {
-    const admin = await getAdmin();
-    if (!admin) return NextResponse.json({ error: "forbidden" }, { status: 403 });
+    const admin = await getAdminUser();
+    if (!admin) {
+      return NextResponse.json({ error: "Admin access required" }, { status: 403 });
+    }
 
-    const { userId } = await request.json();
+    const body = await req.json();
+    const { userId } = body;
+
     if (!userId) {
       return NextResponse.json({ error: "userId is required" }, { status: 400 });
     }
 
     const sql = getDb();
+
+    // Ensure columns exist
+    try {
+      await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS verification_method TEXT`;
+      await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS verification_checked_at TIMESTAMPTZ`;
+      await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS pending_verification BOOLEAN DEFAULT FALSE`;
+    } catch {
+      // Columns may already exist
+    }
+
     await sql`
-      UPDATE users
-      SET is_verified = true,
-          verification_method = 'admin',
-          verification_checked_at = NOW(),
-          pending_verification = false
+      UPDATE users SET
+        is_verified = TRUE,
+        verification_status = 'verified',
+        verification_method = 'admin',
+        verification_checked_at = NOW(),
+        pending_verification = FALSE,
+        updated_at = NOW()
       WHERE id = ${userId}
     `;
 
     return NextResponse.json({ success: true });
-  } catch (e) {
-    console.error("[verification/confirm]", e);
-    return NextResponse.json({ error: "internal error" }, { status: 500 });
+  } catch (err) {
+    console.error("[verification/confirm] error:", err);
+    return NextResponse.json({ error: "Failed to confirm verification" }, { status: 500 });
   }
 }
