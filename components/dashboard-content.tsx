@@ -6,7 +6,7 @@ import { useAuth, User } from "./auth-context";
 import { CalendarManager } from "./calendar-manager";
 import { PlatformIcon } from "./icons/platforms";
 import { ReplyTemplatesManager } from "./reply-templates-manager";
-import { VerificationManager } from "./verification-manager";
+
 import { BioWriterModal } from "./bio-writer-modal";
 import { SendOfferModal } from "./send-offer-modal";
 import { VerifySocialModal } from "./verify-social-modal";
@@ -1560,6 +1560,103 @@ function SlugEditor({ user, onChanged }: { user: User; onChanged: () => void }) 
   );
 }
 
+/* ═══ Link-in-Bio Verification Card ═══ */
+function LinkInBioVerificationCard({ user, socials }: { user: User; socials: any[] }) {
+  const [linkCopied, setLinkCopied] = useState(false);
+  const [verifyLoading, setVerifyLoading] = useState(false);
+  const [verifyResult, setVerifyResult] = useState<{ verified: boolean; pending: boolean; message: string } | null>(null);
+
+  const primarySocial = socials[0];
+  const platformName = primarySocial?.platform === "x" ? "X (Twitter)" : (primarySocial?.platform || "social").charAt(0).toUpperCase() + (primarySocial?.platform || "social").slice(1);
+  const profileLink = `hireacreator.ai/u/${user.slug}`;
+
+  const handleCopyLink = () => {
+    navigator.clipboard?.writeText(profileLink);
+    setLinkCopied(true);
+    setTimeout(() => setLinkCopied(false), 2000);
+  };
+
+  const handleCheckVerification = async () => {
+    if (!primarySocial) return;
+    setVerifyLoading(true);
+    setVerifyResult(null);
+    try {
+      const res = await fetch("/api/verification/check", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ platform: primarySocial.platform, handle: primarySocial.handle }),
+      });
+      const data = await res.json();
+      setVerifyResult({ verified: data.verified, pending: data.pending, message: data.message });
+      if (data.verified) {
+        setTimeout(() => window.location.reload(), 1500);
+      }
+    } catch {
+      setVerifyResult({ verified: false, pending: false, message: "Something went wrong. Please try again." });
+    } finally {
+      setVerifyLoading(false);
+    }
+  };
+
+  return (
+    <div className="bg-amber-50 border border-amber-200/60 rounded-2xl p-5">
+      <div className="flex items-start gap-3 mb-4">
+        <div className="w-9 h-9 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-amber-600"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" strokeLinecap="round" strokeLinejoin="round" /></svg>
+        </div>
+        <div>
+          <h3 className="text-sm font-bold text-neutral-900">Get Verified</h3>
+          <p className="text-xs text-neutral-500 mt-0.5">
+            Add your HireACreator link to your {platformName} bio to appear in the marketplace.
+          </p>
+        </div>
+      </div>
+
+      {/* Link to copy */}
+      <div className="flex items-center gap-2 bg-white border border-amber-200/60 rounded-xl p-3 mb-4">
+        <span className="text-xs text-neutral-700 font-mono truncate flex-1">{profileLink}</span>
+        <button
+          onClick={handleCopyLink}
+          className="px-3 py-1.5 text-xs font-semibold text-white bg-neutral-900 rounded-lg hover:bg-neutral-800 transition-colors shrink-0"
+        >
+          {linkCopied ? "Copied!" : "Copy"}
+        </button>
+      </div>
+
+      {/* Action buttons */}
+      <div className="flex flex-wrap gap-2">
+        <button
+          onClick={handleCheckVerification}
+          disabled={verifyLoading}
+          className="px-4 py-2.5 text-xs font-semibold text-white bg-neutral-900 rounded-lg hover:bg-neutral-800 transition-colors disabled:opacity-50"
+        >
+          {verifyLoading ? "Checking..." : "Check Verification"}
+        </button>
+        <button
+          onClick={handleCheckVerification}
+          disabled={verifyLoading}
+          className="px-4 py-2.5 text-xs font-semibold text-neutral-700 bg-white border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors disabled:opacity-50"
+        >
+          I Have Added It
+        </button>
+      </div>
+
+      {/* Result message */}
+      {verifyResult && (
+        <div className={`mt-3 p-3 rounded-xl text-xs font-medium ${
+          verifyResult.verified
+            ? "bg-emerald-50 border border-emerald-200 text-emerald-700"
+            : verifyResult.pending
+            ? "bg-amber-50 border border-amber-300 text-amber-700"
+            : "bg-red-50 border border-red-200 text-red-700"
+        }`}>
+          {verifyResult.message}
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ═══ Main Dashboard ═══ */
 export function DashboardContent() {
   const { user, loading, refreshUser, logout } = useAuth();
@@ -1840,28 +1937,9 @@ export function DashboardContent() {
                     </div>
                   )}
 
-                  {/* Bio verification banner */}
+                  {/* Link-in-Bio verification card */}
                   {dataLoaded && !user.isVerified && socials.length > 0 && (
-                    <div className="p-4 bg-amber-50 border border-amber-200/60 rounded-2xl flex items-start gap-3">
-                      <div className="w-8 h-8 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-amber-600"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="text-sm font-semibold text-neutral-900">Verify your account to receive offers</h3>
-                        <p className="text-xs text-neutral-500 mt-0.5">Prove you own your social account by adding a unique code to your bio. Required to accept brand deals.</p>
-                        <div className="flex flex-wrap gap-2 mt-3">
-                          {socials.filter((s: any) => ["instagram", "x"].includes(s.platform)).map((s: any) => (
-                            <button
-                              key={s.id}
-                              onClick={() => { setVerifyPlatform(s.platform); setVerifyHandle(s.handle); setVerifyModalOpen(true); }}
-                              className="px-4 py-2 text-xs font-semibold text-white bg-neutral-900 rounded-lg hover:bg-neutral-800 transition-colors"
-                            >
-                              Verify @{s.handle} on {s.platform === "x" ? "X" : "Instagram"}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
+                    <LinkInBioVerificationCard user={user} socials={socials} />
                   )}
                   {dataLoaded && user.isVerified && (
                     <div className="flex items-center gap-2 px-4 py-3 bg-emerald-50 border border-emerald-200/60 rounded-2xl">
@@ -2092,7 +2170,12 @@ export function DashboardContent() {
                   )}
 
                   {/* Verification */}
-                  <VerificationManager />
+                  {user.isVerified && (
+                    <div className="flex items-center gap-2 px-4 py-3 bg-emerald-50 border border-emerald-200/60 rounded-2xl">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="#10b981"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                      <span className="text-sm font-medium text-emerald-700">Verified Creator</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Right — Quick Actions (desktop only) */}

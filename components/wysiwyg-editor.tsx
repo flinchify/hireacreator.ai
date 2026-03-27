@@ -843,12 +843,17 @@ export function WysiwygEditor({ initialData, slug }: { initialData: EditorData; 
     save(fields);
   }
 
-  // Refresh iframe after save
+  // Preview iframe — only refresh on explicit action, not every autosave
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const saveCountRef = useRef(0);
   const prevStatus = useRef(status);
   useEffect(() => {
-    if (prevStatus.current === "saving" && status === "saved" && iframeRef.current) {
-      iframeRef.current.src = `/u/${slug}?t=${Date.now()}&preview=true`;
+    if (prevStatus.current === "saving" && status === "saved") {
+      saveCountRef.current += 1;
+      // Auto-refresh preview every 5th save to avoid constant reloads
+      if (saveCountRef.current % 5 === 0 && iframeRef.current) {
+        iframeRef.current.src = `/u/${slug}?t=${Date.now()}&preview=true`;
+      }
     }
     prevStatus.current = status;
   }, [status, slug]);

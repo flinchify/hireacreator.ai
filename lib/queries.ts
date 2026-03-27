@@ -194,6 +194,7 @@ export async function getCreators(): Promise<Creator[]> {
       AND u.visible_in_marketplace = TRUE
       AND (u.is_banned IS NULL OR u.is_banned = FALSE)
       AND u.email_verified = TRUE
+      AND u.is_verified = TRUE
       AND (u.avatar_url IS NOT NULL OR u.role = 'brand')
       AND (EXISTS (SELECT 1 FROM social_connections sc WHERE sc.user_id = u.id) OR u.role = 'brand')
       AND (EXISTS (SELECT 1 FROM services s WHERE s.user_id = u.id AND s.is_active = TRUE) OR u.role = 'brand')
@@ -221,6 +222,7 @@ export async function getFeaturedCreators(): Promise<Creator[]> {
     SELECT * FROM users
     WHERE role IN ('creator', 'admin', 'brand') AND is_featured = TRUE AND visible_in_marketplace = TRUE
       AND (is_banned IS NULL OR is_banned = FALSE)
+      AND is_verified = TRUE
     ORDER BY rating DESC
     LIMIT 4
   `;
@@ -290,6 +292,7 @@ export async function searchCreators(filters?: {
     users = await sql`
       SELECT * FROM users
       WHERE role = 'creator' AND visible_in_marketplace = TRUE
+        AND is_verified = TRUE
         AND category = ${category}
         AND (
           LOWER(full_name) LIKE ${"%" + query + "%"}
@@ -302,6 +305,7 @@ export async function searchCreators(filters?: {
     users = await sql`
       SELECT * FROM users
       WHERE role = 'creator' AND visible_in_marketplace = TRUE
+        AND is_verified = TRUE
         AND (
           LOWER(full_name) LIKE ${"%" + query + "%"}
           OR LOWER(headline) LIKE ${"%" + query + "%"}
@@ -312,13 +316,13 @@ export async function searchCreators(filters?: {
   } else if (category) {
     users = await sql`
       SELECT * FROM users
-      WHERE role = 'creator' AND visible_in_marketplace = TRUE AND category = ${category}
+      WHERE role = 'creator' AND visible_in_marketplace = TRUE AND is_verified = TRUE AND category = ${category}
       ORDER BY is_featured DESC, rating DESC
     `;
   } else {
     users = await sql`
       SELECT * FROM users
-      WHERE role = 'creator' AND visible_in_marketplace = TRUE
+      WHERE role = 'creator' AND visible_in_marketplace = TRUE AND is_verified = TRUE
       ORDER BY is_featured DESC, rating DESC
     `;
   }
@@ -345,6 +349,7 @@ export async function getTopCreatorsByCategory(): Promise<Record<string, Creator
     WHERE role IN ('creator', 'admin') AND visible_in_marketplace = TRUE
       AND (is_banned IS NULL OR is_banned = FALSE)
       AND email_verified = TRUE
+      AND is_verified = TRUE
       AND category IS NOT NULL AND category != ''
     ORDER BY profile_views DESC NULLS LAST, rating DESC
   `;
@@ -473,6 +478,7 @@ export async function getFeaturedCreatorsRotation(): Promise<Creator[]> {
         AND u.visible_in_marketplace = TRUE
         AND (u.is_banned IS NULL OR u.is_banned = FALSE)
         AND u.avatar_url IS NOT NULL
+        AND u.is_verified = TRUE
       ORDER BY completeness_score DESC, last_featured ASC NULLS FIRST, RANDOM()
       LIMIT 4
     `;

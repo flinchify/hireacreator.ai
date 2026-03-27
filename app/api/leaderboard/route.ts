@@ -26,6 +26,7 @@ export async function GET(request: Request) {
           AND u.visible_in_marketplace = TRUE
           AND (u.is_banned IS NULL OR u.is_banned = FALSE)
           AND u.email_verified = TRUE
+          AND u.is_verified = TRUE
           AND u.category = ${category}
           AND u.creator_score > 0
         ORDER BY u.creator_score DESC
@@ -47,6 +48,7 @@ export async function GET(request: Request) {
           AND u.visible_in_marketplace = TRUE
           AND (u.is_banned IS NULL OR u.is_banned = FALSE)
           AND u.email_verified = TRUE
+          AND u.is_verified = TRUE
           AND u.creator_score > 0
         ORDER BY u.creator_score DESC
         LIMIT ${limit}
@@ -61,6 +63,7 @@ export async function GET(request: Request) {
         AND visible_in_marketplace = TRUE
         AND (is_banned IS NULL OR is_banned = FALSE)
         AND email_verified = TRUE
+        AND is_verified = TRUE
         AND category IS NOT NULL AND category != ''
         AND creator_score > 0
       GROUP BY category

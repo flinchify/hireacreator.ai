@@ -17,6 +17,18 @@ const FONT_MAP: Record<string, string> = {
   manrope: "'Manrope', sans-serif",
 };
 
+/* ── Google Fonts URL map for dynamic loading ── */
+const FONT_URLS: Record<string, string> = {
+  jakarta: "Plus+Jakarta+Sans:wght@400;500;600;700;800",
+  outfit: "Outfit:wght@400;500;600;700;800;900",
+  inter: "Inter:wght@400;500;600;700",
+  "dm-sans": "DM+Sans:wght@400;500;600;700",
+  poppins: "Poppins:wght@400;500;600;700",
+  "space-grotesk": "Space+Grotesk:wght@400;500;600;700",
+  sora: "Sora:wght@400;500;600;700",
+  manrope: "Manrope:wght@400;500;600;700;800",
+};
+
 /* ── Size mapping constants ── */
 const TEXT_SIZES: Record<string, { name: string; bio: string; link: string; headline: string }> = {
   small: { name: 'text-lg', bio: 'text-sm', link: 'text-sm', headline: 'text-sm' },
@@ -3547,9 +3559,23 @@ function TypewriterText({ name, accent }: { name: string; accent: string }) {
 /* ── Main export ── */
 export function LinkInBioContent({ creator, isUnclaimed }: { creator: Creator; isUnclaimed?: boolean }) {
   const template = creator.linkBioTemplate || "minimal";
-  const font = FONT_MAP[creator.linkBioFont] || FONT_MAP.jakarta;
+  const fontKey = creator.linkBioFont || "jakarta";
+  const font = FONT_MAP[fontKey] || FONT_MAP.jakarta;
   const textColor = creator.linkBioTextColor || "";
   const animType = creator.linkBioIntroAnim || "none";
+
+  // Dynamically load the selected Google Font
+  useEffect(() => {
+    const fontUrl = FONT_URLS[fontKey];
+    if (!fontUrl) return;
+    const linkId = `gfont-${fontKey}`;
+    if (document.getElementById(linkId)) return;
+    const link = document.createElement("link");
+    link.id = linkId;
+    link.rel = "stylesheet";
+    link.href = `https://fonts.googleapis.com/css2?family=${fontUrl}&display=swap`;
+    document.head.appendChild(link);
+  }, [fontKey]);
 
   const [animDone, setAnimDone] = useState(() => {
     if (!animType || animType === "none") return true;

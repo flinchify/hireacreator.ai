@@ -2,6 +2,14 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { getDb } from "@/lib/db";
 
+async function ensureColumns() {
+  const sql = getDb();
+  await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS verification_method TEXT`;
+  await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS verification_checked_at TIMESTAMPTZ`;
+  await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS verification_platform TEXT`;
+  await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS pending_verification BOOLEAN DEFAULT FALSE`;
+}
+
 async function getUser() {
   const token = cookies().get("session_token")?.value;
   if (!token) return null;
@@ -10,105 +18,92 @@ async function getUser() {
     SELECT u.id, u.slug FROM users u
     JOIN auth_sessions s ON s.user_id = u.id
     WHERE s.token = ${token} AND s.expires_at > NOW()
+    LIMIT 1
   `;
   return rows.length > 0 ? rows[0] : null;
 }
 
 export async function POST(request: Request) {
   try {
+    await ensureColumns();
+
     const user = await getUser();
     if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 
+    const body = await request.json();
+    const { platform, handle } = body;
+
+    if (!platform || !handle) {
+      return NextResponse.json({ error: "platform and handle are required" }, { status: 400 });
+    }
+
     const sql = getDb();
+    const slug = user.slug as string;
+    const normalizedHandle = (handle as string).toLowerCase().trim().replace(/^@/, "");
 
-    // Check if manual review was requested
-    let manual = false;
-    try {
-      const body = await request.json();
-      manual = !!body?.manual;
-    } catch {
-      // No body or invalid JSON — that's fine
-    }
+    // For X/Twitter: attempt automatic check via fxtwitter API
+    if (["x", "twitter"].includes(platform)) {
+      try {
+        const res = await fetch(`https://api.fxtwitter.com/${normalizedHandle}`, {
+          headers: { "User-Agent": "HireACreator/1.0" },
+          signal: AbortSignal.timeout(10000),
+        });
 
-    // Get user's primary social connection
-    const socials = await sql`
-      SELECT platform, handle FROM social_connections
-      WHERE user_id = ${user.id}
-      ORDER BY created_at
-      LIMIT 1
-    `;
+        if (res.ok) {
+          const data = await res.json();
+          const bio = (data?.user?.description || data?.user?.bio || "").toLowerCase();
 
-    if (socials.length === 0) {
-      return NextResponse.json({
-        verified: false,
-        pending: false,
-        message: "No social account connected. Add one first.",
-      });
-    }
+          if (bio.includes(`hireacreator.ai/u/${slug.toLowerCase()}`)) {
+            await sql`
+              UPDATE users
+              SET is_verified = true,
+                  verification_method = 'link_in_bio',
+                  verification_platform = ${platform},
+                  verification_checked_at = NOW(),
+                  pending_verification = false
+              WHERE id = ${user.id}
+            `;
+            return NextResponse.json({
+              verified: true,
+              pending: false,
+              message: "Verified! Your HireACreator link was found in your bio.",
+            });
+          }
+        }
+      } catch {
+        // Fetch failed — fall through to pending
+      }
 
-    const { platform, handle } = socials[0];
-
-    // If manual submission or non-scrapable platform, set to pending
-    if (manual || !["x", "twitter"].includes(platform)) {
+      // Not found — set pending for manual review
       await sql`
         UPDATE users
-        SET verification_method = 'pending',
-            verification_checked_at = NOW(),
-            verification_platform = ${platform}
+        SET pending_verification = true,
+            verification_platform = ${platform},
+            verification_checked_at = NOW()
         WHERE id = ${user.id}
       `;
       return NextResponse.json({
         verified: false,
         pending: true,
-        message: "Verification submitted for manual review.",
+        message: "We couldn't find the link yet. Your profile has been submitted for manual review.",
       });
     }
 
-    // For X/Twitter: try to check if "hireacreator" appears in their profile
-    try {
-      const res = await fetch(`https://x.com/${handle}`, {
-        headers: {
-          "User-Agent":
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        },
-        signal: AbortSignal.timeout(10000),
-      });
-      const text = await res.text();
-
-      if (text.toLowerCase().includes("hireacreator")) {
-        await sql`
-          UPDATE users
-          SET is_verified = true,
-              verification_method = 'link_in_bio',
-              verification_checked_at = NOW(),
-              verification_platform = ${platform}
-          WHERE id = ${user.id}
-        `;
-        return NextResponse.json({
-          verified: true,
-          pending: false,
-          message: "Verified! Your HireACreator link was found in your bio.",
-        });
-      }
-    } catch {
-      // Fetch failed — fall through to pending
-    }
-
-    // X scrape didn't find it — set pending for manual review
+    // For Instagram/TikTok/YouTube: set pending for manual review
     await sql`
       UPDATE users
-      SET verification_method = 'pending',
-          verification_checked_at = NOW(),
-          verification_platform = ${platform}
+      SET pending_verification = true,
+          verification_platform = ${platform},
+          verification_checked_at = NOW()
       WHERE id = ${user.id}
     `;
 
     return NextResponse.json({
       verified: false,
-      pending: false,
-      message: "Link not found in your bio yet. Make sure your bio contains 'hireacreator' and try again.",
+      pending: true,
+      message: `We can't auto-check ${platform} bios yet. Your profile has been submitted for manual review.`,
     });
-  } catch (e: any) {
+  } catch (e) {
     console.error("[verification/check]", e);
     return NextResponse.json({ error: "internal error" }, { status: 500 });
   }

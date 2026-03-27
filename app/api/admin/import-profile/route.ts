@@ -74,7 +74,7 @@ export async function POST(req: NextRequest) {
         const result = await sql`
           INSERT INTO users (email, full_name, slug, avatar_url, bio, category, headline, role, referral_code,
             link_bio_template, link_bio_bg_type, link_bio_bg_value, link_bio_text_color, link_bio_font, link_bio_button_shape,
-            visible_in_marketplace)
+            visible_in_marketplace, is_verified, verification_method)
           VALUES (
             ${userEmail},
             ${autoProfile.profile.displayName || normalizedHandle},
@@ -91,7 +91,9 @@ export async function POST(req: NextRequest) {
             ${design.textColor || null},
             ${design.font || null},
             ${design.buttonShape || null},
-            true
+            true,
+            true,
+            'admin'
           )
           RETURNING id
         `;
