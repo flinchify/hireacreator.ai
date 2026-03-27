@@ -5,6 +5,8 @@ import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
 import { useAuth } from "./auth-context";
 
+const mono = { fontFamily: "'JetBrains Mono', monospace" };
+
 function UserMenu() {
   const { user, logout } = useAuth();
   const [open, setOpen] = useState(false);
@@ -24,57 +26,57 @@ function UserMenu() {
     <div className="relative" ref={ref}>
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-2 px-2 py-1.5 rounded-full hover:bg-neutral-100 transition-colors"
+        className="flex items-center gap-2 px-2 py-1.5 rounded-none border border-neutral-700 hover:border-emerald-500/50 hover:bg-neutral-800 transition-all"
       >
         {user.avatar ? (
-          <img src={user.avatar} alt={`${user.name || "User"} avatar`} className="w-7 h-7 rounded-full object-cover" />
+          <img src={user.avatar} alt={`${user.name || "User"} avatar`} className="w-6 h-6 rounded-none object-cover" />
         ) : (
-          <div className="w-7 h-7 rounded-full bg-neutral-200 flex items-center justify-center">
-            <span className="text-xs font-medium text-neutral-600">{user.name?.charAt(0) || "?"}</span>
+          <div className="w-6 h-6 rounded-none bg-neutral-800 border border-neutral-600 flex items-center justify-center">
+            <span className="text-[10px] font-mono text-emerald-400">{user.name?.charAt(0) || "?"}</span>
           </div>
         )}
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-neutral-400">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-neutral-500">
           <path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-2 w-56 bg-white border border-neutral-200 rounded-xl shadow-lg py-1 z-[100]">
-          <div className="px-4 py-3 border-b border-neutral-100">
-            <div className="font-medium text-neutral-900 text-sm truncate">{user.name}</div>
-            <div className="text-xs text-neutral-400 truncate">{user.email}</div>
+        <div className="absolute right-0 top-full mt-1 w-56 bg-neutral-900 border border-neutral-700 rounded-none shadow-2xl shadow-black/50 py-1 z-[100]" style={mono}>
+          <div className="px-4 py-3 border-b border-neutral-700/50">
+            <div className="font-medium text-neutral-200 text-xs truncate">{user.name}</div>
+            <div className="text-[10px] text-neutral-500 truncate mt-0.5">{user.email}</div>
             {user.isPro && (
-              <span className="inline-flex items-center mt-1 px-1.5 py-0.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[9px] font-bold uppercase tracking-wider rounded-full">
+              <span className="inline-flex items-center mt-1.5 px-1.5 py-0.5 bg-emerald-500/20 text-emerald-400 text-[9px] font-bold uppercase tracking-wider border border-emerald-500/30">
                 PRO
               </span>
             )}
           </div>
-          <Link href="/dashboard" onClick={() => setOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
-            Dashboard
+          <Link href="/dashboard" onClick={() => setOpen(false)} className="block px-4 py-2 text-xs text-neutral-400 hover:text-emerald-400 hover:bg-neutral-800 transition-colors">
+            ~/dashboard
           </Link>
           {user.role !== "brand" && (
-            <Link href={user.slug ? `/u/${user.slug}` : "/dashboard"} onClick={() => setOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
-              My Link in Bio
+            <Link href={user.slug ? `/u/${user.slug}` : "/dashboard"} onClick={() => setOpen(false)} className="block px-4 py-2 text-xs text-neutral-400 hover:text-emerald-400 hover:bg-neutral-800 transition-colors">
+              ~/link-in-bio
             </Link>
           )}
-          <Link href="/dashboard/settings" onClick={() => setOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
-            Settings
+          <Link href="/dashboard/settings" onClick={() => setOpen(false)} className="block px-4 py-2 text-xs text-neutral-400 hover:text-emerald-400 hover:bg-neutral-800 transition-colors">
+            ~/settings
           </Link>
           {user.role === "admin" && (
-            <Link href="/admin" onClick={() => setOpen(false)} className="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">
-              Admin
+            <Link href="/admin" onClick={() => setOpen(false)} className="block px-4 py-2 text-xs text-red-400 hover:text-red-300 hover:bg-neutral-800 transition-colors">
+              ~/admin
             </Link>
           )}
-          <Link href="/referrals" onClick={() => setOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors flex items-center gap-2">
-            Referrals
-            <span className="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-[9px] font-bold rounded-full">20%</span>
+          <Link href="/referrals" onClick={() => setOpen(false)} className="block px-4 py-2 text-xs text-neutral-400 hover:text-emerald-400 hover:bg-neutral-800 transition-colors flex items-center gap-2">
+            ~/referrals
+            <span className="px-1 py-0.5 bg-emerald-500/20 text-emerald-400 text-[9px] font-bold border border-emerald-500/30">20%</span>
           </Link>
-          <div className="border-t border-neutral-100 mt-1 pt-1">
+          <div className="border-t border-neutral-700/50 mt-1 pt-1">
             <button
               onClick={() => { setOpen(false); logout(); }}
-              className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+              className="block w-full text-left px-4 py-2 text-xs text-red-400 hover:text-red-300 hover:bg-neutral-800 transition-colors"
             >
-              Sign Out
+              exit()
             </button>
           </div>
         </div>
@@ -98,57 +100,58 @@ export function Header() {
 
   return (
     <header className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-1rem)] sm:w-[calc(100%-2rem)] max-w-5xl">
-      <nav className={`relative flex items-center justify-between px-5 sm:px-6 py-3 rounded-2xl border transition-all duration-300 ${
+      <nav className={`relative flex items-center justify-between px-4 sm:px-5 py-2.5 rounded-none border transition-all duration-300 ${
         scrolled
-          ? "bg-white/80 backdrop-blur-xl border-white/40 shadow-lg shadow-blue-500/5"
-          : "bg-white/70 backdrop-blur-xl border-white/40"
-      }`}>
-        {/* Animated gradient border */}
-        <div className="absolute inset-0 rounded-2xl p-[1px] pointer-events-none" style={{
-          background: "conic-gradient(from var(--header-angle, 0deg), transparent 30%, rgba(59,130,246,0.3) 45%, rgba(14,165,233,0.2) 55%, transparent 70%)",
-          WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-          WebkitMaskComposite: "xor",
-          maskComposite: "exclude",
-          animation: "header-sweep 6s linear infinite",
-        }} />
+          ? "bg-neutral-950/90 backdrop-blur-xl border-neutral-700/60 shadow-lg shadow-black/30"
+          : "bg-neutral-950/80 backdrop-blur-xl border-neutral-800/60"
+      }`} style={mono}>
+        {/* Animated scan line */}
+        <div className="absolute inset-0 rounded-none overflow-hidden pointer-events-none">
+          <div className="absolute inset-0 opacity-[0.03]" style={{
+            backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(52,211,153,0.1) 2px, rgba(52,211,153,0.1) 4px)",
+          }} />
+        </div>
+
         <div className="hidden lg:flex items-center gap-0">
           {user?.role === "brand" ? (
-            <Link href="/browse" className="px-3 py-2 text-[13px] font-medium transition-colors text-neutral-600 hover:text-neutral-900" style={{ fontFamily: "var(--font-display)" }}>
-              Explore
+            <Link href="/browse" className="px-3 py-1.5 text-[11px] font-medium tracking-wide uppercase transition-colors text-neutral-400 hover:text-emerald-400">
+              explore
             </Link>
           ) : (
-            <Link href="/browse" className="px-3 py-2 text-[13px] font-medium transition-colors text-neutral-600 hover:text-neutral-900" style={{ fontFamily: "var(--font-display)" }}>
-              Discover
+            <Link href="/browse" className="px-3 py-1.5 text-[11px] font-medium tracking-wide uppercase transition-colors text-neutral-400 hover:text-emerald-400">
+              discover
             </Link>
           )}
-          <span className="text-neutral-300 text-[10px] select-none">/</span>
+          <span className="text-neutral-600 text-[10px] select-none">/</span>
           {!user && (
             <>
-              <Link href="/for-brands" className="px-3 py-2 text-[13px] font-medium transition-colors text-neutral-600 hover:text-neutral-900" style={{ fontFamily: "var(--font-display)" }}>
-                Brands
+              <Link href="/for-brands" className="px-3 py-1.5 text-[11px] font-medium tracking-wide uppercase transition-colors text-neutral-400 hover:text-emerald-400">
+                brands
               </Link>
-              <span className="text-neutral-300 text-[10px] select-none">/</span>
+              <span className="text-neutral-600 text-[10px] select-none">/</span>
             </>
           )}
-          <Link href="/leaderboard" className="px-3 py-2 text-[13px] font-medium transition-colors text-neutral-600 hover:text-neutral-900" style={{ fontFamily: "var(--font-display)" }}>
-            Rankings
+          <Link href="/leaderboard" className="px-3 py-1.5 text-[11px] font-medium tracking-wide uppercase transition-colors text-neutral-400 hover:text-emerald-400">
+            rankings
           </Link>
-          <span className="text-neutral-300 text-[10px] select-none">/</span>
-          <Link href="/pricing" className="px-3 py-2 text-[13px] font-medium transition-colors text-neutral-600 hover:text-neutral-900" style={{ fontFamily: "var(--font-display)" }}>
-            Plans
+          <span className="text-neutral-600 text-[10px] select-none">/</span>
+          <Link href="/pricing" className="px-3 py-1.5 text-[11px] font-medium tracking-wide uppercase transition-colors text-neutral-400 hover:text-emerald-400">
+            plans
           </Link>
-          <span className="text-neutral-300 text-[10px] select-none">/</span>
-          <Link href="/how-it-works" className="px-3 py-2 text-[13px] font-medium transition-colors text-neutral-600 hover:text-neutral-900" style={{ fontFamily: "var(--font-display)" }}>
-            How It Works
+          <span className="text-neutral-600 text-[10px] select-none">/</span>
+          <Link href="/how-it-works" className="px-3 py-1.5 text-[11px] font-medium tracking-wide uppercase transition-colors text-neutral-400 hover:text-emerald-400">
+            how_it_works
           </Link>
-          <span className="text-neutral-300 text-[10px] select-none">/</span>
-          <Link href="/api" className="px-3 py-2 text-[13px] font-medium transition-colors text-neutral-600 hover:text-neutral-900" style={{ fontFamily: "var(--font-display)" }}>
-            API
+          <span className="text-neutral-600 text-[10px] select-none">/</span>
+          <Link href="/api" className="px-3 py-1.5 text-[11px] font-medium tracking-wide uppercase transition-colors text-emerald-500 hover:text-emerald-300 flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+            api
           </Link>
         </div>
 
-        <Link href="/" className="lg:absolute lg:left-1/2 lg:-translate-x-1/2 flex items-center text-neutral-900">
-          <Image src="/logo-3d.png" alt="HireACreator" width={36} height={36} className="w-9 h-9" priority />
+        <Link href="/" className="lg:absolute lg:left-1/2 lg:-translate-x-1/2 flex items-center gap-2">
+          <Image src="/logo-3d.png" alt="HireACreator" width={32} height={32} className="w-8 h-8" priority />
+          <span className="text-[13px] font-bold text-white tracking-tight hidden sm:inline lg:hidden">HireACreator</span>
         </Link>
 
         <div className="hidden lg:flex items-center gap-2">
@@ -156,28 +159,28 @@ export function Header() {
             <div className="w-20 h-8" />
           ) : user ? (
             <>
-              <Link href={user.slug ? `/u/${user.slug}` : "/dashboard"} className="px-3 py-2 text-[13px] font-medium transition-colors text-neutral-600 hover:text-neutral-900" style={{ fontFamily: "var(--font-display)" }}>
-                Link in Bio
+              <Link href={user.slug ? `/u/${user.slug}` : "/dashboard"} className="px-3 py-1.5 text-[11px] font-medium tracking-wide uppercase transition-colors text-neutral-400 hover:text-emerald-400">
+                bio
               </Link>
-              <Link href="/dashboard" className="px-3 py-2 text-[13px] font-medium transition-colors text-neutral-600 hover:text-neutral-900" style={{ fontFamily: "var(--font-display)" }}>
-                Dashboard
+              <Link href="/dashboard" className="px-3 py-1.5 text-[11px] font-medium tracking-wide uppercase transition-colors text-neutral-400 hover:text-emerald-400">
+                dash
               </Link>
               <UserMenu />
             </>
           ) : (
             <>
-              <button onClick={openLogin} className="px-4 py-2 text-[13px] font-medium text-neutral-500 hover:text-neutral-900 transition-colors" style={{ fontFamily: "var(--font-display)" }}>
-                Sign In
+              <button onClick={openLogin} className="px-4 py-1.5 text-[11px] font-medium tracking-wide uppercase text-neutral-400 hover:text-white transition-colors border border-transparent hover:border-neutral-600">
+                sign_in
               </button>
-              <button onClick={() => openSignup()} className="px-4 py-1.5 text-[13px] font-semibold rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/30 transition-all active:scale-[0.98]" style={{ fontFamily: "var(--font-display)" }}>
-                Get Started
+              <button onClick={() => openSignup()} className="px-4 py-1.5 text-[11px] font-bold tracking-wide uppercase rounded-none bg-emerald-500 text-neutral-950 hover:bg-emerald-400 transition-all active:scale-[0.98] border border-emerald-400">
+                get_started
               </button>
             </>
           )}
         </div>
 
         {/* Mobile toggle */}
-        <button className="lg:hidden p-2 text-neutral-700" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Toggle menu">
+        <button className="lg:hidden p-2 text-neutral-400 hover:text-emerald-400 transition-colors" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Toggle menu">
           <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
             {mobileOpen ? <path d="M4 4l12 12M4 16L16 4" /> : <path d="M3 6h14M3 10h14M3 14h14" />}
           </svg>
@@ -186,27 +189,30 @@ export function Header() {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="lg:hidden mt-2 rounded-2xl border border-neutral-100 p-4 shadow-xl bg-white">
-          <div className="flex flex-col gap-1" style={{ fontFamily: "var(--font-display)" }}>
-            <Link href="/browse" className="px-4 py-3 text-sm font-medium rounded-xl min-h-[48px] flex items-center text-neutral-800 hover:bg-neutral-50" onClick={() => setMobileOpen(false)}>
-              {user?.role === "brand" ? "Explore" : "Discover"}
+        <div className="lg:hidden mt-1 rounded-none border border-neutral-700 p-3 shadow-2xl shadow-black/50 bg-neutral-950/95 backdrop-blur-xl" style={mono}>
+          <div className="flex flex-col gap-0.5">
+            <Link href="/browse" className="px-4 py-3 text-[11px] font-medium tracking-wide uppercase min-h-[48px] flex items-center text-neutral-400 hover:text-emerald-400 hover:bg-neutral-800/50 transition-colors" onClick={() => setMobileOpen(false)}>
+              {user?.role === "brand" ? "> explore" : "> discover"}
             </Link>
-            {!user && <Link href="/for-brands" className="px-4 py-3 text-sm font-medium rounded-xl min-h-[48px] flex items-center text-neutral-800 hover:bg-neutral-50" onClick={() => setMobileOpen(false)}>Brands</Link>}
-            <Link href="/leaderboard" className="px-4 py-3 text-sm font-medium rounded-xl min-h-[48px] flex items-center text-neutral-800 hover:bg-neutral-50" onClick={() => setMobileOpen(false)}>Rankings</Link>
-            <Link href="/pricing" className="px-4 py-3 text-sm font-medium rounded-xl min-h-[48px] flex items-center text-neutral-800 hover:bg-neutral-50" onClick={() => setMobileOpen(false)}>Plans</Link>
-            <Link href="/how-it-works" className="px-4 py-3 text-sm font-medium rounded-xl min-h-[48px] flex items-center text-neutral-800 hover:bg-neutral-50" onClick={() => setMobileOpen(false)}>How It Works</Link>
-            <Link href="/api" className="px-4 py-3 text-sm font-medium rounded-xl min-h-[48px] flex items-center text-neutral-800 hover:bg-neutral-50" onClick={() => setMobileOpen(false)}>API</Link>
-            <div className="border-t border-neutral-100 my-2" />
+            {!user && <Link href="/for-brands" className="px-4 py-3 text-[11px] font-medium tracking-wide uppercase min-h-[48px] flex items-center text-neutral-400 hover:text-emerald-400 hover:bg-neutral-800/50 transition-colors" onClick={() => setMobileOpen(false)}>&gt; brands</Link>}
+            <Link href="/leaderboard" className="px-4 py-3 text-[11px] font-medium tracking-wide uppercase min-h-[48px] flex items-center text-neutral-400 hover:text-emerald-400 hover:bg-neutral-800/50 transition-colors" onClick={() => setMobileOpen(false)}>&gt; rankings</Link>
+            <Link href="/pricing" className="px-4 py-3 text-[11px] font-medium tracking-wide uppercase min-h-[48px] flex items-center text-neutral-400 hover:text-emerald-400 hover:bg-neutral-800/50 transition-colors" onClick={() => setMobileOpen(false)}>&gt; plans</Link>
+            <Link href="/how-it-works" className="px-4 py-3 text-[11px] font-medium tracking-wide uppercase min-h-[48px] flex items-center text-neutral-400 hover:text-emerald-400 hover:bg-neutral-800/50 transition-colors" onClick={() => setMobileOpen(false)}>&gt; how_it_works</Link>
+            <Link href="/api" className="px-4 py-3 text-[11px] font-medium tracking-wide uppercase min-h-[48px] flex items-center text-emerald-500 hover:text-emerald-300 hover:bg-neutral-800/50 transition-colors gap-2" onClick={() => setMobileOpen(false)}>
+              <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+              &gt; api
+            </Link>
+            <div className="border-t border-neutral-700/50 my-2" />
             {user ? (
               <>
-                <Link href="/dashboard" className="px-4 py-3 text-sm font-medium rounded-xl min-h-[48px] flex items-center text-neutral-800 hover:bg-neutral-50" onClick={() => setMobileOpen(false)}>Dashboard</Link>
-                {user.role !== "brand" && <Link href={user.slug ? `/u/${user.slug}` : "/dashboard"} className="px-4 py-3 text-sm font-medium rounded-xl min-h-[48px] flex items-center text-neutral-800 hover:bg-neutral-50" onClick={() => setMobileOpen(false)}>My Link in Bio</Link>}
-                {user.role === "admin" && <Link href="/admin" className="px-4 py-3 text-sm font-medium rounded-xl min-h-[48px] flex items-center text-red-600 hover:bg-red-50" onClick={() => setMobileOpen(false)}>Admin</Link>}
+                <Link href="/dashboard" className="px-4 py-3 text-[11px] font-medium tracking-wide uppercase min-h-[48px] flex items-center text-neutral-400 hover:text-emerald-400 hover:bg-neutral-800/50 transition-colors" onClick={() => setMobileOpen(false)}>&gt; dashboard</Link>
+                {user.role !== "brand" && <Link href={user.slug ? `/u/${user.slug}` : "/dashboard"} className="px-4 py-3 text-[11px] font-medium tracking-wide uppercase min-h-[48px] flex items-center text-neutral-400 hover:text-emerald-400 hover:bg-neutral-800/50 transition-colors" onClick={() => setMobileOpen(false)}>&gt; link_in_bio</Link>}
+                {user.role === "admin" && <Link href="/admin" className="px-4 py-3 text-[11px] font-medium tracking-wide uppercase min-h-[48px] flex items-center text-red-400 hover:text-red-300 hover:bg-neutral-800/50 transition-colors" onClick={() => setMobileOpen(false)}>&gt; admin</Link>}
               </>
             ) : (
               <>
-                <button onClick={() => { setMobileOpen(false); openLogin(); }} className="px-4 py-3 text-sm font-medium rounded-xl text-left min-h-[48px] flex items-center text-neutral-800 hover:bg-neutral-50">Sign In</button>
-                <button onClick={() => { setMobileOpen(false); openSignup(); }} className="px-4 py-3 text-sm font-semibold text-center rounded-lg min-h-[48px] flex items-center justify-center active:scale-[0.98] transition-transform bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md shadow-blue-500/20">Get Started</button>
+                <button onClick={() => { setMobileOpen(false); openLogin(); }} className="px-4 py-3 text-[11px] font-medium tracking-wide uppercase text-left min-h-[48px] flex items-center text-neutral-400 hover:text-white hover:bg-neutral-800/50 transition-colors">&gt; sign_in</button>
+                <button onClick={() => { setMobileOpen(false); openSignup(); }} className="px-4 py-3 text-[11px] font-bold tracking-wide uppercase text-center min-h-[48px] flex items-center justify-center active:scale-[0.98] transition-transform bg-emerald-500 text-neutral-950 border border-emerald-400 mt-1">&gt; get_started</button>
               </>
             )}
           </div>
