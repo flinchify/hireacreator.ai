@@ -269,7 +269,7 @@ const BG_SWATCHES = ["#ffffff", "#f5f5f5", "#171717", "#0a0a0a", "#1e1b4b", "#0c
 /* ══════════════════════════════════════════════════════
    TAB DEFINITIONS
    ══════════════════════════════════════════════════════ */
-type TabId = "ai-design" | "header" | "theme" | "wallpaper" | "text" | "buttons" | "colors" | "footer" | "links" | "profile";
+type TabId = "ai-design" | "header" | "theme" | "wallpaper" | "text" | "buttons" | "colors" | "footer" | "links" | "portfolio" | "profile";
 
 const TABS: { id: TabId; label: string; icon: string }[] = [
   { id: "ai-design", label: "AI Design", icon: "M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" },
@@ -281,6 +281,7 @@ const TABS: { id: TabId; label: string; icon: string }[] = [
   { id: "colors", label: "Colors", icon: "M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485" },
   { id: "footer", label: "Footer", icon: "M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v14a2 2 0 01-2 2zM3 17h18" },
   { id: "links", label: "Links", icon: "M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" },
+  { id: "portfolio", label: "Portfolio", icon: "M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" },
   { id: "profile", label: "Profile", icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" },
 ];
 
@@ -843,6 +844,156 @@ function AIDesignSection({ data, onUpdate, onSaveNow, refreshPreview }: {
 }
 
 /* ══════════════════════════════════════════════════════
+   SECTION: PORTFOLIO
+   ══════════════════════════════════════════════════════ */
+function PortfolioSection({ userId }: { userId: string }) {
+  const [items, setItems] = useState<Array<{ id: string; title: string; description?: string; image_url: string; video_url?: string; link_url?: string; sort_order: number }>>([]);
+  const [loading, setLoading] = useState(true);
+  const [adding, setAdding] = useState(false);
+  const [newTitle, setNewTitle] = useState("");
+  const [newDescription, setNewDescription] = useState("");
+  const [newImageUrl, setNewImageUrl] = useState("");
+  const [uploading, setUploading] = useState(false);
+
+  const fetchItems = useCallback(async () => {
+    try {
+      const res = await fetch("/api/profile/portfolio");
+      if (res.ok) {
+        const data = await res.json();
+        setItems(data.items || []);
+      }
+    } catch {} finally { setLoading(false); }
+  }, []);
+
+  useEffect(() => { fetchItems(); }, [fetchItems]);
+
+  const handleUpload = async (file: File) => {
+    setUploading(true);
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      fd.append("type", "portfolio");
+      const res = await fetch("/api/upload", { method: "POST", body: fd });
+      if (res.ok) {
+        const d = await res.json();
+        if (d.url) setNewImageUrl(d.url);
+      }
+    } finally { setUploading(false); }
+  };
+
+  const handleAdd = async () => {
+    if (!newTitle || !newImageUrl) return;
+    setAdding(true);
+    try {
+      const res = await fetch("/api/profile/portfolio", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title: newTitle, description: newDescription || undefined, image_url: newImageUrl }),
+      });
+      if (res.ok) {
+        setNewTitle("");
+        setNewDescription("");
+        setNewImageUrl("");
+        fetchItems();
+      }
+    } finally { setAdding(false); }
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      await fetch("/api/profile/portfolio", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      setItems(prev => prev.filter(i => i.id !== id));
+    } catch {}
+  };
+
+  return (
+    <div className="space-y-5">
+      <h4 className={SECTION_LABEL}>Portfolio Items</h4>
+
+      {loading ? (
+        <p className="text-xs text-neutral-400">Loading...</p>
+      ) : items.length === 0 ? (
+        <p className="text-xs text-neutral-400">No portfolio items yet. Add your first one below.</p>
+      ) : (
+        <div className="space-y-3">
+          {items.map((item) => (
+            <div key={item.id} className="flex items-start gap-3 p-3 bg-neutral-50 rounded-xl border border-neutral-200">
+              {item.image_url && (
+                <img src={item.image_url} alt={item.title} className="w-16 h-16 rounded-lg object-cover shrink-0" />
+              )}
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-neutral-900 truncate">{item.title}</p>
+                {item.description && <p className="text-xs text-neutral-500 mt-0.5 line-clamp-2">{item.description}</p>}
+              </div>
+              <button
+                onClick={() => handleDelete(item.id)}
+                className="shrink-0 p-1.5 text-neutral-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                title="Delete"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" /></svg>
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Add new item */}
+      <div className="space-y-3 pt-3 border-t border-neutral-200">
+        <h4 className={SECTION_LABEL}>Add New Item</h4>
+
+        {/* Image upload */}
+        {newImageUrl ? (
+          <div className="relative">
+            <img src={newImageUrl} alt="Preview" className="w-full h-32 rounded-xl object-cover" />
+            <button
+              onClick={() => setNewImageUrl("")}
+              className="absolute top-2 right-2 p-1 bg-black/60 text-white rounded-full hover:bg-black/80 transition"
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6L6 18M6 6l12 12" /></svg>
+            </button>
+          </div>
+        ) : (
+          <label className={`flex items-center justify-center gap-2 py-6 rounded-xl border-2 border-dashed border-neutral-200 cursor-pointer text-xs font-medium text-neutral-500 hover:border-neutral-400 transition-colors ${uploading ? "opacity-50 pointer-events-none" : ""}`}>
+            <input type="file" accept="image/*,video/mp4,video/webm" className="hidden" onChange={e => {
+              const file = e.target.files?.[0];
+              if (file) handleUpload(file);
+            }} />
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            {uploading ? "Uploading..." : "Upload Image or Video"}
+          </label>
+        )}
+
+        <input
+          type="text"
+          placeholder="Title"
+          value={newTitle}
+          onChange={e => setNewTitle(e.target.value)}
+          className="w-full px-3 py-2 text-sm rounded-lg border border-neutral-200 bg-white focus:outline-none focus:ring-2 focus:ring-neutral-900/10"
+        />
+        <input
+          type="text"
+          placeholder="Description (optional)"
+          value={newDescription}
+          onChange={e => setNewDescription(e.target.value)}
+          className="w-full px-3 py-2 text-sm rounded-lg border border-neutral-200 bg-white focus:outline-none focus:ring-2 focus:ring-neutral-900/10"
+        />
+        <button
+          onClick={handleAdd}
+          disabled={!newTitle || !newImageUrl || adding}
+          className="w-full py-2.5 rounded-xl text-xs font-semibold bg-neutral-900 text-white hover:bg-neutral-800 disabled:opacity-40 disabled:pointer-events-none transition-colors"
+        >
+          {adding ? "Adding..." : "Add Portfolio Item"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════
    MAIN WYSIWYG EDITOR
    ══════════════════════════════════════════════════════ */
 export function WysiwygEditor({ initialData, slug }: { initialData: EditorData; slug: string }) {
@@ -905,6 +1056,7 @@ export function WysiwygEditor({ initialData, slug }: { initialData: EditorData; 
               {activeTab === "colors" && <ColorsSection data={data} onUpdate={updateField} />}
               {activeTab === "footer" && <FooterSection data={data} onUpdate={updateField} />}
               {activeTab === "links" && <LinkManager />}
+              {activeTab === "portfolio" && <PortfolioSection userId={data.id} />}
               {activeTab === "profile" && <ProfileSection data={data} onUpdate={updateField} />}
             </div>
           </div>

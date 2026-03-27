@@ -47,16 +47,18 @@ export async function POST(request: Request) {
       addRandomSuffix: false,
     });
 
-    // Update user profile
-    const sql2 = getDb();
-    if (type === "avatar") {
-      await sql2`UPDATE users SET avatar_url = ${blob.url}, updated_at = NOW() WHERE id = ${user.id}`;
-    } else if (type === "cover") {
-      await sql2`UPDATE users SET cover_url = ${blob.url}, updated_at = NOW() WHERE id = ${user.id}`;
-    } else if (type === "logo") {
-      await sql2`UPDATE users SET logo_url = ${blob.url}, updated_at = NOW() WHERE id = ${user.id}`;
-    } else if (type === "header") {
-      await sql2`UPDATE users SET header_image_url = ${blob.url}, updated_at = NOW() WHERE id = ${user.id}`;
+    // Update user profile (skip for portfolio — managed via portfolio API)
+    if (type !== "portfolio") {
+      const sql2 = getDb();
+      if (type === "avatar") {
+        await sql2`UPDATE users SET avatar_url = ${blob.url}, updated_at = NOW() WHERE id = ${user.id}`;
+      } else if (type === "cover") {
+        await sql2`UPDATE users SET cover_url = ${blob.url}, updated_at = NOW() WHERE id = ${user.id}`;
+      } else if (type === "logo") {
+        await sql2`UPDATE users SET logo_url = ${blob.url}, updated_at = NOW() WHERE id = ${user.id}`;
+      } else if (type === "header") {
+        await sql2`UPDATE users SET header_image_url = ${blob.url}, updated_at = NOW() WHERE id = ${user.id}`;
+      }
     }
 
     return NextResponse.json({ url: blob.url });

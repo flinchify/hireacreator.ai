@@ -1604,7 +1604,8 @@ function TemplateCustom({ creator, isUnclaimed }: { creator: Creator; isUnclaime
           <div className="absolute bottom-[-15%] right-[-10%] w-[50%] h-[50%] rounded-full opacity-10" style={{ background: "radial-gradient(circle, #ec489960 0%, transparent 70%)" }} />
         </div>
       )}
-      <div className={`relative z-10 w-full lg:max-w-[480px] mx-auto px-5 pt-14 pb-10 min-h-screen flex flex-col ${justify}`}>
+      <div className="relative z-10 w-full lg:max-w-[480px] mx-auto px-5 min-h-screen flex flex-col">
+        <div className="flex-1 flex flex-col justify-center py-10">
         {/* Header banner */}
         {creator.headerImageUrl && (
           <div className="w-full mb-4 rounded-2xl overflow-hidden -mt-6">
@@ -1675,7 +1676,10 @@ function TemplateCustom({ creator, isUnclaimed }: { creator: Creator; isUnclaime
           {isEmpty && <EmptyState light={isDarkBg} />}
           {!isEmpty && <CTAButton creator={creator} light={isDarkBg} accent={accent} isUnclaimed={isUnclaimed} />}
         </div>
-        <Branding light={isDarkBg} hidden={creator.hideBranding} />
+        </div>{/* end flex-1 center wrapper */}
+        <div className="shrink-0 pb-4">
+          <Branding light={isDarkBg} hidden={creator.hideBranding} />
+        </div>
       </div>
     </div>
   );
