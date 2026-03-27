@@ -819,9 +819,9 @@ function TemplateGlass({ creator, isUnclaimed }: { creator: Creator; isUnclaimed
             <div className="relative inline-block mb-5">
               <div className="absolute -inset-4 rounded-full opacity-30 blur-2xl" style={{ background: accent }} />
               {creator.avatar ? (
-                <img src={creator.avatar} alt="" className={`relative ${avatarSz} rounded-full object-cover ring-[3px] ring-white/15 shadow-2xl`} />
+                <img src={creator.avatar} alt="" className={`relative ${avatarSz} ${avatarShapeClass(creator.linkBioAvatarShape || "circle")} object-cover ring-[3px] ring-white/15 shadow-2xl`} style={avatarShapeStyle(creator.linkBioAvatarShape || "circle")} />
               ) : (
-                <div className={`relative ${avatarSz} rounded-full bg-white/[0.08] backdrop-blur-xl flex items-center justify-center ring-[3px] ring-white/15 shadow-2xl`}>
+                <div className={`relative ${avatarSz} ${avatarShapeClass(creator.linkBioAvatarShape || "circle")} bg-white/[0.08] backdrop-blur-xl flex items-center justify-center ring-[3px] ring-white/15 shadow-2xl`} style={avatarShapeStyle(creator.linkBioAvatarShape || "circle")}>
                   <span className="text-4xl font-bold text-white/50">{(creator.name || "?")[0]}</span>
                 </div>
               )}
@@ -1132,12 +1132,12 @@ function TemplateNeon({ creator, isUnclaimed }: { creator: Creator; isUnclaimed?
           {/* Avatar with double neon ring: outer accent, inner dark */}
           <div className="relative inline-block">
             <div className="absolute -inset-5 rounded-full opacity-25 blur-2xl" style={{ background: accent }} />
-            <div className="relative p-[3px] rounded-full" style={{ background: `linear-gradient(135deg, ${accent}, ${accent}60, transparent 70%)` }}>
-              <div className="p-[3px] rounded-full bg-[#0a0a0a]">
+            <div className={`relative p-[3px] ${avatarShapeClass(creator.linkBioAvatarShape || "circle")}`} style={{ background: `linear-gradient(135deg, ${accent}, ${accent}60, transparent 70%)`, ...avatarShapeStyle(creator.linkBioAvatarShape || "circle") }}>
+              <div className={`p-[3px] ${avatarShapeClass(creator.linkBioAvatarShape || "circle")} bg-[#0a0a0a]`} style={avatarShapeStyle(creator.linkBioAvatarShape || "circle")}>
                 {creator.avatar ? (
-                  <img src={creator.avatar} alt="" className={`${avatarSz} rounded-full object-cover`} style={{ boxShadow: `0 0 30px ${accent}25` }} />
+                  <img src={creator.avatar} alt="" className={`${avatarSz} ${avatarShapeClass(creator.linkBioAvatarShape || "circle")} object-cover`} style={{ boxShadow: `0 0 30px ${accent}25`, ...avatarShapeStyle(creator.linkBioAvatarShape || "circle") }} />
                 ) : (
-                  <div className={`${avatarSz} rounded-full bg-[#111] flex items-center justify-center`}>
+                  <div className={`${avatarSz} ${avatarShapeClass(creator.linkBioAvatarShape || "circle")} bg-[#111] flex items-center justify-center`} style={avatarShapeStyle(creator.linkBioAvatarShape || "circle")}>
                     <span className="text-3xl font-bold text-white/50">{(creator.name || "?")[0]}</span>
                   </div>
                 )}
@@ -1471,9 +1471,9 @@ function TemplateSplit({ creator, isUnclaimed }: { creator: Creator; isUnclaimed
             <div className="absolute bottom-4 left-5 right-5">
               <div className="flex items-center gap-2.5">
                 {creator.avatar ? (
-                  <img src={creator.avatar} alt="" className="w-12 h-12 rounded-full border-2 border-white object-cover shadow-lg" />
+                  <img src={creator.avatar} alt="" className={`w-12 h-12 ${avatarShapeClass(creator.linkBioAvatarShape || "circle")} border-2 border-white object-cover shadow-lg`} style={avatarShapeStyle(creator.linkBioAvatarShape || "circle")} />
                 ) : (
-                  <div className="w-12 h-12 rounded-full bg-neutral-100 border-2 border-white flex items-center justify-center shadow-lg">
+                  <div className={`w-12 h-12 ${avatarShapeClass(creator.linkBioAvatarShape || "circle")} bg-neutral-100 border-2 border-white flex items-center justify-center shadow-lg`} style={avatarShapeStyle(creator.linkBioAvatarShape || "circle")}>
                     <span className="text-lg font-bold text-neutral-400">{(creator.name || "?")[0]}</span>
                   </div>
                 )}
@@ -1622,9 +1622,9 @@ function TemplateCustom({ creator, isUnclaimed }: { creator: Creator; isUnclaime
             <div className="relative inline-block">
               {isDarkBg && <div className="absolute inset-0 rounded-full opacity-30 blur-xl" style={{ background: accent }} />}
               {creator.avatar ? (
-                <img src={creator.avatar} alt="" className={`relative ${avatarSz} rounded-full object-cover shadow-2xl ${isDarkBg ? "ring-2 ring-white/20" : "ring-2 ring-neutral-200"}`} />
+                <img src={creator.avatar} alt="" className={`relative ${avatarSz} ${avatarShapeClass(creator.linkBioAvatarShape || "circle")} object-cover shadow-2xl ${isDarkBg ? "ring-2 ring-white/20" : "ring-2 ring-neutral-200"}`} style={avatarShapeStyle(creator.linkBioAvatarShape || "circle")} />
               ) : (
-                <div className={`relative ${avatarSz} rounded-full flex items-center justify-center shadow-2xl ${isDarkBg ? "bg-white/10 backdrop-blur-xl ring-2 ring-white/20" : "bg-neutral-100 ring-2 ring-neutral-200"}`}><span className={`text-3xl font-bold ${isDarkBg ? "text-white/60" : "text-neutral-400"}`}>{(creator.name || "?")[0]}</span></div>
+                <div className={`relative ${avatarSz} ${avatarShapeClass(creator.linkBioAvatarShape || "circle")} flex items-center justify-center shadow-2xl ${isDarkBg ? "bg-white/10 backdrop-blur-xl ring-2 ring-white/20" : "bg-neutral-100 ring-2 ring-neutral-200"}`} style={avatarShapeStyle(creator.linkBioAvatarShape || "circle")}><span className={`text-3xl font-bold ${isDarkBg ? "text-white/60" : "text-neutral-400"}`}>{(creator.name || "?")[0]}</span></div>
               )}
               {creator.isOnline && <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4"><span className="animate-ping absolute h-full w-full rounded-full bg-emerald-400 opacity-75" /><span className={`relative rounded-full h-4 w-4 bg-emerald-500 ring-2 ${isDarkBg ? "ring-[#1a1040]" : "ring-white"}`} /></span>}
             </div>
@@ -2033,9 +2033,9 @@ function TemplateAurora({ creator, isUnclaimed }: { creator: Creator; isUnclaime
         <div className="relative inline-block mb-5">
           <div className="absolute -inset-3 rounded-full opacity-30 blur-xl" style={{ background: "linear-gradient(135deg, #60a5fa, #a78bfa, #34d399)" }} />
           {creator.avatar ? (
-            <img src={creator.avatar} alt="" className={`relative ${avatarSz} rounded-full object-cover shadow-2xl ring-2 ring-white/20`} />
+            <img src={creator.avatar} alt="" className={`relative ${avatarSz} ${avatarShapeClass(creator.linkBioAvatarShape || "circle")} object-cover shadow-2xl ring-2 ring-white/20`} style={avatarShapeStyle(creator.linkBioAvatarShape || "circle")} />
           ) : (
-            <div className={`relative ${avatarSz} rounded-full bg-white/10 backdrop-blur-xl flex items-center justify-center ring-2 ring-white/20`}>
+            <div className={`relative ${avatarSz} ${avatarShapeClass(creator.linkBioAvatarShape || "circle")} bg-white/10 backdrop-blur-xl flex items-center justify-center ring-2 ring-white/20`} style={avatarShapeStyle(creator.linkBioAvatarShape || "circle")}>
               <span className="text-3xl font-bold text-white/60">{(creator.name || "?")[0]}</span>
             </div>
           )}
@@ -2106,9 +2106,9 @@ function TemplateSunset({ creator, isUnclaimed }: { creator: Creator; isUnclaime
 
         <div className="relative inline-block mb-5">
           {creator.avatar ? (
-            <img src={creator.avatar} alt="" className={`${avatarSz} rounded-full object-cover shadow-2xl ring-4 ring-white/30`} />
+            <img src={creator.avatar} alt="" className={`${avatarSz} ${avatarShapeClass(creator.linkBioAvatarShape || "circle")} object-cover shadow-2xl ring-4 ring-white/30`} style={avatarShapeStyle(creator.linkBioAvatarShape || "circle")} />
           ) : (
-            <div className={`${avatarSz} rounded-full bg-white/20 backdrop-blur-xl flex items-center justify-center ring-4 ring-white/30`}>
+            <div className={`${avatarSz} ${avatarShapeClass(creator.linkBioAvatarShape || "circle")} bg-white/20 backdrop-blur-xl flex items-center justify-center ring-4 ring-white/30`} style={avatarShapeStyle(creator.linkBioAvatarShape || "circle")}>
               <span className="text-3xl font-bold text-white/80">{(creator.name || "?")[0]}</span>
             </div>
           )}
@@ -2303,9 +2303,9 @@ function TemplatePastel({ creator, isUnclaimed }: { creator: Creator; isUnclaime
 
         <div className="relative inline-block mb-5">
           {creator.avatar ? (
-            <img src={creator.avatar} alt="" className={`${avatarSz} rounded-full object-cover shadow-lg ring-4 ring-white`} />
+            <img src={creator.avatar} alt="" className={`${avatarSz} ${avatarShapeClass(creator.linkBioAvatarShape || "circle")} object-cover shadow-lg ring-4 ring-white`} style={avatarShapeStyle(creator.linkBioAvatarShape || "circle")} />
           ) : (
-            <div className={`${avatarSz} rounded-full bg-white shadow-lg flex items-center justify-center ring-4 ring-white`}>
+            <div className={`${avatarSz} ${avatarShapeClass(creator.linkBioAvatarShape || "circle")} bg-white shadow-lg flex items-center justify-center ring-4 ring-white`} style={avatarShapeStyle(creator.linkBioAvatarShape || "circle")}>
               <span className="text-3xl font-bold text-purple-300">{(creator.name || "?")[0]}</span>
             </div>
           )}
@@ -2399,9 +2399,9 @@ function TemplateMagazine({ creator, isUnclaimed }: { creator: Creator; isUnclai
           <div className="border-b border-neutral-300 pb-3 mb-3">
             <div className="flex items-center justify-center gap-3 mb-2">
               {creator.avatar ? (
-                <img src={creator.avatar} alt="" className={`${avatarSz} rounded-full object-cover`} />
+                <img src={creator.avatar} alt="" className={`${avatarSz} ${avatarShapeClass(creator.linkBioAvatarShape || "circle")} object-cover`} style={avatarShapeStyle(creator.linkBioAvatarShape || "circle")} />
               ) : (
-                <div className={`${avatarSz} rounded-full bg-neutral-100 flex items-center justify-center`}>
+                <div className={`${avatarSz} ${avatarShapeClass(creator.linkBioAvatarShape || "circle")} bg-neutral-100 flex items-center justify-center`} style={avatarShapeStyle(creator.linkBioAvatarShape || "circle")}>
                   <span className="text-3xl font-bold text-neutral-400">{(creator.name || "?")[0]}</span>
                 </div>
               )}
@@ -2593,9 +2593,9 @@ function TemplateMidnight({ creator, isUnclaimed }: { creator: Creator; isUnclai
 
         <div className="relative inline-block mb-5">
           {creator.avatar ? (
-            <img src={creator.avatar} alt="" className={`${avatarSz} rounded-full object-cover shadow-2xl ring-2 ring-white/10`} />
+            <img src={creator.avatar} alt="" className={`${avatarSz} ${avatarShapeClass(creator.linkBioAvatarShape || "circle")} object-cover shadow-2xl ring-2 ring-white/10`} style={avatarShapeStyle(creator.linkBioAvatarShape || "circle")} />
           ) : (
-            <div className={`${avatarSz} rounded-full bg-white/5 flex items-center justify-center ring-2 ring-white/10`}>
+            <div className={`${avatarSz} ${avatarShapeClass(creator.linkBioAvatarShape || "circle")} bg-white/5 flex items-center justify-center ring-2 ring-white/10`} style={avatarShapeStyle(creator.linkBioAvatarShape || "circle")}>
               <span className="text-3xl font-bold text-white/40">{(creator.name || "?")[0]}</span>
             </div>
           )}
@@ -2671,9 +2671,9 @@ function TemplateClay({ creator, isUnclaimed }: { creator: Creator; isUnclaimed?
 
         <div className="relative inline-block mb-5">
           {creator.avatar ? (
-            <img src={creator.avatar} alt="" className={`${avatarSz} rounded-full object-cover`} style={{ boxShadow: "8px 8px 16px #bebebe, -8px -8px 16px #ffffff" }} />
+            <img src={creator.avatar} alt="" className={`${avatarSz} ${avatarShapeClass(creator.linkBioAvatarShape || "circle")} object-cover`} style={{ boxShadow: "8px 8px 16px #bebebe, -8px -8px 16px #ffffff", ...avatarShapeStyle(creator.linkBioAvatarShape || "circle") }} />
           ) : (
-            <div className={`${avatarSz} rounded-full flex items-center justify-center`} style={{ background: bg, boxShadow: "8px 8px 16px #bebebe, -8px -8px 16px #ffffff" }}>
+            <div className={`${avatarSz} ${avatarShapeClass(creator.linkBioAvatarShape || "circle")} flex items-center justify-center`} style={{ background: bg, boxShadow: "8px 8px 16px #bebebe, -8px -8px 16px #ffffff", ...avatarShapeStyle(creator.linkBioAvatarShape || "circle") }}>
               <span className="text-3xl font-bold text-neutral-400">{(creator.name || "?")[0]}</span>
             </div>
           )}
@@ -2776,9 +2776,9 @@ function TemplateGradientMesh({ creator, isUnclaimed }: { creator: Creator; isUn
         <div className={`bg-white/70 backdrop-blur-xl rounded-3xl p-6 sm:p-8 shadow-xl border border-white/80 ${align}`}>
           <div className="relative inline-block mb-4">
             {creator.avatar ? (
-              <img src={creator.avatar} alt="" className={`${avatarSz} rounded-full object-cover shadow-lg ring-4 ring-white/80`} />
+              <img src={creator.avatar} alt="" className={`${avatarSz} ${avatarShapeClass(creator.linkBioAvatarShape || "circle")} object-cover shadow-lg ring-4 ring-white/80`} style={avatarShapeStyle(creator.linkBioAvatarShape || "circle")} />
             ) : (
-              <div className={`${avatarSz} rounded-full bg-white/80 shadow-lg flex items-center justify-center ring-4 ring-white/80`}>
+              <div className={`${avatarSz} ${avatarShapeClass(creator.linkBioAvatarShape || "circle")} bg-white/80 shadow-lg flex items-center justify-center ring-4 ring-white/80`} style={avatarShapeStyle(creator.linkBioAvatarShape || "circle")}>
                 <span className="text-3xl font-bold text-neutral-400">{(creator.name || "?")[0]}</span>
               </div>
             )}
@@ -2877,9 +2877,9 @@ function TemplateTrader({ creator, isUnclaimed }: { creator: Creator; isUnclaime
         {/* Avatar with green ring */}
         <div className="text-center mb-5">
           {creator.avatar ? (
-            <img src={creator.avatar} alt="" className={`${avatarSz} rounded-full object-cover mx-auto ring-2 ring-[#00c087]/60 ring-offset-2 ring-offset-[#0b0e11]`} />
+            <img src={creator.avatar} alt="" className={`${avatarSz} ${avatarShapeClass(creator.linkBioAvatarShape || "circle")} object-cover mx-auto ring-2 ring-[#00c087]/60 ring-offset-2 ring-offset-[#0b0e11]`} style={avatarShapeStyle(creator.linkBioAvatarShape || "circle")} />
           ) : (
-            <div className={`${avatarSz} rounded-full mx-auto bg-[#00c087]/10 flex items-center justify-center ring-2 ring-[#00c087]/60 ring-offset-2 ring-offset-[#0b0e11]`}>
+            <div className={`${avatarSz} ${avatarShapeClass(creator.linkBioAvatarShape || "circle")} mx-auto bg-[#00c087]/10 flex items-center justify-center ring-2 ring-[#00c087]/60 ring-offset-2 ring-offset-[#0b0e11]`} style={avatarShapeStyle(creator.linkBioAvatarShape || "circle")}>
               <span className="text-3xl font-bold text-[#00c087]/70">{(creator.name || "?")[0]}</span>
             </div>
           )}
@@ -2981,9 +2981,9 @@ function TemplateEducator({ creator, isUnclaimed }: { creator: Creator; isUnclai
         {/* Avatar */}
         <div className="relative inline-block mb-5">
           {creator.avatar ? (
-            <img src={creator.avatar} alt="" className={`${avatarSz} rounded-full object-cover shadow-md ring-4 ring-amber-100`} />
+            <img src={creator.avatar} alt="" className={`${avatarSz} ${avatarShapeClass(creator.linkBioAvatarShape || "circle")} object-cover shadow-md ring-4 ring-amber-100`} style={avatarShapeStyle(creator.linkBioAvatarShape || "circle")} />
           ) : (
-            <div className={`${avatarSz} rounded-full bg-amber-50 shadow-md flex items-center justify-center ring-4 ring-amber-100`}>
+            <div className={`${avatarSz} ${avatarShapeClass(creator.linkBioAvatarShape || "circle")} bg-amber-50 shadow-md flex items-center justify-center ring-4 ring-amber-100`} style={avatarShapeStyle(creator.linkBioAvatarShape || "circle")}>
               <span className="text-3xl font-bold text-amber-400">{(creator.name || "?")[0]}</span>
             </div>
           )}
@@ -3201,9 +3201,9 @@ function TemplateExecutive({ creator, isUnclaimed }: { creator: Creator; isUncla
         {/* Large centered avatar */}
         <div className="text-center mb-8">
           {creator.avatar ? (
-            <img src={creator.avatar} alt="" className={`${avatarSz} rounded-full object-cover mx-auto shadow-lg`} />
+            <img src={creator.avatar} alt="" className={`${avatarSz} ${avatarShapeClass(creator.linkBioAvatarShape || "circle")} object-cover mx-auto shadow-lg`} style={avatarShapeStyle(creator.linkBioAvatarShape || "circle")} />
           ) : (
-            <div className={`${avatarSz} rounded-full mx-auto shadow-lg flex items-center justify-center`} style={{ background: "#f1f5f9" }}>
+            <div className={`${avatarSz} ${avatarShapeClass(creator.linkBioAvatarShape || "circle")} mx-auto shadow-lg flex items-center justify-center`} style={{ background: "#f1f5f9", ...avatarShapeStyle(creator.linkBioAvatarShape || "circle") }}>
               <span className="text-3xl font-bold" style={{ color: accent }}>{(creator.name || "?")[0]}</span>
             </div>
           )}
@@ -3319,9 +3319,9 @@ function TemplateAutomotive({ creator, isUnclaimed }: { creator: Creator; isUncl
           <div className="text-center mb-6">
             <div className="relative inline-block mb-4">
               {creator.avatar ? (
-                <img src={creator.avatar} alt="" className={`${avatarSz} rounded-full object-cover ring-2`} style={{ borderColor: accent, outlineColor: accent }} />
+                <img src={creator.avatar} alt="" className={`${avatarSz} ${avatarShapeClass(creator.linkBioAvatarShape || "circle")} object-cover ring-2`} style={{ borderColor: accent, outlineColor: accent, ...avatarShapeStyle(creator.linkBioAvatarShape || "circle") }} />
               ) : (
-                <div className={`${avatarSz} rounded-full bg-white/5 flex items-center justify-center ring-2 ring-white/10`}>
+                <div className={`${avatarSz} ${avatarShapeClass(creator.linkBioAvatarShape || "circle")} bg-white/5 flex items-center justify-center ring-2 ring-white/10`} style={avatarShapeStyle(creator.linkBioAvatarShape || "circle")}>
                   <span className="text-3xl font-bold text-white/40">{(creator.name || "?")[0]}</span>
                 </div>
               )}
