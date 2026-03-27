@@ -361,7 +361,7 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
           <p className="text-neutral-500 text-sm text-center max-w-xl mx-auto mb-12">
             These creators get millions of views but have no way to monetize beyond ads. HireACreator changes that.
           </p>
-          <StaggerChildren className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <StaggerChildren className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
             {[
               {
                 image: "/niches/4wd.jpg",
@@ -380,6 +380,12 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
                 title: "Product Reviews",
                 stat: "650K+ likes per post",
                 desc: "Amazon finds and gadget reviews going viral daily. These creators move product but get paid nothing for it.",
+              },
+              {
+                image: "/niches/food.jpg",
+                title: "Food & Reviews",
+                stat: "738K+ likes per post",
+                desc: "Food creators pulling hundreds of thousands of likes per video. Restaurants and food brands should be paying for this exposure.",
               },
               {
                 image: "/niches/ugc.jpg",
