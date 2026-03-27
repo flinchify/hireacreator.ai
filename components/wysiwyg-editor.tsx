@@ -239,6 +239,7 @@ const TEMPLATES = [
   { id: "clay", name: "Clay", color: "#fde68a" }, { id: "gradient-mesh", name: "Gradient Mesh", color: "#c4b5fd" },
   { id: "trader", name: "Trader", color: "#064e3b" }, { id: "educator", name: "Educator", color: "#dbeafe" },
   { id: "developer", name: "Developer", color: "#1e293b" }, { id: "executive", name: "Executive", color: "#f8fafc" },
+  { id: "automotive", name: "Automotive", color: "linear-gradient(135deg, #0d0d0d 0%, #1a1a2e 50%, #0d0d0d 100%)" },
 ];
 
 const GRADIENT_PRESETS = [
@@ -269,7 +270,7 @@ const BG_SWATCHES = ["#ffffff", "#f5f5f5", "#171717", "#0a0a0a", "#1e1b4b", "#0c
 /* ══════════════════════════════════════════════════════
    TAB DEFINITIONS
    ══════════════════════════════════════════════════════ */
-type TabId = "ai-design" | "header" | "theme" | "wallpaper" | "text" | "buttons" | "colors" | "footer" | "links" | "portfolio" | "profile";
+type TabId = "ai-design" | "header" | "theme" | "wallpaper" | "text" | "buttons" | "colors" | "footer" | "links" | "portfolio" | "mods" | "profile";
 
 const TABS: { id: TabId; label: string; icon: string }[] = [
   { id: "ai-design", label: "AI Design", icon: "M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" },
@@ -282,6 +283,7 @@ const TABS: { id: TabId; label: string; icon: string }[] = [
   { id: "footer", label: "Footer", icon: "M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v14a2 2 0 01-2 2zM3 17h18" },
   { id: "links", label: "Links", icon: "M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" },
   { id: "portfolio", label: "Portfolio", icon: "M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" },
+  { id: "mods", label: "Mods", icon: "M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z" },
   { id: "profile", label: "Profile", icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" },
 ];
 
@@ -844,6 +846,108 @@ function AIDesignSection({ data, onUpdate, onSaveNow, refreshPreview }: {
 }
 
 /* ══════════════════════════════════════════════════════
+   SECTION: MODS (for car/automotive creators)
+   ══════════════════════════════════════════════════════ */
+const MOD_CATEGORIES = ["Engine", "Suspension", "Exterior", "Interior", "Wheels/Tires", "Electrical", "Armor/Protection", "Other"];
+
+function ModsSection({ data, onUpdate }: { data: Record<string, any>; onUpdate: (f: Record<string, any>) => void }) {
+  let parsed: { mods?: any[]; modSheetEnabled?: boolean; modSheetPrice?: number } = {};
+  try { if (data.link_bio_blocks) parsed = JSON.parse(data.link_bio_blocks); } catch {}
+
+  const [mods, setMods] = useState<{ name: string; brand: string; price: string; category: string }[]>(parsed.mods || []);
+  const [sheetEnabled, setSheetEnabled] = useState(parsed.modSheetEnabled || false);
+  const [sheetPrice, setSheetPrice] = useState(String(parsed.modSheetPrice || 0));
+  const [newMod, setNewMod] = useState({ name: "", brand: "", price: "", category: "Engine" });
+
+  function saveAll(updatedMods: typeof mods, enabled: boolean, price: string) {
+    const payload = JSON.stringify({ mods: updatedMods, modSheetEnabled: enabled, modSheetPrice: Number(price) || 0 });
+    onUpdate({ link_bio_blocks: payload });
+  }
+
+  function addMod() {
+    if (!newMod.name.trim()) return;
+    const updated = [...mods, { ...newMod, name: newMod.name.trim(), brand: newMod.brand.trim(), price: newMod.price.trim() }];
+    setMods(updated);
+    setNewMod({ name: "", brand: "", price: "", category: "Engine" });
+    saveAll(updated, sheetEnabled, sheetPrice);
+  }
+
+  function removeMod(i: number) {
+    const updated = mods.filter((_, idx) => idx !== i);
+    setMods(updated);
+    saveAll(updated, sheetEnabled, sheetPrice);
+  }
+
+  return (
+    <div className="space-y-5">
+      <div>
+        <h4 className={SECTION_LABEL}>Your Modifications</h4>
+        <p className="text-[10px] text-neutral-400 mb-3">List the mods on your build. Shows on the Automotive template.</p>
+      </div>
+
+      {/* Existing mods */}
+      {mods.length > 0 ? (
+        <div className="space-y-1.5 max-h-[300px] overflow-y-auto">
+          {mods.map((m, i) => (
+            <div key={i} className="flex items-center gap-2 bg-neutral-50 rounded-lg px-3 py-2 text-xs">
+              <div className="flex-1 min-w-0">
+                <span className="font-semibold text-neutral-800">{m.name}</span>
+                {m.brand && <span className="text-neutral-400 ml-1">({m.brand})</span>}
+                {m.price && <span className="text-neutral-400 ml-1">${m.price}</span>}
+              </div>
+              <span className="text-[9px] text-neutral-400 bg-neutral-200 px-1.5 py-0.5 rounded shrink-0">{m.category}</span>
+              <button onClick={() => removeMod(i)} className="text-red-400 hover:text-red-600 shrink-0">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" strokeLinecap="round"/></svg>
+              </button>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p className="text-xs text-neutral-400 bg-neutral-50 rounded-lg p-4 text-center">No mods added yet.</p>
+      )}
+
+      {/* Add mod form */}
+      <div className="space-y-2 border-t border-neutral-100 pt-4">
+        <input value={newMod.name} onChange={e => setNewMod(p => ({ ...p, name: e.target.value }))} placeholder="Mod name (e.g. 2&quot; Lift Kit)" className="w-full px-3 py-2 rounded-lg border border-neutral-200 text-xs focus:outline-none focus:ring-2 focus:ring-neutral-900/10" />
+        <div className="flex gap-2">
+          <input value={newMod.brand} onChange={e => setNewMod(p => ({ ...p, brand: e.target.value }))} placeholder="Brand (optional)" className="flex-1 px-3 py-2 rounded-lg border border-neutral-200 text-xs focus:outline-none focus:ring-2 focus:ring-neutral-900/10" />
+          <input value={newMod.price} onChange={e => setNewMod(p => ({ ...p, price: e.target.value }))} placeholder="Price $" className="w-20 px-3 py-2 rounded-lg border border-neutral-200 text-xs focus:outline-none focus:ring-2 focus:ring-neutral-900/10" />
+        </div>
+        <div className="flex gap-2">
+          <select value={newMod.category} onChange={e => setNewMod(p => ({ ...p, category: e.target.value }))} className="flex-1 px-3 py-2 rounded-lg border border-neutral-200 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-neutral-900/10">
+            {MOD_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+          </select>
+          <button onClick={addMod} className="px-4 py-2 text-xs font-semibold bg-neutral-900 text-white rounded-lg hover:bg-neutral-800 transition-colors shrink-0">Add</button>
+        </div>
+      </div>
+
+      {/* Mod sheet toggles */}
+      <div className="border-t border-neutral-100 pt-4 space-y-3">
+        <div className="flex items-center justify-between">
+          <div>
+            <h4 className="text-xs font-semibold text-neutral-700">Show Mod Sheet on Profile</h4>
+            <p className="text-[10px] text-neutral-400">Display your full mod list on your page</p>
+          </div>
+          <button onClick={() => { const v = !sheetEnabled; setSheetEnabled(v); saveAll(mods, v, sheetPrice); }}
+            className={`w-10 h-6 rounded-full transition-colors ${sheetEnabled ? "bg-emerald-500" : "bg-neutral-300"}`}>
+            <div className={`w-4 h-4 bg-white rounded-full shadow transition-transform mx-1 ${sheetEnabled ? "translate-x-4" : "translate-x-0"}`} />
+          </button>
+        </div>
+        {sheetEnabled && (
+          <div>
+            <h4 className="text-xs font-semibold text-neutral-700 mb-1">Mod Sheet Price</h4>
+            <div className="flex items-center gap-2">
+              <input value={sheetPrice} onChange={e => { setSheetPrice(e.target.value); saveAll(mods, sheetEnabled, e.target.value); }} placeholder="0" className="w-24 px-3 py-2 rounded-lg border border-neutral-200 text-xs focus:outline-none focus:ring-2 focus:ring-neutral-900/10" />
+              <span className="text-[10px] text-neutral-400">Set to 0 for free</span>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════
    SECTION: PORTFOLIO
    ══════════════════════════════════════════════════════ */
 function PortfolioSection({ userId }: { userId: string }) {
@@ -1057,6 +1161,7 @@ export function WysiwygEditor({ initialData, slug }: { initialData: EditorData; 
               {activeTab === "footer" && <FooterSection data={data} onUpdate={updateField} />}
               {activeTab === "links" && <LinkManager />}
               {activeTab === "portfolio" && <PortfolioSection userId={data.id} />}
+              {activeTab === "mods" && <ModsSection data={data} onUpdate={updateField} />}
               {activeTab === "profile" && <ProfileSection data={data} onUpdate={updateField} />}
             </div>
           </div>

@@ -3278,6 +3278,147 @@ function TemplateExecutive({ creator, isUnclaimed }: { creator: Creator; isUncla
 }
 
 /* ══════════════════════════════════════════════════════════════
+   TEMPLATE: AUTOMOTIVE — Carbon fiber dark, racing stripe, mod sheet
+   ══════════════════════════════════════════════════════════════ */
+function TemplateAutomotive({ creator, isUnclaimed }: { creator: Creator; isUnclaimed?: boolean }) {
+  const isEmpty = !creator.bio && creator.services.length === 0 && creator.socials.length === 0;
+  const accent = creator.linkBioAccent || "#ef4444";
+  const ts = TEXT_SIZES[creator.linkBioTextSize || "medium"] || TEXT_SIZES.medium;
+  const avatarSz = AVATAR_SIZES[creator.linkBioAvatarSize || "medium"] || AVATAR_SIZES.medium;
+
+  // Parse mods from linkBioBlocks
+  let modsData: { mods?: { name: string; brand: string; price?: string; category: string }[]; modSheetEnabled?: boolean; modSheetPrice?: number } = {};
+  try { if (creator.linkBioBlocks) modsData = JSON.parse(creator.linkBioBlocks); } catch {}
+  const mods = modsData.mods || [];
+  const modCategories = Array.from(new Set(mods.map(m => m.category)));
+
+  const heroImage = creator.headerImageUrl || (creator.portfolio.length > 0 ? creator.portfolio[0].image : null);
+
+  return (
+    <div className="min-h-screen relative overflow-hidden" style={{ background: "#0d0d0d" }}>
+      {/* Carbon fiber texture */}
+      <div className="fixed inset-0 pointer-events-none opacity-[0.04]" style={{
+        backgroundImage: `repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px),
+          repeating-linear-gradient(-45deg, transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px)`,
+        backgroundSize: "8px 8px",
+      }} />
+      {/* Racing stripe */}
+      <div className="fixed top-0 left-0 right-0 h-1 z-20" style={{ background: `linear-gradient(90deg, transparent 0%, ${accent} 20%, ${accent} 80%, transparent 100%)` }} />
+
+      <div className="relative z-10 w-full lg:max-w-[520px] mx-auto min-h-screen flex flex-col">
+        <div className="flex-1 flex flex-col justify-center px-5 py-10">
+
+          {/* Hero car image */}
+          {heroImage && (
+            <div className="w-full rounded-2xl overflow-hidden mb-6 border border-white/10">
+              <img src={heroImage} alt="" className="w-full h-auto max-h-[280px] object-cover" />
+            </div>
+          )}
+
+          {/* Profile */}
+          <div className="text-center mb-6">
+            <div className="relative inline-block mb-4">
+              {creator.avatar ? (
+                <img src={creator.avatar} alt="" className={`${avatarSz} rounded-full object-cover ring-2`} style={{ borderColor: accent, outlineColor: accent }} />
+              ) : (
+                <div className={`${avatarSz} rounded-full bg-white/5 flex items-center justify-center ring-2 ring-white/10`}>
+                  <span className="text-3xl font-bold text-white/40">{(creator.name || "?")[0]}</span>
+                </div>
+              )}
+              {creator.isOnline && <span className="absolute bottom-0 right-0 flex h-4 w-4"><span className="animate-ping absolute h-full w-full rounded-full bg-emerald-400 opacity-75" /><span className="relative rounded-full h-4 w-4 bg-emerald-500 ring-2 ring-[#0d0d0d]" /></span>}
+            </div>
+            <div className="flex items-center justify-center gap-1.5">
+              <h1 className={`${ts.name} font-bold text-white tracking-tight`}>{creator.name || "Your Name"}</h1>
+              {creator.isVerified && <VerifiedBadge light />}{creator.isPro && <ProBadge />}
+            </div>
+            {creator.headline && <p className={`mt-2 ${ts.headline} text-white/40 max-w-[320px] mx-auto`}>{creator.headline}</p>}
+            {creator.location && <p className="mt-2 text-xs text-white/25 flex items-center justify-center gap-1"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>{creator.location}</p>}
+          </div>
+
+          {/* Stats bar */}
+          <div className="flex items-center justify-center gap-6 py-3 mb-6 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+            {mods.length > 0 && <div className="text-center"><div className="text-lg font-bold text-white">{mods.length}</div><div className="text-[10px] uppercase tracking-wider text-white/30">Mods</div></div>}
+            {creator.portfolio.length > 0 && <><div className="w-px h-8 bg-white/10" /><div className="text-center"><div className="text-lg font-bold text-white">{creator.portfolio.length}</div><div className="text-[10px] uppercase tracking-wider text-white/30">Photos</div></div></>}
+            {creator.rating > 0 && <><div className="w-px h-8 bg-white/10" /><div className="text-center"><div className="text-lg font-bold text-white">{creator.rating.toFixed(1)}</div><div className="text-[10px] uppercase tracking-wider text-white/30">Rating</div></div></>}
+          </div>
+
+          <Socials creator={creator} light />
+          {creator.bio && <p className="text-sm text-white/40 text-center mb-6 leading-relaxed">{creator.bio}</p>}
+
+          {/* Contact info */}
+          {(creator.contactEmail || creator.contactPhone) && (
+            <div className="flex flex-wrap items-center justify-center gap-4 mb-6 text-xs text-white/30">
+              {creator.contactEmail && <a href={`mailto:${creator.contactEmail}`} className="flex items-center gap-1.5 hover:text-white/60 transition-colors"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 7L2 7"/></svg>{creator.contactEmail}</a>}
+              {creator.contactPhone && <a href={`tel:${creator.contactPhone}`} className="flex items-center gap-1.5 hover:text-white/60 transition-colors"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>{creator.contactPhone}</a>}
+            </div>
+          )}
+
+          <BioLinksSection creator={creator} light />
+
+          {/* Mod Sheet */}
+          {modsData.modSheetEnabled && mods.length > 0 && (
+            <div className="mb-6 rounded-xl border border-white/10 overflow-hidden">
+              <div className="px-4 py-3 flex items-center justify-between" style={{ background: `${accent}15` }}>
+                <div>
+                  <h3 className="text-sm font-bold text-white">Mod Sheet</h3>
+                  <p className="text-[10px] text-white/30 mt-0.5">{mods.length} modifications listed</p>
+                </div>
+                <span className="text-sm font-bold px-3 py-1 rounded-lg" style={{ background: `${accent}20`, color: accent }}>
+                  {modsData.modSheetPrice && modsData.modSheetPrice > 0 ? `$${modsData.modSheetPrice}` : "Free"}
+                </span>
+              </div>
+              <div className="divide-y divide-white/[0.04]">
+                {modCategories.map(cat => (
+                  <div key={cat} className="px-4 py-3">
+                    <h4 className="text-[10px] font-bold uppercase tracking-wider text-white/20 mb-2">{cat}</h4>
+                    {mods.filter(m => m.category === cat).map((m, i) => (
+                      <div key={i} className="flex items-center justify-between py-1.5">
+                        <div><span className="text-xs text-white/70">{m.name}</span>{m.brand && <span className="text-[10px] text-white/20 ml-1.5">by {m.brand}</span>}</div>
+                        {m.price && <span className="text-xs text-white/30">${m.price}</span>}
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Portfolio — 2 column for car photos */}
+          {creator.portfolio.length > 0 && (
+            <div className="grid grid-cols-2 gap-2 mb-6">
+              {creator.portfolio.map(p => (
+                <div key={p.id} className="aspect-[4/3] rounded-xl overflow-hidden bg-white/[0.03] border border-white/[0.06]">
+                  {p.image ? <img src={p.image} alt={p.title} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-xs text-white/10">{p.title}</div>}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Services */}
+          {creator.services.length > 0 && (
+            <div className="space-y-2 mb-6">
+              {creator.services.map(s => (
+                <a key={s.id} href={`/creators/${creator.slug}`} className="block w-full rounded-xl px-5 py-4 bg-white/[0.03] border border-white/[0.06] hover:border-white/20 transition-all">
+                  <div className="font-semibold text-white/80 text-sm">{s.title}</div>
+                  <div className="text-xs text-white/25 mt-0.5">{s.price ? `From $${s.price}` : "Contact for pricing"}{s.deliveryDays ? ` · ${s.deliveryDays} day delivery` : ""}</div>
+                </a>
+              ))}
+            </div>
+          )}
+
+          {creator.calendarEnabled && <div className="my-4"><CalendarBooking creatorId={creator.id} creatorName={creator.name} /></div>}
+          {isEmpty && <EmptyState light />}
+          {!isEmpty && <CTAButton creator={creator} light accent={accent} isUnclaimed={isUnclaimed} />}
+        </div>
+        <div className="shrink-0 pb-4">
+          <Branding light hidden={creator.hideBranding} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════
    MAIN EXPORT
    ══════════════════════════════════════════════════════════════ */
 const TEMPLATES: Record<string, React.ComponentType<{ creator: Creator; isUnclaimed?: boolean }>> = {
@@ -3305,6 +3446,7 @@ const TEMPLATES: Record<string, React.ComponentType<{ creator: Creator; isUnclai
   educator: TemplateEducator,
   developer: TemplateDeveloper,
   executive: TemplateExecutive,
+  automotive: TemplateAutomotive,
 };
 
 /* ── Intro Animation Overlay ── */
