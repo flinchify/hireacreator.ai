@@ -3,6 +3,7 @@
 import { AuthProvider, useAuth } from "./auth-context";
 import { AuthModal } from "./auth-modal";
 import { OnboardingFlow } from "./onboarding-flow";
+import { CodeBackground } from "./code-background";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useState, useEffect } from "react";
 
@@ -31,9 +32,10 @@ function OnboardingGate({ children }: { children: React.ReactNode }) {
 export function ClientLayout({ children }: { children: React.ReactNode }) {
   return (
     <AuthProvider>
+      <CodeBackground />
       <Suspense fallback={null}>
         <OnboardingGate>
-          <main className="page-fade-in">
+          <main className="page-fade-in relative z-10">
             {children}
           </main>
         </OnboardingGate>

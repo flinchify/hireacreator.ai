@@ -11,11 +11,11 @@ import type { Creator } from "@/lib/types";
 
 /* ─── Typing rotation for hero ─── */
 const heroWords = [
-  "land paid brand deals",
-  "turn followers into income",
-  "go from DMs to deposits",
-  "keep 100% of their earnings",
-  "get found by real brands",
+  "AI builds your profile in 60 seconds",
+  "AI agents book creators autonomously",
+  "AI scores your engagement instantly",
+  "AI designs your page from your brand",
+  "AI matches brands to perfect creators",
 ];
 
 function TypingRotation() {
@@ -236,13 +236,13 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
             className="text-2xl sm:text-4xl lg:text-[3rem] text-neutral-800 leading-[1.6] mb-6"
             style={{ fontFamily: "var(--font-serif)" }}
           >
-            The page that pays you.
+            AI-powered creator marketplace.
             <br />
             <TypingRotation />
           </h1>
 
-          <p className="text-neutral-500 text-base sm:text-lg max-w-xl mx-auto">
-            One link for your content, your rates, and your brand deals. Claim your page in 30 seconds.
+          <p className="text-neutral-500 text-base sm:text-lg max-w-2xl mx-auto">
+            AI builds your profile, scores your engagement, designs your page, and connects you with brands. The first creator marketplace built for the agentic era.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center mt-10">
@@ -272,10 +272,10 @@ export function HomepageContent({ featured, creatorCount }: { featured: Creator[
         <div className="relative z-10 mt-12 sm:mt-16 max-w-3xl mx-auto">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
-              { stat: "0%", label: "Creator fees", sub: "You keep everything" },
-              { stat: "60s", label: "Profile built", sub: "AI does the work" },
-              { stat: "15+", label: "Platforms", sub: "All your socials" },
-              { stat: "24/7", label: "Brand offers", sub: "Get discovered" },
+              { stat: "AI", label: "Profile Builder", sub: "60-second setup" },
+              { stat: "MCP", label: "Agent Protocol", sub: "AI agents hire creators" },
+              { stat: "0%", label: "Creator Fees", sub: "You keep everything" },
+              { stat: "API", label: "Full Access", sub: "REST + webhooks" },
             ].map((item, i) => (
               <div
                 key={i}
