@@ -141,10 +141,14 @@ export function Header() {
           <Link href="/how-it-works" className="px-3 py-2 text-[13px] font-medium transition-colors text-neutral-600 hover:text-neutral-900" style={{ fontFamily: "var(--font-display)" }}>
             How It Works
           </Link>
+          <span className="text-neutral-300 text-[10px] select-none">/</span>
+          <Link href="/api" className="px-3 py-2 text-[13px] font-medium transition-colors text-neutral-600 hover:text-neutral-900" style={{ fontFamily: "var(--font-display)" }}>
+            API
+          </Link>
         </div>
 
         <Link href="/" className="lg:absolute lg:left-1/2 lg:-translate-x-1/2 flex items-center text-neutral-900">
-          <Image src="/logo-512.png" alt="HireACreator" width={32} height={32} className="w-8 h-8" priority />
+          <Image src="/logo-3d.png" alt="HireACreator" width={36} height={36} className="w-9 h-9" priority />
         </Link>
 
         <div className="hidden lg:flex items-center gap-2">
@@ -191,6 +195,7 @@ export function Header() {
             <Link href="/leaderboard" className="px-4 py-3 text-sm font-medium rounded-xl min-h-[48px] flex items-center text-neutral-800 hover:bg-neutral-50" onClick={() => setMobileOpen(false)}>Rankings</Link>
             <Link href="/pricing" className="px-4 py-3 text-sm font-medium rounded-xl min-h-[48px] flex items-center text-neutral-800 hover:bg-neutral-50" onClick={() => setMobileOpen(false)}>Plans</Link>
             <Link href="/how-it-works" className="px-4 py-3 text-sm font-medium rounded-xl min-h-[48px] flex items-center text-neutral-800 hover:bg-neutral-50" onClick={() => setMobileOpen(false)}>How It Works</Link>
+            <Link href="/api" className="px-4 py-3 text-sm font-medium rounded-xl min-h-[48px] flex items-center text-neutral-800 hover:bg-neutral-50" onClick={() => setMobileOpen(false)}>API</Link>
             <div className="border-t border-neutral-100 my-2" />
             {user ? (
               <>
