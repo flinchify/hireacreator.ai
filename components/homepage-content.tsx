@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ScoreChecker } from "./score-checker";
 import { AnimateOnScroll, StaggerChildren } from "./animate-on-scroll";
 import { CreatorCard } from "./creator-card";
+import { CodeRainBg } from "./code-rain-bg";
 
 import type { Creator } from "@/lib/types";
 
@@ -42,6 +43,18 @@ export function HomepageContent({
   featured: Creator[];
   creatorCount: number;
 }) {
+  const heroContentRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function onScroll() {
+      if (!heroContentRef.current) return;
+      const y = window.scrollY;
+      heroContentRef.current.style.transform = `translateY(${y * 0.15}px)`;
+    }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
     <>
       {/* ═══ Section 1: Hero ═══ */}
@@ -59,7 +72,10 @@ export function HomepageContent({
           }}
         />
 
-        <div className="relative z-10 max-w-3xl mx-auto text-center">
+        {/* Animated code rain background */}
+        <CodeRainBg />
+
+        <div ref={heroContentRef} className="relative z-10 max-w-3xl mx-auto text-center">
           <h1
             className="text-3xl sm:text-4xl lg:text-5xl text-neutral-900 leading-tight tracking-tight"
             style={{ fontFamily: "var(--font-display)" }}
