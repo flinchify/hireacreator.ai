@@ -10,19 +10,19 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: {
-    default: "HireACreator.ai - The Creator Marketplace with 0% Fees",
+    default: "HireACreator.ai — Creator Hiring Infrastructure for the AI Era",
     template: "%s | HireACreator.ai",
   },
   description:
-    "The creator marketplace where creators keep 100% of their earnings. Find and book verified creators for UGC, video, photography, design, and more.",
+    "The AI-native creator marketplace where brands and AI agents discover, hire, and pay creators. 0% creator fees. API-first.",
   keywords: ["creator marketplace", "hire creators", "UGC", "influencer marketing", "0% fees", "book creators", "creator economy"],
   authors: [{ name: "HireACreator.ai" }],
   alternates: {
     canonical: "https://hireacreator.ai",
   },
   openGraph: {
-    title: "HireACreator.ai - The Creator Marketplace with 0% Fees",
-    description: "Find and book verified creators. 0% platform fees for creators. Always.",
+    title: "HireACreator.ai — Creator Hiring Infrastructure for the AI Era",
+    description: "The AI-native creator marketplace where brands and AI agents discover, hire, and pay creators. 0% creator fees. API-first.",
     url: "https://hireacreator.ai",
     siteName: "HireACreator.ai",
     type: "website",
@@ -31,8 +31,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "HireACreator.ai - 0% Fees Creator Marketplace",
-    description: "Book verified creators for UGC, video, photography, and more. Creators keep 100%.",
+    title: "HireACreator.ai — Creator Hiring Infrastructure for the AI Era",
+    description: "The AI-native creator marketplace where brands and AI agents discover, hire, and pay creators. 0% creator fees. API-first.",
     images: ["https://hireacreator.ai/og-logo.png"],
   },
   metadataBase: new URL("https://hireacreator.ai"),
