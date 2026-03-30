@@ -131,8 +131,8 @@ export function Header() {
               <span className="text-neutral-600 text-[10px] select-none">/</span>
             </>
           )}
-          <Link href="/leaderboard" className="px-3 py-1.5 text-[11px] font-medium tracking-wide uppercase transition-colors text-neutral-400 hover:text-emerald-400">
-            rankings
+          <Link href="/for-creators" className="px-3 py-1.5 text-[11px] font-medium tracking-wide uppercase transition-colors text-neutral-400 hover:text-emerald-400">
+            creators
           </Link>
           <span className="text-neutral-600 text-[10px] select-none">/</span>
           <Link href="/pricing" className="px-3 py-1.5 text-[11px] font-medium tracking-wide uppercase transition-colors text-neutral-400 hover:text-emerald-400">

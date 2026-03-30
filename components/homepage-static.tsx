@@ -196,15 +196,15 @@ export function HomepageStatic({ featured, creatorCount }: { featured: Creator[]
         </div>
       </section>
 
-      {/* Section 5: Featured Creators */}
-      {featured.length > 0 && (
+      {/* Section 5: Featured Creators — only show if creators have real pricing */}
+      {featured.filter(c => c.hourlyRate && c.hourlyRate > 0).length >= 3 && (
         <section className="py-16 sm:py-24 px-5">
           <div className="max-w-6xl mx-auto">
             <h2 className="text-2xl sm:text-3xl text-neutral-900 text-center mb-12" style={{ fontFamily: "var(--font-display)" }}>
               Featured creators
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
-              {featured.map((creator) => (
+              {featured.filter(c => c.hourlyRate && c.hourlyRate > 0).map((creator) => (
                 <CreatorCard key={creator.id} creator={creator} />
               ))}
             </div>

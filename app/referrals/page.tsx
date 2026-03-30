@@ -27,8 +27,54 @@ export default function ReferralsPage() {
     window.open(`https://x.com/intent/tweet?text=${text}`, "_blank");
   }
 
-  if (loading) return <div className="min-h-screen bg-neutral-50 flex items-center justify-center"><div className="w-6 h-6 border-2 border-neutral-300 border-t-neutral-900 rounded-full animate-spin" /></div>;
-  if (!user) return <div className="min-h-screen bg-neutral-50 flex items-center justify-center"><p className="text-neutral-500">Sign in to access referrals.</p></div>;
+  if (loading) return (
+    <div className="min-h-screen bg-neutral-50">
+      <Header />
+      <div className="flex items-center justify-center pt-40"><div className="w-6 h-6 border-2 border-neutral-300 border-t-neutral-900 rounded-full animate-spin" /></div>
+    </div>
+  );
+
+  if (!user) return (
+    <div className="min-h-screen bg-white">
+      <Header />
+      <section className="pt-32 sm:pt-40 pb-20 px-4">
+        <div className="max-w-xl mx-auto text-center">
+          <div className="w-16 h-16 rounded-2xl bg-blue-50 flex items-center justify-center mx-auto mb-6">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-blue-500">
+              <path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4-4v2" strokeLinecap="round" strokeLinejoin="round" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M22 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </div>
+          <h1 className="font-display text-3xl sm:text-4xl font-bold text-neutral-900 mb-4">Referral Program</h1>
+          <p className="text-neutral-500 text-lg mb-4 max-w-md mx-auto">
+            Earn 20% of every subscription payment as platform credits for 12 months. Share your link, earn when they subscribe.
+          </p>
+
+          <div className="bg-neutral-50 border border-neutral-200 rounded-2xl p-6 mb-8 text-left">
+            <h2 className="font-display text-sm font-bold text-neutral-900 mb-4">How it works</h2>
+            <div className="space-y-3">
+              {[
+                { step: "1", title: "Share your unique link", desc: "Every creator gets a personal referral link after signing in." },
+                { step: "2", title: "Friends sign up", desc: "When someone creates an account through your link, they're tracked as your referral." },
+                { step: "3", title: "They subscribe, you earn", desc: "Get 20% of their subscription as platform credits for 12 months." },
+              ].map(s => (
+                <div key={s.step} className="flex items-start gap-3">
+                  <div className="w-6 h-6 rounded-full bg-neutral-900 text-white flex items-center justify-center text-xs font-bold shrink-0">{s.step}</div>
+                  <div><span className="text-sm font-semibold text-neutral-900">{s.title}</span><span className="text-sm text-neutral-500"> — {s.desc}</span></div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <Link href="/claim" className="inline-flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white rounded-lg px-8 py-3.5 font-semibold shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30 transition-all min-h-[48px] text-sm">
+            Sign Up to Get Your Referral Link
+          </Link>
+          <p className="text-xs text-neutral-400 mt-4">Free to join. No credit card required.</p>
+        </div>
+      </section>
+    </div>
+  );
 
   return (
     <>

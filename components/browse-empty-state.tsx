@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "./auth-context";
 
 export function BrowseEmptyState() {
@@ -8,6 +8,11 @@ export function BrowseEmptyState() {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [waitlistCount, setWaitlistCount] = useState(0);
+
+  useEffect(() => {
+    fetch("/api/waitlist").then(r => r.json()).then(d => setWaitlistCount(d.count || 0)).catch(() => {});
+  }, []);
 
   async function handleWaitlist(e: React.FormEvent) {
     e.preventDefault();
@@ -19,34 +24,52 @@ export function BrowseEmptyState() {
       body: JSON.stringify({ email, role: "brand" }),
     });
     const data = await res.json();
-    if (data.success) setSubmitted(true);
+    if (data.success) {
+      setSubmitted(true);
+      setWaitlistCount(data.position || waitlistCount + 1);
+    }
     setLoading(false);
   }
 
   return (
-    <div className="text-center py-20 max-w-md mx-auto">
-      <div className="w-16 h-16 rounded-full bg-neutral-100 flex items-center justify-center mx-auto mb-6">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-neutral-400">
-          <path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4-4v2" strokeLinecap="round" strokeLinejoin="round" />
-          <circle cx="9" cy="7" r="4" />
-          <path d="M22 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
+    <div className="text-center py-16 max-w-lg mx-auto">
+      {/* Animated pulse icon */}
+      <div className="relative w-20 h-20 mx-auto mb-8">
+        <div className="absolute inset-0 rounded-full bg-blue-500/10 animate-ping" style={{ animationDuration: "2s" }} />
+        <div className="relative w-20 h-20 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-blue-500">
+            <path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4-4v2" strokeLinecap="round" strokeLinejoin="round" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M22 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </div>
       </div>
 
-      <h3 className="font-display text-xl font-bold text-neutral-900 mb-2">Launching soon</h3>
-      <p className="text-sm text-neutral-500 mb-8 leading-relaxed">
-        We're onboarding our first wave of verified creators.
-        Join the waitlist to get notified when the marketplace opens,
-        or sign up now to claim your profile and get featured early.
+      <h3 className="font-display text-2xl sm:text-3xl font-bold text-neutral-900 mb-3">
+        Marketplace launching soon
+      </h3>
+      <p className="text-neutral-500 mb-2 leading-relaxed max-w-md mx-auto">
+        We're onboarding the first wave of verified creators.
+        Join the waitlist to get early access when we go live.
       </p>
 
+      {/* Waitlist counter */}
+      {waitlistCount > 0 && !submitted && (
+        <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 border border-blue-100 rounded-full mb-8">
+          <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+          <span className="text-sm font-medium text-blue-700">
+            {waitlistCount.toLocaleString()} {waitlistCount === 1 ? "person" : "people"} on the waitlist
+          </span>
+        </div>
+      )}
+
       {submitted ? (
-        <div className="bg-neutral-950 text-white rounded-2xl px-6 py-4">
-          <div className="font-display font-bold">You're on the list.</div>
-          <p className="text-sm text-neutral-400 mt-1">We'll email you when creators are live.</p>
+        <div className="bg-neutral-950 text-white rounded-2xl px-6 py-5 max-w-sm mx-auto">
+          <div className="font-display font-bold text-lg">You're on the list!</div>
+          <p className="text-sm text-neutral-400 mt-1">Position #{waitlistCount}. We'll email you when creators are live.</p>
         </div>
       ) : (
-        <form onSubmit={handleWaitlist} className="flex gap-2 mb-4">
+        <form onSubmit={handleWaitlist} className="flex gap-2 mb-4 max-w-md mx-auto">
           <input
             type="email"
             value={email}
@@ -60,17 +83,22 @@ export function BrowseEmptyState() {
             disabled={loading}
             className="px-6 py-3 text-sm font-medium text-white bg-neutral-900 rounded-full hover:bg-neutral-800 transition-colors whitespace-nowrap disabled:opacity-50"
           >
-            {loading ? "..." : "Notify Me"}
+            {loading ? "..." : "Join Waitlist"}
           </button>
         </form>
       )}
 
-      <button
-        onClick={() => openSignup("creator")}
-        className="text-sm text-neutral-500 hover:text-neutral-900 transition-colors underline underline-offset-4"
-      >
-        I'm a creator — let me sign up now
-      </button>
+      <div className="flex flex-col items-center gap-3 mt-6">
+        <button
+          onClick={() => openSignup("creator")}
+          className="text-sm text-blue-600 hover:text-blue-800 transition-colors font-medium"
+        >
+          I'm a creator — claim my profile now
+        </button>
+        <p className="text-xs text-neutral-400">
+          First 500 creators get a permanent Founding Creator badge
+        </p>
+      </div>
     </div>
   );
 }
