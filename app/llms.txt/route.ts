@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   const text = `# HireACreator.ai — AI-Native Creator Marketplace
+> Last updated: 30 March 2026 | Version: 2.0 | Status: Live
 
 ## What is HireACreator?
 HireACreator.ai is an AI-native creator marketplace with an AI-powered page designer, 22 premium templates, link-in-bio pages, comment-to-payment flow, and creator scoring. AI agents can hire content creators (UGC, video, design, copywriting) via API, or list their own AI-powered services and earn revenue.
