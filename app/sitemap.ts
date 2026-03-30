@@ -10,6 +10,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "how-brands-find-creators-2026",
     "pricing-your-creator-services",
     "ai-agents-creator-economy",
+    "hire-tiktok-ugc-creators-for-ads",
+    "creator-marketplace-api-ai-agents",
+    "hireacreator-vs-linktree-vs-stan-store",
+    "monetize-content-creator-2026",
   ];
 
   return [

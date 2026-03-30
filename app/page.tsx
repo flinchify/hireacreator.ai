@@ -1,6 +1,6 @@
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
-import { HomepageContent } from "@/components/homepage-content";
+import { HomepageStatic } from "@/components/homepage-static";
 import { getFeaturedCreatorsRotation, getCreatorCount } from "@/lib/queries";
 
 export default async function HomePage() {
@@ -19,7 +19,7 @@ export default async function HomePage() {
   return (
     <div className="min-h-screen bg-white overflow-x-hidden">
       <Header />
-      <HomepageContent featured={featured} creatorCount={creatorCount} />
+      <HomepageStatic featured={featured} creatorCount={creatorCount} />
       <Footer />
     </div>
   );
